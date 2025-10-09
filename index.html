@@ -214,121 +214,42 @@
         <span></span>
 </a>
 
-<!-- AI ASSISTANT WIDGET -->
+<!-- AI ASSISTANT WIDGET - SIMPLE VERSION -->
 <div id="ai-assistant-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000;">
-    <button onclick="toggleAIChat()" class="robot-button">
-        <div class="robot-icon">🤖</div>
-        <span class="robot-text">AI Assistant</span>
+    <button onclick="toggleAIChat()" style="background: #2563eb; color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; font-size: 24px; width: 60px; height: 60px;">
+        🤖
     </button>
 
-    <div id="ai-chat-container" style="display: none; position: absolute; bottom: 70px; right: 0; width: 300px; height: 400px; background: white; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); transform: scale(0.9); opacity: 0; transition: all 0.3s ease;">
+    <div id="ai-chat-container" style="display: none; position: absolute; bottom: 70px; right: 0; width: 300px; height: 400px; background: white; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); border: 2px solid #2563eb;">
         <iframe
             src="https://bacson427.github.io/ai-assistant"
-            style="width: 100%; height: 100%; border: none; border-radius: 15px;"
+            style="width: 100%; height: 100%; border: none; border-radius: 13px;"
             title="AI Assistant"
         ></iframe>
     </div>
 </div>
 
-<style>
-.robot-button {
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-weight: bold;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-    position: relative;
-    overflow: hidden;
-}
-
-.robot-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
-}
-
-.robot-button:active {
-    transform: scale(0.95);
-}
-
-.robot-icon {
-    font-size: 28px;
-    transition: all 0.3s ease;
-}
-
-.robot-button:hover .robot-icon {
-    transform: rotate(10deg) scale(1.2);
-}
-
-.robot-text {
-    position: absolute;
-    bottom: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 12px;
-    opacity: 0;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-}
-
-.robot-button:hover .robot-text {
-    opacity: 1;
-    bottom: -20px;
-}
-
-/* Hiệu ứng mở chat container */
-#ai-chat-container.show {
-    transform: scale(1);
-    opacity: 1;
-}
-</style>
-
 <script>
 function toggleAIChat() {
-    console.log('Button clicked!'); // Kiểm tra hàm có chạy không
+    console.log('=== AI CHAT TOGGLE CALLED ===');
     const chatContainer = document.getElementById('ai-chat-container');
+    console.log('Current display:', chatContainer.style.display);
     
     if (chatContainer.style.display === 'none' || chatContainer.style.display === '') {
+        console.log('Opening chat...');
         chatContainer.style.display = 'block';
-        // Thêm hiệu ứng mở
-        setTimeout(() => {
-            chatContainer.classList.add('show');
-        }, 10);
     } else {
-        chatContainer.classList.remove('show');
-        // Đợi hiệu ứng đóng rồi mới ẩn
-        setTimeout(() => {
-            chatContainer.style.display = 'none';
-        }, 300);
+        console.log('Closing chat...');
+        chatContainer.style.display = 'none';
     }
+    
+    console.log('New display:', chatContainer.style.display);
 }
 
-// Kiểm tra xem element có tồn tại không
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('AI Widget loaded');
-    const chatContainer = document.getElementById('ai-chat-container');
-    const button = document.querySelector('.robot-button');
-    
-    if (chatContainer) {
-        console.log('Chat container found');
-    } else {
-        console.log('Chat container NOT found');
-    }
-    
-    if (button) {
-        console.log('Button found');
-    } else {
-        console.log('Button NOT found');
-    }
-});
+// Test ngay khi load
+console.log('=== AI WIDGET LOADED ===');
+console.log('Chat container:', document.getElementById('ai-chat-container'));
+console.log('Button:', document.querySelector('button[onclick="toggleAIChat()"]'));
 </script>
 
 </body>
