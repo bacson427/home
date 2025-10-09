@@ -212,15 +212,16 @@
         <img src="a7d0a7ad-a0cc-4f12-beed-67213000f013_og-image.jpeg" class="link-icon" alt="Blog Icon">
         <span class="link-text">Grade 12 Learning Process</span>
         <span></span>
-    </a>
+</a>
 
 <!-- AI ASSISTANT WIDGET -->
 <div id="ai-assistant-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000;">
-    <button onclick="toggleAIChat()" style="background: #2563eb; color: white; border: none; padding: 12px; border-radius: 50%; cursor: pointer; font-weight: bold; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
-        <div style="font-size: 28px;">🤖</div>
+    <button onclick="toggleAIChat()" class="robot-button">
+        <div class="robot-icon">🤖</div>
+        <span class="robot-text">AI Assistant</span>
     </button>
 
-    <div id="ai-chat-container" style="display: none; position: absolute; bottom: 70px; right: 0; width: 400px; height: 600px; background: white; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+    <div id="ai-chat-container" style="display: none; position: absolute; bottom: 70px; right: 0; width: 300px; height: 400px; background: white; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); transform: scale(0.9); opacity: 0; transition: all 0.3s ease;">
         <iframe
             src="https://bacson427.github.io/ai-assistant"
             style="width: 100%; height: 100%; border: none; border-radius: 15px;"
@@ -229,13 +230,82 @@
     </div>
 </div>
 
+<style>
+.robot-button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.robot-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+.robot-button:active {
+    transform: scale(0.95);
+}
+
+.robot-icon {
+    font-size: 28px;
+    transition: all 0.3s ease;
+}
+
+.robot-button:hover .robot-icon {
+    transform: rotate(10deg) scale(1.2);
+}
+
+.robot-text {
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.robot-button:hover .robot-text {
+    opacity: 1;
+    bottom: -20px;
+}
+
+/* Hiệu ứng mở chat container */
+#ai-chat-container.show {
+    transform: scale(1);
+    opacity: 1;
+}
+</style>
+
 <script>
 function toggleAIChat() {
     const chatContainer = document.getElementById('ai-chat-container');
     if (chatContainer.style.display === 'none') {
         chatContainer.style.display = 'block';
+        // Thêm hiệu ứng mở
+        setTimeout(() => {
+            chatContainer.classList.add('show');
+        }, 10);
     } else {
-        chatContainer.style.display = 'none';
+        chatContainer.classList.remove('show');
+        // Đợi hiệu ứng đóng rồi mới ẩn
+        setTimeout(() => {
+            chatContainer.style.display = 'none';
+        }, 300);
     }
 }
 </script>
