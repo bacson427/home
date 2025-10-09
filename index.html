@@ -165,6 +165,175 @@
 
         @keyframes smoothDrop {
             0% { opacity: 0; transform: translateY(-30px) scale(0.9); }
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nguyen Bac Son</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; 
+            margin: 0; 
+            padding: 50px 0;
+            color: white; 
+            background: linear-gradient(to bottom, #1e3c72, #2a5298);
+            min-height: 100vh; 
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* CÁ BƠI THUẬN */
+        .fish {
+            position: absolute;
+            font-size: 24px;
+            animation: swim 20s linear infinite;
+            z-index: 0;
+        }
+        .fish1 { top: 15%; animation-delay: 0s; }
+        .fish2 { top: 35%; animation-delay: 4s; }
+        .fish3 { top: 55%; animation-delay: 8s; }
+        .fish4 { top: 75%; animation-delay: 12s; }
+
+        @keyframes swim {
+            0% { transform: translateX(-100px) scaleX(1); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(calc(100vw + 100px)) scaleX(1); opacity: 0; }
+        }
+
+        /* RONG BIỂN */
+        .seaweed {
+            position: absolute;
+            bottom: 0;
+            width: 40px;
+            background: linear-gradient(to top, #2e8b57, #3cb371);
+            animation: sway 8s ease-in-out infinite;
+            z-index: 0;
+        }
+        .seaweed1 { left: 10%; height: 80px; animation-delay: 0s; }
+        .seaweed2 { left: 25%; height: 120px; animation-delay: 1s; }
+        .seaweed3 { left: 40%; height: 100px; animation-delay: 2s; }
+        .seaweed4 { left: 60%; height: 90px; animation-delay: 3s; }
+        .seaweed5 { left: 80%; height: 110px; animation-delay: 4s; }
+
+        @keyframes sway {
+            0%, 100% { transform: skewX(-2deg); }
+            50% { transform: skewX(2deg); }
+        }
+
+        /* BONG BÓNG */
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 6s ease-in infinite;
+            z-index: 0;
+        }
+        .bubble1 { width: 8px; height: 8px; left: 15%; animation-delay: 0s; }
+        .bubble2 { width: 12px; height: 12px; left: 30%; animation-delay: 1s; }
+        .bubble3 { width: 6px; height: 6px; left: 50%; animation-delay: 2s; }
+        .bubble4 { width: 10px; height: 10px; left: 70%; animation-delay: 3s; }
+        .bubble5 { width: 14px; height: 14px; left: 85%; animation-delay: 4s; }
+
+        @keyframes float {
+            0% { bottom: -50px; opacity: 0; transform: scale(0.5); }
+            20% { opacity: 0.7; transform: scale(1); }
+            80% { opacity: 0.3; }
+            100% { bottom: 100vh; opacity: 0; transform: scale(1.2); }
+        }
+
+        /* NỘI DUNG CHÍNH */
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-name {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #ef5350, #f48fb1, #7e57c2, #2196f3, #26c6da, #43a047, #eeff41, #f9a825, #ff5722);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            background-size: 200% auto; 
+            animation: gradient-animation 10s ease infinite; 
+            -webkit-text-stroke: 1.5px white;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+        }
+
+        @keyframes gradient-animation {
+            0% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+            100% { background-position: 0% center; }
+        }
+
+        .profile-description-new {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 30px; 
+            color: white;
+            padding: 0 10px;
+            line-height: 1.5;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+        }
+
+        .profile-img { 
+            border-radius: 50%; 
+            width: 120px; 
+            height: 120px; 
+            object-fit: cover; 
+            margin-bottom: 20px; 
+            border: 4px solid white;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+
+        /* MÀU CHUYỂN MƯỢT TỪ TRÊN XUỐNG */
+        .link-button {
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            width: 90%;
+            max-width: 400px; 
+            margin: 10px auto; 
+            padding: 12px 15px; 
+            color: white;
+            text-decoration: none;
+            border-radius: 10px; 
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            position: relative; 
+            border: none;
+            opacity: 0;
+            transform: translateY(-30px);
+            animation: smoothDrop 0.8s ease forwards;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* HIỆU ỨNG RƠI MƯỢT MÀ */
+        .link-button:nth-child(1) { animation-delay: 0.1s; background: linear-gradient(135deg, #FF6B6B, #FF8E8E); }
+        .link-button:nth-child(2) { animation-delay: 0.2s; background: linear-gradient(135deg, #4ECDC4, #88D9D9); }
+        .link-button:nth-child(3) { animation-delay: 0.3s; background: linear-gradient(135deg, #FFD166, #FFE08A); }
+        .link-button:nth-child(4) { animation-delay: 0.4s; background: linear-gradient(135deg, #06D6A0, #4CE0B3); }
+        .link-button:nth-child(5) { animation-delay: 0.5s; background: linear-gradient(135deg, #118AB2, #4DA8CA); }
+        .link-button:nth-child(6) { animation-delay: 0.6s; background: linear-gradient(135deg, #073B4C, #0A556C); }
+        .link-button:nth-child(7) { animation-delay: 0.7s; background: linear-gradient(135deg, #EF476F, #F2849A); }
+        .link-button:nth-child(8) { animation-delay: 0.8s; background: linear-gradient(135deg, #7209B7, #9D4EDD); }
+        .link-button:nth-child(9) { animation-delay: 0.9s; background: linear-gradient(135deg, #F3722C, #F8966C); }
+        .link-button:nth-child(10) { animation-delay: 1.0s; background: linear-gradient(135deg, #277DA1, #4D9BC0); }
+        .link-button:nth-child(11) { animation-delay: 1.1s; background: linear-gradient(135deg, #43AA8B, #6BC4A6); }
+        .link-button:nth-child(12) { animation-delay: 1.2s; background: linear-gradient(135deg, #F94144, #FA6B6E); }
+        .link-button:nth-child(13) { animation-delay: 1.3s; background: linear-gradient(135deg, #577590, #7A91AC); }
+        .link-button:nth-child(14) { animation-delay: 1.4s; background: linear-gradient(135deg, #F9C74F, #FBD56F); }
+        .link-button:nth-child(15) { animation-delay: 1.5s; background: linear-gradient(135deg, #FF6B6B, #FF8E8E); }
+        .link-button:nth-child(16) { animation-delay: 1.6s; background: linear-gradient(135deg, #4ECDC4, #88D9D9); }
+
+        @keyframes smoothDrop {
+            0% { opacity: 0; transform: translateY(-30px) scale(0.9); }
             70% { transform: translateY(5px) scale(1.02); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
@@ -227,91 +396,100 @@
             <img src="a6cef8fb-f306-492b-8e7a-76e533d3582c_image.jpeg" class="link-icon" alt="Yearbook">
             <span class="link-text">High school yearbook</span>
         </a>
+
+        <a href="https://www.facebook.com/share/15LYpoEpKW/" class="link-button">
+            <img src="6aa41df5-0183-4ade-9361-637adf912356_image.jpeg" class="link-icon" alt="Facebook Icon">
+            <span class="link-text">Facebook</span>
+        </a>
         
-        <!-- ... THÊM CÁC LINK KHÁC ... -->
+        <a href="mailto:bacson20062007@gmail.com" class="link-button">
+            <img src="ee560656-c979-4486-b84d-5cdb83ba1ce2_image.jpeg" class="link-icon" alt="Gmail Icon">
+            <span class="link-text">Gmail</span>
+        </a>
+        
+        <a href="https://drive.google.com/file/d/1qZgbegxPpZb2vvQeylP-7Jr_FBMTGfC8/view" class="link-button">
+            <img src="508cc1ae-5081-4092-9f5f-2883aeb3a2a2_image.jpeg" class="link-icon" alt="Phone Icon">
+            <span class="link-text">Số điện thoại</span>
+        </a>
+        
+        <a href="https://www.tiktok.com/@bacson_427" class="link-button">
+            <img src="1f9a419d-f112-4727-824b-784f4c164253_image.jpeg" class="link-icon" alt="TikTok Icon">
+            <span class="link-text">TikTok</span>
+        </a>
+        
+        <a href="https://locket.cam/bacson.427" class="link-button">
+            <img src="a4da9cc0-6c4d-4dd5-97b8-67840fe2f8d8_image.jpeg" class="link-icon" alt="Locket Icon">
+            <span class="link-text">Locket</span>
+        </a>
+        
+        <a href="https://drive.google.com/file/d/1EAo3HTYaUCl4cgAQXTp9ZMr5hNW9ihG_/view" class="link-button">
+            <img src="b1c927f8-c382-44f2-878b-f37117b2b97b_image.jpeg" class="link-icon" alt="WeChat Icon">
+            <span class="link-text">WeChat</span>
+        </a>
+        
+        <a href="https://weibo.com/u/9081906655" class="link-button">
+            <img src="5aeb43bb-3936-40a2-97b8-65d18c1042ab_image.jpeg" class="link-icon" alt="Weibo Icon">
+            <span class="link-text">Weibo</span>
+        </a>
+        
+        <a href="https://t1.kugou.com/9Frgv17EtV2?lgk=2402388783" class="link-button">
+            <img src="aa0afa85-508e-4a60-9426-c5de68035888_image.jpeg" class="link-icon" alt="Kugou Icon">
+            <span class="link-text">酷狗音乐</span>
+        </a>
+        
+        <a href="https://api.whatsapp.com/send/?phone=84347432736&text&type=phone_number&app_absent=0&wame_ctl=1" class="link-button">
+            <img src="2a83bc9d-7275-4dc5-94d9-4650cd0d4720_image.jpeg" class="link-icon" alt="WhatsApp Icon">
+            <span class="link-text">WhatsApp</span>
+        </a>
+        
+        <a href="http://t.me/bacson_427" class="link-button">
+            <img src="00fb1b75-6f9b-478c-83ef-157b0c4c643a_image.jpeg" class="link-icon" alt="Telegram Icon">
+            <span class="link-text">Telegram</span>
+        </a>
+        
+        <a href="https://www.facebook.com/share/15LYpoEpKW/" class="link-button">
+            <img src="7981e36e-2135-4984-9db4-aada7f4cf512_451092928-122126210678315205-5147074455930422218-n.jpeg" class="link-icon" alt="Fanpage Icon">
+            <span class="link-text">Fanpage</span>
+        </a>
+        
+        <a href="https://share.jagat.io/u/RnabNgt7oC" class="link-button">
+            <img src="de1c5be5-95a8-4c9b-a682-c4d9c6907656_image.jpeg" class="link-icon" alt="Jagat Icon">
+            <span class="link-text">Jagat</span>
+        </a>
+        
+        <a href="https://nguyenbacson427.blogspot.com/2025/05/bacson.427.html" class="link-button">
+            <img src="a7d0a7ad-a0cc-4f12-beed-67213000f013_og-image.jpeg" class="link-icon" alt="Blog Icon">
+            <span class="link-text">Grade 12 Learning Process</span>
+        </a>
         
     </div>
 </body>
-</html>
-        
-    </a>
-    
-    <a href="https://www.facebook.com/bacson.427" class="link-button color-2">
-        <img src="6aa41df5-0183-4ade-9361-637adf912356_image.jpeg" class="link-icon" alt="Facebook Icon">
-        <span class="link-text">Facebook</span>
-        <span></span>
-    </a>
-    
-    <a href="mailto:bacson20062007@gmail.com" class="link-button color-3">
-        <img src="ee560656-c979-4486-b84d-5cdb83ba1ce2_image.jpeg" class="link-icon" alt="Gmail Icon">
-        <span class="link-text">Gmail</span>
-        <span></span>
-    </a>
-    
-    <a href="https://drive.google.com/file/d/1qZgbegxPpZb2vvQeylP-7Jr_FBMTGfC8/view" class="link-button color-4">
-        <img src="508cc1ae-5081-4092-9f5f-2883aeb3a2a2_image.jpeg" class="link-icon" alt="Phone Icon">
-        <span class="link-text">Số điện thoại</span>
-        <span></span>
-    </a>
-    
-    <a href="https://www.tiktok.com/@bacson_427" class="link-button color-5">
-        <img src="1f9a419d-f112-4727-824b-784f4c164253_image.jpeg" class="link-icon" alt="TikTok Icon">
-        <span class="link-text">TikTok</span>
-        <span></span>
-    </a>
-    
-    <a href="https://locket.cam/bacson.427" class="link-button color-6">
-        <img src="a4da9cc0-6c4d-4dd5-97b8-67840fe2f8d8_image.jpeg" class="link-icon" alt="Locket Icon">
-        <span class="link-text">Locket</span>
-        <span></span>
-    </a>
-    
-    <a href="https://drive.google.com/file/d/1EAo3HTYaUCl4cgAQXTp9ZMr5hNW9ihG_/view" class="link-button color-7">
-        <img src="b1c927f8-c382-44f2-878b-f37117b2b97b_image.jpeg" class="link-icon" alt="WeChat Icon">
-        <span class="link-text">WeChat</span>
-        <span></span>
-    </a>
-    
-    <a href="https://weibo.com/u/9081906655" class="link-button color-8">
-        <img src="5aeb43bb-3936-40a2-97b8-65d18c1042ab_image.jpeg" class="link-icon" alt="Weibo Icon">
-        <span class="link-text">Weibo</span>
-        <span></span>
-    </a>
-    
-    <a href="https://t1.kugou.com/9Frgv17EtV2?lgk=2402388783" class="link-button color-9">
-        <img src="aa0afa85-508e-4a60-9426-c5de68035888_image.jpeg" class="link-icon" alt="Kugou Icon">
-        <span class="link-text">酷狗音乐</span>
-        <span></span>
-    </a>
-    
-    <a href="https://api.whatsapp.com/send/?phone=84347432736&text&type=phone_number&app_absent=0&wame_ctl=1" class="link-button color-10">
-        <img src="2a83bc9d-7275-4dc5-94d9-4650cd0d4720_image.jpeg" class="link-icon" alt="WhatsApp Icon">
-        <span class="link-text">WhatsApp</span>
-        <span></span>
-    </a>
-    
-    <a href="http://t.me/bacson_427" class="link-button color-11">
-        <img src="00fb1b75-6f9b-478c-83ef-157b0c4c643a_image.jpeg" class="link-icon" alt="Telegram Icon">
-        <span class="link-text">Telegram</span>
-        <span></span>
-    </a>
-    
-    <a href="https://www.facebook.com/share/15LYpoEpKW/" class="link-button color-12">
-        <img src="7981e36e-2135-4984-9db4-aada7f4cf512_451092928-122126210678315205-5147074455930422218-n.jpeg" class="link-icon" alt="Fanpage Icon">
-        <span class="link-text">Fanpage</span>
-        <span></span>
-    </a>
-    
-    <a href="https://share.jagat.io/u/RnabNgt7oC" class="link-button color-13">
-        <img src="de1c5be5-95a8-4c9b-a682-c4d9c6907656_image.jpeg" class="link-icon" alt="Jagat Icon">
-        <span class="link-text">Jagat</span>
-        <span></span>
-    </a>
-    
-    <a href="https://nguyenbacson427.blogspot.com/2025/05/bacson.427.html" class="link-button color-14">
-        <img src="a7d0a7ad-a0cc-4f12-beed-67213000f013_og-image.jpeg" class="link-icon" alt="Blog Icon">
-        <span class="link-text">Grade 12 Learning Process</span>
-        <span></span>
+</html>            70% { transform: translateY(5px) scale(1.02); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .link-button:hover { 
+            transform: translateY(-3px) scale(1.02); 
+            box-shadow: 0 8px 25px rgba(255,255,255,0.2); 
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .link-icon {
+            width: 30px; 
+            height: 30px;
+            object-fit: contain; 
+            border-radius: 50%; 
+            padding: 2px; 
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .link-text {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0 60px; 
+
 </a>
 
 <!-- AI ASSISTANT WIDGET - SIMPLE VERSION -->
