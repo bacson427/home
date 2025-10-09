@@ -1,24 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nguyen Bac Son | Link-in-Bio</title>
-    <meta name="viewport" content="width=device-width, initial-width=1.0">
     <style>
-        /* Thiết lập chung và Màu nền gradient mới */
+        /* Thiết lập chung và Màu nền gradient */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             text-align: center; 
             margin: 0; 
-            padding: 50px 0 100px 0; /* Tăng padding dưới để tránh nút nổi */
+            padding: 50px 0 100px 0;
             color: white; 
-            
-            /* Nền gradient (Giữ nguyên theo code bạn cung cấp) */
             background-image: linear-gradient(to bottom right, #e0ffe6, #b3e0ff, #99bbff); 
             background-size: cover; 
             background-attachment: fixed; 
             background-position: center; 
             min-height: 100vh; 
-            backdrop-filter: none; 
         }
         
         /* Định dạng Tên (NGUYEN BAC SON) */
@@ -94,7 +92,7 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.5); 
         }
         
-        /* Định dạng logo bên trong nút - Căn lề trái */
+        /* Định dạng logo bên trong nút */
         .link-icon {
             width: 30px; 
             height: 30px;
@@ -105,7 +103,7 @@
             flex-shrink: 0; 
         }
 
-        /* Định dạng text của nút - Căn giữa tuyệt đối trong nút */
+        /* Định dạng text của nút */
         .link-text {
             position: absolute;
             left: 50%;
@@ -115,7 +113,7 @@
             text-shadow: 1px 1px 3px rgba(0,0,0,0.5); 
         }
 
-        /* MÀU CẦU VỒNG (Giữ nguyên) */
+        /* MÀU CẦU VỒNG */
         .color-1 { background-color: #FF5733; } 
         .color-2 { background-color: #FFC300; } 
         .color-3 { background-color: #33FF57; } 
@@ -131,7 +129,7 @@
         .color-13 { background-color: #000000; color: white; } 
         .color-14 { background-color: #999999; }
 
-        /* CSS cho Widget nổi */
+        /* CSS cho AI Widget */
         #ai-assistant-widget {
             position: fixed; 
             bottom: 20px; 
@@ -143,25 +141,172 @@
             position: absolute; 
             bottom: 70px; 
             right: 0; 
-            width: 350px; /* Chiều rộng hẹp hơn cho điện thoại */
-            height: 500px; /* Chiều cao tối ưu */
+            width: 350px;
+            height: 500px;
             background: white; 
             border-radius: 15px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
             border: 2px solid #2563eb;
-            /* Animation cho chat box */
             transform: scale(0);
             transform-origin: bottom right;
             transition: transform 0.3s ease-out, opacity 0.3s ease-out;
             opacity: 0;
-            display: block; /* Giữ display: block để animation hoạt động */
-            pointer-events: none; /* Ngăn chặn tương tác khi ẩn */
+            display: block;
+            pointer-events: none;
+            overflow: hidden;
         }
         
         #ai-chat-container.active {
             transform: scale(1);
             opacity: 1;
-            pointer-events: auto; /* Cho phép tương tác khi hiện */
+            pointer-events: auto;
+        }
+
+        /* AI Chat Interface */
+        .ai-chat-header {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 13px 13px 0 0;
+        }
+
+        .ai-chat-body {
+            height: calc(100% - 120px);
+            padding: 15px;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+
+        .ai-chat-footer {
+            padding: 15px;
+            border-top: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 0 0 13px 13px;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .chat-message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .ai-message .message-bubble {
+            background: white;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+            border-bottom-left-radius: 5px;
+        }
+
+        .user-message .message-bubble {
+            background: #2563eb;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .user-message .message-time {
+            text-align: left;
+        }
+
+        #ai-chat-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #ai-chat-input:focus {
+            border-color: #2563eb;
+        }
+
+        #ai-send-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+            transition: background 0.3s;
+        }
+
+        #ai-send-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .ai-typing {
+            display: inline-flex;
+            align-items: center;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .typing-dots {
+            display: inline-flex;
+            margin-left: 5px;
+        }
+
+        .typing-dots span {
+            height: 6px;
+            width: 6px;
+            background: #9ca3af;
+            border-radius: 50%;
+            display: block;
+            margin: 0 1px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: 0s; }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.2);
         }
     </style>
 </head>
@@ -182,7 +327,7 @@
         <span class="link-text">Facebook</span>
         <span></span>
     </a>
-    <a href="mailto:bacson20062007@gmail.com" class="link-button color-3">
+        <a href="mailto:bacson20062007@gmail.com" class="link-button color-3">
         <img src="ee560656-c979-4486-b84d-5cdb83ba1ce2_image.jpeg" class="link-icon" alt="Gmail Icon">
         <span class="link-text">Gmail</span>
         <span></span>
@@ -242,31 +387,180 @@
         <span class="link-text">Grade 12 Learning Process</span>
         <span></span>
     </a>
-<!-- AI ASSISTANT WIDGET -->
-<div id="ai-assistant-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000;">
-    <button onclick="toggleAIChat()" style="background: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 25px; cursor: pointer; font-weight: bold;">
-        Nguyễn Bắc Sơn 
-    </button>
 
-    <div id="ai-chat-container" style="display: none; position: absolute; bottom: 60px; right: 0; width: 400px; height: 600px; background: white; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-        <iframe
-            src="https://bacson427.github.io/ai-assistant"
-            style="width: 100%; height: 100%; border: none; border-radius: 15px;"
-            title="AI Assistant"
-        ></iframe>
+    <!-- AI ASSISTANT WIDGET -->
+    <div id="ai-assistant-widget">
+        <button onclick="toggleAIChat()" style="background: #2563eb; color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; font-size: 24px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.4);">
+            💬
+        </button>
+
+        <div id="ai-chat-container">
+            <div class="ai-chat-header">
+                <div>
+                    <strong>🤖 AI Assistant</strong>
+                    <div style="font-size: 12px; opacity: 0.8;">Trợ lý ảo của Nguyễn Bắc Sơn</div>
+                </div>
+                <button class="close-btn" onclick="toggleAIChat()">×</button>
+            </div>
+            
+            <div class="ai-chat-body" id="ai-chat-messages">
+                <div class="chat-message ai-message">
+                    <div class="message-bubble">
+                        Xin chào! Tôi là trợ lý ảo của Nguyễn Bắc Sơn. Tôi có thể giúp gì cho bạn?
+                        <div class="message-time">Bây giờ</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ai-chat-footer">
+                <div style="display: flex; align-items: center;">
+                    <input type="text" id="ai-chat-input" placeholder="Nhập câu hỏi của bạn..." onkeypress="handleKeyPress(event)">
+                    <button id="ai-send-btn" onclick="sendMessage()">Gửi</button>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-function toggleAIChat() {
-    const chatContainer = document.getElementById('ai-chat-container');
-    if (chatContainer.style.display === 'none') {
-        chatContainer.style.display = 'block';
-    } else {
-        chatContainer.style.display = 'none';
-    }
-}
-</script>
-
+    <script>
+        // Biến lưu trữ lịch sử chat
+        let chatHistory = [];
+        
+        function toggleAIChat() {
+            const chatContainer = document.getElementById('ai-chat-container');
+            chatContainer.classList.toggle('active');
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('ai-chat-input');
+            const message = input.value.trim();
+            
+            if (message === '') return;
+            
+            // Thêm tin nhắn người dùng vào chat
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Hiển thị trạng thái đang nhập
+            showTypingIndicator();
+            
+            // Xử lý phản hồi AI (giả lập)
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = getAIResponse(message);
+                addMessage(response, 'ai');
+            }, 1000 + Math.random() * 1000);
+        }
+        
+        function addMessage(text, sender) {
+            const chatMessages = document.getElementById('ai-chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}-message`;
+            
+            const time = new Date().toLocaleTimeString('vi-VN', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    ${text}
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Lưu vào lịch sử
+            chatHistory.push({ sender, text, time });
+        }
+        
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('ai-chat-messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.className = 'chat-message ai-message';
+            typingDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div class="ai-typing">
+                        Đang nhập
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+        
+        function getAIResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            
+            // Các câu trả lời được định nghĩa sẵn
+            if (lowerMessage.includes('chào') || lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
+                return "Xin chào! Rất vui được gặp bạn. Tôi có thể giúp gì cho bạn?";
+            }
+            else if (lowerMessage.includes('tên') || lowerMessage.includes('ai là')) {
+                return "Tôi là trợ lý ảo của Nguyễn Bắc Sơn. Tôi được tạo ra để hỗ trợ trả lời các câu hỏi về anh ấy!";
+            }
+            else if (lowerMessage.includes('liên hệ') || lowerMessage.includes('contact') || lowerMessage.includes('liên lạc')) {
+                return "Bạn có thể liên hệ với Nguyễn Bắc Sơn qua:\n• Facebook: facebook.com/bacson.427\n• Email: bacson20062007@gmail.com\n• SĐT: 0347432736\n• TikTok: @bacson_427";
+            }
+            else if (lowerMessage.includes('học') || lowerMessage.includes('trường') || lowerMessage.includes('lớp')) {
+                return "Nguyễn Bắc Sơn hiện đang là học sinh lớp 12. Bạn có thể xem quá trình học tập của anh ấy qua link 'Grade 12 Learning Process' phía trên!";
+            }
+            else if (lowerMessage.includes('cảm ơn') || lowerMessage.includes('thanks')) {
+                return "Không có gì! Nếu bạn có thêm câu hỏi gì, đừng ngần ngại hỏi tôi nhé!";
+            }
+            else if (lowerMessage.includes('tạm biệt') || lowerMessage.includes('bye')) {
+                return "Tạm biệt bạn! Hy vọng sớm gặp lại bạn. Đừng quên kết nối với Nguyễn Bắc Sơn qua các mạng xã hội nhé!";
+            }
+            else {
+                const randomResponses = [
+                    "Tôi có thể giúp bạn kết nối với Nguyễn Bắc Sơn qua các mạng xã hội được liệt kê phía trên!",
+                    "Bạn muốn biết thêm thông tin gì về Nguyễn Bắc Sơn?",
+                    "Tôi có thể cung cấp thông tin liên hệ và các kênh mạng xã hội của Nguyễn Bắc Sơn.",
+                    "Hãy xem các liên kết phía trên để kết nối trực tiếp với Nguyễn Bắc Sơn nhé!",
+                    "Bạn có thể hỏi tôi về thông tin liên hệ, mạng xã hội hoặc quá trình học tập của Nguyễn Bắc Sơn."
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+        }
+        
+        // Đóng chat khi click bên ngoài
+        document.addEventListener('click', function(event) {
+            const chatContainer = document.getElementById('ai-chat-container');
+            const aiButton = document.querySelector('#ai-assistant-widget button');
+            
+            if (chatContainer.classList.contains('active') && 
+                !chatContainer.contains(event.target) && 
+                !aiButton.contains(event.target)) {
+                chatContainer.classList.remove('active');
+            }
+        });
+        
+        // Đóng bằng phím ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.getElementById('ai-chat-container').classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
