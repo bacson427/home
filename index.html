@@ -34,14 +34,12 @@
             text-shadow: 2px 2px 8px rgba(0,0,0,0.8); 
         }
 
-        /* Keyframes cho hiệu ứng chạy màu */
         @keyframes gradient-animation {
             0% { background-position: 0% center; }
             50% { background-position: 100% center; }
             100% { background-position: 0% center; }
         }
 
-        /* Dòng mô tả */
         .profile-description-new {
             font-size: 14px;
             font-weight: 600; 
@@ -52,7 +50,6 @@
             text-shadow: 1px 1px 3px rgba(255,255,255,0.7); 
         }
 
-        /* Định dạng ảnh đại diện */
         .profile-img { 
             border-radius: 50%; 
             width: 120px; 
@@ -67,7 +64,6 @@
             animation: gradient-animation 10s ease infinite; 
         }
 
-        /* Định dạng nút liên kết */
         .link-button {
             display: flex; 
             align-items: center; 
@@ -92,7 +88,6 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.5); 
         }
         
-        /* Định dạng logo bên trong nút */
         .link-icon {
             width: 30px; 
             height: 30px;
@@ -103,7 +98,6 @@
             flex-shrink: 0; 
         }
 
-        /* Định dạng text của nút */
         .link-text {
             position: absolute;
             left: 50%;
@@ -147,147 +141,24 @@
             border-radius: 15px; 
             box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
             border: 2px solid #2563eb;
-            transform: scale(0);
-            transform-origin: bottom right;
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-            opacity: 0;
-            display: block;
-            pointer-events: none;
+            display: none;
             overflow: hidden;
         }
         
         #ai-chat-container.active {
-            transform: scale(1);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* AI Chat Interface */
-        .ai-chat-header {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 13px 13px 0 0;
-        }
-
-        .ai-chat-body {
-            height: calc(100% - 120px);
-            padding: 15px;
-            overflow-y: auto;
-            background: #f8fafc;
-        }
-
-        .ai-chat-footer {
-            padding: 15px;
-            border-top: 1px solid #e5e7eb;
-            background: white;
-            border-radius: 0 0 13px 13px;
-        }
-
-        .chat-message {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: flex-start;
-        }
-
-        .chat-message.user {
-            justify-content: flex-end;
-        }
-
-        .message-bubble {
-            max-width: 80%;
-            padding: 12px 16px;
-            border-radius: 18px;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .ai-message .message-bubble {
-            background: white;
-            border: 1px solid #e5e7eb;
-            color: #374151;
-            border-bottom-left-radius: 5px;
-        }
-
-        .user-message .message-bubble {
-            background: #2563eb;
-            color: white;
-            border-bottom-right-radius: 5px;
-        }
-
-        .message-time {
-            font-size: 11px;
-            color: #9ca3af;
-            margin-top: 5px;
-            text-align: right;
-        }
-
-        .user-message .message-time {
-            text-align: left;
-        }
-
-        #ai-chat-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 25px;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        #ai-chat-input:focus {
-            border-color: #2563eb;
-        }
-
-        #ai-send-btn {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-left: 10px;
-            transition: background 0.3s;
-        }
-
-        #ai-send-btn:hover {
-            background: #1d4ed8;
-        }
-
-        .ai-typing {
-            display: inline-flex;
-            align-items: center;
-            color: #6b7280;
-            font-style: italic;
-        }
-
-        .typing-dots {
-            display: inline-flex;
-            margin-left: 5px;
-        }
-
-        .typing-dots span {
-            height: 6px;
-            width: 6px;
-            background: #9ca3af;
-            border-radius: 50%;
             display: block;
-            margin: 0 1px;
-            animation: typing 1.4s infinite ease-in-out;
         }
 
-        .typing-dots span:nth-child(1) { animation-delay: 0s; }
-        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        .ai-loading {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+        }
 
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-5px); }
+        .ai-error {
+            padding: 20px;
+            text-align: center;
+            color: #ef4444;
         }
 
         .close-btn {
@@ -403,144 +274,93 @@
                 <button class="close-btn" onclick="toggleAIChat()">×</button>
             </div>
             
-            <div class="ai-chat-body" id="ai-chat-messages">
-                <div class="chat-message ai-message">
-                    <div class="message-bubble">
-                        Xin chào! Tôi là trợ lý ảo của Nguyễn Bắc Sơn. Tôi có thể giúp gì cho bạn?
-                        <div class="message-time">Bây giờ</div>
-                    </div>
-                </div>
+            <!-- Loading State -->
+            <div id="ai-loading" class="ai-loading">
+                <p>Đang tải AI Assistant...</p>
             </div>
             
-            <div class="ai-chat-footer">
-                <div style="display: flex; align-items: center;">
-                    <input type="text" id="ai-chat-input" placeholder="Nhập câu hỏi của bạn..." onkeypress="handleKeyPress(event)">
-                    <button id="ai-send-btn" onclick="sendMessage()">Gửi</button>
-                </div>
+            <!-- Error State -->
+            <div id="ai-error" class="ai-error" style="display: none;">
+                <p>Không thể tải AI Assistant. Vui lòng thử lại sau.</p>
+                <button onclick="retryAIConnection()" style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 10px;">
+                    Thử lại
+                </button>
             </div>
+            
+            <!-- Iframe for AI Assistant -->
+            <iframe
+                id="ai-assistant-frame"
+                src="https://bacson427.github.io/ai-assistant/"
+                style="width: 100%; height: calc(100% - 60px); border: none; display: none;"
+                title="AI Assistant"
+                allow="microphone; camera"
+            ></iframe>
         </div>
     </div>
 
     <script>
-        // Biến lưu trữ lịch sử chat
-        let chatHistory = [];
+        let aiChatVisible = false;
         
         function toggleAIChat() {
             const chatContainer = document.getElementById('ai-chat-container');
-            chatContainer.classList.toggle('active');
-        }
-        
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
+            const aiFrame = document.getElementById('ai-assistant-frame');
+            const loadingDiv = document.getElementById('ai-loading');
+            const errorDiv = document.getElementById('ai-error');
+            
+            if (!aiChatVisible) {
+                // Mở chat
+                chatContainer.classList.add('active');
+                aiChatVisible = true;
+                
+                // Hiển thị loading
+                loadingDiv.style.display = 'block';
+                errorDiv.style.display = 'none';
+                aiFrame.style.display = 'none';
+                
+                // Thử tải iframe
+                loadAIAssistant();
+            } else {
+                // Đóng chat
+                chatContainer.classList.remove('active');
+                aiChatVisible = false;
             }
         }
         
-        function sendMessage() {
-            const input = document.getElementById('ai-chat-input');
-            const message = input.value.trim();
+        function loadAIAssistant() {
+            const aiFrame = document.getElementById('ai-assistant-frame');
+            const loadingDiv = document.getElementById('ai-loading');
+            const errorDiv = document.getElementById('ai-error');
             
-            if (message === '') return;
+            // Reset iframe src để tải lại
+            aiFrame.src = 'https://bacson427.github.io/ai-assistant/';
             
-            // Thêm tin nhắn người dùng vào chat
-            addMessage(message, 'user');
-            input.value = '';
+            // Xử lý khi iframe load thành công
+            aiFrame.onload = function() {
+                loadingDiv.style.display = 'none';
+                errorDiv.style.display = 'none';
+                aiFrame.style.display = 'block';
+                console.log('AI Assistant loaded successfully');
+            };
             
-            // Hiển thị trạng thái đang nhập
-            showTypingIndicator();
+            // Xử lý khi iframe lỗi
+            aiFrame.onerror = function() {
+                loadingDiv.style.display = 'none';
+                errorDiv.style.display = 'block';
+                aiFrame.style.display = 'none';
+                console.error('Failed to load AI Assistant');
+            };
             
-            // Xử lý phản hồi AI (giả lập)
-            setTimeout(() => {
-                removeTypingIndicator();
-                const response = getAIResponse(message);
-                addMessage(response, 'ai');
-            }, 1000 + Math.random() * 1000);
+            // Timeout sau 10 giây nếu không load được
+            setTimeout(function() {
+                if (loadingDiv.style.display !== 'none') {
+                    loadingDiv.style.display = 'none';
+                    errorDiv.style.display = 'block';
+                }
+            }, 10000);
         }
         
-        function addMessage(text, sender) {
-            const chatMessages = document.getElementById('ai-chat-messages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `chat-message ${sender}-message`;
-            
-            const time = new Date().toLocaleTimeString('vi-VN', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-            
-            messageDiv.innerHTML = `
-                <div class="message-bubble">
-                    ${text}
-                    <div class="message-time">${time}</div>
-                </div>
-            `;
-            
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            
-            // Lưu vào lịch sử
-            chatHistory.push({ sender, text, time });
-        }
-        
-        function showTypingIndicator() {
-            const chatMessages = document.getElementById('ai-chat-messages');
-            const typingDiv = document.createElement('div');
-            typingDiv.id = 'typing-indicator';
-            typingDiv.className = 'chat-message ai-message';
-            typingDiv.innerHTML = `
-                <div class="message-bubble">
-                    <div class="ai-typing">
-                        Đang nhập
-                        <div class="typing-dots">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            chatMessages.appendChild(typingDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-        
-        function removeTypingIndicator() {
-            const typingIndicator = document.getElementById('typing-indicator');
-            if (typingIndicator) {
-                typingIndicator.remove();
-            }
-        }
-        
-        function getAIResponse(userMessage) {
-            const lowerMessage = userMessage.toLowerCase();
-            
-            // Các câu trả lời được định nghĩa sẵn
-            if (lowerMessage.includes('chào') || lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
-                return "Xin chào! Rất vui được gặp bạn. Tôi có thể giúp gì cho bạn?";
-            }
-            else if (lowerMessage.includes('tên') || lowerMessage.includes('ai là')) {
-                return "Tôi là trợ lý ảo của Nguyễn Bắc Sơn. Tôi được tạo ra để hỗ trợ trả lời các câu hỏi về anh ấy!";
-            }
-            else if (lowerMessage.includes('liên hệ') || lowerMessage.includes('contact') || lowerMessage.includes('liên lạc')) {
-                return "Bạn có thể liên hệ với Nguyễn Bắc Sơn qua:\n• Facebook: facebook.com/bacson.427\n• Email: bacson20062007@gmail.com\n• SĐT: 0347432736\n• TikTok: @bacson_427";
-            }
-            else if (lowerMessage.includes('học') || lowerMessage.includes('trường') || lowerMessage.includes('lớp')) {
-                return "Nguyễn Bắc Sơn hiện đang là học sinh lớp 12. Bạn có thể xem quá trình học tập của anh ấy qua link 'Grade 12 Learning Process' phía trên!";
-            }
-            else if (lowerMessage.includes('cảm ơn') || lowerMessage.includes('thanks')) {
-                return "Không có gì! Nếu bạn có thêm câu hỏi gì, đừng ngần ngại hỏi tôi nhé!";
-            }
-            else if (lowerMessage.includes('tạm biệt') || lowerMessage.includes('bye')) {
-                return "Tạm biệt bạn! Hy vọng sớm gặp lại bạn. Đừng quên kết nối với Nguyễn Bắc Sơn qua các mạng xã hội nhé!";
-            }
-            else {
-                const randomResponses = [
-                    "Tôi có thể giúp bạn kết nối với Nguyễn Bắc Sơn qua các mạng xã hội được liệt kê phía trên!",
-                    "Bạn muốn biết thêm thông tin gì về Nguyễn Bắc Sơn?",
-                    "Tôi có thể cung cấp thông tin liên hệ và các kênh mạng xã hội của Nguyễn Bắc Sơn.",
-                    "Hãy xem các liên kết phía trên để kết nối trực tiếp với Nguyễn Bắc Sơn nhé!",
-                    "Bạn có thể hỏi tôi về thông tin liên hệ, mạng xã hội hoặc quá trình học tập của Nguyễn Bắc Sơn."
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
+        function retryAIConnection() {
+            loadAIAssistant();
         }
         
         // Đóng chat khi click bên ngoài
@@ -548,17 +368,17 @@
             const chatContainer = document.getElementById('ai-chat-container');
             const aiButton = document.querySelector('#ai-assistant-widget button');
             
-            if (chatContainer.classList.contains('active') && 
+            if (aiChatVisible && 
                 !chatContainer.contains(event.target) && 
                 !aiButton.contains(event.target)) {
-                chatContainer.classList.remove('active');
+                toggleAIChat();
             }
         });
         
         // Đóng bằng phím ESC
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                document.getElementById('ai-chat-container').classList.remove('active');
+            if (event.key === 'Escape' && aiChatVisible) {
+                toggleAIChat();
             }
         });
     </script>
