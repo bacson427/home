@@ -140,13 +140,98 @@
             background: white; 
             border-radius: 15px; 
             box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
-            border: 2px solid #2563eb;
             display: none;
             overflow: hidden;
+            /* Hiệu ứng border chạy màu */
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+        }
+        
+        #ai-chat-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+            background-size: 400% 400%;
+            border-radius: 17px;
+            z-index: -1;
+            animation: border-glow 3s ease infinite;
+            filter: blur(1px);
         }
         
         #ai-chat-container.active {
             display: block;
+        }
+
+        @keyframes border-glow {
+            0% {
+                background-position: 0% 50%;
+                opacity: 1;
+            }
+            50% {
+                background-position: 100% 50%;
+                opacity: 0.8;
+            }
+            100% {
+                background-position: 0% 50%;
+                opacity: 1;
+            }
+        }
+
+        /* Nút AI với hiệu ứng màu chạy */
+        .ai-button {
+            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+            background-size: 400% 400%;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: button-glow 3s ease infinite;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .ai-button:hover {
+            transform: scale(1.1);
+        }
+
+        .ai-button::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: inherit;
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(8px);
+            opacity: 0.7;
+            animation: button-glow 3s ease infinite;
+        }
+
+        @keyframes button-glow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         /* AI Chat Interface */
@@ -158,6 +243,8 @@
             justify-content: space-between;
             align-items: center;
             border-radius: 13px 13px 0 0;
+            position: relative;
+            z-index: 1;
         }
 
         .ai-chat-body {
@@ -165,6 +252,8 @@
             padding: 15px;
             overflow-y: auto;
             background: #f8fafc;
+            position: relative;
+            z-index: 1;
         }
 
         .ai-chat-footer {
@@ -172,6 +261,8 @@
             border-top: 1px solid #e5e7eb;
             background: white;
             border-radius: 0 0 13px 13px;
+            position: relative;
+            z-index: 1;
         }
 
         .chat-message {
@@ -190,6 +281,7 @@
             border-radius: 18px;
             font-size: 14px;
             line-height: 1.4;
+            position: relative;
         }
 
         .ai-message .message-bubble {
@@ -307,6 +399,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: background 0.3s;
         }
 
         .close-btn:hover {
@@ -392,9 +485,9 @@
         <span></span>
     </a>
 
-    <!-- AI ASSISTANT WIDGET -->
+    <!-- AI ASSISTANT WIDGET với hiệu ứng màu chạy -->
     <div id="ai-assistant-widget">
-        <button onclick="toggleAIChat()" style="background: #2563eb; color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; font-size: 24px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.4);">
+        <button onclick="toggleAIChat()" class="ai-button">
             💬
         </button>
 
@@ -589,4 +682,4 @@
         });
     </script>
 </body>
-        </html>
+    </html>
