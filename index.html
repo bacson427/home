@@ -215,90 +215,48 @@
         <span></span>
 </a>
 
-<!-- AI ASSISTANT WIDGET - CÓ NÚT GỬI -->
+<!-- AI ASSISTANT WIDGET - SIMPLE VERSION -->
 <div id="ai-assistant-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000;">
-    <button onclick="toggleAIChat()" style="background: #2563eb; color: white; border: none; padding: 12px; border-radius: 50%; cursor: pointer; font-size: 20px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+    <button onclick="toggleAIChat()" style="background: #2563eb; color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; font-size: 24px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
         💬
     </button>
 
-    <div id="ai-chat-container" style="display: none; position: absolute; bottom: 60px; right: 0; width: 300px; height: 400px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); border: 2px solid #2563eb;">
+    <div id="ai-chat-container" style="display: none; position: absolute; bottom: 70px; right: 0; width: 350px; height: 500px; background: white; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); border: 2px solid #2563eb;">
         
-        <!-- HEADER -->
-        <div style="background: #2563eb; color: white; padding: 10px; border-radius: 12px 12px 0 0; text-align: center; font-weight: bold;">
-            AI Assistant
-        </div>
-        
-        <!-- CHAT MESSAGES -->
-        <div id="chat-messages" style="height: 300px; overflow-y: auto; padding: 10px;">
-            <div style="background: #f1f1f1; padding: 8px; border-radius: 10px; margin: 5px 0;">
-                Xin chào! Tôi có thể giúp gì cho bạn?
-            </div>
-        </div>
-        
-        <!-- INPUT AREA WITH SEND BUTTON -->
-        <div style="display: flex; padding: 10px; border-top: 1px solid #e5e7eb;">
-            <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." style="flex: 1; padding: 8px; border: 1px solid #d1d5db; border-radius: 20px; margin-right: 8px;">
-            <button onclick="sendMessage()" style="background: #2563eb; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                📮
-            </button>
-        </div>
+        <!-- CHAT IFRAME -->
+        <iframe
+            src="https://bacson427.github.io/ai-assistant"
+            style="width: 100%; height: 100%; border: none; border-radius: 15px;"
+            title="AI Assistant"
+        ></iframe>
     </div>
 </div>
 
 <script>
 function toggleAIChat() {
+    console.log('Toggle function called');
     const chatContainer = document.getElementById('ai-chat-container');
+    console.log('Before:', chatContainer.style.display);
+    
     if (chatContainer.style.display === 'none' || chatContainer.style.display === '') {
         chatContainer.style.display = 'block';
     } else {
         chatContainer.style.display = 'none';
     }
-}
-
-function sendMessage() {
-    const input = document.getElementById('chat-input');
-    const message = input.value.trim();
     
-    if (message) {
-        const messagesDiv = document.getElementById('chat-messages');
-        
-        // Thêm tin nhắn người dùng
-        const userMsg = document.createElement('div');
-        userMsg.style.background = '#2563eb';
-        userMsg.style.color = 'white';
-        userMsg.style.padding = '8px';
-        userMsg.style.borderRadius = '10px';
-        userMsg.style.margin = '5px 0';
-        userMsg.style.marginLeft = '50px';
-        userMsg.textContent = message;
-        messagesDiv.appendChild(userMsg);
-        
-        // Xóa input
-        input.value = '';
-        
-        // Auto scroll xuống
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        
-        // Giả lập phản hồi AI
-        setTimeout(() => {
-            const aiMsg = document.createElement('div');
-            aiMsg.style.background = '#f1f1f1';
-            aiMsg.style.padding = '8px';
-            aiMsg.style.borderRadius = '10px';
-            aiMsg.style.margin = '5px 0';
-            aiMsg.textContent = 'Tôi đã nhận được tin nhắn của bạn!';
-            messagesDiv.appendChild(aiMsg);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }, 1000);
-    }
+    console.log('After:', chatContainer.style.display);
 }
 
-// Gửi tin nhắn khi nhấn Enter
-document.getElementById('chat-input').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        sendMessage();
-    }
-});
+function closeChat() {
+
+   console.log('Close function called');
+    const chatContainer = document.getElementById('ai-chat-container');
+    chatContainer.style.display = 'none';
+}
+
+// Test khi trang load
+console.log('AI Widget script loaded');
+console.log('Chat container:', document.getElementById('ai-chat-container'));
 </script>
 
 </body>
