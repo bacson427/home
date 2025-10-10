@@ -282,12 +282,12 @@
         <!-- Verification Overlay -->
         <div id="verification-overlay" class="verification-overlay">
             <div class="verification-box">
-                <div class="verification-title">🤖 Xác Minh</div>
+                <div class="verification-title">🤖 Xác Minh Người Dùng</div>
                 <div class="verification-question" id="verification-question"></div>
                 <input type="text" id="verification-answer" class="verification-input" placeholder="Nhập kết quả" maxlength="3">
                 <button onclick="verifyHuman()" class="verify-btn">XÁC MINH</button>
-                <div id="error-message" class="error-message">❌ Sai! Thử lại</div>
-                <div class="rate-limit-info">Chống bot & spam</div>
+                <div id="error-message" class="error-message">❌ Câu trả lời không đúng. Vui lòng thử lại!</div>
+                <div class="rate-limit-info">Hệ thống chống bot & spam tự động</div>
             </div>
         </div>
         
@@ -300,65 +300,66 @@
         <div class="ai-chat-body" id="ai-chat-messages">
             <div class="chat-message ai-message">
                 <div class="message-bubble">
-                    <strong>Xin chào! Tôi là AI Assistant</strong><br>
+                    <strong>Xin chào! Tôi là AI Assistant của Nguyễn Bắc Sơn</strong><br><br>
                     Tôi có thể giúp bạn tìm hiểu về:<br>
                     • Thông tin cá nhân<br>
                     • Học vấn & chuyên ngành<br>
                     • Kỹ năng & kinh nghiệm<br>
                     • Liên hệ & mạng xã hội<br>
-                    <em>Chọn câu hỏi bên dưới!</em>
+                    • Sở thích & dự án<br><br>
+                    <em>Chọn câu hỏi có sẵn bên dưới!</em>
                     <div class="message-time">Hệ thống: ĐANG BẢO VỆ</div>
                 </div>
             </div>
 
             <!-- Quick Questions -->
-            <div style="margin-top: 15px;">
+            <div style="margin-top: 20px;">
                 <div class="quick-question" onclick="askQuickQuestion('Giới thiệu về Nguyễn Bắc Sơn')">
-                    🤵 Giới thiệu
+                    🤵 Giới thiệu về Nguyễn Bắc Sơn
                 </div>
                 <div class="quick-question" onclick="askQuickQuestion('Học vấn và ngành Điện Công Nghiệp')">
-                    🎓 Học vấn
+                    🎓 Học vấn và ngành Điện Công Nghiệp
                 </div>
                 <div class="quick-question" onclick="askQuickQuestion('Thông tin liên hệ')">
-                    📞 Liên hệ
+                    📞 Thông tin liên hệ
                 </div>
                 <div class="quick-question" onclick="askQuickQuestion('Kỹ năng và sở thích')">
-                    💼 Kỹ năng
+                    💼 Kỹ năng và sở thích
                 </div>
                 <div class="quick-question" onclick="askQuickQuestion('Mạng xã hội và dự án')">
-                    🌐 Mạng xã hội
+                    🌐 Mạng xã hội và dự án
                 </div>
             </div>
 
             <!-- Spam Warning -->
             <div id="spam-warning" class="spam-warning">
-                ⚠️ <strong>SPAM:</strong> Chờ <span id="countdown">30</span>s
+                ⚠️ <strong>PHÁT HIỆN SPAM:</strong> Vui lòng chờ <span id="countdown">30</span> giây trước khi gửi tin nhắn tiếp theo.
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    /* AI Widget - Kích thước nhỏ hơn */
+    /* AI Widget */
     #ai-assistant-widget {
         position: fixed; 
-        bottom: 20px; 
-        right: 20px; 
+        bottom: 25px; 
+        right: 25px; 
         z-index: 10000;
     }
 
     #ai-chat-container {
         position: absolute; 
-        bottom: 70px; 
+        bottom: 80px; 
         right: 0; 
-        width: 350px; /* Giảm từ 400px */
-        height: 500px; /* Giảm từ 650px */
+        width: 400px;
+        height: 650px;
         background: white; 
-        border-radius: 15px; 
-        box-shadow: 0 15px 30px rgba(0,0,0,0.15); 
+        border-radius: 20px; 
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
         display: none;
         overflow: hidden;
-        border: 2px solid transparent;
+        border: 3px solid transparent;
         background-clip: padding-box;
         position: relative;
     }
@@ -366,13 +367,13 @@
     #ai-chat-container::before {
         content: '';
         position: absolute;
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
         background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
         background-size: 400% 400%;
-        border-radius: 17px;
+        border-radius: 23px;
         z-index: -1;
         animation: borderGlow 4s ease infinite;
     }
@@ -386,16 +387,16 @@
         background-size: 400% 400%;
         color: white;
         border: none;
-        padding: 16px;
+        padding: 20px;
         border-radius: 50%;
         cursor: pointer;
-        font-size: 24px;
-        width: 60px; /* Giảm từ 75px */
-        height: 60px; /* Giảm từ 75px */
+        font-size: 28px;
+        width: 75px;
+        height: 75px;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         transition: all 0.3s ease;
         animation: buttonGlow 4s ease infinite;
         position: relative;
@@ -412,7 +413,7 @@
         background: inherit;
         border-radius: 50%;
         z-index: -1;
-        filter: blur(8px);
+        filter: blur(10px);
         opacity: 0.7;
         animation: buttonGlow 4s ease infinite;
     }
@@ -420,55 +421,55 @@
     @keyframes buttonGlow {
         0% {
             background-position: 0% 50%;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
         50% {
             background-position: 100% 50%;
-            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
         }
         100% {
             background-position: 0% 50%;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
     }
 
     .ai-button:hover {
-        transform: scale(1.1) rotate(5deg);
-        box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6);
+        transform: scale(1.15) rotate(5deg);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
     }
 
-    /* AI Chat Interface - Thu gọn */
+    /* AI Chat Interface */
     .ai-chat-header {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
-        padding: 15px 20px; /* Giảm padding */
+        padding: 25px;
         text-align: center;
-        border-radius: 13px 13px 0 0;
+        border-radius: 17px 17px 0 0;
         position: relative;
     }
 
     .ai-chat-header strong {
-        font-size: 16px; /* Giảm từ 20px */
+        font-size: 20px;
         display: block;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
         font-weight: 700;
     }
 
     .ai-chat-header div {
-        font-size: 11px; /* Giảm từ 13px */
+        font-size: 13px;
         opacity: 0.9;
         font-weight: 500;
     }
 
     .ai-chat-body {
-        height: calc(100% - 120px); /* Điều chỉnh theo header mới */
-        padding: 15px; /* Giảm từ 25px */
+        height: calc(100% - 150px);
+        padding: 25px;
         overflow-y: auto;
         background: #f8fafc;
     }
 
     .chat-message {
-        margin-bottom: 12px; /* Giảm từ 18px */
+        margin-bottom: 18px;
         display: flex;
         align-items: flex-start;
     }
@@ -478,11 +479,11 @@
     }
 
     .message-bubble {
-        max-width: 85%; /* Tăng từ 80% */
-        padding: 10px 14px; /* Giảm từ 14px 18px */
-        border-radius: 16px;
-        font-size: 13px; /* Giảm từ 14px */
-        line-height: 1.5;
+        max-width: 80%;
+        padding: 14px 18px;
+        border-radius: 20px;
+        font-size: 14px;
+        line-height: 1.6;
         position: relative;
     }
 
@@ -490,21 +491,21 @@
         background: white;
         border: 1px solid #e5e7eb;
         color: #374151;
-        border-bottom-left-radius: 6px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+        border-bottom-left-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     .user-message .message-bubble {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
-        border-bottom-right-radius: 6px;
-        box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);
+        border-bottom-right-radius: 8px;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
     .message-time {
-        font-size: 10px; /* Giảm từ 11px */
+        font-size: 11px;
         color: #9ca3af;
-        margin-top: 4px; /* Giảm từ 6px */
+        margin-top: 6px;
         opacity: 0.7;
     }
 
@@ -512,24 +513,24 @@
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
         border: none;
-        border-radius: 10px;
-        padding: 10px 14px; /* Giảm từ 14px 18px */
-        margin: 6px 0; /* Giảm từ 10px 0 */
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin: 10px 0;
         cursor: pointer;
         transition: all 0.3s;
-        font-size: 12px; /* Giảm từ 14px */
+        font-size: 14px;
         text-align: center;
         font-weight: 600;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
     }
 
     .quick-question:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         background: linear-gradient(135deg, #764ba2, #667eea);
     }
 
-    /* Verification - Thu gọn */
+    /* Verification */
     .verification-overlay {
         position: absolute;
         top: 0;
@@ -542,17 +543,17 @@
         align-items: center;
         justify-content: center;
         z-index: 20;
-        padding: 20px; /* Giảm từ 30px */
+        padding: 30px;
     }
 
     .verification-box {
         background: white;
-        padding: 25px; /* Giảm từ 35px */
-        border-radius: 15px;
-        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        padding: 35px;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
         text-align: center;
-        max-width: 300px; /* Giảm từ 340px */
-        border: 2px solid transparent;
+        max-width: 340px;
+        border: 3px solid transparent;
         background-clip: padding-box;
         position: relative;
     }
@@ -560,19 +561,19 @@
     .verification-box::before {
         content: '';
         position: absolute;
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
         background: linear-gradient(135deg, #667eea, #764ba2);
-        border-radius: 17px;
+        border-radius: 23px;
         z-index: -1;
     }
 
     .verification-title {
-        font-size: 18px; /* Giảm từ 22px */
+        font-size: 22px;
         font-weight: 700;
-        margin-bottom: 10px; /* Giảm từ 15px */
+        margin-bottom: 15px;
         background: linear-gradient(135deg, #667eea, #764ba2);
         -webkit-background-clip: text;
         background-clip: text;
@@ -580,20 +581,20 @@
     }
 
     .verification-question {
-        font-size: 16px; /* Giảm từ 20px */
-        margin: 15px 0; /* Giảm từ 25px 0 */
+        font-size: 20px;
+        margin: 25px 0;
         color: #2c3e50;
         font-weight: 700;
     }
 
     .verification-input {
-        width: 100px; /* Giảm từ 130px */
-        padding: 10px; /* Giảm từ 14px */
-        font-size: 16px; /* Giảm từ 20px */
+        width: 130px;
+        padding: 14px;
+        font-size: 20px;
         text-align: center;
-        border: 2px solid #e5e7eb;
-        border-radius: 8px;
-        margin-bottom: 15px; /* Giảm từ 20px */
+        border: 3px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 20px;
         font-weight: 700;
         transition: all 0.3s ease;
     }
@@ -601,32 +602,32 @@
     .verification-input:focus {
         border-color: #667eea;
         outline: none;
-        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
-        transform: scale(1.03);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: scale(1.05);
     }
 
     .verify-btn {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
         border: none;
-        padding: 10px 25px; /* Giảm từ 14px 35px */
-        border-radius: 8px;
+        padding: 14px 35px;
+        border-radius: 12px;
         cursor: pointer;
-        font-size: 14px; /* Giảm từ 16px */
+        font-size: 16px;
         font-weight: 700;
         transition: all 0.3s;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
     }
 
     .verify-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
     }
 
     .error-message {
         color: #e74c3c;
-        font-size: 12px; /* Giảm từ 14px */
-        margin-top: 10px; /* Giảm từ 15px */
+        font-size: 14px;
+        margin-top: 15px;
         display: none;
         font-weight: 600;
     }
@@ -635,65 +636,46 @@
         background: rgba(255,255,255,0.2);
         border: none;
         color: white;
-        font-size: 18px; /* Giảm từ 22px */
+        font-size: 22px;
         cursor: pointer;
-        padding: 8px; /* Giảm từ 10px */
+        padding: 10px;
         border-radius: 50%;
-        width: 32px; /* Giảm từ 40px */
-        height: 32px; /* Giảm từ 40px */
+        width: 40px;
+        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
         transition: all 0.3s;
         position: absolute;
-        top: 12px; /* Giảm từ 20px */
-        right: 12px; /* Giảm từ 20px */
+        top: 20px;
+        right: 20px;
     }
 
     .close-btn:hover {
         background: rgba(255,255,255,0.3);
-        transform: scale(1.05);
+        transform: scale(1.1);
     }
 
     .spam-warning {
         background: #ffeaa7;
         color: #d63031;
-        padding: 8px 10px; /* Giảm từ 12px */
-        border-radius: 6px;
-        margin: 8px 0; /* Giảm từ 12px 0 */
-        font-size: 11px; /* Giảm từ 13px */
-        border: 1px solid #fab1a0;
+        padding: 12px;
+        border-radius: 10px;
+        margin: 12px 0;
+        font-size: 13px;
+        border: 2px solid #fab1a0;
         display: none;
         font-weight: 600;
     }
 
     .rate-limit-info {
-        font-size: 10px; /* Giảm từ 12px */
+        font-size: 12px;
         color: #666;
-        margin-top: 10px; /* Giảm từ 15px */
+        margin-top: 15px;
         text-align: center;
         font-weight: 500;
     }
-
-    /* Scrollbar tùy chỉnh cho chat body */
-    .ai-chat-body::-webkit-scrollbar {
-        width: 4px;
-    }
-
-    .ai-chat-body::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 2px;
-    }
-
-    .ai-chat-body::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 2px;
-    }
-
-    .ai-chat-body::-webkit-scrollbar-thumb:hover {
-        background: #a8a8a8;
-    }
-</style>
+    </style>
         <script>
         // Hệ thống bảo mật
         const security = {
@@ -979,4 +961,3 @@
     </script>
 </body>
 </html>
-        
