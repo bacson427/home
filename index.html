@@ -6,6 +6,46 @@
     <title>Nguyen Bac Son | Official Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+/* HIỆU ỨNG MÂY */
+.cloud {
+    position: absolute;
+    background: rgba(128, 128, 128, 0.6);
+    border-radius: 50px;
+    animation: cloud-move linear infinite;
+    z-index: 9997;
+    filter: blur(2px);
+}
+
+.cloud:before,
+.cloud:after {
+    content: '';
+    position: absolute;
+    background: rgba(128, 128, 128, 0.6);
+    border-radius: 50%;
+}
+
+.cloud:before {
+    width: 60px;
+    height: 60px;
+    top: -30px;
+    left: 20px;
+}
+
+.cloud:after {
+    width: 40px;
+    height: 40px;
+    top: -20px;
+    right: 20px;
+}
+
+@keyframes cloud-move {
+    from {
+        transform: translateX(-200px);
+    }
+    to {
+        transform: translateX(calc(100vw + 200px));
+    }
+}
 /* HIỆU ỨNG MƯA */
 .rain-container {
     position: fixed;
@@ -1192,7 +1232,108 @@ function startRainEffect() {
 
 // Tự động chạy
 document.addEventListener('DOMContentLoaded', startRainEffect);
+// Hiệu ứng mưa tự động
+function startRainEffect() {
+    const rainContainer = document.getElementById('rainContainer');
+    const lightning = document.getElementById('lightning');
+    
+    let intensity = 7;
+    
+    function createRaindrop() {
+        const drop = document.createElement('div');
+        drop.classList.add('drop');
+        
+        const left = Math.random() * 100;
+        drop.style.left = left + 'vw';
+        
+        const duration = 0.5 + Math.random() * 1;
+        drop.style.animation = 'rain-fall ' + duration + 's linear ' + (Math.random() * 2) + 's forwards';
+        
+        rainContainer.appendChild(drop);
+        
+        setTimeout(() => {
+            createSplash(left);
+        }, duration * 1000);
+        
+        setTimeout(() => {
+            if (drop.parentNode) {
+                drop.remove();
+            }
+        }, (duration + 2) * 1000);
+    }
+    
+    function createSplash(left) {
+        const splash = document.createElement('div');
+        splash.classList.add('splash');
+        splash.style.left = left + 'vw';
+        splash.style.bottom = '0';
+        splash.style.animation = 'rain-splash 0.4s ease-out forwards';
+        
+        rainContainer.appendChild(splash);
+        
+        setTimeout(() => {
+            if (splash.parentNode) {
+                splash.remove();
+            }
+        }, 400);
+    }
+    
+    function createLightning() {
+        lightning.style.opacity = '0.8';
+        setTimeout(() => {
+            lightning.style.opacity = '0';
+        }, 100);
+        
+        setTimeout(() => {
+            lightning.style.opacity = '0.6';
+            setTimeout(() => {
+                lightning.style.opacity = '0';
+            }, 50);
+        }, 200);
+    }
+    
+    // Tạo mây
+    function createClouds() {
+        const clouds = [
+            { id: 'cloud1', size: 120, speed: 200, top: 15 },
+            { id: 'cloud2', size: 160, speed: 180, top: 25 },
+            { id: 'cloud3', size: 100, speed: 220, top: 10 }
+        ];
+        
+        clouds.forEach(cloud => {
+            const cloudElement = document.getElementById(cloud.id);
+            cloudElement.style.width = cloud.size + 'px';
+            cloudElement.style.height = cloud.size / 2 + 'px';
+            cloudElement.style.top = cloud.top + '%';
+            cloudElement.style.animationDuration = cloud.speed + 's';
+            cloudElement.style.opacity = '0.7';
+        });
+    }
+    
+    // Bắt đầu mưa
+    setInterval(() => {
+        for (let i = 0; i < intensity; i++) {
+            createRaindrop();
+        }
+    }, 50);
+    
+    // Sấm chớp
+    setInterval(() => {
+        if (Math.random() > 0.7) {
+            createLightning();
+        }
+    }, 15000);
+    
+    // Tạo mây
+    createClouds();
+}
+
+// Tự động chạy
+document.addEventListener('DOMContentLoaded', startRainEffect);
     </script>
+<div class="cloud" id="cloud1"></div>
+<div class="cloud" id="cloud2"></div>
+<div class="cloud" id="cloud3"></div>
 <div class="rain-container" id="rainContainer"></div>
 <div class="lightning" id="lightning"></div>
 </body>
