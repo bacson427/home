@@ -167,50 +167,59 @@
             }
         }
 
-        /* Ảnh đại diện với hiệu ứng màu */
-        .profile-img { 
-            border-radius: 50%; 
-            width: 140px; 
-            height: 140px; 
-            object-fit: cover; 
-            margin-bottom: 25px; 
-            border: 4px solid transparent;
-            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
-            background-size: 400% 400%;
-            padding: 4px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            animation: borderGlow 4s ease infinite;
-            position: relative;
-            transition: all 0.3s ease;
-        }
+        /* Ảnh đại diện với hiệu ứng màu và xoay */
+.profile-img { 
+    border-radius: 50%; 
+    width: 140px; 
+    height: 140px; 
+    object-fit: cover; 
+    margin-bottom: 25px; 
+    border: none;
+    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
+    background-size: 400% 400%;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    animation: borderGlow 4s ease infinite, rotate 6s linear infinite;
+    position: relative;
+    transition: all 0.3s ease;
+}
 
-        .profile-img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
-        }
+.profile-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+    animation-play-state: paused; /* Dừng xoay khi hover */
+}
 
-        @keyframes borderGlow {
-            0% {
-                background-position: 0% 50%;
-                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-            }
-            25% {
-                background-position: 50% 50%;
-                box-shadow: 0 8px 25px rgba(118, 75, 162, 0.3);
-            }
-            50% {
-                background-position: 100% 50%;
-                box-shadow: 0 8px 25px rgba(240, 147, 251, 0.3);
-            }
-            75% {
-                background-position: 50% 50%;
-                box-shadow: 0 8px 25px rgba(245, 87, 108, 0.3);
-            }
-            100% {
-                background-position: 0% 50%;
-                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-            }
-        }
+@keyframes borderGlow {
+    0% {
+        background-position: 0% 50%;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+    25% {
+        background-position: 50% 50%;
+        box-shadow: 0 8px 25px rgba(118, 75, 162, 0.3);
+    }
+    50% {
+        background-position: 100% 50%;
+        box-shadow: 0 8px 25px rgba(240, 147, 251, 0.3);
+    }
+    75% {
+        background-position: 50% 50%;
+        box-shadow: 0 8px 25px rgba(245, 87, 108, 0.3);
+    }
+    100% {
+        background-position: 0% 50%;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 
         .profile-img::after {
             content: '';
