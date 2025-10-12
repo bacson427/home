@@ -14,6 +14,30 @@
     display: block;
     text-align: center;
     margin: 20px 0;
+    padding: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    border-radius: 10px;
+}
+
+/* Hiệu ứng khi hoàn thành */
+.counter-number.complete {
+    color: #28a745;
+    transform: scale(1.1);
+}
+
+/* Container cho counter nếu muốn */
+.counter-container {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.counter-label {
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 10px;
 }
 /* ... các quy tắc CSS khác ... */
         /* Ẩn biểu tượng ngôi nhà (fa-house) */
@@ -1066,26 +1090,32 @@
         document.getElementById('spam-warning').style.display = 'none';
 
         console.log('🚀 Website đã sẵn sàng với đầy đủ tính năng!');
-// Function đếm số
-function animateCounter(element, target, duration = 2007) {
+
+// Khởi tạo
+document.getElementById('verification-overlay').style.display = 'none';
+document.getElementById('spam-warning').style.display = 'none';
+
+console.log('Website đã sẵn sàng với đầy đủ tính năng!');
+
+function animateCounter(element, target, duration = 2000) {
     let start = 0;
     const increment = target / (duration / 16);
     const counterElement = document.querySelector(element);
-    
+
     const timer = setInterval(() => {
         start += increment;
         if (start >= target) {
-            counterElement.textContent = target.toLocaleString();
+            counterElement.textContent = target; // Sẽ hiển thị 2007
             clearInterval(timer);
         } else {
-            counterElement.textContent = Math.floor(start).toLocaleString();
+            counterElement.textContent = Math.floor(start);
         }
     }, 16);
 }
 
 // Gọi function khi trang load
 document.addEventListener('DOMContentLoaded', function() {
-    animateCounter('.counter-number', 1000);
+    animateCounter('.counter-number', 2007);
 });
 </script>
 </body>
