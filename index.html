@@ -248,6 +248,38 @@
             opacity: 0.7;
             filter: blur(8px);
         }
+.slot-machine {
+    font-family: 'Courier New', monospace;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ff6b6b;
+    background: #2d3436;
+    padding: 15px 25px;
+    border-radius: 10px;
+    border: 3px solid #ff6b6b;
+    display: inline-block;
+    text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+    letter-spacing: 3px;
+}
+
+.slot-rolling {
+    animation: roll 0.1s infinite;
+}
+
+@keyframes roll {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+}
+
+.final-date {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+    transform: scale(1.05);
+    transition: all 0.5s ease;
+}
     </style>
 </head>
 <body>
@@ -261,7 +293,7 @@
             <h1 class="profile-name">NGUYEN BAC SON</h1>
             <p class="profile-description">Below are my official social media and contact information. You can communicate with me through the boxes below. 👇</p>
 <!-- Chỉ cần copy thẻ này -->
-<span class="counter-number" data-counter="2007">00 00 0000</span>
+<span class="counter-number slot-machine">00 00 0000</span>
         </div>
             <!-- Links Container -->
     <div class="links-container">
@@ -1120,27 +1152,67 @@ document.getElementById('spam-warning').style.display = 'none';
 
 console.log('Website đã sẵn sàng với đầy đủ tính năng!');
 
-function animateCounter(element, target, duration = 2000) {
-    let start = 0;
-    const increment = target / (duration / 16);
+function slotMachineToDate(element) {
     const counterElement = document.querySelector(element);
+    const finalDate = "04 02 2007";
+    let rolls = 0;
+    const maxRolls = 35;
     
-    const timer = setInterval(() => {
-        start += increment;
-        if (start >= target) {
-            // Khi đạt 2007 thì hiển thị "04 02 2007"
-            counterElement.textContent = "04 02 2007";
-            clearInterval(timer);
-        } else {
-            // Hiển thị số đếm bình thường
-            counterElement.textContent = Math.floor(start);
+    counterElement.classList.add('slot-rolling');
+    
+    const slotInterval = setInterval(() => {
+        // Tạo số ngẫu nhiên với format "00 00 0000"
+        const randomDate = 
+            Math.floor(Math.random() * 100).toString().padStart(2, '0') + " " +
+            Math.floor(Math.random() * 100).toString().padStart(2, '0') + " " +
+            Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+        
+        counterElement.textContent = randomDate;
+        rolls++;
+        
+        // Dừng slot machine và hiển thị "04 02 2007"
+        if (rolls >= maxRolls) {
+            clearInterval(slotInterval);
+            counterElement.classList.remove('slot-rolling');
+            
+            // Hiệu ứng gõ từng ký tự
+            let currentDisplay = "";
+            let charIndex = 0;
+            
+            const typeInterval = setInterval(() => {
+                currentDisplay += finalDate[charIndex];
+                counterElement.textContent = currentDisplay;
+                charIndex++;
+                
+                if (charIndex >= finalDate.length) {
+                    clearInterval(typeInterval);
+                    // Hiệu ứng hoàn thành
+                    counterElement.classList.add('final-date');
+                    
+                    // Thêm hiệu ứng nhấp nháy
+                    setTimeout(() => {
+                        counterElement.style.animation = 'pulse 0.5s 3';
+                    }, 500);
+                }
+            }, 120);
         }
-    }, 16);
+    }, 90);
 }
 
-// Gọi function
+// Thêm hiệu ứng pulse cho CSS
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+`;
+document.head.appendChild(style);
+
+// Gọi function khi trang load
 document.addEventListener('DOMContentLoaded', function() {
-    animateCounter('.counter-number', 2007);
+    slotMachineToDate('.slot-machine');
 });
 </script>
 </body>
