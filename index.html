@@ -6,7 +6,7 @@
     <title>Nguyen Bac Son | Official Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-/* Hiệu ứng mưa */
+/* HIỆU ỨNG MƯA */
 .rain-container {
     position: fixed;
     top: 0;
@@ -257,88 +257,6 @@
     </style>
 </head>
 <body>
-// Hiệu ứng mưa tự động
-function startRainEffect() {
-    const rainContainer = document.getElementById('rainContainer');
-    const lightning = document.getElementById('lightning');
-    
-    if (!rainContainer || !lightning) {
-        console.log('Không tìm thấy elements cho hiệu ứng mưa');
-        return;
-    }
-    
-    let intensity = 7;
-    
-    function createRaindrop() {
-        const drop = document.createElement('div');
-        drop.classList.add('drop');
-        
-        const left = Math.random() * 100;
-        drop.style.left = `${left}vw`;
-        
-        const duration = 0.5 + Math.random() * 1;
-        drop.style.animation = `rain-fall ${duration}s linear ${Math.random() * 2}s forwards`;
-        
-        rainContainer.appendChild(drop);
-        
-        setTimeout(() => {
-            createSplash(left);
-        }, duration * 1000);
-        
-        setTimeout(() => {
-            if (drop.parentNode) {
-                drop.remove();
-            }
-        }, (duration + 2) * 1000);
-    }
-    
-    function createSplash(left) {
-        const splash = document.createElement('div');
-        splash.classList.add('splash');
-        splash.style.left = `${left}vw`;
-        splash.style.bottom = '0';
-        splash.style.animation = 'rain-splash 0.4s ease-out forwards';
-        
-        rainContainer.appendChild(splash);
-        
-        setTimeout(() => {
-            if (splash.parentNode) {
-                splash.remove();
-            }
-        }, 400);
-    }
-    
-    function createLightning() {
-        lightning.style.opacity = '0.8';
-        setTimeout(() => {
-            lightning.style.opacity = '0';
-        }, 100);
-        
-        setTimeout(() => {
-            lightning.style.opacity = '0.6';
-            setTimeout(() => {
-                lightning.style.opacity = '0';
-            }, 50);
-        }, 200);
-    }
-    
-    // Bắt đầu mưa
-    setInterval(() => {
-        for (let i = 0; i < intensity; i++) {
-            createRaindrop();
-        }
-    }, 50);
-    
-    // Sấm chớp
-    setInterval(() => {
-        if (Math.random() > 0.7) {
-            createLightning();
-        }
-    }, 15000);
-}
-
-// Tự động chạy
-document.addEventListener('DOMContentLoaded', startRainEffect);
     <div class="container">
         <!-- Profile Card -->
         <div class="profile-card">
@@ -1196,6 +1114,84 @@ document.addEventListener('DOMContentLoaded', startRainEffect);
         document.getElementById('spam-warning').style.display = 'none';
 
         console.log('🚀 Website đã sẵn sàng với đầy đủ tính năng!');
+
+// Hiệu ứng mưa tự động
+function startRainEffect() {
+    const rainContainer = document.getElementById('rainContainer');
+    const lightning = document.getElementById('lightning');
+    
+    let intensity = 7;
+    
+    function createRaindrop() {
+        const drop = document.createElement('div');
+        drop.classList.add('drop');
+        
+        const left = Math.random() * 100;
+        drop.style.left = left + 'vw';
+        
+        const duration = 0.5 + Math.random() * 1;
+        drop.style.animation = 'rain-fall ' + duration + 's linear ' + (Math.random() * 2) + 's forwards';
+        
+        rainContainer.appendChild(drop);
+        
+        setTimeout(() => {
+            createSplash(left);
+        }, duration * 1000);
+        
+        setTimeout(() => {
+            if (drop.parentNode) {
+                drop.remove();
+            }
+        }, (duration + 2) * 1000);
+    }
+    
+    function createSplash(left) {
+        const splash = document.createElement('div');
+        splash.classList.add('splash');
+        splash.style.left = left + 'vw';
+        splash.style.bottom = '0';
+        splash.style.animation = 'rain-splash 0.4s ease-out forwards';
+        
+        rainContainer.appendChild(splash);
+        
+        setTimeout(() => {
+            if (splash.parentNode) {
+                splash.remove();
+            }
+        }, 400);
+    }
+    
+    function createLightning() {
+        lightning.style.opacity = '0.8';
+        setTimeout(() => {
+            lightning.style.opacity = '0';
+        }, 100);
+        
+        setTimeout(() => {
+            lightning.style.opacity = '0.6';
+            setTimeout(() => {
+                lightning.style.opacity = '0';
+            }, 50);
+        }, 200);
+    }
+    
+    // Bắt đầu mưa
+    setInterval(() => {
+        for (let i = 0; i < intensity; i++) {
+            createRaindrop();
+        }
+    }, 50);
+    
+    // Sấm chớp
+    setInterval(() => {
+        if (Math.random() > 0.7) {
+            createLightning();
+        }
+    }, 15000);
+}
+
+// Tự động chạy
+document.addEventListener('DOMContentLoaded', startRainEffect);
     </script>
 <div class="rain-container" id="rainContainer"></div>
 <div class="lightning" id="lightning"></div>
