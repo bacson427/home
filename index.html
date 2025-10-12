@@ -168,27 +168,39 @@
         }
 
         /* Ảnh đại diện với hiệu ứng viền cầu vòng xoay */
+.profile-img-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
 .profile-img { 
     border-radius: 50%; 
     width: 140px; 
     height: 140px; 
     object-fit: cover; 
-    margin-bottom: 25px; 
+    position: relative;
+    z-index: 2;
+}
+
+.profile-img-border {
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    width: 146px;
+    height: 146px;
+    border-radius: 50%;
     border: 3px solid transparent;
     border-top: 3px solid #ff0000;
     border-right: 3px solid #00ff00;
     border-bottom: 3px solid #0000ff;
     border-left: 3px solid #ffff00;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     animation: rotate 2s linear infinite;
-    position: relative;
-    transition: all 0.3s ease;
+    z-index: 1;
 }
 
-.profile-img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 35px rgba(0,0,0,0.2);
-    animation-play-state: paused; /* Dừng xoay khi hover */
+.profile-img-wrapper:hover .profile-img-border {
+    animation-play-state: paused;
 }
 
 @keyframes rotate {
@@ -225,7 +237,6 @@
         border-left-color: #ffff00;
     }
 }
-
         .profile-img::after {
             content: '';
             position: absolute;
@@ -247,7 +258,10 @@
     <div class="container">
         <!-- Profile Card -->
         <div class="profile-card">
-            <img src="20251007031346.png" alt="Ảnh đại diện" class="profile-img">
+           <div class="profile-img-wrapper">
+    <div class="profile-img-border"></div>
+    <img src="20251007031346.png" alt="Ảnh đại diện" class="profile-img">
+</div>
             <h1 class="profile-name">NGUYEN BAC SON</h1>
             <p class="profile-description">Below are my official social media and contact information. You can communicate with me through the boxes below. 👇</p>
 <!-- Chỉ cần copy thẻ này -->
