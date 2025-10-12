@@ -6,40 +6,75 @@
     <title>Nguyen Bac Son | Official Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-/* THÊM VÀO FILE CSS - ÁP DỤNG NGAY LẬP TỨC */
-body {
+/* ĐẶT Ở ĐẦU FILE CSS ĐỂ ƯU TIÊN CAO */
+html.dark-mode body {
   background-color: #121212 !important;
   color: #e0e0e0 !important;
 }
 
-header {
+html.dark-mode header {
   background-color: #1e1e1e !important;
   color: #ffffff !important;
 }
 
-footer {
+html.dark-mode footer {
   background-color: #1e1e1e !important;
   color: #cccccc !important;
 }
 
-a {
+html.dark-mode a {
   color: #4dabf7 !important;
 }
 
-h1, h2, h3, h4, h5, h6 {
+html.dark-mode h1,
+html.dark-mode h2, 
+html.dark-mode h3, 
+html.dark-mode h4, 
+html.dark-mode h5, 
+html.dark-mode h6 {
   color: #ffffff !important;
 }
 
-button {
+html.dark-mode button {
   background-color: #333333 !important;
   color: #ffffff !important;
   border: 1px solid #555555 !important;
 }
 
-input, textarea, select {
+html.dark-mode input,
+html.dark-mode textarea,
+html.dark-mode select {
   background-color: #2d2d2d !important;
   color: #ffffff !important;
   border: 1px solid #555555 !important;
+}
+
+html.dark-mode div {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+}
+
+html.dark-mode section {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+}
+
+html.dark-mode nav {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+html.dark-mode table {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+  border-color: #444444 !important;
+}
+
+html.dark-mode th,
+html.dark-mode td {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+  border-color: #444444 !important;
 }
 /* HIỆU ỨNG MÂY */
 .cloud {
@@ -1294,6 +1329,96 @@ function startRainEffect() {
 
 // Tự động chạy
 document.addEventListener('DOMContentLoaded', startRainEffect);
+// HÀM ÁP DỤNG DARK MODE
+function applyDarkMode() {
+  console.log('Đang áp dụng Dark Mode...');
+  
+  // CÁCH 1: Thêm class dark-mode vào html element
+  document.documentElement.classList.add('dark-mode');
+  
+  // CÁCH 2: Áp dụng style trực tiếp cho body và các element quan trọng
+  document.body.style.backgroundColor = '#121212';
+  document.body.style.color = '#e0e0e0';
+  
+  // Áp dụng cho tất cả các thẻ
+  const allElements = document.querySelectorAll('*');
+  allElements.forEach(element => {
+    // Giữ nguyên style cho một số element đặc biệt
+    if (!['SCRIPT', 'STYLE', 'META', 'LINK'].includes(element.tagName)) {
+      element.style.backgroundColor = element.tagName === 'BODY' ? '#121212' : '#1e1e1e';
+      element.style.color = '#e0e0e0';
+    }
+  });
+  
+  // Xử lý riêng cho các thẻ cụ thể
+  const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+  headers.forEach(header => {
+    header.style.color = '#ffffff';
+  });
+  
+  const buttons = document.querySelectorAll('button');
+  buttons.forEach(button => {
+    button.style.backgroundColor = '#333333';
+    button.style.color = '#ffffff';
+    button.style.border = '1px solid #555555';
+  });
+  
+  const inputs = document.querySelectorAll('input, textarea, select');
+  inputs.forEach(input => {
+    input.style.backgroundColor = '#2d2d2d';
+    input.style.color = '#ffffff';
+    input.style.border = '1px solid #555555';
+  });
+  
+  const links = document.querySelectorAll('a');
+  links.forEach(link => {
+    link.style.color = '#4dabf7';
+  });
+  
+  console.log('Áp dụng Dark Mode hoàn tất!');
+}
+
+// HÀM KIỂM TRA VÀ KÍCH HOẠT
+function initializeDarkMode() {
+  console.log('Khởi tạo Dark Mode...');
+  
+  // Kiểm tra xem dark mode đã được áp dụng chưa
+  const isDarkApplied = document.documentElement.classList.contains('dark-mode');
+  
+  if (!isDarkApplied) {
+    // Thử cách 1: Dùng CSS class
+    setTimeout(() => {
+      document.documentElement.classList.add('dark-mode');
+      console.log('Đã thêm class dark-mode');
+    }, 100);
+    
+    // Thử cách 2: Dùng style trực tiếp sau 500ms
+    setTimeout(() => {
+      applyDarkMode();
+    }, 500);
+    
+    // Thử cách 3: Force style sau 1s
+    setTimeout(() => {
+      document.body.setAttribute('style', 'background-color: #121212 !important; color: #e0e0e0 !important;');
+      console.log('Đã force style trực tiếp');
+    }, 1000);
+  }
+}
+
+// CHẠY KHI TRANG LOAD XONG
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM đã load - Áp dụng Dark Mode');
+  initializeDarkMode();
+});
+
+// CHẠY KHI TRANG HOÀN TOÀN LOAD XONG
+window.addEventListener('load', function() {
+  console.log('Window loaded - Đảm bảo Dark Mode');
+  setTimeout(initializeDarkMode, 200);
+});
+
+// THỬ LẠI SAU 2 GIÂY NỮA ĐỂ CHẮC CHẮN
+setTimeout(initializeDarkMode, 2000);
 </script>
 <div class="rain-background"></div>
 <div class="cloud" id="cloud1"></div>
