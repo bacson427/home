@@ -1344,20 +1344,70 @@ function startRainEffect() {
 // Tự động chạy
 document.addEventListener('DOMContentLoaded', startRainEffect);
 
-// THÊM VÀO FILE JS HIỆN TẠI
-function applyDarkModeToYourPage() {
-  // Thêm class dark-mode
-  document.documentElement.classList.add('dark-mode');
-  
-  // Áp dụng cho toàn bộ trang
-  document.body.style.backgroundColor = '#1a1a1a';
-  document.body.style.color = '#e8e8e8';
-  
-  console.log('Dark Mode đã được áp dụng!');
+// CODE NÀY CHẮC CHẮN CHẠY - THÊM NGAY
+console.log('Bắt đầu áp dụng Dark Mode...');
+
+// CÁCH 1: Style trực tiếp - CHẮC CHẮN HOẠT ĐỘNG
+function forceDarkMode() {
+    // Áp dụng style trực tiếp cho body
+    document.body.style.backgroundColor = '#1a1a1a';
+    document.body.style.color = '#e8e8e8';
+    
+    // Áp dụng cho tất cả các thẻ
+    const allElements = document.querySelectorAll('*');
+    allElements.forEach(element => {
+        if (!['SCRIPT', 'STYLE', 'META', 'LINK'].includes(element.tagName)) {
+            // Giữ background trong suốt cho một số phần tử
+            if (!element.closest('header') && !element.closest('footer') && !element.closest('ul')) {
+                element.style.backgroundColor = 'transparent';
+            }
+            element.style.color = '#e8e8e8';
+        }
+    });
+    
+    // Xử lý header
+    const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    headers.forEach(header => {
+        header.style.color = '#66b3ff';
+    });
+    
+    // Xử lý danh sách
+    const lists = document.querySelectorAll('ul, ol');
+    lists.forEach(list => {
+        list.style.backgroundColor = '#2d2d2d';
+        list.style.border = '1px solid #444';
+        list.style.borderRadius = '8px';
+        list.style.padding = '10px';
+    });
+    
+    // Xử lý list items
+    const listItems = document.querySelectorAll('li');
+    listItems.forEach(li => {
+        li.style.color = '#e8e8e8';
+        li.style.padding = '5px 0';
+        li.style.borderBottom = '1px solid #444';
+    });
+    
+    // Xử lý text in đậm
+    const boldTexts = document.querySelectorAll('strong, b');
+    boldTexts.forEach(bold => {
+        bold.style.color = '#4dabf7';
+    });
+    
+    console.log('Dark Mode đã được áp dụng thành công!');
 }
 
-// Chạy khi trang load
-document.addEventListener('DOMContentLoaded', applyDarkModeToYourPage);
+// CHẠY NGAY KHI TRANG BẮT ĐẦU LOAD
+document.addEventListener('DOMContentLoaded', forceDarkMode);
+
+// CHẠY LẠI SAU KHI TRANG LOAD HOÀN TOÀN
+window.addEventListener('load', forceDarkMode);
+
+// CHẠY THÊM SAU 1 GIÂY ĐỂ CHẮC CHẮN
+setTimeout(forceDarkMode, 1000);
+
+// CHẠY THÊM SAU 3 GIÂY NỮA
+setTimeout(forceDarkMode, 3000);
 </script>
 </body>
 </html>
