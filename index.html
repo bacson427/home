@@ -80,99 +80,57 @@
             overflow: hidden;
         }
 
-     /* === GHÉP TẤT CẢ CSS === */
+     profile-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255,255,255,0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite linear;
+        }
 
-/* 1. Base styles cho profile name */
-.profile-name {
-    font-size: 2.5rem;
-    font-weight: 800; /* Đậm hơn */
-    color: #000000; /* Màu đen đậm */
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Đổ bóng nhẹ */
-    margin-bottom: 20px;
-    letter-spacing: 1px;
-}
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
 
-/* 2. Base styles cho profile description */
-.profile-description {
-    font-size: 1.1rem;
-    color: #333333; /* Màu xám đậm */
-    line-height: 1.6;
-    font-weight: 500;
-    margin-bottom: 30px;
-}
+        /* Tên với hiệu ứng gradient động */
+        .profile-name {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(
+                45deg,
+                #FF6B6B,
+                #4ECDC4,
+                #45B7D1,
+                #96CEB4,
+                #FFEAA7,
+                #DDA0DD,
+                #98D8C8
+            );
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 8s ease infinite;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            letter-spacing: 1px;
+        }
 
-/* 3. Styles cho các link */
-.links-container a {
-    font-weight: 600;
-    color: #2c3e50;
-    text-decoration: none;
-    background: rgba(255,255,255,0.9);
-    backdrop-filter: blur(10px);
-    border: 2px solid #e0e0e0;
-}
-
-.links-container a:hover {
-    background: #ffffff;
-    border-color: #007bff;
-    color: #007bff;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,123,255,0.2);
-}
-
-/* 4. Đảm bảo background không ảnh hưởng đến chữ */
-.profile-card {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-/* 5. Tăng độ tương phản */
-body {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-
-.container {
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-/* 6. Slot Machine Styles */
-.slot-machine {
-    font-family: 'Courier New', monospace;
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #ff6b6b;
-    background: #2d3436;
-    padding: 15px 25px;
-    border-radius: 10px;
-    border: 3px solid #ff6b6b;
-    display: inline-block;
-    text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
-    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
-    letter-spacing: 3px;
-    margin: 20px 0;
-}
-
-.slot-rolling {
-    animation: roll 0.1s infinite;
-}
-
-@keyframes roll {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
-    100% { transform: translateY(0); }
-}
-
-.final-date {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-color: #667eea;
-    transform: scale(1.05);
-    transition: all 0.5s ease;
-}
-
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
         /* Mô tả nổi bật */
         .profile-description {
             font-size: 16px;
