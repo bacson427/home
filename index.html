@@ -9,34 +9,34 @@
 /* HIỆU ỨNG MÂY */
 .cloud {
     position: fixed;
-    background: rgba(128, 128, 128, 0.6);
+    background: rgba(128, 128, 128, 0.4);
     border-radius: 50px;
     animation: cloud-move linear infinite;
     z-index: 9997;
-    filter: blur(2px);
-    opacity: 0.7;
+    filter: blur(1px);
+    opacity: 0.5;
 }
 
 .cloud:before,
 .cloud:after {
     content: '';
     position: absolute;
-    background: rgba(128, 128, 128, 0.6);
+    background: rgba(128, 128, 128, 0.4);
     border-radius: 50%;
 }
 
 .cloud:before {
-    width: 60px;
-    height: 60px;
-    top: -30px;
-    left: 20px;
-}
-
-.cloud:after {
     width: 40px;
     height: 40px;
     top: -20px;
-    right: 20px;
+    left: 15px;
+}
+
+.cloud:after {
+    width: 30px;
+    height: 30px;
+    top: -15px;
+    right: 15px;
 }
 
 @keyframes cloud-move {
@@ -57,10 +57,9 @@
     height: 100%;
     z-index: -1;
     background: linear-gradient(to bottom, 
-        #000000 0%, 
-        #000000 30%, 
-        #2c3e50 70%, 
-        #34495e 100%);
+        #1a1a1a 0%, 
+        #2d2d2d 50%, 
+        #3a3a3a 100%);
     pointer-events: none;
 }
 /* HIỆU ỨNG MƯA */
@@ -76,20 +75,20 @@
 
 .drop {
     position: absolute;
-    width: 2px;
-    height: 15px;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2));
-    border-radius: 0 0 5px 5px;
+    width: 1px;
+    height: 12px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.1));
+    border-radius: 0 0 3px 3px;
     animation: rain-fall linear forwards;
 }
 
 .splash {
     position: absolute;
-    width: 15px;
-    height: 10px;
+    width: 10px;
+    height: 6px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.4);
-    animation: rain-splash 0.4s ease-out forwards;
+    background: rgba(255, 255, 255, 0.3);
+    animation: rain-splash 0.3s ease-out forwards;
 }
 
 .lightning {
@@ -98,7 +97,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.6);
     opacity: 0;
     pointer-events: none;
     z-index: 9998;
@@ -119,7 +118,7 @@
         opacity: 1;
     }
     100% {
-        transform: scale(1);
+        transform: scale(0.8);
         opacity: 0;
     }
 }
@@ -1171,12 +1170,12 @@
         document.getElementById('spam-warning').style.display = 'none';
 
         console.log('🚀 Website đã sẵn sàng với đầy đủ tính năng!');
-// Hiệu ứng mưa tự động
+// Hiệu ứng mưa tự động - NHẸ NHÀNG
 function startRainEffect() {
     const rainContainer = document.getElementById('rainContainer');
     const lightning = document.getElementById('lightning');
     
-    let intensity = 7;
+    let intensity = 3; // GIẢM từ 7 xuống 3
     
     function createRaindrop() {
         const drop = document.createElement('div');
@@ -1185,8 +1184,8 @@ function startRainEffect() {
         const left = Math.random() * 100;
         drop.style.left = left + 'vw';
         
-        const duration = 0.5 + Math.random() * 1;
-        drop.style.animation = 'rain-fall ' + duration + 's linear ' + (Math.random() * 2) + 's forwards';
+        const duration = 1 + Math.random() * 1.5; // CHẬM hơn
+        drop.style.animation = 'rain-fall ' + duration + 's linear ' + (Math.random() * 1) + 's forwards';
         
         rainContainer.appendChild(drop);
         
@@ -1198,7 +1197,7 @@ function startRainEffect() {
             if (drop.parentNode) {
                 drop.remove();
             }
-        }, (duration + 2) * 1000);
+        }, (duration + 1) * 1000);
     }
     
     function createSplash(left) {
@@ -1206,7 +1205,7 @@ function startRainEffect() {
         splash.classList.add('splash');
         splash.style.left = left + 'vw';
         splash.style.bottom = '0';
-        splash.style.animation = 'rain-splash 0.4s ease-out forwards';
+        splash.style.animation = 'rain-splash 0.3s ease-out forwards';
         
         rainContainer.appendChild(splash);
         
@@ -1214,29 +1213,21 @@ function startRainEffect() {
             if (splash.parentNode) {
                 splash.remove();
             }
-        }, 400);
+        }, 300);
     }
     
     function createLightning() {
-        lightning.style.opacity = '0.8';
+        lightning.style.opacity = '0.4'; // NHẸ hơn
         setTimeout(() => {
             lightning.style.opacity = '0';
-        }, 100);
-        
-        setTimeout(() => {
-            lightning.style.opacity = '0.6';
-            setTimeout(() => {
-                lightning.style.opacity = '0';
-            }, 50);
-        }, 200);
+        }, 80);
     }
     
-    // Tạo mây - ĐẨY LÊN TRÊN CÙNG
+    // Tạo mây - ÍT MÂY HƠN
     function createClouds() {
         const clouds = [
-            { id: 'cloud1', size: 120, speed: 200, top: 0 },
-            { id: 'cloud2', size: 160, speed: 180, top: 2 },
-            { id: 'cloud3', size: 100, speed: 220, top: 1 }
+            { id: 'cloud1', size: 80, speed: 250, top: 5 },   // NHỎ hơn, CHẬM hơn
+            { id: 'cloud2', size: 100, speed: 300, top: 8 }    // CHỈ 2 ĐÁM MÂY
         ];
         
         clouds.forEach(cloud => {
@@ -1248,19 +1239,19 @@ function startRainEffect() {
         });
     }
     
-    // Bắt đầu mưa
+    // Bắt đầu mưa - CHẬM hơn
     setInterval(() => {
         for (let i = 0; i < intensity; i++) {
             createRaindrop();
         }
-    }, 50);
+    }, 100); // TĂNG từ 50ms lên 100ms
     
-    // Sấm chớp
+    // Sấm chớp - ÍT hơn
     setInterval(() => {
-        if (Math.random() > 0.7) {
+        if (Math.random() > 0.9) { // GIẢM tần suất
             createLightning();
         }
-    }, 15000);
+    }, 20000); // TĂNG từ 15s lên 20s
     
     // Tạo mây
     createClouds();
