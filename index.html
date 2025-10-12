@@ -6,6 +6,65 @@
     <title>Nguyen Bac Son | Official Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+/* Hiệu ứng mưa */
+.rain-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.drop {
+    position: absolute;
+    width: 2px;
+    height: 15px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2));
+    border-radius: 0 0 5px 5px;
+    animation: fall linear forwards;
+}
+
+.splash {
+    position: absolute;
+    width: 15px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    animation: splash 0.4s ease-out forwards;
+}
+
+.lightning {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9998;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh);
+    }
+}
+
+@keyframes splash {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
 /* ... các quy tắc CSS khác ... */
         /* Ẩn biểu tượng ngôi nhà (fa-house) */
 .fa-house {
@@ -197,6 +256,92 @@
     </style>
 </head>
 <body>
+// Hiệu ứng mưa tự động
+function startRainEffect() {
+    const rainContainer = document.getElementById('rainContainer');
+    const lightning = document.getElementById('lightning');
+    
+    let intensity = 7; // Cường độ mưa (từ 1-10)
+    
+    // Tạo giọt mưa
+    function createRaindrop() {
+        const drop = document.createElement('div');
+        drop.classList.add('drop');
+        
+        const left = Math.random() * 100;
+        drop.style.left = `${left}vw`;
+        
+        const duration = 0.5 + Math.random() * 1;
+        drop.style.animationDuration = `${duration}s`;
+        
+        const delay = Math.random() * 2;
+        drop.style.animationDelay = `${delay}s`;
+        
+        rainContainer.appendChild(drop);
+        
+        setTimeout(() => {
+            createSplash(left);
+        }, duration * 1000);
+        
+        setTimeout(() => {
+            if (drop.parentNode) {
+                drop.parentNode.removeChild(drop);
+            }
+        }, (duration + delay) * 1000);
+    }
+    
+    // Tạo hiệu ứng văng nước
+    function createSplash(left) {
+        const splash = document.createElement('div');
+        splash.classList.add('splash');
+        splash.style.left = `${left}vw`;
+        splash.style.bottom = '0';
+        
+        rainContainer.appendChild(splash);
+        
+        setTimeout(() => {
+            if (splash.parentNode) {
+                splash.parentNode.removeChild(splash);
+            }
+        }, 400);
+    }
+    
+    // Tạo hiệu ứng sấm chớp
+    function createLightning() {
+        lightning.style.opacity = 0.8;
+        setTimeout(() => {
+            lightning.style.opacity = 0;
+        }, 100);
+        
+        setTimeout(() => {
+            lightning.style.opacity = 0.6;
+            setTimeout(() => {
+                lightning.style.opacity = 0;
+            }, 50);
+        }, 200);
+    }
+    
+    // Bắt đầu mưa
+    setInterval(() => {
+        for (let i = 0; i < intensity; i++) {
+            createRaindrop();
+        }
+    }, 50);
+    
+    // Sấm chớp ngẫu nhiên
+    setInterval(() => {
+        if (Math.random() > 0.7) {
+            createLightning();
+        }
+    }, 10000);
+}
+
+// Tự động chạy khi trang tải xong
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startRainEffect);
+} else {
+    startRainEffect();
+}
     <div class="container">
         <!-- Profile Card -->
         <div class="profile-card">
@@ -1055,5 +1200,7 @@
 
         console.log('🚀 Website đã sẵn sàng với đầy đủ tính năng!');
     </script>
+<div class="rain-container" id="rainContainer"></div>
+<div class="lightning" id="lightning"></div>
 </body>
 </html>
