@@ -2,23 +2,50 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-   <meta name="viewport" content="width=500, initial-scale=0.9">
+   <meta name="viewport" content="width=500, initial-scale=0.9, maximum-scale=0.9, minimum-scale=0.9, user-scalable=no">
     <title>Nguyen Bac Son | Official Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-/* Phương pháp CSS hiện đại */
-@viewport {
-    width: device-width;
-    zoom: 1.0;
-    min-zoom: 1.0;
-    max-zoom: 1.0;
-    user-zoom: fixed;
-}
 
-/* Hoặc sử dụng */
-@-ms-viewport {
-    width: device-width;
-}
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: none;
+            text-size-adjust: none;
+        }
+        
+        html, body {
+            touch-action: pan-x pan-y;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            width: 500px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        h1 { color: #333; text-align: center; }
+        p { line-height: 1.6; color: #666; }
+        
+        input, textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
 
 /* ... các quy tắc CSS khác ... */
         /* Ẩn biểu tượng ngôi nhà (fa-house) */
@@ -212,6 +239,32 @@
 </head>
 <body>
     <div class="container">
+        <h1>Nguyễn Bắc Sơn</h1>
+        <p>Viewport: width=500, scale=0.9 - Chống zoom hoàn toàn</p>
+        <input type="text" placeholder="Nhập text here" style="width: 100%; padding: 8px; margin: 10px 0;">
+    </div>
+
+    <script>
+        // Chống zoom
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+
+        let lastTap = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = new Date().getTime();
+            if (now - lastTap < 500) e.preventDefault();
+            lastTap = now;
+        }, { passive: false });
+
+        document.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) e.preventDefault();
+        }, { passive: false });
+    </script>
         <!-- Profile Card -->
         <div class="profile-card">
             <img src="20251007031346.png" alt="Ảnh đại diện" class="profile-img">
