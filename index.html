@@ -6,6 +6,116 @@
     <title>Nguyen Bac Son | Official Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+/* === FILE CSS TỔNG HỢP - CHỈ CẦN COPY 1 LẦN === */
+
+/* 1. FADE IN - Mờ dần hiện ra */
+.fade-in-item {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.fade-in-item.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 2. SLIDE LEFT - Trượt từ trái */
+.slide-left-item {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: all 0.6s ease;
+}
+
+.slide-left-item.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 3. SLIDE RIGHT - Trượt từ phải */
+.slide-right-item {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.6s ease;
+}
+
+.slide-right-item.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 4. ZOOM IN - Phóng to nhẹ */
+.zoom-in-item {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.6s ease;
+}
+
+.zoom-in-item.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* 5. TYPEWRITER - Chữ đánh máy */
+.typewriter-text {
+    overflow: hidden;
+    border-right: 2px solid #000;
+    white-space: nowrap;
+    animation: typing 3s steps(30, end), blink-caret 0.5s step-end infinite;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #000 }
+}
+
+/* 6. BUTTON HOVER - Nút đổi màu */
+.hover-fill-btn {
+    padding: 12px 24px;
+    background: transparent;
+    border: 2px solid #007bff;
+    color: #007bff;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.hover-fill-btn:hover {
+    color: white;
+    background: #007bff;
+    transform: translateY(-2px);
+}
+
+/* 7. CARD HOVER - Thẻ đổ bóng */
+.hover-shadow-card {
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.hover-shadow-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* 8. SCROLL TRIGGER - Kích hoạt khi cuộn */
+.scroll-trigger {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s ease;
+}
+
+.scroll-trigger.active {
+    opacity: 1;
+    transform: translateY(0);
+}
 /* Kiểu dáng cho chữ "Nguyen Bac Son" - từng chữ cái */ .nguyen-bac-son-char {
 
 }
@@ -290,6 +400,16 @@ font-size: 20px; /* Có thể điều chỉnh kích thước */ animation: flash
     </style>
 </head>
 <body>
+<!-- Ví dụ sử dụng -->
+<h2 class="typewriter-text">Tiêu đề chữ chạy</h2>
+
+<div class="fade-in-item">Nội dung mờ dần hiện ra</div>
+
+<div class="slide-left-item">Nội dung trượt từ trái</div>
+
+<button class="hover-fill-btn">Nút hover đẹp</button>
+
+<div class="hover-shadow-card">Thẻ có bóng khi hover</div>
     <div class="container">
         <!-- Profile Card -->
         <div class="profile-card">
@@ -1220,6 +1340,29 @@ document.head.appendChild(style);
 // Gọi function khi trang load
 document.addEventListener('DOMContentLoaded', function() {
     slotMachineToDate('.slot-machine');
+});
+// === FILE JS TỔNG HỢP - CHỈ CẦN COPY 1 LẦN ===
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Kích hoạt hiệu ứng khi cuộn
+    function activateOnScroll() {
+        const elements = document.querySelectorAll('.fade-in-item, .slide-left-item, .slide-right-item, .zoom-in-item, .scroll-trigger');
+        
+        elements.forEach(element => {
+            const elementTop = element.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+            
+            if (elementTop < windowHeight - 100) {
+                element.classList.add('active');
+            }
+        });
+    }
+    
+    // Chạy lần đầu
+    activateOnScroll();
+    
+    // Chạy khi cuộn
+    window.addEventListener('scroll', activateOnScroll);
 });
 </script>
 </body>
