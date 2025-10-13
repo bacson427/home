@@ -113,28 +113,25 @@
     transform: translateY(50px);
     transition: all 0.8s ease;
 }
-/* HIỆU ỨNG FADE IN ĐƠN GIẢN */
-.fade-in-element {
-    animation: fadeIn 1s ease-in-out;
+/* CHỈ ÁP DỤNG CHO CÁC PHẦN TỬ KHỐI, KHÔNG ÁP DỤNG CHO TEXT THÔNG THƯỜING */
+section, header, footer, div, .container, .card, .box, 
+button, .btn, img, .image, h1, h2, h3, h4, h5, h6 {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.visible-element {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-/* HIỆU ỨNG CHO NÚT */
-.hover-button {
+/* HIỆU ỨNG HOVER CHO NÚT */
+button, .btn {
     transition: all 0.3s ease;
 }
 
-.hover-button:hover {
+button:hover, .btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
@@ -1366,34 +1363,28 @@ document.addEventListener('DOMContentLoaded', function() {
 // === FILE JS TỔNG HỢP - CHỈ CẦN COPY 1 LẦN ===
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Kích hoạt hiệu ứng khi cuộn
-    function activateOnScroll() {
-        const elements = document.querySelectorAll('.fade-in-item, .slide-left-item, .slide-right-item, .zoom-in-item, .scroll-trigger');
-        
-        elements.forEach(element => {
-            const elementTop = element.getBoundingClientRect().top;
-            const windowHeight = window.innerHeight;
-            
-            if (elementTop < windowHeight - 100) {
-                element.classList.add('active');
+
+    // CHỈ ÁP DỤNG CHO BLOCK ELEMENTS, KHÔNG ÁP DỤNG CHO TEXT NODE
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎯 Hiệu ứng khối đã sẵn sàng!');
+    
+    // CHỈ chọn các phần tử khối, không chọn text node
+    const blockElements = document.querySelectorAll(
+        'section, header, footer, div, .container, .card, .box, button, .btn, img, .image, h1, h2, h3, h4, h5, h6'
+    );
+    
+    // Hiệu ứng khi cuộn
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible-element');
             }
         });
-    }
+    }, { threshold: 0.1 });
     
-    // HIỆU ỨNG ĐƠN GIẢN - CHẮC CHẮN CHẠY
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ Hiệu ứng đã được kích hoạt!');
-    
-    // Tự động thêm class fade-in cho các phần tử chính
-    const elements = document.querySelectorAll('section, header, .container, button, h1, h2, p');
-    elements.forEach(element => {
-        element.classList.add('fade-in-element');
-    });
-    
-    // Thêm hiệu ứng hover cho nút
-    const buttons = document.querySelectorAll('button, .btn');
-    buttons.forEach(button => {
-        button.classList.add('hover-button');
+    // Áp dụng cho từng phần tử khối
+    blockElements.forEach(element => {
+        observer.observe(element);
     });
 });
 </script>
