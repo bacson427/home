@@ -27,7 +27,13 @@
     font-size: 40px;
     cursor: pointer;
     user-select: none;
-    transition: transform 0.8s ease; /* Chuyển hướng chậm */
+    transition: transform 0.8s ease;
+    transform: scaleX(1); /* MẶC ĐỊNH MẶT HƯỚNG SANG PHẢI */
+}
+
+/* Khi cá bơi sang trái - LẬT NGANG */
+.marine-creature.swimming-left {
+    transform: scaleX(-1);
 }
 
 /* Bong bóng */
@@ -1288,8 +1294,8 @@ function createMarineCreature(creature) {
     // Tốc độ rất chậm
     const speed = 0.3 + Math.random() * 0.4;
     
-    // Hướng ngẫu nhiên
-    const angle = Math.random() * Math.PI * 2;
+    // Hướng ngẫu nhiên - ĐẢM BẢO ĐẦU ĐI TRƯỚC
+    let angle = Math.random() * Math.PI * 2;
     
     // Thêm sự kiện click
     element.addEventListener('click', handleCreatureClick);
@@ -1309,14 +1315,14 @@ function createMarineCreature(creature) {
     return element;
 }
 
-// Cập nhật vị trí cá
+// Cập nhật vị trí cá - ĐẢM BẢO ĐẦU ĐI TRƯỚC
 function updateFishes() {
     fishes.forEach(fish => {
         // Thỉnh thoảng đổi hướng
         fish.changeDirectionTimer--;
         if (fish.changeDirectionTimer <= 0) {
             fish.angle = Math.random() * Math.PI * 2;
-            fish.changeDirectionTimer = 60 + Math.random() * 120; // 2-6 giây
+            fish.changeDirectionTimer = 60 + Math.random() * 120;
         }
         
         // Tính toán vận tốc
@@ -1327,7 +1333,7 @@ function updateFishes() {
         fish.x += vx;
         fish.y += vy;
         
-        // Xử lý va chạm với biên - QUAY ĐẦU KHI CHẠM MÉP
+        // Xử lý va chạm với biên - QUAY ĐẦU ĐÚNG
         let hitWall = false;
         
         if (fish.x < 0) {
@@ -1350,13 +1356,13 @@ function updateFishes() {
             hitWall = true;
         }
         
-        // Cập nhật hướng nhìn của cá - LUÔN QUAY MẶT VỀ HƯỚNG DI CHUYỂN
+        // CẬP NHẬT HƯỚNG NHÌN - ĐẦU LUÔN ĐI TRƯỚC
         if (vx > 0) {
-            // Đang bơi sang phải - mặt hướng sang phải
-            fish.element.style.transform = 'scaleX(1)';
+            // Đang bơi sang phải - mặt hướng sang phải (không lật)
+            fish.element.classList.remove('swimming-left');
         } else if (vx < 0) {
             // Đang bơi sang trái - mặt hướng sang trái (lật ngang)
-            fish.element.style.transform = 'scaleX(-1)';
+            fish.element.classList.add('swimming-left');
         }
         
         // Áp dụng vị trí mới
@@ -1377,7 +1383,7 @@ function createBubble() {
     bubble.style.width = size + 'px';
     bubble.style.height = size + 'px';
     bubble.style.left = Math.random() * 100 + '%';
-    bubble.style.animationDuration = (Math.random() * 10 + 5) + 's'; // Rất chậm
+    bubble.style.animationDuration = (Math.random() * 10 + 5) + 's';
     
     bubble.addEventListener('click', handleBubbleClick);
     
@@ -1400,8 +1406,7 @@ function handleCreatureClick(event) {
     // Làm cá giật lùi khi chạm
     const fish = fishes.find(f => f.element === creature);
     if (fish) {
-        // Đảo ngược hướng
-        fish.angle += Math.PI;
+        fish.angle += Math.PI; // Quay 180 độ
         fish.changeDirectionTimer = 30;
     }
     
