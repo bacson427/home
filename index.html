@@ -5,6 +5,8 @@
    <meta name="viewport" content="width=500, initial-scale=0.9"> 
     <title>Nguyen Bac Son | Official Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="effects.css">
+<script src="effects.js" defer></script>
     <style>
 /* === FILE CSS TỔNG HỢP - CHỈ CẦN COPY 1 LẦN === */
 
@@ -111,7 +113,22 @@
     transform: translateY(50px);
     transition: all 0.8s ease;
 }
+/* === CSS TỰ ĐỘNG - CHẠY NGẦM === */
+section, .section { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
+h1, h2, h3, h4, h5, h6 { opacity: 0; transform: translateY(20px); transition: all 0.6s ease 0.2s; }
+p, .text { opacity: 0; transform: translateY(15px); transition: all 0.6s ease 0.4s; }
+img, .image { opacity: 0; transform: scale(0.9); transition: all 0.8s ease 0.3s; }
+button, .btn { opacity: 0; transform: translateY(10px); transition: all 0.5s ease 0.5s; }
 
+.auto-visible { 
+    opacity: 1 !important; 
+    transform: translateY(0) scale(1) !important; 
+}
+
+button:hover, .btn:hover { 
+    transform: translateY(-2px); 
+    transition: all 0.3s ease; 
+}
 .scroll-trigger.active {
     opacity: 1;
     transform: translateY(0);
@@ -1364,6 +1381,53 @@ document.addEventListener('DOMContentLoaded', function() {
     // Chạy khi cuộn
     window.addEventListener('scroll', activateOnScroll);
 });
+// === JS CHẠY NGẦM HOÀN TOÀN - KHÔNG HIỆN GÌ ===
+(function() {
+    'use strict';
+    
+    // Chạy ngầm khi trang ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSilentEffects);
+    } else {
+        initSilentEffects();
+    }
+    
+    function initSilentEffects() {
+        // Tạo observer ngầm
+        const silentObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('auto-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        // Quét ngầm tất cả elements
+        const allElements = document.querySelectorAll(
+            'section, .section, h1, h2, h3, h4, h5, h6, p, img, button, .btn, .card, .container, div'
+        );
+        
+        // Áp dụng ngầm
+        allElements.forEach(function(el) {
+            if (el.offsetWidth > 0 || el.offsetHeight > 0) {
+                silentObserver.observe(el);
+            }
+        });
+    }
+    
+    // Xử lý hover ngầm
+    document.addEventListener('mouseover', function(e) {
+        if (e.target.matches('button, .btn, [type="button"]')) {
+            e.target.style.transform = 'translateY(-2px)';
+        }
+    });
+    
+    document.addEventListener('mouseout', function(e) {
+        if (e.target.matches('button, .btn, [type="button"]')) {
+            e.target.style.transform = 'translateY(0)';
+        }
+    });
+})();
 </script>
 </body>
 </html>
