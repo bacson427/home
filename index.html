@@ -113,25 +113,30 @@
     transform: translateY(50px);
     transition: all 0.8s ease;
 }
-/* === CSS TỰ ĐỘNG - CHẠY NGẦM === */
-section, .section { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
-h1, h2, h3, h4, h5, h6 { opacity: 0; transform: translateY(20px); transition: all 0.6s ease 0.2s; }
-p, .text { opacity: 0; transform: translateY(15px); transition: all 0.6s ease 0.4s; }
-img, .image { opacity: 0; transform: scale(0.9); transition: all 0.8s ease 0.3s; }
-button, .btn { opacity: 0; transform: translateY(10px); transition: all 0.5s ease 0.5s; }
-
-.auto-visible { 
-    opacity: 1 !important; 
-    transform: translateY(0) scale(1) !important; 
+/* HIỆU ỨNG FADE IN ĐƠN GIẢN */
+.fade-in-element {
+    animation: fadeIn 1s ease-in-out;
 }
 
-button:hover, .btn:hover { 
-    transform: translateY(-2px); 
-    transition: all 0.3s ease; 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
-.scroll-trigger.active {
-    opacity: 1;
-    transform: translateY(0);
+
+/* HIỆU ỨNG CHO NÚT */
+.hover-button {
+    transition: all 0.3s ease;
+}
+
+.hover-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 /* Kiểu dáng cho chữ "Nguyen Bac Son" - từng chữ cái */ .nguyen-bac-son-char {
 
@@ -1375,59 +1380,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Chạy lần đầu
-    activateOnScroll();
+    // HIỆU ỨNG ĐƠN GIẢN - CHẮC CHẮN CHẠY
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ Hiệu ứng đã được kích hoạt!');
     
-    // Chạy khi cuộn
-    window.addEventListener('scroll', activateOnScroll);
+    // Tự động thêm class fade-in cho các phần tử chính
+    const elements = document.querySelectorAll('section, header, .container, button, h1, h2, p');
+    elements.forEach(element => {
+        element.classList.add('fade-in-element');
+    });
+    
+    // Thêm hiệu ứng hover cho nút
+    const buttons = document.querySelectorAll('button, .btn');
+    buttons.forEach(button => {
+        button.classList.add('hover-button');
+    });
 });
-// === JS CHẠY NGẦM HOÀN TOÀN - KHÔNG HIỆN GÌ ===
-(function() {
-    'use strict';
-    
-    // Chạy ngầm khi trang ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initSilentEffects);
-    } else {
-        initSilentEffects();
-    }
-    
-    function initSilentEffects() {
-        // Tạo observer ngầm
-        const silentObserver = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('auto-visible');
-                }
-            });
-        }, { threshold: 0.1 });
-        
-        // Quét ngầm tất cả elements
-        const allElements = document.querySelectorAll(
-            'section, .section, h1, h2, h3, h4, h5, h6, p, img, button, .btn, .card, .container, div'
-        );
-        
-        // Áp dụng ngầm
-        allElements.forEach(function(el) {
-            if (el.offsetWidth > 0 || el.offsetHeight > 0) {
-                silentObserver.observe(el);
-            }
-        });
-    }
-    
-    // Xử lý hover ngầm
-    document.addEventListener('mouseover', function(e) {
-        if (e.target.matches('button, .btn, [type="button"]')) {
-            e.target.style.transform = 'translateY(-2px)';
-        }
-    });
-    
-    document.addEventListener('mouseout', function(e) {
-        if (e.target.matches('button, .btn, [type="button"]')) {
-            e.target.style.transform = 'translateY(0)';
-        }
-    });
-})();
 </script>
 </body>
 </html>
