@@ -117,6 +117,125 @@
         transform: translateX(20px) scale(1.2);
     }
 }
+/* Hiệu ứng cá bơi toàn màn hình */
+.fullscreen-fish {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(to bottom, #1a2980, #26d0ce);
+    overflow: hidden;
+    z-index: -1;
+}
+
+.fish {
+    position: absolute;
+    width: 80px;
+    height: 40px;
+    animation: swim 20s linear infinite;
+}
+
+.fish-body {
+    width: 100%;
+    height: 100%;
+    border-radius: 50% 40% 40% 50%;
+    position: relative;
+}
+
+.fish-tail {
+    position: absolute;
+    left: -20px;
+    top: 8px;
+    width: 25px;
+    height: 25px;
+    clip-path: polygon(100% 0, 0 50%, 100% 100%);
+    animation: tailMove 0.5s ease-in-out infinite alternate;
+}
+
+.fish-fin {
+    position: absolute;
+    top: -8px;
+    left: 20px;
+    width: 20px;
+    height: 12px;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.fish-eye {
+    position: absolute;
+    right: 15px;
+    top: 12px;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+}
+
+.fish-eye::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: black;
+    border-radius: 50%;
+    top: 2.5px;
+    left: 2.5px;
+}
+
+.bubble {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    bottom: -20px;
+    animation: rise linear infinite;
+}
+
+@keyframes swim {
+    0% { 
+        left: -80px; 
+        transform: scaleX(1); 
+    }
+    49% { 
+        transform: scaleX(1); 
+    }
+    50% { 
+        left: 100vw; 
+        transform: scaleX(-1); 
+    }
+    99% { 
+        transform: scaleX(-1); 
+    }
+    100% { 
+        left: -80px; 
+        transform: scaleX(1); 
+    }
+}
+
+@keyframes tailMove {
+    from { transform: rotate(-15deg); }
+    to { transform: rotate(15deg); }
+}
+
+@keyframes rise {
+    0% {
+        bottom: -20px;
+        opacity: 0;
+        transform: translateX(0) scale(0.3);
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        bottom: 100vh;
+        opacity: 0;
+        transform: translateX(30px) scale(1.5);
+    }
+}
+
 /* Kiểu dáng cho chữ "Nguyen Bac Son" - từng chữ cái */ .nguyen-bac-son-char {
 
 }
@@ -403,6 +522,7 @@ font-size: 20px; /* Có thể điều chỉnh kích thước */ animation: flash
 <body>
 <!-- Thêm container này vào vị trí bạn muốn hiển thị hiệu ứng -->
 <div class="aquarium-container"></div>
+<div class="fullscreen-fish"></div>
 <!-- Ví dụ sử dụng -->
     <div class="container">
         <!-- Profile Card -->
@@ -1408,6 +1528,106 @@ function initAquarium() {
 
 // Chạy khi trang load
 document.addEventListener('DOMContentLoaded', initAquarium);
+// Tạo cá toàn màn hình
+function createFullscreenFish() {
+    const container = document.querySelector('.fullscreen-fish');
+    const fish = document.createElement('div');
+    fish.className = 'fish';
+    
+    const fishBody = document.createElement('div');
+    fishBody.className = 'fish-body';
+    
+    const fishTail = document.createElement('div');
+    fishTail.className = 'fish-tail';
+    
+    const fishFin = document.createElement('div');
+    fishFin.className = 'fish-fin';
+    
+    const fishEye = document.createElement('div');
+    fishEye.className = 'fish-eye';
+    
+    fishBody.appendChild(fishTail);
+    fishBody.appendChild(fishFin);
+    fishBody.appendChild(fishEye);
+    fish.appendChild(fishBody);
+    
+    // Vị trí và tốc độ ngẫu nhiên
+    fish.style.top = Math.random() * 80 + 10 + '%';
+    fish.style.animationDuration = (Math.random() * 15 + 15) + 's';
+    fish.style.animationDelay = (Math.random() * 10) + 's';
+    
+    // Màu sắc ngẫu nhiên
+    const colors = [
+        { body: '#ff6b6b', tail: '#ff8e8e' },
+        { body: '#4ecdc4', tail: '#44a08d' },
+        { body: '#ff9a8b', tail: '#ff6b6b' },
+        { body: '#a8edea', tail: '#fed6e3' },
+        { body: '#ffd93d', tail: '#ff9a8b' },
+        { body: '#6bceff', tail: '#4ecdc4' }
+    ];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    fishBody.style.background = color.body;
+    fishTail.style.background = color.tail;
+    fishFin.style.background = color.tail;
+    
+    container.appendChild(fish);
+}
+
+// Tạo bong bóng toàn màn hình
+function createFullscreenBubble() {
+    const container = document.querySelector('.fullscreen-fish');
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    
+    // Kích thước ngẫu nhiên
+    const size = Math.random() * 25 + 8;
+    bubble.style.width = size + 'px';
+    bubble.style.height = size + 'px';
+    
+    // Vị trí ngẫu nhiên
+    bubble.style.left = Math.random() * 100 + '%';
+    
+    // Tốc độ ngẫu nhiên
+    bubble.style.animationDuration = (Math.random() * 5 + 3) + 's';
+    
+    container.appendChild(bubble);
+    
+    // Xóa bong bóng sau khi animation kết thúc
+    setTimeout(() => {
+        if (bubble.parentNode) {
+            bubble.parentNode.removeChild(bubble);
+        }
+    }, 8000);
+}
+
+// Khởi tạo hiệu ứng cá bơi toàn màn hình
+function initFullscreenFishEffect() {
+    // Tạo 5-8 con cá
+    const fishCount = Math.floor(Math.random() * 4) + 5;
+    for (let i = 0; i < fishCount; i++) {
+        createFullscreenFish();
+    }
+    
+    // Tạo bong bóng liên tục
+    setInterval(createFullscreenBubble, 300);
+    
+    // Thêm bong bóng ban đầu
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => createFullscreenBubble(), i * 150);
+    }
+}
+
+// Chạy khi trang load
+document.addEventListener('DOMContentLoaded', initFullscreenFishEffect);
+
+// Xử lý resize window
+window.addEventListener('resize', function() {
+    const container = document.querySelector('.fullscreen-fish');
+    if (container) {
+        container.style.width = window.innerWidth + 'px';
+        container.style.height = window.innerHeight + 'px';
+    }
+});
 </script>
 </body>
 </html>
