@@ -8,6 +8,115 @@
 <link rel="stylesheet" href="effects.css">
 <script src="effects.js" defer></script>
     <style>
+/* Hiệu ứng cá bơi và bong bóng */
+.aquarium-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(to bottom, #1a2980, #26d0ce);
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.fish {
+    position: absolute;
+    width: 60px;
+    height: 30px;
+    animation: swim 15s linear infinite;
+}
+
+.fish-body {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+    border-radius: 50% 40% 40% 50%;
+    position: relative;
+}
+
+.fish-tail {
+    position: absolute;
+    left: -15px;
+    top: 5px;
+    width: 20px;
+    height: 20px;
+    background: #ff8e8e;
+    clip-path: polygon(100% 0, 0 50%, 100% 100%);
+    animation: tailMove 0.5s ease-in-out infinite alternate;
+}
+
+.fish-eye {
+    position: absolute;
+    right: 10px;
+    top: 8px;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+}
+
+.fish-eye::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: black;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+}
+
+.bubble {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    bottom: -10px;
+    animation: rise linear infinite;
+}
+
+@keyframes swim {
+    0% { 
+        left: -60px; 
+        transform: scaleX(1); 
+    }
+    49% { 
+        transform: scaleX(1); 
+    }
+    50% { 
+        left: 100%; 
+        transform: scaleX(-1); 
+    }
+    99% { 
+        transform: scaleX(-1); 
+    }
+    100% { 
+        left: -60px; 
+        transform: scaleX(1); 
+    }
+}
+
+@keyframes tailMove {
+    from { transform: rotate(-10deg); }
+    to { transform: rotate(10deg); }
+}
+
+@keyframes rise {
+    0% {
+        bottom: -10px;
+        opacity: 0;
+        transform: translateX(0) scale(0.3);
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        bottom: 100%;
+        opacity: 0;
+        transform: translateX(20px) scale(1.2);
+    }
+}
 /* Kiểu dáng cho chữ "Nguyen Bac Son" - từng chữ cái */ .nguyen-bac-son-char {
 
 }
@@ -292,6 +401,8 @@ font-size: 20px; /* Có thể điều chỉnh kích thước */ animation: flash
     </style>
 </head>
 <body>
+<!-- Thêm container này vào vị trí bạn muốn hiển thị hiệu ứng -->
+<div class="aquarium-container"></div>
 <!-- Ví dụ sử dụng -->
     <div class="container">
         <!-- Profile Card -->
@@ -1224,6 +1335,79 @@ document.head.appendChild(style);
 document.addEventListener('DOMContentLoaded', function() {
     slotMachineToDate('.slot-machine');
 });
+
+// Tạo cá
+function createFish() {
+    const container = document.querySelector('.aquarium-container');
+    const fish = document.createElement('div');
+    fish.className = 'fish';
+    
+    const fishBody = document.createElement('div');
+    fishBody.className = 'fish-body';
+    
+    const fishTail = document.createElement('div');
+    fishTail.className = 'fish-tail';
+    
+    const fishEye = document.createElement('div');
+    fishEye.className = 'fish-eye';
+    
+    fishBody.appendChild(fishTail);
+    fishBody.appendChild(fishEye);
+    fish.appendChild(fishBody);
+    
+    // Vị trí ngẫu nhiên
+    fish.style.top = Math.random() * 70 + 10 + '%';
+    fish.style.animationDuration = (Math.random() * 10 + 10) + 's';
+    fish.style.animationDelay = (Math.random() * 5) + 's';
+    
+    container.appendChild(fish);
+}
+
+// Tạo bong bóng
+function createBubble() {
+    const container = document.querySelector('.aquarium-container');
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    
+    // Kích thước ngẫu nhiên
+    const size = Math.random() * 15 + 5;
+    bubble.style.width = size + 'px';
+    bubble.style.height = size + 'px';
+    
+    // Vị trí ngẫu nhiên
+    bubble.style.left = Math.random() * 100 + '%';
+    
+    // Tốc độ ngẫu nhiên
+    bubble.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    
+    container.appendChild(bubble);
+    
+    // Xóa bong bóng sau khi animation kết thúc
+    setTimeout(() => {
+        if (bubble.parentNode) {
+            bubble.parentNode.removeChild(bubble);
+        }
+    }, 5000);
+}
+
+// Khởi tạo hiệu ứng
+function initAquarium() {
+    // Tạo 3 con cá
+    for (let i = 0; i < 3; i++) {
+        createFish();
+    }
+    
+    // Tạo bong bóng liên tục
+    setInterval(createBubble, 500);
+    
+    // Thêm bong bóng ban đầu
+    for (let i = 0; i < 10; i++) {
+        setTimeout(() => createBubble(), i * 200);
+    }
+}
+
+// Chạy khi trang load
+document.addEventListener('DOMContentLoaded', initAquarium);
 </script>
 </body>
 </html>
