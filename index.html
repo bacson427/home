@@ -18,94 +18,229 @@
     background: linear-gradient(to bottom, #1a2980, #26d0ce);
     overflow: hidden;
     z-index: -1;
+    cursor: pointer;
 }
 
-.fish {
+/* Cá và sinh vật biển */
+.marine-creature {
     position: absolute;
-    width: 80px;
-    height: 40px;
-    animation: swim 20s linear infinite;
+    font-size: 40px;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    user-select: none;
 }
 
-.fish-body {
-    width: 100%;
-    height: 100%;
-    border-radius: 50% 40% 40% 50%;
-    position: relative;
+/* Hiệu ứng khi chạm */
+.marine-creature.touched {
+    animation-play-state: paused;
+    transform: scale(1.3) rotate(360deg);
+    filter: brightness(1.5) drop-shadow(0 0 10px gold);
+    z-index: 1000;
 }
 
-.fish-tail {
+/* Hiệu ứng bong bóng vỡ */
+.bubble-pop {
     position: absolute;
-    left: -20px;
-    top: 8px;
-    width: 25px;
-    height: 25px;
-    clip-path: polygon(100% 0, 0 50%, 100% 100%);
-    animation: tailMove 0.5s ease-in-out infinite alternate;
+    font-size: 20px;
+    animation: pop 0.8s ease-out forwards;
+    pointer-events: none;
+    z-index: 1001;
 }
 
-.fish-fin {
+/* Hiệu ứng vòng tròn nước */
+.water-ripple {
     position: absolute;
-    top: -8px;
-    left: 20px;
-    width: 20px;
-    height: 12px;
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-}
-
-.fish-eye {
-    position: absolute;
-    right: 15px;
-    top: 12px;
-    width: 10px;
-    height: 10px;
-    background: white;
+    border: 2px solid rgba(255, 255, 255, 0.8);
     border-radius: 50%;
+    animation: ripple 1s ease-out forwards;
+    pointer-events: none;
+    z-index: 999;
 }
 
-.fish-eye::after {
-    content: '';
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background: black;
-    border-radius: 50%;
-    top: 2.5px;
-    left: 2.5px;
+/* Cá vàng 🐟 */
+.fish-gold {
+    animation: swimGold 25s infinite;
 }
 
+.fish-gold:hover {
+    transform: scale(1.1);
+}
+
+/* Cá nhiệt đới 🐠 */
+.fish-tropical {
+    animation: swimTropical 30s infinite;
+}
+
+.fish-tropical:hover {
+    transform: scale(1.1);
+}
+
+/* Cá nóc 🐡 */
+.fish-puffer {
+    animation: swimPuffer 35s infinite;
+}
+
+.fish-puffer.touched {
+    transform: scale(1.8) rotate(360deg);
+    font-size: 50px;
+}
+
+/* Tôm 🦐 */
+.shrimp {
+    animation: swimShrimp 20s infinite;
+    font-size: 35px;
+}
+
+.shrimp.touched {
+    animation: shrimpJump 0.5s ease-out;
+}
+
+/* Bạch tuộc 🐙 */
+.octopus {
+    animation: swimOctopus 40s infinite;
+    font-size: 45px;
+}
+
+.octopus.touched {
+    animation: octopusInk 1s ease-out;
+}
+
+/* Mực 🦑 */
+.squid {
+    animation: swimSquid 28s infinite;
+    font-size: 42px;
+}
+
+/* Bong bóng */
 .bubble {
     position: absolute;
     background: rgba(255, 255, 255, 0.6);
     border-radius: 50%;
     bottom: -20px;
     animation: rise linear infinite;
+    cursor: pointer;
+    transition: transform 0.2s ease;
 }
 
-@keyframes swim {
-    0% { 
-        left: -80px; 
-        transform: scaleX(1); 
+.bubble.touched {
+    animation: bubblePop 0.5s ease-out forwards;
+}
+
+/* Animations chính */
+@keyframes swimGold {
+    0%, 100% { 
+        left: -50px; 
+        top: 20%;
+        transform: scaleX(1) rotate(0deg);
     }
-    49% { 
-        transform: scaleX(1); 
+    25% {
+        top: 15%;
+        transform: scaleX(1) rotate(-5deg);
     }
     50% { 
         left: 100vw; 
-        transform: scaleX(-1); 
+        top: 25%;
+        transform: scaleX(-1) rotate(5deg);
     }
-    99% { 
-        transform: scaleX(-1); 
-    }
-    100% { 
-        left: -80px; 
-        transform: scaleX(1); 
+    75% {
+        top: 30%;
+        transform: scaleX(-1) rotate(-3deg);
     }
 }
 
-@keyframes tailMove {
-    from { transform: rotate(-15deg); }
-    to { transform: rotate(15deg); }
+@keyframes swimTropical {
+    0%, 100% { 
+        left: -60px; 
+        top: 60%;
+        transform: scaleX(1) rotate(0deg);
+    }
+    20% {
+        top: 50%;
+        transform: scaleX(1) rotate(-8deg);
+    }
+    40% {
+        top: 65%;
+        transform: scaleX(1) rotate(6deg);
+    }
+    60% { 
+        left: 100vw; 
+        top: 55%;
+        transform: scaleX(-1) rotate(-4deg);
+    }
+    80% {
+        top: 70%;
+        transform: scaleX(-1) rotate(7deg);
+    }
+}
+
+/* Animations tương tác */
+@keyframes shrimpJump {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-100px) scale(1.2);
+    }
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes octopusInk {
+    0% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(0.3) drop-shadow(0 0 20px #000);
+        transform: scale(1.5);
+    }
+    100% {
+        filter: brightness(1);
+        transform: scale(1);
+    }
+}
+
+@keyframes bubblePop {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(0.5);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+@keyframes ripple {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+    100% {
+        width: 100px;
+        height: 100px;
+        opacity: 0;
+        transform: translate(-50%, -50%);
+    }
 }
 
 @keyframes rise {
@@ -1346,53 +1481,45 @@ document.addEventListener('DOMContentLoaded', function() {
     slotMachineToDate('.slot-machine');
 });
 
-// Tạo cá toàn màn hình
-function createFullscreenFish() {
+// Danh sách các sinh vật biển với thuộc tính riêng
+const marineCreatures = [
+    { emoji: '🐟', class: 'fish-gold', speed: 25, count: 3 },
+    { emoji: '🐠', class: 'fish-tropical', speed: 30, count: 3 },
+    { emoji: '🐡', class: 'fish-puffer', speed: 35, count: 2 },
+    { emoji: '🦐', class: 'shrimp', speed: 20, count: 4 },
+    { emoji: '🐙', class: 'octopus', speed: 40, count: 2 },
+    { emoji: '🦑', class: 'squid', speed: 28, count: 3 }
+];
+
+// Tạo sinh vật biển
+function createMarineCreature(creature) {
     const container = document.querySelector('.fullscreen-fish');
-    const fish = document.createElement('div');
-    fish.className = 'fish';
+    const element = document.createElement('div');
+    element.className = `marine-creature ${creature.class}`;
+    element.textContent = creature.emoji;
+    element.setAttribute('data-type', creature.class);
     
-    const fishBody = document.createElement('div');
-    fishBody.className = 'fish-body';
+    // Vị trí ngẫu nhiên
+    const startTop = Math.random() * 80 + 10;
+    element.style.top = startTop + '%';
     
-    const fishTail = document.createElement('div');
-    fishTail.className = 'fish-tail';
+    // Thời gian animation ngẫu nhiên
+    const speedVariation = creature.speed * (0.7 + Math.random() * 0.6);
+    element.style.animationDuration = speedVariation + 's';
     
-    const fishFin = document.createElement('div');
-    fishFin.className = 'fish-fin';
+    // Delay ngẫu nhiên
+    element.style.animationDelay = (Math.random() * 20) + 's';
     
-    const fishEye = document.createElement('div');
-    fishEye.className = 'fish-eye';
+    // Thêm sự kiện click
+    element.addEventListener('click', handleCreatureClick);
+    element.addEventListener('touchstart', handleCreatureTouch, { passive: true });
     
-    fishBody.appendChild(fishTail);
-    fishBody.appendChild(fishFin);
-    fishBody.appendChild(fishEye);
-    fish.appendChild(fishBody);
-    
-    // Vị trí và tốc độ ngẫu nhiên
-    fish.style.top = Math.random() * 80 + 10 + '%';
-    fish.style.animationDuration = (Math.random() * 15 + 15) + 's';
-    fish.style.animationDelay = (Math.random() * 10) + 's';
-    
-    // Màu sắc ngẫu nhiên
-    const colors = [
-        { body: '#ff6b6b', tail: '#ff8e8e' },
-        { body: '#4ecdc4', tail: '#44a08d' },
-        { body: '#ff9a8b', tail: '#ff6b6b' },
-        { body: '#a8edea', tail: '#fed6e3' },
-        { body: '#ffd93d', tail: '#ff9a8b' },
-        { body: '#6bceff', tail: '#4ecdc4' }
-    ];
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    fishBody.style.background = color.body;
-    fishTail.style.background = color.tail;
-    fishFin.style.background = color.tail;
-    
-    container.appendChild(fish);
+    container.appendChild(element);
+    return element;
 }
 
-// Tạo bong bóng toàn màn hình
-function createFullscreenBubble() {
+// Tạo bong bóng
+function createBubble() {
     const container = document.querySelector('.fullscreen-fish');
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
@@ -1408,6 +1535,10 @@ function createFullscreenBubble() {
     // Tốc độ ngẫu nhiên
     bubble.style.animationDuration = (Math.random() * 5 + 3) + 's';
     
+    // Thêm sự kiện click cho bong bóng
+    bubble.addEventListener('click', handleBubbleClick);
+    bubble.addEventListener('touchstart', handleBubbleTouch, { passive: true });
+    
     container.appendChild(bubble);
     
     // Xóa bong bóng sau khi animation kết thúc
@@ -1416,27 +1547,181 @@ function createFullscreenBubble() {
             bubble.parentNode.removeChild(bubble);
         }
     }, 8000);
+    
+    return bubble;
 }
 
-// Khởi tạo hiệu ứng cá bơi toàn màn hình
-function initFullscreenFishEffect() {
-    // Tạo 5-8 con cá
-    const fishCount = Math.floor(Math.random() * 4) + 5;
-    for (let i = 0; i < fishCount; i++) {
-        createFullscreenFish();
-    }
+// Xử lý click sinh vật
+function handleCreatureClick(event) {
+    const creature = event.target;
+    triggerCreatureEffect(creature);
+}
+
+// Xử lý touch sinh vật
+function handleCreatureTouch(event) {
+    event.preventDefault();
+    const creature = event.target;
+    triggerCreatureEffect(creature);
+    
+    // Tạo hiệu ứng vòng tròn nước
+    createWaterRipple(event);
+}
+
+// Xử lý click bong bóng
+function handleBubbleClick(event) {
+    const bubble = event.target;
+    triggerBubbleEffect(bubble);
+}
+
+// Xử lý touch bong bóng
+function handleBubbleTouch(event) {
+    event.preventDefault();
+    const bubble = event.target;
+    triggerBubbleEffect(bubble);
+    
+    // Tạo hiệu ứng vòng tròn nước
+    createWaterRipple(event);
+}
+
+// Hiệu ứng khi chạm vào sinh vật
+function triggerCreatureEffect(creature) {
+    // Thêm class touched
+    creature.classList.add('touched');
+    
+    // Tạo hiệu ứng pop
+    createPopEffect(creature);
+    
+    // Phát âm thanh (tuỳ chọn)
+    playCreatureSound(creature);
+    
+    // Trở lại bình thường sau 1 giây
+    setTimeout(() => {
+        creature.classList.remove('touched');
+    }, 1000);
+}
+
+// Hiệu ứng khi chạm vào bong bóng
+function triggerBubbleEffect(bubble) {
+    bubble.classList.add('touched');
+    
+    // Tạo hiệu ứng pop
+    createPopEffect(bubble);
+    
+    // Phát âm thanh pop
+    playBubblePopSound();
+    
+    // Xóa bong bóng sau hiệu ứng
+    setTimeout(() => {
+        if (bubble.parentNode) {
+            bubble.parentNode.removeChild(bubble);
+        }
+    }, 500);
+}
+
+// Tạo hiệu ứng pop
+function createPopEffect(element) {
+    const rect = element.getBoundingClientRect();
+    const pop = document.createElement('div');
+    pop.className = 'bubble-pop';
+    pop.textContent = '💥';
+    pop.style.left = (rect.left + rect.width / 2) + 'px';
+    pop.style.top = (rect.top + rect.height / 2) + 'px';
+    
+    document.querySelector('.fullscreen-fish').appendChild(pop);
+    
+    // Xóa hiệu ứng pop sau khi hoàn thành
+    setTimeout(() => {
+        if (pop.parentNode) {
+            pop.parentNode.removeChild(pop);
+        }
+    }, 800);
+}
+
+// Tạo hiệu ứng vòng tròn nước
+function createWaterRipple(event) {
+    const touch = event.touches ? event.touches[0] : event;
+    const ripple = document.createElement('div');
+    ripple.className = 'water-ripple';
+    ripple.style.left = touch.clientX + 'px';
+    ripple.style.top = touch.clientY + 'px';
+    
+    document.querySelector('.fullscreen-fish').appendChild(ripple);
+    
+    // Xóa hiệu ứng ripple sau khi hoàn thành
+    setTimeout(() => {
+        if (ripple.parentNode) {
+            ripple.parentNode.removeChild(ripple);
+        }
+    }, 1000);
+}
+
+// Phát âm thanh (tuỳ chọn)
+function playCreatureSound(creature) {
+    // Có thể thêm âm thanh tại đây
+    console.log('Creature touched:', creature.getAttribute('data-type'));
+}
+
+function playBubblePopSound() {
+    // Có thể thêm âm thanh pop tại đây
+    console.log('Bubble popped!');
+}
+
+// Khởi tạo hiệu ứng
+function initMarineWorld() {
+    // Tạo tất cả sinh vật biển
+    marineCreatures.forEach(creature => {
+        for (let i = 0; i < creature.count; i++) {
+            createMarineCreature(creature);
+        }
+    });
     
     // Tạo bong bóng liên tục
-    setInterval(createFullscreenBubble, 300);
+    setInterval(createBubble, 200);
     
     // Thêm bong bóng ban đầu
-    for (let i = 0; i < 20; i++) {
-        setTimeout(() => createFullscreenBubble(), i * 150);
+    for (let i = 0; i < 25; i++) {
+        setTimeout(() => createBubble(), i * 100);
     }
+    
+    // Thêm sự kiện click toàn màn hình để tạo bong bóng mới
+    document.querySelector('.fullscreen-fish').addEventListener('click', function(event) {
+        if (event.target === this) {
+            createBubbleAtPosition(event.clientX, event.clientY);
+        }
+    });
+    
+    document.querySelector('.fullscreen-fish').addEventListener('touchstart', function(event) {
+        if (event.target === this) {
+            const touch = event.touches[0];
+            createBubbleAtPosition(touch.clientX, touch.clientY);
+        }
+    });
+}
+
+// Tạo bong bóng tại vị trí click
+function createBubbleAtPosition(x, y) {
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.style.width = '15px';
+    bubble.style.height = '15px';
+    bubble.style.left = x + 'px';
+    bubble.style.bottom = (window.innerHeight - y) + 'px';
+    bubble.style.animationDuration = '3s';
+    
+    bubble.addEventListener('click', handleBubbleClick);
+    bubble.addEventListener('touchstart', handleBubbleTouch, { passive: true });
+    
+    document.querySelector('.fullscreen-fish').appendChild(bubble);
+    
+    setTimeout(() => {
+        if (bubble.parentNode) {
+            bubble.parentNode.removeChild(bubble);
+        }
+    }, 3000);
 }
 
 // Chạy khi trang load
-document.addEventListener('DOMContentLoaded', initFullscreenFishEffect);
+document.addEventListener('DOMContentLoaded', initMarineWorld);
 
 // Xử lý resize window
 window.addEventListener('resize', function() {
