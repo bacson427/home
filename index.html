@@ -15,40 +15,24 @@
 <link rel="stylesheet" href="effects.css">
 <script src="effects.js" defer></script>
     <style>
-/* CONTAINER CĂN GIỮA MỌI THỨ */
+/* CONTAINER CĂN GIỮA MỌI THỨ: đảm bảo đã được dán */
 .main-content-wrapper-flex {
     display: flex;
     flex-direction: column; /* Xếp các phần tử theo chiều dọc */
     align-items: center;   /* CĂN GIỮA TẤT CẢ các mục theo chiều ngang */
-    /* tùy chọn: nếu muốn toàn bộ nội dung nằm giữa màn hình */
-    /* min-height: 100vh; */ 
-    /* justify-content: center; */
+    padding-top: 20px; /* Thêm khoảng cách trên cùng */
 }
 
-/* ĐỊNH DẠNG AVATAR */
+/* ĐỊNH DẠNG AVATAR (ID của thẻ IMG) */
 #0347432040207016612 {
     width: 150px;       
     height: 150px;
-    border-radius: 50%; 
-    object-fit: cover;
-    border: 5px solid #3498db; 
-    margin-bottom: 20px; /* Thêm khoảng cách với tên */
-    /* Không cần display: block; hay margin: auto; nữa vì flexbox đã xử lý */
-}
-
-/* ĐỊNH DẠNG TÊN VÀ CÁC BOX (cho đẹp hơn và căn giữa nội dung trong box) */
-h1 {
-    font-size: 24px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-}
-
-.description-box, .date-box {
-    text-align: center; /* Căn giữa văn bản bên trong các box */
-    padding: 10px 15px;
-    margin: 5px 0; /* Khoảng cách giữa các box */
-    /* ... thêm các style màu sắc, bo góc khác theo ý bạn ... */
-    max-width: 90%; /* Giới hạn chiều rộng để dễ đọc hơn trên màn hình lớn */
+    border-radius: 50%; /* LÀM HÌNH ẢNH TRÒN */
+    object-fit: cover; /* ĐẢM BẢO ẢNH VỪA KHÍT MÀ KHÔNG BỊ MÉO HOẶC CẮT SAI */
+    border: 5px solid #3498db; /* Viền xung quanh */
+    margin-bottom: 20px; 
+    /* CHÚ Ý: nếu bạn đang dùng một lớp DIV bao quanh IMG để tạo viền cầu vồng (như trong ảnh), 
+       thì bạn phải áp dụng ID và class '.rotating' cho lớp DIV đó thay vì thẻ IMG */
 }
 
 /* ĐỊNH NGHĨA HIỆU ỨNG XOAY */
@@ -61,10 +45,22 @@ h1 {
     }
 }
 
-/* CLASS KÍCH HOẠT: Tốc độ 15 giây cho 1 vòng */
+/* CLASS KÍCH HOẠT */
 .rotating {
     animation: rotate 15s linear infinite; 
 }
+
+/* ĐỊNH DẠNG CHUNG (Để căn giữa văn bản) */
+h1 {
+    text-align: center;
+}
+
+.description-box, .date-box {
+    text-align: center;
+    max-width: 90%; 
+    margin: 10px 0; 
+}
+
 
 /* Hiệu ứng bong bóng toàn màn hình */
 .fullscreen-bubbles {
@@ -1676,9 +1672,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Lấy phần tử Audio và Avatar bằng CHÍNH XÁC các ID mới
+    // Lấy phần tử Audio và Avatar bằng CHÍNH XÁC các ID
     const myAudio = document.getElementById('0347432040207016612-audio');
-    const avatar = document.getElementById('0347432040207016612'); // ID của ảnh
+    const avatar = document.getElementById('0347432040207016612'); 
 
     // Kiểm tra để đảm bảo cả hai phần tử tồn tại
     if (myAudio && avatar) {
@@ -1696,7 +1692,7 @@ document.addEventListener('DOMContentLoaded', function() {
         myAudio.addEventListener('pause', stopRotation);
         myAudio.addEventListener('ended', stopRotation);
     } else {
-        console.error("Lỗi: Không tìm thấy phần tử Audio hoặc Avatar. Vui lòng kiểm tra lại các ID trong HTML.");
+        console.error("Lỗi: Không tìm thấy phần tử Audio hoặc Avatar.");
     }
 });
 
