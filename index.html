@@ -15,20 +15,31 @@
 <link rel="stylesheet" href="effects.css">
 <script src="effects.js" defer></script>
     <style>
-/* CHỈ THÊM HIỆU ỨNG - KHÔNG TẠO AVATAR MỚI */
+/* VÒNG TRÒN CẦU VỒNG XOAY QUANH AVATAR */
 .rainbow-effect {
-    border: 5px solid;
+    position: relative;
+    display: inline-block;
     border-radius: 50%;
-    border-image: linear-gradient(45deg, red, orange, yellow, green, blue, purple, pink) 1;
-    animation: rainbow-border 3s linear infinite;
+    padding: 8px;
+    background: conic-gradient(
+        from 0deg,
+        #ff0000, #ff9900, #ffff00, 
+        #33cc33, #3399ff, #9933cc, #ff3399, #ff0000
+    );
+    animation: rotate-rainbow 3s linear infinite;
 }
 
-@keyframes rainbow-border {
-    0% { border-image-source: linear-gradient(45deg, red, orange, yellow, green, blue, purple, pink); }
-    25% { border-image-source: linear-gradient(45deg, orange, yellow, green, blue, purple, pink, red); }
-    50% { border-image-source: linear-gradient(45deg, yellow, green, blue, purple, pink, red, orange); }
-    100% { border-image-source: linear-gradient(45deg, red, orange, yellow, green, blue, purple, pink); }
+@keyframes rotate-rainbow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
+
+/* Đảm bảo avatar hiển thị đúng */
+.profile-img {
+    border-radius: 50%;
+    display: block;
+}
+
 /* Hiệu ứng bong bóng toàn màn hình */
 .fullscreen-bubbles {
     position: fixed;
