@@ -15,51 +15,48 @@
 <link rel="stylesheet" href="effects.css">
 <script src="effects.js" defer></script>
     <style>
-/* CONTAINER CĂN GIỮA MỌI THỨ: đảm bảo đã được dán */
+/* CONTAINER CĂN GIỮA */
 .main-content-wrapper-flex {
     display: flex;
-    flex-direction: column; /* Xếp các phần tử theo chiều dọc */
-    align-items: center;   /* CĂN GIỮA TẤT CẢ các mục theo chiều ngang */
-    padding-top: 20px; /* Thêm khoảng cách trên cùng */
+    flex-direction: column; 
+    align-items: center;   
+    padding-top: 20px; 
 }
 
-/* ĐỊNH DẠNG AVATAR (ID của thẻ IMG) */
-#0347432040207016612 {
+/* 1. ĐỊNH DẠNG VỎ BỌC (DIV CONTAINER) */
+/* ID #0347432040207016612 bây giờ là DIV, nơi áp dụng xoay và kích thước chung */
+#0347432040207016612.avatar-container {
     width: 150px;       
     height: 150px;
-    border-radius: 50%; /* LÀM HÌNH ẢNH TRÒN */
-    object-fit: cover; /* ĐẢM BẢO ẢNH VỪA KHÍT MÀ KHÔNG BỊ MÉO HOẶC CẮT SAI */
-    border: 5px solid #3498db; /* Viền xung quanh */
-    margin-bottom: 20px; 
-    /* CHÚ Ý: nếu bạn đang dùng một lớp DIV bao quanh IMG để tạo viền cầu vồng (như trong ảnh), 
-       thì bạn phải áp dụng ID và class '.rotating' cho lớp DIV đó thay vì thẻ IMG */
+    border-radius: 50%; /* Vòng ngoài tròn */
+    border: 5px solid #3498db; /* Hoặc border cầu vồng của bạn */
+    overflow: hidden; /* QUAN TRỌNG: Cắt ảnh bên trong theo hình tròn */
+    margin-bottom: 20px;
+    /* Đảm bảo hình ảnh được căn giữa trong DIV này nếu cần thiết */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* ĐỊNH NGHĨA HIỆU ỨNG XOAY */
+/* 2. ĐỊNH NGHĨA HIỆU ỨNG XOAY */
 @keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
-/* CLASS KÍCH HOẠT */
+/* CLASS KÍCH HOẠT CHO VỎ BỌC */
 .rotating {
     animation: rotate 15s linear infinite; 
 }
 
-/* ĐỊNH DẠNG CHUNG (Để căn giữa văn bản) */
-h1 {
-    text-align: center;
+/* 3. ĐỊNH DẠNG ẢNH BÊN TRONG (IMG) */
+.avatar-img {
+    width: 100%;  /* Ảnh chiếm hết DIV */
+    height: 100%;
+    object-fit: cover; /* Đảm bảo ảnh không bị bóp méo */
+    /* KHÔNG áp dụng border-radius cho thẻ IMG này nữa */
 }
 
-.description-box, .date-box {
-    text-align: center;
-    max-width: 90%; 
-    margin: 10px 0; 
-}
 
 
 /* Hiệu ứng bong bóng toàn màn hình */
@@ -528,24 +525,16 @@ h1 {
 </head>
 <body>
 <div class="main-content-wrapper-flex">
-    <img id="0347432040207016612" src="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png" alt="avatar">
-
-    <h1>NGUYEN BAC SON</h1>
-    
-    <div class="description-box">
-        Below are my official social media and contact information. You can communicate with me through the boxes below.
+    <div id="0347432040207016612" class="avatar-container"> 
+        <img class="avatar-img" src="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png" alt="Logo">
     </div>
 
-    <div class="date-box">
-        04 02 2007
-    </div>
-    
     <audio id="0347432040207016612-audio" controls>
         <source src="https://nguyenbacson.io.vn/nguyenbacson.mp3" type="audio/mpeg">
-        trình duyệt của bạn không hỗ trợ phần tử audio.
     </audio>
     
-    </div>
+</div>
+
 
 <!-- Chỉ cần copy thẻ này -->
 <span class="counter-number slot-machine">00 00 0000</span>
@@ -1672,29 +1661,24 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Lấy phần tử Audio và Avatar bằng CHÍNH XÁC các ID
+    // Audio ID vẫn giữ nguyên
     const myAudio = document.getElementById('0347432040207016612-audio');
+    // Avatar ID LÀ DIV CONTAINER: nơi áp dụng hiệu ứng xoay
     const avatar = document.getElementById('0347432040207016612'); 
 
-    // Kiểm tra để đảm bảo cả hai phần tử tồn tại
+    // ... (Phần logic play/pause vẫn giữ nguyên)
     if (myAudio && avatar) {
-        
-        // Bật xoay khi nhạc bắt đầu phát
         myAudio.addEventListener('play', function() {
             avatar.classList.add('rotating'); 
         });
-
-        // Tắt xoay khi nhạc bị tạm dừng hoặc kết thúc
         const stopRotation = () => {
             avatar.classList.remove('rotating');
         };
-
         myAudio.addEventListener('pause', stopRotation);
         myAudio.addEventListener('ended', stopRotation);
-    } else {
-        console.error("Lỗi: Không tìm thấy phần tử Audio hoặc Avatar.");
-    }
+    } 
 });
+
 
 </script>
 </body>
