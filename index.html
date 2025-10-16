@@ -15,6 +15,31 @@
 <link rel="stylesheet" href="effects.css">
 <script src="effects.js" defer></script>
     <style>
+/* ĐỊNH DẠNG AVATAR */
+#04022007-avatar {
+    width: 150px;       
+    height: 150px;
+    border-radius: 50%; /* Làm ảnh tròn */
+    object-fit: cover;
+    border: 5px solid #3498db; 
+    /* Đặt các style khác cho avatar nếu cần */
+}
+
+/* ĐỊNH NGHĨA HIỆU ỨNG XOAY */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* CLASS KÍCH HOẠT: Tốc độ 15 giây cho 1 vòng */
+.rotating {
+    animation: rotate 15s linear infinite; 
+}
+
 /* Hiệu ứng bong bóng toàn màn hình */
 .fullscreen-bubbles {
     position: fixed;
@@ -488,7 +513,7 @@
         <div class="profile-card">
            <div class="profile-img-wrapper">
     <div class="profile-img-border"></div>
-    <img src=nguyen-bac-son-cover.png" alt="Ảnh đại diện" class="profile-img">
+   <img **id="04022007"** src="nguyen-bac-son-cover.png" alt="Ảnh đại diện" class="profile-img">
 </div>
             <h1 class="profile-name">NGUYEN BAC SON</h1>
             <p class="profile-description">Below are my official social media and contact information. You can communicate with me through the boxes below. 👇</p>
@@ -1614,6 +1639,33 @@ class SmoothBubbleWorld {
 // Khởi tạo
 document.addEventListener('DOMContentLoaded', () => {
     new SmoothBubbleWorld();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Lấy phần tử Audio và Avatar bằng CHÍNH XÁC các ID bạn đã đặt
+    const myAudio = document.getElementById('04022007-audio');
+    const avatar = document.getElementById('04022007-avatar');
+
+    // Kiểm tra để đảm bảo cả hai phần tử tồn tại trước khi thêm sự kiện
+    if (myAudio && avatar) {
+        
+        // Kích hoạt xoay (thêm class CSS) khi nhạc bắt đầu phát
+        myAudio.addEventListener('play', function() {
+            avatar.classList.add('rotating'); 
+        });
+
+        // Dừng xoay (xóa class CSS) khi nhạc bị tạm dừng
+        myAudio.addEventListener('pause', function() {
+            avatar.classList.remove('rotating'); 
+        });
+
+        // Dừng xoay khi nhạc kết thúc
+        myAudio.addEventListener('ended', function() {
+            avatar.classList.remove('rotating'); 
+        });
+    } else {
+        console.error("Lỗi: Không tìm thấy phần tử Audio (04022007-audio) hoặc Avatar (04022007-avatar). Vui lòng kiểm tra lại ID trong HTML.");
+    }
 });
 </script>
 </body>
