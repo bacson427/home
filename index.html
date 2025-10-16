@@ -25,6 +25,16 @@
     /* Đặt các style khác cho avatar nếu cần */
 }
 
+/* ĐỊNH DẠNG AVATAR */
+#0347432040207016612 {
+    width: 150px;       
+    height: 150px;
+    border-radius: 50%; /* Làm ảnh tròn */
+    object-fit: cover;
+    border: 5px solid #3498db; 
+    /* Đặt các style khác cho avatar nếu cần */
+}
+
 /* ĐỊNH NGHĨA HIỆU ỨNG XOAY */
 @keyframes rotate {
     from {
@@ -505,6 +515,13 @@
     </style>
 </head>
 <body>
+<img id="0347432040207016612" src="nguyen-bac-son-cover.png" alt="Ảnh đại diện" class="profile-img">
+
+<audio id="0347432040207016612-audio" controls>
+  <source src="./audio/Nguyenbacson.mp3" type="audio/mpeg">
+  Trình duyệt của bạn không hỗ trợ audio.
+</audio>
+
 <!-- Thêm container này vào vị trí bạn muốn hiển thị hiệu ứng -->
 <div class="fullscreen-bubbles"></div>
 <!-- Ví dụ sử dụng -->
@@ -1642,31 +1659,30 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Lấy phần tử Audio và Avatar bằng CHÍNH XÁC các ID bạn đã đặt
-    const myAudio = document.getElementById('04022007-audio');
-    const avatar = document.getElementById('04022007-avatar');
+    // Lấy phần tử Audio và Avatar bằng CHÍNH XÁC các ID mới
+    const myAudio = document.getElementById('0347432040207016612-audio');
+    const avatar = document.getElementById('0347432040207016612'); // ID của ảnh
 
-    // Kiểm tra để đảm bảo cả hai phần tử tồn tại trước khi thêm sự kiện
+    // Kiểm tra để đảm bảo cả hai phần tử tồn tại
     if (myAudio && avatar) {
         
-        // Kích hoạt xoay (thêm class CSS) khi nhạc bắt đầu phát
+        // Bật xoay khi nhạc bắt đầu phát
         myAudio.addEventListener('play', function() {
             avatar.classList.add('rotating'); 
         });
 
-        // Dừng xoay (xóa class CSS) khi nhạc bị tạm dừng
-        myAudio.addEventListener('pause', function() {
-            avatar.classList.remove('rotating'); 
-        });
+        // Tắt xoay khi nhạc bị tạm dừng hoặc kết thúc
+        const stopRotation = () => {
+            avatar.classList.remove('rotating');
+        };
 
-        // Dừng xoay khi nhạc kết thúc
-        myAudio.addEventListener('ended', function() {
-            avatar.classList.remove('rotating'); 
-        });
+        myAudio.addEventListener('pause', stopRotation);
+        myAudio.addEventListener('ended', stopRotation);
     } else {
-        console.error("Lỗi: Không tìm thấy phần tử Audio (04022007-audio) hoặc Avatar (04022007-avatar). Vui lòng kiểm tra lại ID trong HTML.");
+        console.error("Lỗi: Không tìm thấy phần tử Audio hoặc Avatar. Vui lòng kiểm tra lại các ID trong HTML.");
     }
 });
+
 </script>
 </body>
 </html>
