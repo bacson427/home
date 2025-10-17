@@ -15,7 +15,6 @@
 <link rel="stylesheet" href="effects.css">
 <script src="effects.js" defer></script>
   <style>
-/* start Nguyen Bac Son Music
 .music-container {
   display: flex;
   justify-content: center;
@@ -80,7 +79,6 @@
     opacity: 0;
   }
 }
-/* the end Nguyen Bac Son Music 
 
 /* HIỆU ỨNG CẦU VỒNG CHO AVATAR */
 .rainbow-effect {
@@ -581,17 +579,15 @@
 <span class="counter-number slot-machine">00 00 0000</span>
         </div>
 
-  
-<!-- Start Nguyen Bac Son Music -->
+ <!-- THAY THẾ TOÀN BỘ PHẦN MUSIC HIỆN TẠI -->
 <div class="music-container">
   <div class="music-section">
-    <h4>Nguyễn Bắc Sơn Music 🌤️</h4>
+    <h4>🎧Nguyễn Bắc Sơn Music🎶</h4>
     <audio controls class="music-player">
       <source src="https://nguyenbacson.io.vn/nguyenbacson.mp3" type="audio/mpeg">
     </audio>
   </div>
 </div>
-<!-- The End Nguyen Bac Son Music -->
 
             <!-- Links Container -->
     <div class="links-container">
@@ -1714,8 +1710,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new SmoothBubbleWorld();
 });
 
-// Start Nguyen Bac Son Music 
-
+<script>
 document.addEventListener('DOMContentLoaded', function() {
   const audio = document.querySelector('.music-player');
   const musicSection = document.querySelector('.music-section');
@@ -1724,56 +1719,52 @@ document.addEventListener('DOMContentLoaded', function() {
   let emojiCount = 0;
   const MAX_EMOJIS = 4;
 
-  if (audio && musicSection) {
-    audio.addEventListener('play', function() {
-      emojiInterval = setInterval(() => {
-        if (audio.paused || emojiCount >= MAX_EMOJIS) return;
-        createFloatingEmoji();
-      }, 2500);
-    });
+  audio.addEventListener('play', function() {
+    emojiInterval = setInterval(() => {
+      if (audio.paused || emojiCount >= MAX_EMOJIS) return;
+      createFloatingEmoji();
+    }, 2500);
+  });
 
-    audio.addEventListener('pause', function() {
-      if (emojiInterval) clearInterval(emojiInterval);
-      emojiCount = 0;
-    });
+  audio.addEventListener('pause', function() {
+    clearInterval(emojiInterval);
+    emojiCount = 0;
+  });
 
-    function createFloatingEmoji() {
-      emojiCount++;
+  function createFloatingEmoji() {
+    emojiCount++;
 
-      const emoji = document.createElement('div');
-      emoji.className = 'music-emoji';
-      emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    const emoji = document.createElement('div');
+    emoji.className = 'music-emoji';
+    emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
 
-      const startX = Math.random() * (musicSection.offsetWidth - 30);
-      emoji.style.left = startX + 'px';
+    const startX = Math.random() * (musicSection.offsetWidth - 30);
+    emoji.style.left = startX + 'px';
 
-      const size = 18 + Math.random() * 15;
-      emoji.style.fontSize = size + 'px';
+    const size = 18 + Math.random() * 15;
+    emoji.style.fontSize = size + 'px';
 
-      const duration = 2.5 + Math.random() * 3;
-      emoji.style.animationDuration = duration + 's';
+    const duration = 2.5 + Math.random() * 3;
+    emoji.style.animationDuration = duration + 's';
 
-      const endY = -50 - Math.random() * 80;
-      const endX = -20 + Math.random() * 40;
-      emoji.style.setProperty('--end-y', endY + 'px');
-      emoji.style.setProperty('--end-x', endX + 'px');
+    const endY = -50 - Math.random() * 80;
+    const endX = -20 + Math.random() * 40;
+    emoji.style.setProperty('--end-y', endY + 'px');
+    emoji.style.setProperty('--end-x', endX + 'px');
 
-      emoji.style.opacity = 0.7 + Math.random() * 0.3;
-      emoji.style.animationName = 'floatUp';
+    emoji.style.opacity = 0.7 + Math.random() * 0.3;
+    emoji.style.animationName = 'floatUp';
 
-      musicSection.appendChild(emoji);
+    musicSection.appendChild(emoji);
 
-      setTimeout(() => {
-        if (emoji.parentNode) {
-          emoji.parentNode.removeChild(emoji);
-          emojiCount--;
-        }
-      }, duration * 1000);
-    }
+    setTimeout(() => {
+      if (emoji.parentNode) {
+        emoji.parentNode.removeChild(emoji);
+        emojiCount--;
+      }
+    }, duration * 1000);
   }
 });
-
-// The End Nguyen Bac Son Music 
 </script>
 </body>
 </html>
