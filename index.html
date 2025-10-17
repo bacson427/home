@@ -15,13 +15,19 @@
 <link rel="stylesheet" href="effects.css">
 <script src="effects.js" defer></script>
   <style>
-.music-section {
+.music-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 20px 0;
+}
+
+.music-section {
   padding: 20px;
   border-radius: 15px;
   background: #fff;
   text-align: center;
-  max-width: 300px;
+  width: 300px;
   position: relative;
   z-index: 1;
   overflow: hidden;
@@ -73,7 +79,6 @@
     opacity: 0;
   }
 }
-
 
 /* HIỆU ỨNG CẦU VỒNG CHO AVATAR */
 .rainbow-effect {
@@ -574,11 +579,15 @@
 <span class="counter-number slot-machine">00 00 0000</span>
         </div>
 
+  
+<!-- THAY THẾ TOÀN BỘ PHẦN MUSIC HIỆN TẠI -->
+<div class="music-container">
   <div class="music-section">
-  <h4>🎵 Nguyễn Bắc Sơn Music 🎹</h4>
-  <audio controls class="music-player">
-    <source src="https://nguyenbacson.io.vn/nguyenbacson.mp3" type="audio/mpeg">
-  </audio>
+    <h4>🎵Nguyễn Bắc Sơn Music🎹</h4>
+    <audio controls class="music-player">
+      <source src="https://nguyenbacson.io.vn/nguyenbacson.mp3" type="audio/mpeg">
+    </audio>
+  </div>
 </div>
             <!-- Links Container -->
     <div class="links-container">
@@ -1701,19 +1710,20 @@ document.addEventListener('DOMContentLoaded', () => {
     new SmoothBubbleWorld();
 });
 
+
 document.addEventListener('DOMContentLoaded', function() {
   const audio = document.querySelector('.music-player');
   const musicSection = document.querySelector('.music-section');
   const emojis = ['🎤', '🎧', '🎵', '🎶'];
   let emojiInterval = null;
   let emojiCount = 0;
-  const MAX_EMOJIS = 4; // Giới hạn để không lag
+  const MAX_EMOJIS = 4;
 
   audio.addEventListener('play', function() {
     emojiInterval = setInterval(() => {
       if (audio.paused || emojiCount >= MAX_EMOJIS) return;
       createFloatingEmoji();
-    }, 2500); // Khoảng cách tạo emoji
+    }, 2500);
   });
 
   audio.addEventListener('pause', function() {
@@ -1728,32 +1738,25 @@ document.addEventListener('DOMContentLoaded', function() {
     emoji.className = 'music-emoji';
     emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
 
-    // RANDOM VỊ TRÍ BẮT ĐẦU
     const startX = Math.random() * (musicSection.offsetWidth - 30);
     emoji.style.left = startX + 'px';
 
-    // RANDOM KÍCH THƯỚC
-    const size = 18 + Math.random() * 15; // 18-33px
+    const size = 18 + Math.random() * 15;
     emoji.style.fontSize = size + 'px';
 
-    // RANDOM THỜI GIAN BAY
-    const duration = 2.5 + Math.random() * 3; // 2.5-5.5 giây
+    const duration = 2.5 + Math.random() * 3;
     emoji.style.animationDuration = duration + 's';
 
-    // RANDOM HƯỚNG BAY
-    const endY = -50 - Math.random() * 80; // Bay lên -50 đến -130px
-    const endX = -20 + Math.random() * 40; // Bay ngang -20 đến +20px
+    const endY = -50 - Math.random() * 80;
+    const endX = -20 + Math.random() * 40;
     emoji.style.setProperty('--end-y', endY + 'px');
     emoji.style.setProperty('--end-x', endX + 'px');
 
-    // RANDOM ĐỘ MỜ
-    emoji.style.opacity = 0.7 + Math.random() * 0.3; // 0.7-1.0
-
+    emoji.style.opacity = 0.7 + Math.random() * 0.3;
     emoji.style.animationName = 'floatUp';
 
     musicSection.appendChild(emoji);
 
-    // Xóa emoji sau khi bay xong
     setTimeout(() => {
       if (emoji.parentNode) {
         emoji.parentNode.removeChild(emoji);
@@ -1762,7 +1765,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, duration * 1000);
   }
 });
-
 </script>
 </body>
 </html>
