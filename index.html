@@ -21,6 +21,73 @@
 <link rel="stylesheet" href="effects.css">
 <script src="effects.js" defer></script>
   <style>
+.consent-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #2c3e50;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+
+.consent-buttons {
+    margin-top: 10px;
+}
+
+.btn-accept {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    margin: 0 5px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-decline {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    margin: 0 5px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.ip-display {
+    font-size: 16px;
+    color: #666;
+    margin: 15px 0;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #3498db;
+}
+
+.privacy-notice {
+    font-size: 12px;
+    color: #7f8c8d;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.privacy-notice a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.privacy-notice a:hover {
+    text-decoration: underline;
+}
+
+.hidden {
+    display: none;
+}
+
 .music-container {
   display: flex;
   justify-content: center;
@@ -594,6 +661,19 @@
     </audio>
   </div>
 </div>
+<div id="ip-consent-banner" class="consent-banner">
+    <p>Chúng tôi sử dụng địa chỉ IP để bảo mật và phân tích lưu lượng truy cập.</p>
+    <div class="consent-buttons">
+        <button onclick="acceptConsent()" class="btn-accept">Đồng ý</button>
+        <button onclick="declineConsent()" class="btn-decline">Từ chối</button>
+    </div>
+</div>
+
+<div id="ip-display" class="ip-display"></div>
+
+<p class="privacy-notice">
+    <a href="/privacy-policy.html" target="_blank">Xem chính sách bảo mật</a>
+</p>
 
             <!-- Links Container -->
     <div class="links-container">
@@ -1771,6 +1851,54 @@ document.addEventListener('DOMContentLoaded', function() {
     }, duration * 1000);
   }
 });
+// Kiểm tra consent
+document.addEventListener('DOMContentLoaded', function() {
+    const consent = localStorage.getItem('ip-consent');
+    const banner = document.getElementById('ip-consent-banner');
+    
+    if (consent === 'accepted') {
+        banner.classList.add('hidden');
+        getIPAddress();
+    } else if (consent === 'declined') {
+        banner.classList.add('hidden');
+        showDeclinedMessage();
+    }
+    // Nếu chưa có consent, hiển thị banner
+});
+
+function acceptConsent() {
+    localStorage.setItem('ip-consent', 'accepted');
+    document.getElementById('ip-consent-banner').classList.add('hidden');
+    getIPAddress();
+}
+
+function declineConsent() {
+    localStorage.setItem('ip-consent', 'declined');
+    document.getElementById('ip-consent-banner').classList.add('hidden');
+    showDeclinedMessage();
+}
+
+function getIPAddress() {
+    fetch('/cdn-cgi/trace')
+        .then(response => response.text())
+        .then(data => {
+            const lines = data.split('\n');
+            const ipLine = lines.find(line => line.startsWith('ip='));
+            const ip = ipLine ? ipLine.split('=')[1] : 'Không lấy được IP';
+            
+            document.getElementById('ip-display').textContent = 
+                'Địa chỉ IP của bạn: ' + ip + ' (Thu thập cho mục đích bảo mật)';
+        })
+        .catch(error => {
+            document.getElementById('ip-display').textContent = 
+                'Không thể lấy địa chỉ IP';
+        });
+}
+
+function showDeclinedMessage() {
+    document.getElementById('ip-display').textContent = 
+        'Bạn đã từ chối thu thập địa chỉ IP. Tính năng bảo mật có thể bị hạn chế.';
+}
 </script>
 </body>
 </html>
