@@ -5,18 +5,6 @@
    <meta name="viewport" content="width=500, initial-scale=0.9"> 
 <meta property="og:title" content="Nguyễn Bắc Sơn" />
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GDNH0CRN5V"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-GDNH0CRN5V');
-  </script>
-  
-  <link rel="stylesheet" href="style.css">
-  <script src="my_script.js"></script> 
-
 <meta property="og:description" content="Welcome To Website Nguyen Bac Son" />
 
     <!-- Meta Tags for Facebook & Zalo -->
@@ -1863,54 +1851,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, duration * 1000);
   }
 });
-// Kiểm tra consent
-document.addEventListener('DOMContentLoaded', function() {
-    const consent = localStorage.getItem('ip-consent');
-    const banner = document.getElementById('ip-consent-banner');
-    
-    if (consent === 'accepted') {
-        banner.classList.add('hidden');
-        getIPAddress();
-    } else if (consent === 'declined') {
-        banner.classList.add('hidden');
-        showDeclinedMessage();
-    }
-    // Nếu chưa có consent, hiển thị banner
-});
-
-function acceptConsent() {
-    localStorage.setItem('ip-consent', 'accepted');
-    document.getElementById('ip-consent-banner').classList.add('hidden');
-    getIPAddress();
-}
-
-function declineConsent() {
-    localStorage.setItem('ip-consent', 'declined');
-    document.getElementById('ip-consent-banner').classList.add('hidden');
-    showDeclinedMessage();
-}
-
-function getIPAddress() {
-    fetch('/cdn-cgi/trace')
-        .then(response => response.text())
-        .then(data => {
-            const lines = data.split('\n');
-            const ipLine = lines.find(line => line.startsWith('ip='));
-            const ip = ipLine ? ipLine.split('=')[1] : 'Không lấy được IP';
-            
-            document.getElementById('ip-display').textContent = 
-                'IP của bạn: ' + ip + ' (Security)';
-        })
-        .catch(error => {
-            document.getElementById('ip-display').textContent = 
-                'Không thể lấy địa chỉ IP';
-        });
-}
-
-function showDeclinedMessage() {
-    document.getElementById('ip-display').textContent = 
-        'Bạn đã từ chối thu thập IP. Tính năng bảo mật có thể bị hạn chế.';
-}
+ 
 </script>
 </body>
 </html>
