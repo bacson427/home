@@ -1,0 +1,33 @@
+name: Auto Obfuscate JavaScript
+
+on: 
+  push:
+    branches: [ main ]
+
+jobs:
+  obfuscate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Install obfuscator
+      run: npm install -g javascript-obfuscator
+      
+    - name: Obfuscate JS files
+      run: |
+        find . -name "*.js" -not -path "./node_modules/*" -exec javascript-obfuscator {} --output {} --compact true --control-flow-flattening true \;
+        
+    - name: Commit obfuscated files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -m "Auto obfuscate JavaScript" || exit 0
+        git push
