@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-    <title>URL Shortener - NguyenBacSon</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener - NguyenBacSon.io.vn</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
-            font-family: 'Segoe UI', Arial; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -45,6 +47,7 @@
             border-radius: 8px;
             font-size: 16px;
             transition: border-color 0.3s;
+            width: 100%;
         }
         input[type="url"]:focus, input[type="text"]:focus, select:focus {
             outline: none;
@@ -59,6 +62,7 @@
             font-size: 16px;
             cursor: pointer;
             transition: transform 0.2s;
+            width: 100%;
         }
         button:hover {
             transform: translateY(-2px);
@@ -76,6 +80,7 @@
             word-break: break-all;
             font-size: 18px;
             margin-bottom: 10px;
+            display: block;
         }
         .expiry-info {
             color: #666;
@@ -109,6 +114,13 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        .slug-preview {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .available { color: #28a745; }
+        .taken { color: #dc3545; }
         
         /* QR Code Styles */
         .qr-section {
@@ -132,32 +144,54 @@
             display: flex;
             gap: 10px;
             justify-content: center;
+            flex-wrap: wrap;
         }
         .btn-secondary {
             background: #6c757d;
             padding: 10px 20px;
             font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
         }
         .btn-success {
             background: #28a745;
             padding: 10px 20px;
             font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
         }
         .loading {
             color: #666;
             font-style: italic;
         }
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
     </style>
-    
-    <!-- Thêm thư viện QR Code -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>🔗 Rút gọn URL + QR Code</h1>
         <div class="domain">nguyenbacson.io.vn</div>
         
-        <form class="url-form" action="shorten.php" method="POST" id="urlForm">
+        <form class="url-form" id="urlForm">
             <!-- URL gốc -->
             <div class="form-group">
                 <label for="long_url">URL cần rút gọn:</label>
@@ -194,6 +228,9 @@
             
             <button type="submit">Rút gọn ngay!</button>
         </form>
+        
+        <!-- Thông báo lỗi -->
+        <div class="error" id="errorMessage"></div>
         
         <!-- Kết quả -->
         <div class="result" id="result">
@@ -233,29 +270,58 @@
             }
         });
 
+        // Hiển thị thông báo lỗi
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
         // Xử lý form
         document.getElementById('urlForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
-            const response = await fetch('shorten.php', {
-                method: 'POST',
-                body: formData
-            });
+            const button = this.querySelector('button[type="submit"]');
+            const originalText = button.textContent;
             
-            const result = await response.json();
+            // Hiệu ứng loading
+            button.textContent = 'Đang xử lý...';
+            button.disabled = true;
             
-            if (result.success) {
-                // Hiển thị URL rút gọn
-                document.getElementById('shortUrl').href = result.short_url;
-                document.getElementById('shortUrl').textContent = result.short_url;
-                document.getElementById('expiryInfo').textContent = result.expiry_text;
-                document.getElementById('result').style.display = 'block';
+            try {
+                const response = await fetch('#', {
+                    method: 'POST',
+                    body: formData
+                });
                 
-                // Tạo QR Code
-                generateQRCode(result.short_url);
-            } else {
-                alert('Lỗi: ' + result.error);
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Hiển thị URL rút gọn
+                    document.getElementById('shortUrl').href = result.short_url;
+                    document.getElementById('shortUrl').textContent = result.short_url;
+                    document.getElementById('expiryInfo').textContent = result.expiry_text;
+                    document.getElementById('result').style.display = 'block';
+                    
+                    // Tạo QR Code
+                    generateQRCode(result.short_url);
+                    
+                    // Reset form
+                    this.reset();
+                    document.getElementById('customSlugContainer').style.display = 'none';
+                    
+                } else {
+                    showError('Lỗi: ' + result.error);
+                }
+            } catch (error) {
+                showError('Lỗi kết nối: ' + error.message);
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
             }
         });
 
@@ -299,7 +365,7 @@
             const canvas = document.querySelector('#qrcode canvas');
             if (canvas && navigator.share) {
                 canvas.toBlob(function(blob) {
-                    const file = new File([blob], 'qrcode.png', { type: 'image/png' });
+                    const file = new File([blob], 'qrcode-nguyenbacson.png', { type: 'image/png' });
                     navigator.share({
                         files: [file],
                         title: 'QR Code - NguyenBacSon',
@@ -312,5 +378,111 @@
             }
         }
     </script>
+
+    <?php
+    // PHP Xử lý form
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Hàm kiểm tra slug có tồn tại chưa
+        function slug_exists($slug) {
+            if (!file_exists('urls.json')) return false;
+            
+            $urls = file('urls.json', FILE_IGNORE_NEW_LINES);
+            foreach ($urls as $line) {
+                $data = json_decode($line, true);
+                if (isset($data[$slug])) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Hàm tính thời gian hết hạn
+        function calculate_expiry($hours) {
+            if ($hours === 'forever') {
+                return null;
+            }
+            return time() + ($hours * 3600);
+        }
+
+        // Hàm định dạng thời gian hiển thị
+        function format_expiry_text($expiry_time) {
+            if ($expiry_time === null) {
+                return '⏳ Không bao giờ hết hạn';
+            }
+            $formatted_date = date('d/m/Y H:i', $expiry_time);
+            return '⏰ Hết hạn: ' . $formatted_date;
+        }
+
+        header('Content-Type: application/json');
+        
+        $long_url = filter_var($_POST['long_url'], FILTER_VALIDATE_URL);
+        $expiry_hours = $_POST['expiry_time'];
+        $use_custom_slug = isset($_POST['use_custom_slug']);
+        $custom_slug = $use_custom_slug ? $_POST['custom_slug'] : '';
+        
+        // Validation
+        if (!$long_url) {
+            echo json_encode(['success' => false, 'error' => 'URL không hợp lệ']);
+            exit;
+        }
+        
+        if (empty($expiry_hours)) {
+            echo json_encode(['success' => false, 'error' => 'Vui lòng chọn thời gian hết hạn']);
+            exit;
+        }
+        
+        // Xử lý custom slug
+        if ($use_custom_slug) {
+            if (empty($custom_slug)) {
+                echo json_encode(['success' => false, 'error' => 'Vui lòng nhập ký tự tùy chọn']);
+                exit;
+            }
+            
+            // Kiểm tra ký tự hợp lệ
+            if (!preg_match('/^[a-zA-Z0-9\-_]+$/', $custom_slug)) {
+                echo json_encode(['success' => false, 'error' => 'Chỉ được dùng chữ cái, số, gạch ngang và gạch dưới']);
+                exit;
+            }
+            
+            // Kiểm tra slug đã tồn tại
+            if (slug_exists($custom_slug)) {
+                echo json_encode(['success' => false, 'error' => 'Ký tự này đã có người sử dụng']);
+                exit;
+            }
+            
+            $code = $custom_slug;
+        } else {
+            // Tạo mã ngẫu nhiên
+            do {
+                $code = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 6);
+            } while (slug_exists($code));
+        }
+        
+        // Tính thời gian hết hạn
+        $expiry_time = calculate_expiry($expiry_hours);
+        
+        // Dữ liệu cần lưu
+        $url_data = [
+            'long_url' => $long_url,
+            'created_at' => time(),
+            'expiry_time' => $expiry_time,
+            'clicks' => 0
+        ];
+        
+        // Lưu vào file
+        $data_line = json_encode([$code => $url_data]) . "\n";
+        file_put_contents('urls.json', $data_line, FILE_APPEND);
+        
+        // Trả về kết quả
+        $short_url = "https://nguyenbacson.io.vn/{$code}";
+        
+        echo json_encode([
+            'success' => true,
+            'short_url' => $short_url,
+            'expiry_text' => format_expiry_text($expiry_time)
+        ]);
+        exit;
+    }
+    ?>
 </body>
 </html>
