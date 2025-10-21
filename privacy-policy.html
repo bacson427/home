@@ -5,14 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chính Sách Bảo Mật - nguyenbacson.io.vn</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             background-color: black;
             color: #00FF00;
             font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 14px;
+            font-size: 16px;
+            line-height: 1.2;
             margin: 0;
             padding: 20px;
-            overflow: hidden;
+            overflow: auto;
             position: relative;
         }
 
@@ -22,17 +29,27 @@
             z-index: 2;
         }
 
+        #output div {
+            height: 19px;
+            min-height: 19px;
+            line-height: 19px;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
         .red-text {
             color: #FF0000;
+            font-weight: bold;
         }
 
-        .blink {
-            animation: blink 1s infinite;
+        .green-text {
+            color: #00FF00;
         }
 
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
+        .python-code {
+            color: #00FF00;
+            opacity: 0.9;
         }
 
         .matrix-container {
@@ -43,41 +60,38 @@
             height: 100%;
             pointer-events: none;
             z-index: 1;
+            opacity: 0.2;
         }
 
         .matrix-column {
             display: inline-block;
             width: 1em;
-            font-size: 16px;
+            font-size: 14px;
             text-align: center;
             color: #00FF00;
-            text-shadow: 0 0 5px #00FF00;
-            animation: fade 1.5s infinite linear;
-            opacity: 0.7;
+            animation: matrixFall 15s infinite linear;
+            opacity: 0;
         }
 
-        @keyframes fade {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-
-        /* Ẩn nội dung chính sách bảo mật gốc */
-        .policy-content {
-            display: none;
+        @keyframes matrixFall {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            5% {
+                opacity: 1;
+            }
+            95% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Nội dung chính sách bảo mật gốc (bị ẩn) -->
-    <div class="policy-content">
-        <h1>CHÍNH SÁCH BẢO MẬT</h1>
-        <div class="last-updated">
-            <strong>Lần cập nhật cuối cùng:</strong> 00:37, ngày 20 tháng 10 năm 2025
-        </div>
-        <!-- ... (giữ nguyên toàn bộ nội dung chính sách bảo mật của bạn) ... -->
-    </div>
-
     <!-- Hiệu ứng hacker -->
     <div id="output"></div>
     <div class="matrix-container" id="matrixContainer"></div>
@@ -87,25 +101,24 @@
             const output = document.getElementById('output');
             const matrixContainer = document.getElementById('matrixContainer');
             
-            // Tạo hiệu ứng Matrix background
+            // Tạo hiệu ứng Matrix background nhẹ
             function createMatrixEffect() {
-                const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
-                const columns = Math.floor(window.innerWidth / 16);
+                const chars = "01010101010101010101010101010101";
+                const columns = Math.floor(window.innerWidth / 14);
                 
                 for (let i = 0; i < columns; i++) {
                     const column = document.createElement('div');
                     column.className = 'matrix-column';
-                    column.style.left = (i * 16) + 'px';
-                    column.style.animationDelay = (Math.random() * 5) + 's';
-                    matrixContainer.appendChild(column);
+                    column.style.left = (i * 14) + 'px';
+                    column.style.animationDelay = (Math.random() * 15) + 's';
+                    column.style.animationDuration = (Math.random() * 10 + 10) + 's';
                     
-                    // Thêm ký tự ngẫu nhiên
                     let content = '';
-                    const rows = Math.floor(window.innerHeight / 16);
-                    for (let j = 0; j < rows; j++) {
-                        content += chars[Math.floor(Math.random() * chars.length)] + '\n';
+                    for (let j = 0; j < 1; j++) {
+                        content += chars[Math.floor(Math.random() * chars.length)];
                     }
                     column.textContent = content;
+                    matrixContainer.appendChild(column);
                 }
             }
 
@@ -147,7 +160,9 @@
                 "  Tài liệu công khai liên quan đến đăng ký tên miền",
                 " ",
                 "> TRẠNG THÁI: ĐÃ TẢI XONG",
-                "> BẢO MẬT: ACTIVATED"
+                "> BẢO MẬT: ACTIVATED",
+                " ",
+                " "
             ];
 
             let index = 0;
@@ -157,75 +172,92 @@
                     const line = texts[index];
                     const p = document.createElement('div');
                     
-                    // Chữ màu đỏ đứng im cho các dòng đặc biệt
                     if (line.includes("ACTIVATED") || line.includes("ĐANG TẢI") || line.includes("TRẠNG THÁI")) {
                         p.className = 'red-text';
+                        output.appendChild(p);
+                        // Chữ đỏ gõ từ từ
+                        typeLineSlow(p, line, 0);
+                    } else {
+                        p.className = 'green-text';
+                        output.appendChild(p);
+                        // Chữ xanh gõ nhanh hơn
+                        typeLineFast(p, line, 0);
                     }
-                    
-                    output.appendChild(p);
-                    typeLine(p, line, 0);
                     index++;
                 } else {
-                    // Khi hoàn thành, chuyển sang Python code
-                    setTimeout(startPythonCode, 1000);
+                    // Khi hoàn thành, chuyển sang Python code cực nhanh và vô hạn
+                    startPythonCode();
                 }
             }
             
-            function typeLine(element, text, charIndex) {
+            function typeLineSlow(element, text, charIndex) {
                 if (charIndex < text.length) {
                     element.textContent += text.charAt(charIndex);
-                    setTimeout(() => typeLine(element, text, charIndex + 1), 50);
+                    setTimeout(() => typeLineSlow(element, text, charIndex + 1), 80); // Chậm
                 } else {
-                    setTimeout(typeText, 200);
+                    setTimeout(typeText, 100);
+                }
+            }
+            
+            function typeLineFast(element, text, charIndex) {
+                if (charIndex < text.length) {
+                    element.textContent += text.charAt(charIndex);
+                    setTimeout(() => typeLineFast(element, text, charIndex + 1), 40); // Nhanh
+                } else {
+                    setTimeout(typeText, 50);
                 }
             }
             
             function startPythonCode() {
                 const pythonContainer = document.createElement('div');
+                pythonContainer.className = 'python-code';
                 pythonContainer.id = 'python-code';
                 output.appendChild(pythonContainer);
-                generatePythonCode();
+                
+                // Tạo dòng trống để phân cách
+                const spacer = document.createElement('div');
+                spacer.innerHTML = '&nbsp;';
+                output.appendChild(spacer);
+                
+                // Bắt đầu tạo Python code cực nhanh và vô hạn
+                generatePythonCodeInfinite();
             }
             
-            function generatePythonCode() {
-                const pythonChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789[]{}():;=+-*/<>!&|^~%#@.,\"'\\_ \n";
+            function generatePythonCodeInfinite() {
+                const pythonChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789[]{}():;=+-*/<>!&|^~%#@.,\"'\\_ ";
                 const pythonKeywords = ["def ", "class ", "import ", "from ", "if ", "else ", "for ", "while ", "return ", "print(", "self.", "try:", "except:", "with ", "as "];
-                
                 let lineCount = 0;
-                const maxLines = 30;
                 
                 function addPythonLine() {
-                    if (lineCount >= maxLines) return;
-                    
                     const lineElement = document.createElement('div');
                     document.getElementById('python-code').appendChild(lineElement);
                     
-                    let line = "";
-                    const lineLength = Math.floor(Math.random() * 50) + 20;
+                    let line = ">>> ";
+                    const lineLength = Math.floor(Math.random() * 70) + 30;
                     
                     // Thỉnh thoảng thêm keyword Python
-                    if (Math.random() < 0.3) {
+                    if (Math.random() < 0.5) {
                         line += pythonKeywords[Math.floor(Math.random() * pythonKeywords.length)];
                     }
                     
                     // Thêm ký tự ngẫu nhiên
-                    for (let i = 0; i < lineLength; i++) {
+                    const remainingLength = lineLength - line.length;
+                    for (let i = 0; i < remainingLength; i++) {
                         line += pythonChars[Math.floor(Math.random() * pythonChars.length)];
                     }
                     
-                    typePythonLine(lineElement, line, 0);
+                    // Hiển thị ngay lập tức (rất nhanh)
+                    lineElement.textContent = line;
                     lineCount++;
                     
-                    if (lineCount < maxLines) {
-                        setTimeout(addPythonLine, Math.random() * 200 + 100);
+                    // Giới hạn số dòng Python, xóa dòng cũ
+                    const pythonCode = document.getElementById('python-code');
+                    if (pythonCode.children.length > 25) {
+                        pythonCode.removeChild(pythonCode.firstChild);
                     }
-                }
-                
-                function typePythonLine(element, text, charIndex) {
-                    if (charIndex < text.length) {
-                        element.textContent += text.charAt(charIndex);
-                        setTimeout(() => typePythonLine(element, text, charIndex + 1), 30);
-                    }
+                    
+                    // Tốc độ cực nhanh - tiếp tục vô hạn
+                    setTimeout(addPythonLine, 80); // Rất nhanh
                 }
                 
                 addPythonLine();
