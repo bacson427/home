@@ -147,6 +147,48 @@
 </body>
 </html>
 <style>
+.comment-stats-detailed {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.comment-stats-detailed h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stat-category {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: white;
+    border-radius: 6px;
+    border-left: 4px solid #3498db;
+}
+
+.category-name {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.category-count {
+    color: #1a6b3a;
+    font-weight: bold;
+}
+
+.total-filtered {
+    background: #eaf7ff;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    text-align: center;
+}
   .footer {
     background-color: #f8f9fa;
     padding: 15px 20px;
@@ -497,8 +539,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const exportComments = document.getElementById('exportComments');
     const deleteAllComments = document.getElementById('deleteAllComments');
     
-    // Mật khẩu quản trị (trong thực tế nên lưu ở server)
-    const ADMIN_PASSWORD = "admin123";
+    // Cơ chế đánh lừa mật khẩu - Mật khẩu thực là @Son2007
+    function getRealPassword() {
+        // Phân tán mật khẩu thành nhiều phần
+        const part1 = String.fromCharCode(64); // @
+        const part2 = "Son";
+        const part3 = "20";
+        const part4 = "07";
+        
+        // Tạo nhiễu
+        const fake1 = "Admin123";
+        const fake2 = "password";
+        const fake3 = "123456";
+        
+        // Ghép các phần lại
+        return part1 + part2 + part3 + part4;
+    }
+    
+    function validatePassword(input) {
+        const realPassword = getRealPassword();
+        return input === realPassword;
+    }
     
     // Tải các ý kiến từ localStorage khi trang được tải
     loadComments();
@@ -528,9 +589,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Lưu ý kiến mới
         saveComment(newComment);
         
-        // Hiển thị ý kiến mới
-        displayComment(newComment);
-        
         // Reset form
         commentForm.reset();
         
@@ -549,7 +607,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Xử lý đăng nhập quản trị
     adminLogin.addEventListener('click', function() {
         const password = document.getElementById('adminPassword').value;
-        if (password === ADMIN_PASSWORD) {
+        if (validatePassword(password)) {
             adminPanel.style.display = 'block';
             document.querySelector('.password-protected').style.display = 'none';
             updateAdminStats();
@@ -611,8 +669,43 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Hiển thị các ý kiến theo bộ lọc và sắp xếp
-        filterAndSortComments();
+        // Hiển thị thống kê thay vì danh sách ý kiến
+        displayCommentStats();
+    }
+    
+    // Hàm hiển thị thống kê ý kiến (thay vì hiển thị chi tiết)
+    function displayCommentStats() {
+        const comments = JSON.parse(localStorage.getItem('userComments')) || [];
+        
+        if (comments.length === 0) {
+            commentsList.innerHTML = '<div class="no-comments"><i class="fas fa-comment-slash"></i><br>Chưa có ý kiến nào. Hãy là người đầu tiên chia sẻ!</div>';
+            return;
+        }
+        
+        // Thống kê theo danh mục
+        const statsByCategory = {};
+        comments.forEach(comment => {
+            if (!statsByCategory[comment.category]) {
+                statsByCategory[comment.category] = 0;
+            }
+            statsByCategory[comment.category]++;
+        });
+        
+        // Tạo HTML hiển thị thống kê
+        let statsHTML = '<div class="comment-stats-detailed">';
+        statsHTML += '<h3><i class="fas fa-chart-bar"></i> Thống kê ý kiến</h3>';
+        
+        for (const category in statsByCategory) {
+            statsHTML += `
+                <div class="stat-category">
+                    <span class="category-name">${getCategoryName(category)}</span>
+                    <span class="category-count">${statsByCategory[category]} ý kiến</span>
+                </div>
+            `;
+        }
+        
+        statsHTML += '</div>';
+        commentsList.innerHTML = statsHTML;
     }
     
     // Hàm lọc và sắp xếp ý kiến
@@ -636,55 +729,45 @@ document.addEventListener('DOMContentLoaded', function() {
             );
         }
         
-        // Sắp xếp
-        if (sortOrder === 'newest') {
-            filteredComments.sort((a, b) => b.dateObj - a.dateObj);
-        } else {
-            filteredComments.sort((a, b) => a.dateObj - b.dateObj);
-        }
-        
-        // Hiển thị kết quả
-        displayComments(filteredComments);
+        // Hiển thị thống kê sau khi lọc
+        displayFilteredStats(filteredComments);
     }
     
-    // Hàm hiển thị danh sách ý kiến
-    function displayComments(comments) {
+    // Hàm hiển thị thống kê sau khi lọc
+    function displayFilteredStats(comments) {
         if (comments.length === 0) {
             commentsList.innerHTML = '<div class="no-comments"><i class="fas fa-search"></i><br>Không tìm thấy ý kiến nào phù hợp với bộ lọc.</div>';
             return;
         }
         
-        commentsList.innerHTML = '';
+        // Thống kê theo danh mục
+        const statsByCategory = {};
         comments.forEach(comment => {
-            displayComment(comment);
+            if (!statsByCategory[comment.category]) {
+                statsByCategory[comment.category] = 0;
+            }
+            statsByCategory[comment.category]++;
         });
-    }
-    
-    // Hàm hiển thị một ý kiến
-    function displayComment(comment) {
-        // Xóa thông báo "chưa có ý kiến" nếu có
-        const noComments = commentsList.querySelector('.no-comments');
-        if (noComments) {
-            noComments.remove();
+        
+        // Tạo HTML hiển thị thống kê
+        let statsHTML = '<div class="comment-stats-detailed">';
+        statsHTML += '<h3><i class="fas fa-chart-bar"></i> Thống kê ý kiến</h3>';
+        statsHTML += `<p class="total-filtered">Tìm thấy <strong>${comments.length}</strong> ý kiến phù hợp</p>`;
+        
+        for (const category in statsByCategory) {
+            statsHTML += `
+                <div class="stat-category">
+                    <span class="category-name">${getCategoryName(category)}</span>
+                    <span class="category-count">${statsByCategory[category]} ý kiến</span>
+                </div>
+            `;
         }
         
-        // Tạo phần tử ý kiến mới
-        const commentElement = document.createElement('div');
-        commentElement.className = 'comment';
-        commentElement.innerHTML = `
-            <div class="comment-header">
-                <span class="comment-author">${comment.name}</span>
-                <span class="comment-date">${comment.date}</span>
-            </div>
-            <div class="comment-content">${comment.comment}</div>
-            <div class="comment-category">${getCategoryName(comment.category)}</div>
-        `;
-        
-        // Thêm ý kiến mới vào danh sách
-        commentsList.appendChild(commentElement);
+        statsHTML += '</div>';
+        commentsList.innerHTML = statsHTML;
     }
     
-    // Hàm cập nhật thống kê
+    // Hàm cập nhật thống kê tổng quan
     function updateStats() {
         const comments = JSON.parse(localStorage.getItem('userComments')) || [];
         const today = new Date().toDateString();
@@ -694,6 +777,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         document.getElementById('totalComments').textContent = comments.length;
         document.getElementById('todayComments').textContent = todayComments;
+        
+        // Cập nhật hiển thị thống kê chi tiết
+        displayCommentStats();
     }
     
     // Hàm cập nhật thống kê quản trị
@@ -734,10 +820,4 @@ document.addEventListener('DOMContentLoaded', function() {
         return categories[category] || 'Không xác định';
     }
 });
-  // JavaScript cho footer (nếu cần thêm tính năng)
-document.addEventListener('DOMContentLoaded', function() {
-    // Code xử lý cho footer nếu cần
-    console.log('Footer loaded');
-});
-          </script>
-          
+</script>
