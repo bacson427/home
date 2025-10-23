@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang Ý Kiến Người Dùng - Bảo Vệ Dữ Liệu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
     <style>
         /* CSS sẽ được thêm ở phần 2 */
     </style>
@@ -31,6 +32,30 @@
                     <div class="form-group">
                         <label for="email">Email:</label>
                         <input type="email" id="email" placeholder="Nhập email của bạn" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Số điện thoại (có mã vùng tự động):</label>
+                        <input type="tel" id="phone" placeholder="Nhập số điện thoại của bạn">
+                        <span id="valid-msg" class="hide">✓ Hợp lệ</span>
+                        <span id="error-msg" class="hide"></span>
+                        <div class="phone-info">
+                            <small>Mã vùng sẽ tự động thay đổi theo quốc gia bạn chọn</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Quốc gia:</label>
+                        <select id="country" required>
+                            <option value="">Chọn quốc gia</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="state">Tỉnh/Thành phố:</label>
+                        <select id="state" required>
+                            <option value="">Chọn tỉnh/thành phố</option>
+                        </select>
                     </div>
                     
                     <div class="form-group">
@@ -72,6 +97,10 @@
                         <div class="stat-number" id="todayComments">0</div>
                         <div class="stat-label">Ý kiến hôm nay</div>
                     </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="countryCount">0</div>
+                        <div class="stat-label">Quốc gia</div>
+                    </div>
                 </div>
                 
                 <div class="filter-controls">
@@ -83,12 +112,14 @@
                         <option value="khac">Khác</option>
                     </select>
                     
+                    <select id="filterCountry">
+                        <option value="">Tất cả quốc gia</option>
+                    </select>
+
                     <select id="sortComments">
                         <option value="newest">Mới nhất</option>
                         <option value="oldest">Cũ nhất</option>
                     </select>
-                    
-                    <input type="text" id="searchComments" placeholder="Tìm kiếm ý kiến...">
                 </div>
                 
                 <div id="commentsList">
@@ -136,8 +167,9 @@
         </footer>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script>
-        // JavaScript sẽ được thêm ở phần 3
+        // JavaScript sẽ được thêm ở phần tiếp theo
     </script>
 <!-- Footer -->
 <div class="footer">
@@ -147,34 +179,6 @@
 </body>
 </html>
 <style>
-.footer {
-    background-color: #f8f9fa;
-    padding: 15px 20px;
-    border-top: 1px solid #e9ecef;
-    text-align: center;
-    font-size: 14px;
-    color: #6c757d;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    z-index: 1000;
-}
-
-.footer a {
-    color: #007bff;
-    text-decoration: none;
-    margin: 0 10px;
-}
-
-.footer a:hover {
-    text-decoration: underline;
-}
-
-body {
-    margin-bottom: 70px;
-}
 * {
     margin: 0;
     padding: 0;
@@ -280,6 +284,7 @@ h2 i {
 
 .form-group {
     margin-bottom: 20px;
+    position: relative;
 }
 
 label {
@@ -384,6 +389,17 @@ textarea {
     margin-top: 5px;
 }
 
+.comment-location {
+    display: inline-block;
+    background: #e8f6f3;
+    color: #27ae60;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
 .no-comments {
     text-align: center;
     color: #7f8c8d;
@@ -439,13 +455,13 @@ textarea {
     padding: 15px;
     border-radius: 8px;
     flex: 1;
-    min-width: 150px;
+    min-width: 120px;
     text-align: center;
     border-top: 4px solid #3498db;
 }
 
 .stat-number {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: bold;
     color: #2c3e50;
 }
@@ -471,19 +487,64 @@ footer {
     margin-bottom: 20px;
 }
 
-@media (max-width: 768px) {
-    .content {
-        flex-direction: column;
-    }
-    
-    h1 {
-        font-size: 2rem;
-    }
-    
-    .filter-controls, .admin-controls {
-        flex-direction: column;
+/* International Telephone Input Styles */
+.iti {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.iti__flag {
+    background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/img/flags.png");
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .iti__flag {
+        background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/img/flags@2x.png");
     }
 }
+
+.iti__selected-flag {
+    background-color: #f8f9fa;
+    border-radius: 6px 0 0 6px;
+    padding: 0 8px;
+}
+
+.iti__country-list {
+    border-radius: 6px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.hide {
+    display: none;
+}
+
+#valid-msg {
+    color: #27ae60;
+    position: absolute;
+    right: 10px;
+    top: 38px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+#error-msg {
+    color: #e74c3c;
+    position: absolute;
+    right: 10px;
+    top: 38px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.phone-info {
+    margin-top: 5px;
+}
+
+.phone-info small {
+    color: #7f8c8d;
+    font-style: italic;
+}
+
 .comment-stats-detailed {
     background: #f8f9fa;
     padding: 20px;
@@ -526,52 +587,224 @@ footer {
     margin-bottom: 15px;
     text-align: center;
 }
+
+.country-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 5px;
+    background: white;
+    border-radius: 4px;
+}
+
+.phone-preview {
+    background: #e8f6f3;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: #27ae60;
+}
+
+@media (max-width: 768px) {
+    .content {
+        flex-direction: column;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .filter-controls, .admin-controls {
+        flex-direction: column;
+    }
+    
+    .comment-stats {
+        flex-direction: column;
+    }
+    
+    .stat-box {
+        min-width: auto;
+    }
+    
+    .iti {
+        font-size: 14px;
+    }
+}
+.footer {
+    background-color: #f8f9fa;
+    padding: 15px 20px;
+    border-top: 1px solid #e9ecef;
+    text-align: center;
+    font-size: 14px;
+    color: #6c757d;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.footer a {
+    color: #007bff;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+body {
+    margin-bottom: 70px;
+}
 </style>
 <script>
+// Dữ liệu quốc gia cơ bản
+const allCountries = [
+    { code: 'VN', name: 'Việt Nam', states: ['Hà Nội', 'Hồ Chí Minh', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'An Giang', 'Bà Rịa - Vũng Tàu', 'Bắc Giang', 'Bắc Kạn', 'Bạc Liêu', 'Bắc Ninh', 'Bến Tre', 'Bình Định', 'Bình Dương', 'Bình Phước', 'Bình Thuận', 'Cà Mau', 'Cao Bằng', 'Đắk Lắk', 'Đắk Nông', 'Điện Biên', 'Đồng Nai', 'Đồng Tháp', 'Gia Lai', 'Hà Giang', 'Hà Nam', 'Hà Tĩnh', 'Hải Dương', 'Hậu Giang', 'Hòa Bình', 'Hưng Yên', 'Khánh Hòa', 'Kiên Giang', 'Kon Tum', 'Lai Châu', 'Lâm Đồng', 'Lạng Sơn', 'Lào Cai', 'Long An', 'Nam Định', 'Nghệ An', 'Ninh Bình', 'Ninh Thuận', 'Phú Thọ', 'Phú Yên', 'Quảng Bình', 'Quảng Nam', 'Quảng Ngãi', 'Quảng Ninh', 'Quảng Trị', 'Sóc Trăng', 'Sơn La', 'Tây Ninh', 'Thái Bình', 'Thái Nguyên', 'Thanh Hóa', 'Thừa Thiên Huế', 'Tiền Giang', 'Trà Vinh', 'Tuyên Quang', 'Vĩnh Long', 'Vĩnh Phúc', 'Yên Bái'] },
+    { code: 'US', name: 'United States', states: ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'] },
+    { code: 'CN', name: 'China', states: ['Beijing', 'Shanghai', 'Tianjin', 'Chongqing', 'Guangdong', 'Zhejiang', 'Jiangsu', 'Shandong', 'Henan', 'Hubei', 'Hunan', 'Sichuan', 'Anhui', 'Fujian', 'Heilongjiang', 'Jilin', 'Liaoning', 'Shaanxi', 'Shanxi', 'Hebei'] },
+    { code: 'JP', name: 'Japan', states: ['Tokyo', 'Osaka', 'Kyoto', 'Hokkaido', 'Aichi', 'Chiba', 'Fukuoka', 'Hyogo', 'Kanagawa', 'Saitama'] },
+    { code: 'KR', name: 'South Korea', states: ['Seoul', 'Busan', 'Incheon', 'Daegu', 'Daejeon', 'Gwangju', 'Ulsan', 'Gyeonggi', 'Gangwon', 'Chungcheong'] },
+    { code: 'SG', name: 'Singapore', states: ['Singapore'] },
+    { code: 'TH', name: 'Thailand', states: ['Bangkok', 'Chiang Mai', 'Phuket', 'Pattaya', 'Krabi', 'Samui', 'Hua Hin', 'Chiang Rai'] },
+    { code: 'MY', name: 'Malaysia', states: ['Kuala Lumpur', 'Penang', 'Johor Bahru', 'Malacca', 'Ipoh', 'Kuching', 'Kota Kinabalu'] },
+    { code: 'ID', name: 'Indonesia', states: ['Jakarta', 'Bali', 'Surabaya', 'Bandung', 'Medan', 'Makassar', 'Semarang'] },
+    { code: 'PH', name: 'Philippines', states: ['Manila', 'Cebu', 'Davao', 'Quezon City', 'Makati', 'Cagayan de Oro', 'Bacolod'] },
+    { code: 'GB', name: 'United Kingdom', states: ['London', 'Manchester', 'Birmingham', 'Liverpool', 'Edinburgh', 'Glasgow', 'Bristol', 'Leeds'] },
+    { code: 'FR', name: 'France', states: ['Paris', 'Marseille', 'Lyon', 'Toulouse', 'Nice', 'Nantes', 'Strasbourg', 'Montpellier'] },
+    { code: 'DE', name: 'Germany', states: ['Berlin', 'Munich', 'Hamburg', 'Cologne', 'Frankfurt', 'Stuttgart', 'Düsseldorf', 'Dortmund'] },
+    { code: 'IT', name: 'Italy', states: ['Rome', 'Milan', 'Naples', 'Turin', 'Palermo', 'Genoa', 'Bologna', 'Florence'] },
+    { code: 'ES', name: 'Spain', states: ['Madrid', 'Barcelona', 'Valencia', 'Seville', 'Zaragoza', 'Malaga', 'Murcia', 'Palma'] },
+    { code: 'CA', name: 'Canada', states: ['Toronto', 'Vancouver', 'Montreal', 'Calgary', 'Edmonton', 'Ottawa', 'Winnipeg', 'Quebec City'] },
+    { code: 'AU', name: 'Australia', states: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Gold Coast', 'Canberra', 'Newcastle'] }
+];
+
 document.addEventListener('DOMContentLoaded', function() {
     const commentForm = document.getElementById('commentForm');
     const commentsList = document.getElementById('commentsList');
     const filterCategory = document.getElementById('filterCategory');
+    const filterCountry = document.getElementById('filterCountry');
     const sortComments = document.getElementById('sortComments');
-    const searchComments = document.getElementById('searchComments');
     const adminLogin = document.getElementById('adminLogin');
     const adminPanel = document.getElementById('adminPanel');
     const exportComments = document.getElementById('exportComments');
     const deleteAllComments = document.getElementById('deleteAllComments');
+    const countrySelect = document.getElementById('country');
+    const stateSelect = document.getElementById('state');
+    const phoneInputField = document.getElementById('phone');
     
-    // Cơ chế đánh lừa mật khẩu - Mật khẩu thực là @Son2007
+    // Khởi tạo International Telephone Input
+    const phoneInput = window.intlTelInput(phoneInputField, {
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        separateDialCode: true,
+        preferredCountries: ['vn', 'us', 'gb', 'ca', 'au', 'jp', 'kr', 'sg'],
+        initialCountry: "auto",
+        geoIpLookup: function(callback) {
+            fetch('https://ipapi.co/json/')
+                .then(res => res.json())
+                .then(data => callback(data.country_code))
+                .catch(() => callback('vn'));
+        }
+    });
+
+    // Các biến để validate số điện thoại
+    const validMsg = document.getElementById("valid-msg");
+    const errorMsg = document.getElementById("error-msg");
+
+    // Validate số điện thoại real-time
+    function validatePhoneNumber() {
+        if (phoneInput.isValidNumber()) {
+            validMsg.classList.remove("hide");
+            errorMsg.classList.add("hide");
+            return true;
+        } else {
+            validMsg.classList.add("hide");
+            errorMsg.classList.remove("hide");
+            errorMsg.textContent = "Số điện thoại không hợp lệ";
+            return false;
+        }
+    }
+
+    // Event listeners cho số điện thoại
+    phoneInputField.addEventListener('input', validatePhoneNumber);
+    phoneInputField.addEventListener('blur', validatePhoneNumber);
+    phoneInputField.addEventListener('countrychange', validatePhoneNumber);
+
+    // Cơ chế đánh lừa mật khẩu
     function getRealPassword() {
-        // Phân tán mật khẩu thành nhiều phần
         const part1 = String.fromCharCode(64); // @
         const part2 = "Son";
         const part3 = "20";
         const part4 = "07";
-        
-        // Tạo nhiễu
-        const fake1 = "Admin123";
-        const fake2 = "password";
-        const fake3 = "123456";
-        
-        // Ghép các phần lại
         return part1 + part2 + part3 + part4;
     }
-    
+
     function validatePassword(input) {
         const realPassword = getRealPassword();
         return input === realPassword;
     }
-    
+
+    // Khởi tạo danh sách quốc gia
+    function initializeCountries() {
+        allCountries.forEach(country => {
+            const option = document.createElement('option');
+            option.value = country.code;
+            option.textContent = country.name;
+            countrySelect.appendChild(option);
+
+            const filterOption = document.createElement('option');
+            filterOption.value = country.code;
+            filterOption.textContent = country.name;
+            filterCountry.appendChild(filterOption);
+        });
+    }
+
+    // Cập nhật danh sách tỉnh/thành phố khi chọn quốc gia
+    countrySelect.addEventListener('change', function() {
+        const selectedCountry = allCountries.find(c => c.code === this.value);
+        stateSelect.innerHTML = '<option value="">Chọn tỉnh/thành phố</option>';
+        
+        if (selectedCountry) {
+            selectedCountry.states.forEach(state => {
+                const option = document.createElement('option');
+                option.value = state;
+                option.textContent = state;
+                stateSelect.appendChild(option);
+            });
+            
+            // Tự động cập nhật mã vùng điện thoại khi chọn quốc gia
+            phoneInput.setCountry(selectedCountry.code);
+            validatePhoneNumber();
+        }
+    });
+
     // Tải các ý kiến từ localStorage khi trang được tải
+    initializeCountries();
     loadComments();
     updateStats();
-    
+
     // Xử lý sự kiện gửi form
     commentForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
+        // Validate số điện thoại
+        if (!validatePhoneNumber()) {
+            alert('Vui lòng nhập số điện thoại hợp lệ!');
+            phoneInputField.focus();
+            return;
+        }
+
         // Lấy dữ liệu từ form
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
+        const phone = phoneInput.getNumber();
+        const country = countrySelect.options[countrySelect.selectedIndex].text;
+        const countryCode = countrySelect.value;
+        const state = stateSelect.value;
         const category = document.getElementById('category').value;
         const comment = document.getElementById('comment').value;
         
@@ -580,6 +813,10 @@ document.addEventListener('DOMContentLoaded', function() {
             id: Date.now(),
             name: name,
             email: email,
+            phone: phone,
+            country: country,
+            countryCode: countryCode,
+            state: state,
             category: category,
             comment: comment,
             date: new Date().toLocaleString('vi-VN'),
@@ -591,6 +828,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Reset form
         commentForm.reset();
+        phoneInput.setNumber("");
+        stateSelect.innerHTML = '<option value="">Chọn tỉnh/thành phố</option>';
+        validMsg.classList.add("hide");
+        errorMsg.classList.add("hide");
         
         // Cập nhật thống kê
         updateStats();
@@ -598,12 +839,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Hiển thị thông báo
         alert('Cảm ơn bạn đã gửi ý kiến! Ý kiến của bạn đã được lưu an toàn.');
     });
-    
+
     // Xử lý bộ lọc và tìm kiếm
     filterCategory.addEventListener('change', filterAndSortComments);
+    filterCountry.addEventListener('change', filterAndSortComments);
     sortComments.addEventListener('change', filterAndSortComments);
-    searchComments.addEventListener('input', filterAndSortComments);
-    
+
     // Xử lý đăng nhập quản trị
     adminLogin.addEventListener('click', function() {
         const password = document.getElementById('adminPassword').value;
@@ -615,7 +856,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Mật khẩu không đúng!');
         }
     });
-    
+
     // Xuất dữ liệu
     exportComments.addEventListener('click', function() {
         const comments = JSON.parse(localStorage.getItem('userComments')) || [];
@@ -625,9 +866,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Tạo nội dung file CSV
-        let csvContent = "Tên,Email,Danh mục,Ý kiến,Ngày gửi\n";
+        let csvContent = "Tên,Email,Số điện thoại,Quốc gia,Tỉnh/Thành phố,Danh mục,Ý kiến,Ngày gửi\n";
         comments.forEach(comment => {
-            csvContent += `"${comment.name}","${comment.email}","${getCategoryName(comment.category)}","${comment.comment.replace(/"/g, '""')}","${comment.date}"\n`;
+            csvContent += `"${comment.name}","${comment.email}","${comment.phone}","${comment.country}","${comment.state}","${getCategoryName(comment.category)}","${comment.comment.replace(/"/g, '""')}","${comment.date}"\n`;
         });
         
         // Tạo file và tải về
@@ -641,7 +882,7 @@ document.addEventListener('DOMContentLoaded', function() {
         link.click();
         document.body.removeChild(link);
     });
-    
+
     // Xóa tất cả ý kiến
     deleteAllComments.addEventListener('click', function() {
         if (confirm('Bạn có chắc chắn muốn xóa TẤT CẢ ý kiến? Hành động này không thể hoàn tác!')) {
@@ -652,14 +893,13 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Đã xóa tất cả ý kiến!');
         }
     });
-    
     // Hàm lưu ý kiến vào localStorage
     function saveComment(comment) {
         let comments = JSON.parse(localStorage.getItem('userComments')) || [];
         comments.push(comment);
         localStorage.setItem('userComments', JSON.stringify(comments));
     }
-    
+
     // Hàm tải các ý kiến từ localStorage
     function loadComments() {
         const comments = JSON.parse(localStorage.getItem('userComments')) || [];
@@ -672,8 +912,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Hiển thị thống kê thay vì danh sách ý kiến
         displayCommentStats();
     }
-    
-    // Hàm hiển thị thống kê ý kiến (thay vì hiển thị chi tiết)
+
+    // Hàm hiển thị thống kê ý kiến
     function displayCommentStats() {
         const comments = JSON.parse(localStorage.getItem('userComments')) || [];
         
@@ -684,17 +924,28 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Thống kê theo danh mục
         const statsByCategory = {};
+        const statsByCountry = {};
+        
         comments.forEach(comment => {
+            // Thống kê danh mục
             if (!statsByCategory[comment.category]) {
                 statsByCategory[comment.category] = 0;
             }
             statsByCategory[comment.category]++;
+            
+            // Thống kê quốc gia
+            if (!statsByCountry[comment.country]) {
+                statsByCountry[comment.country] = 0;
+            }
+            statsByCountry[comment.country]++;
         });
         
         // Tạo HTML hiển thị thống kê
         let statsHTML = '<div class="comment-stats-detailed">';
         statsHTML += '<h3><i class="fas fa-chart-bar"></i> Thống kê ý kiến</h3>';
         
+        // Hiển thị thống kê theo danh mục
+        statsHTML += '<h4><i class="fas fa-tags"></i> Theo danh mục:</h4>';
         for (const category in statsByCategory) {
             statsHTML += `
                 <div class="stat-category">
@@ -704,16 +955,27 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
         
+        // Hiển thị thống kê theo quốc gia
+        statsHTML += '<h4 style="margin-top: 20px;"><i class="fas fa-globe"></i> Theo quốc gia:</h4>';
+        for (const country in statsByCountry) {
+            statsHTML += `
+                <div class="country-stat">
+                    <span class="category-name">${country}</span>
+                    <span class="category-count">${statsByCountry[country]} ý kiến</span>
+                </div>
+            `;
+        }
+        
         statsHTML += '</div>';
         commentsList.innerHTML = statsHTML;
     }
-    
+
     // Hàm lọc và sắp xếp ý kiến
     function filterAndSortComments() {
         const comments = JSON.parse(localStorage.getItem('userComments')) || [];
         const categoryFilter = filterCategory.value;
+        const countryFilter = filterCountry.value;
         const sortOrder = sortComments.value;
-        const searchTerm = searchComments.value.toLowerCase();
         
         // Lọc theo danh mục
         let filteredComments = comments;
@@ -721,18 +983,22 @@ document.addEventListener('DOMContentLoaded', function() {
             filteredComments = filteredComments.filter(comment => comment.category === categoryFilter);
         }
         
-        // Lọc theo từ khóa tìm kiếm
-        if (searchTerm) {
-            filteredComments = filteredComments.filter(comment => 
-                comment.name.toLowerCase().includes(searchTerm) || 
-                comment.comment.toLowerCase().includes(searchTerm)
-            );
+        // Lọc theo quốc gia
+        if (countryFilter) {
+            filteredComments = filteredComments.filter(comment => comment.countryCode === countryFilter);
+        }
+        
+        // Sắp xếp
+        if (sortOrder === 'newest') {
+            filteredComments.sort((a, b) => b.dateObj - a.dateObj);
+        } else {
+            filteredComments.sort((a, b) => a.dateObj - b.dateObj);
         }
         
         // Hiển thị thống kê sau khi lọc
         displayFilteredStats(filteredComments);
     }
-    
+
     // Hàm hiển thị thống kê sau khi lọc
     function displayFilteredStats(comments) {
         if (comments.length === 0) {
@@ -742,11 +1008,20 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Thống kê theo danh mục
         const statsByCategory = {};
+        const statsByCountry = {};
+        
         comments.forEach(comment => {
+            // Thống kê danh mục
             if (!statsByCategory[comment.category]) {
                 statsByCategory[comment.category] = 0;
             }
             statsByCategory[comment.category]++;
+            
+            // Thống kê quốc gia
+            if (!statsByCountry[comment.country]) {
+                statsByCountry[comment.country] = 0;
+            }
+            statsByCountry[comment.country]++;
         });
         
         // Tạo HTML hiển thị thống kê
@@ -754,6 +1029,8 @@ document.addEventListener('DOMContentLoaded', function() {
         statsHTML += '<h3><i class="fas fa-chart-bar"></i> Thống kê ý kiến</h3>';
         statsHTML += `<p class="total-filtered">Tìm thấy <strong>${comments.length}</strong> ý kiến phù hợp</p>`;
         
+        // Hiển thị thống kê theo danh mục
+        statsHTML += '<h4><i class="fas fa-tags"></i> Theo danh mục:</h4>';
         for (const category in statsByCategory) {
             statsHTML += `
                 <div class="stat-category">
@@ -763,10 +1040,21 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
         
+        // Hiển thị thống kê theo quốc gia
+        statsHTML += '<h4 style="margin-top: 20px;"><i class="fas fa-globe"></i> Theo quốc gia:</h4>';
+        for (const country in statsByCountry) {
+            statsHTML += `
+                <div class="country-stat">
+                    <span class="category-name">${country}</span>
+                    <span class="category-count">${statsByCountry[country]} ý kiến</span>
+                </div>
+            `;
+        }
+        
         statsHTML += '</div>';
         commentsList.innerHTML = statsHTML;
     }
-    
+
     // Hàm cập nhật thống kê tổng quan
     function updateStats() {
         const comments = JSON.parse(localStorage.getItem('userComments')) || [];
@@ -775,26 +1063,39 @@ document.addEventListener('DOMContentLoaded', function() {
             new Date(comment.dateObj).toDateString() === today
         ).length;
         
+        // Đếm số quốc gia duy nhất
+        const uniqueCountries = [...new Set(comments.map(comment => comment.country))];
+        
         document.getElementById('totalComments').textContent = comments.length;
         document.getElementById('todayComments').textContent = todayComments;
+        document.getElementById('countryCount').textContent = uniqueCountries.length;
         
         // Cập nhật hiển thị thống kê chi tiết
         displayCommentStats();
     }
-    
+
     // Hàm cập nhật thống kê quản trị
     function updateAdminStats() {
         const comments = JSON.parse(localStorage.getItem('userComments')) || [];
         const stats = {
             total: comments.length,
-            byCategory: {}
+            byCategory: {},
+            byCountry: {},
+            byPhoneCode: {}
         };
         
         comments.forEach(comment => {
+            // Thống kê danh mục
             if (!stats.byCategory[comment.category]) {
                 stats.byCategory[comment.category] = 0;
             }
             stats.byCategory[comment.category]++;
+            
+            // Thống kê quốc gia
+            if (!stats.byCountry[comment.country]) {
+                stats.byCountry[comment.country] = 0;
+            }
+            stats.byCountry[comment.country]++;
         });
         
         let statsHTML = `<p>Tổng số ý kiến: <strong>${stats.total}</strong></p>`;
@@ -802,6 +1103,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         for (const category in stats.byCategory) {
             statsHTML += `<li>${getCategoryName(category)}: ${stats.byCategory[category]}</li>`;
+        }
+        
+        statsHTML += '</ul><p>Phân bổ theo quốc gia:</p><ul>';
+        
+        for (const country in stats.byCountry) {
+            statsHTML += `<li>${country}: ${stats.byCountry[country]}</li>`;
         }
         
         statsHTML += '</ul>';
