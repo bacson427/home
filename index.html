@@ -41,7 +41,9 @@
     height: 24px;
     cursor: pointer;
     z-index: 1000;
-    display: none; /* Ẩn mặc định */
+    display: none;
+    background: transparent;
+    border: none;
 }
 
 .hamburger-menu span {
@@ -51,9 +53,9 @@
     background-color: #333;
     margin-bottom: 6px;
     transition: all 0.3s ease;
+    border-radius: 2px;
 }
 
-/* Hiệu ứng khi hover */
 .hamburger-menu:hover span {
     background-color: #007bff;
 }
@@ -66,21 +68,29 @@
     background: white;
     border: 1px solid #ddd;
     border-radius: 5px;
-    padding: 10px;
+    padding: 10px 0;
     display: none;
     z-index: 999;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    min-width: 150px;
 }
 
 .menu-dropdown a {
     display: block;
-    padding: 8px 15px;
+    padding: 10px 20px;
     text-decoration: none;
     color: #333;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.3s;
+}
+
+.menu-dropdown a:last-child {
+    border-bottom: none;
 }
 
 .menu-dropdown a:hover {
-    background-color: #f5f5f5;
+    background-color: #f8f9fa;
+    color: #007bff;
 }
 
 /* Hiển thị menu trên mobile */
@@ -1942,46 +1952,29 @@ document.addEventListener('DOMContentLoaded', function() {
     }, duration * 1000);
   }
 });
-// JavaScript cho footer (nếu cần thêm tính năng)
+// Thêm vào cuối file js hiện có
 document.addEventListener('DOMContentLoaded', function() {
-    // Code xử lý cho footer nếu cần
-    console.log('Footer loaded');
-});
-// Thêm sự kiện click cho menu
-document.getElementById('hamburgerMenu').addEventListener('click', function() {
-    const menu = document.getElementById('menuDropdown');
-    if (menu.style.display === 'block') {
-        menu.style.display = 'none';
-    } else {
-        menu.style.display = 'block';
-    }
-});
-
-// Đóng menu khi click ra ngoài
-document.addEventListener('click', function(event) {
-    const menu = document.getElementById('menuDropdown');
     const hamburger = document.getElementById('hamburgerMenu');
+    const menu = document.getElementById('menuDropdown');
     
-    if (!hamburger.contains(event.target) && !menu.contains(event.target)) {
-        menu.style.display = 'none';
+    if (hamburger && menu) {
+        hamburger.addEventListener('click', function(event) {
+            event.stopPropagation();
+            if (menu.style.display === 'block') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'block';
+            }
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!hamburger.contains(event.target) && !menu.contains(event.target)) {
+                menu.style.display = 'none';
+            }
+        });
     }
 });
 </script>
-<!-- Thêm đoạn này vào trước thẻ đóng </body> -->
-<div class="hamburger-menu" id="hamburgerMenu">
-    <span></span>
-    <span></span>
-    <span></span>
-</div>
-
-<!-- Menu dropdown (tùy chọn) -->
-<div class="menu-dropdown" id="menuDropdown">
-    <a href="https://nguyenbacson.io.vn/cn/index.html">Chinese</a>
-    <a href="https://nguyenbacson.io.vn/privacy-policy.html">Privacy Policy</a>
-    <a href="https://nguyenbacson.io.vn/improve-the-website/index.html">Improve the website</a>
-</div>
-
-<script src="script.js"></script>
 </body>
 </html>
 <!-- trigger -->
