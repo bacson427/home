@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Ý Kiến Người Dùng - Bảo Vệ Dữ Liệu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS sẽ được thêm ở phần 2 */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="privacy-badge">
+                <i class="fas fa-shield-alt"></i> Bảo vệ dữ liệu
+            </div>
+            <h1>Trang Ý Kiến Người Dùng</h1>
+            <p class="subtitle">Chia sẻ ý kiến, đánh giá và góp ý của bạn về website. Dữ liệu của bạn được bảo vệ an toàn.</p>
+        </header>
+        
+        <div class="content">
+            <section class="form-section">
+                <h2><i class="fas fa-pen"></i> Thêm Ý Kiến Của Bạn</h2>
+                <form id="commentForm">
+                    <div class="form-group">
+                        <label for="name">Họ và tên:</label>
+                        <input type="text" id="name" placeholder="Nhập họ tên của bạn" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" placeholder="Nhập email của bạn" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category">Danh mục ý kiến:</label>
+                        <select id="category" required>
+                            <option value="">Chọn danh mục</option>
+                            <option value="gop-y">Góp ý</option>
+                            <option value="danh-gia">Đánh giá</option>
+                            <option value="hoi-dap">Hỏi đáp</option>
+                            <option value="khac">Khác</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comment">Ý kiến của bạn:</label>
+                        <textarea id="comment" placeholder="Chia sẻ ý kiến, đánh giá hoặc góp ý của bạn..." required></textarea>
+                    </div>
+                    
+                    <div class="privacy-notice">
+                        <h3><i class="fas fa-lock"></i> Cam kết bảo vệ dữ liệu</h3>
+                        <p>Thông tin cá nhân của bạn sẽ được bảo vệ và chỉ sử dụng cho mục đích quản lý ý kiến. Chúng tôi không chia sẻ thông tin với bên thứ ba.</p>
+                    </div>
+                    
+                    <button type="submit" class="btn">
+                        <i class="fas fa-paper-plane"></i> Gửi Ý Kiến
+                    </button>
+                </form>
+            </section>
+            
+            <section class="comments-section">
+                <h2><i class="fas fa-comments"></i> Ý Kiến Từ Người Dùng</h2>
+                
+                <div class="comment-stats">
+                    <div class="stat-box">
+                        <div class="stat-number" id="totalComments">0</div>
+                        <div class="stat-label">Tổng số ý kiến</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="todayComments">0</div>
+                        <div class="stat-label">Ý kiến hôm nay</div>
+                    </div>
+                </div>
+                
+                <div class="filter-controls">
+                    <select id="filterCategory">
+                        <option value="">Tất cả danh mục</option>
+                        <option value="gop-y">Góp ý</option>
+                        <option value="danh-gia">Đánh giá</option>
+                        <option value="hoi-dap">Hỏi đáp</option>
+                        <option value="khac">Khác</option>
+                    </select>
+                    
+                    <select id="sortComments">
+                        <option value="newest">Mới nhất</option>
+                        <option value="oldest">Cũ nhất</option>
+                    </select>
+                    
+                    <input type="text" id="searchComments" placeholder="Tìm kiếm ý kiến...">
+                </div>
+                
+                <div id="commentsList">
+                    <div class="no-comments">
+                        <i class="fas fa-comment-slash"></i><br>
+                        Chưa có ý kiến nào. Hãy là người đầu tiên chia sẻ!
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <section class="admin-section">
+            <h2><i class="fas fa-user-shield"></i> Khu vực Quản trị</h2>
+            
+            <div class="password-protected">
+                <p><i class="fas fa-lock"></i> Khu vực này được bảo vệ bằng mật khẩu. Chỉ quản trị viên mới có thể truy cập.</p>
+                <div class="form-group">
+                    <label for="adminPassword">Mật khẩu quản trị:</label>
+                    <input type="password" id="adminPassword" placeholder="Nhập mật khẩu quản trị">
+                </div>
+                <button id="adminLogin" class="btn">
+                    <i class="fas fa-sign-in-alt"></i> Đăng nhập quản trị
+                </button>
+            </div>
+            
+            <div id="adminPanel" style="display: none;">
+                <div class="admin-controls">
+                    <button id="exportComments" class="btn btn-secondary">
+                        <i class="fas fa-download"></i> Xuất dữ liệu
+                    </button>
+                    <button id="deleteAllComments" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Xóa tất cả
+                    </button>
+                </div>
+                
+                <div class="admin-stats">
+                    <h3>Thống kê dữ liệu</h3>
+                    <div id="adminStats"></div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p><i class="fas fa-shield-alt"></i> © 2023 Trang Ý Kiến Người Dùng. Tất cả dữ liệu được bảo vệ theo chính sách riêng tư.</p>
+        </footer>
+    </div>
+
+    <script>
+        // JavaScript sẽ được thêm ở phần 3
+    </script>
+  <!-- Footer -->
+<div class="footer">
+    Bản quyền © 2025 thuộc về Nguyen Bac Son. | 
+    <a href="https://nguyenbacson.io.vn/privacy-policy.html">Chính sách bảo mật</a>
+</div>
+</body>
+</html>
+<style>
+  .footer {
+    background-color: #f8f9fa;
+    padding: 15px 20px;
+    border-top: 1px solid #e9ecef;
+    text-align: center;
+    font-size: 14px;
+    color: #6c757d;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.footer a {
+    color: #007bff;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+body {
+    margin-bottom: 70px;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    padding: 30px 0;
+    background: linear-gradient(135deg, #1a6b3a 0%, #2c9c5c 100%);
+    color: white;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.privacy-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.form-section {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.comments-section {
+    flex: 2;
+    min-width: 300px;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.admin-section {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-top: 30px;
+    border-left: 4px solid #e74c3c;
+}
+
+h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+h2 i {
+    color: #1a6b3a;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border 0.3s;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.btn {
+    background: linear-gradient(135deg, #1a6b3a 0%, #2c9c5c 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+}
+
+.comment {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #3498db;
+    transition: transform 0.3s;
+    position: relative;
+}
+
+.comment:hover {
+    transform: translateX(5px);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.comment-date {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.comment-content {
+    color: #34495e;
+    margin-bottom: 10px;
+}
+
+.comment-category {
+    display: inline-block;
+    background: #eaf2f8;
+    color: #3498db;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+.no-comments {
+    text-align: center;
+    color: #7f8c8d;
+    padding: 30px;
+    font-style: italic;
+}
+
+.privacy-notice {
+    background: #eaf7ff;
+    border-left: 4px solid #3498db;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+.privacy-notice h3 {
+    color: #2c3e50;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-controls select, .filter-controls input {
+    flex: 1;
+    min-width: 150px;
+}
+
+.admin-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.comment-stats {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.stat-box {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 150px;
+    text-align: center;
+    border-top: 4px solid #3498db;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+    color: #7f8c8d;
+    border-top: 1px solid #eee;
+}
+
+.password-protected {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .content {
+        flex-direction: column;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .filter-controls, .admin-controls {
+        flex-direction: column;
+    }
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const commentForm = document.getElementById('commentForm');
+    const commentsList = document.getElementById('commentsList');
+    const filterCategory = document.getElementById('filterCategory');
+    const sortComments = document.getElementById('sortComments');
+    const searchComments = document.getElementById('searchComments');
+    const adminLogin = document.getElementById('adminLogin');
+    const adminPanel = document.getElementById('adminPanel');
+    const exportComments = document.getElementById('exportComments');
+    const deleteAllComments = document.getElementById('deleteAllComments');
+    
+    // Mật khẩu quản trị (trong thực tế nên lưu ở server)
+    const ADMIN_PASSWORD = "admin123";
+    
+    // Tải các ý kiến từ localStorage khi trang được tải
+    loadComments();
+    updateStats();
+    
+    // Xử lý sự kiện gửi form
+    commentForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Lấy dữ liệu từ form
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const category = document.getElementById('category').value;
+        const comment = document.getElementById('comment').value;
+        
+        // Tạo đối tượng ý kiến mới
+        const newComment = {
+            id: Date.now(),
+            name: name,
+            email: email,
+            category: category,
+            comment: comment,
+            date: new Date().toLocaleString('vi-VN'),
+            dateObj: new Date()
+        };
+        
+        // Lưu ý kiến mới
+        saveComment(newComment);
+        
+        // Hiển thị ý kiến mới
+        displayComment(newComment);
+        
+        // Reset form
+        commentForm.reset();
+        
+        // Cập nhật thống kê
+        updateStats();
+        
+        // Hiển thị thông báo
+        alert('Cảm ơn bạn đã gửi ý kiến! Ý kiến của bạn đã được lưu an toàn.');
+    });
+    
+    // Xử lý bộ lọc và tìm kiếm
+    filterCategory.addEventListener('change', filterAndSortComments);
+    sortComments.addEventListener('change', filterAndSortComments);
+    searchComments.addEventListener('input', filterAndSortComments);
+    
+    // Xử lý đăng nhập quản trị
+    adminLogin.addEventListener('click', function() {
+        const password = document.getElementById('adminPassword').value;
+        if (password === ADMIN_PASSWORD) {
+            adminPanel.style.display = 'block';
+            document.querySelector('.password-protected').style.display = 'none';
+            updateAdminStats();
+        } else {
+            alert('Mật khẩu không đúng!');
+        }
+    });
+    
+    // Xuất dữ liệu
+    exportComments.addEventListener('click', function() {
+        const comments = JSON.parse(localStorage.getItem('userComments')) || [];
+        if (comments.length === 0) {
+            alert('Không có dữ liệu để xuất!');
+            return;
+        }
+        
+        // Tạo nội dung file CSV
+        let csvContent = "Tên,Email,Danh mục,Ý kiến,Ngày gửi\n";
+        comments.forEach(comment => {
+            csvContent += `"${comment.name}","${comment.email}","${getCategoryName(comment.category)}","${comment.comment.replace(/"/g, '""')}","${comment.date}"\n`;
+        });
+        
+        // Tạo file và tải về
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "y_kien_nguoi_dung.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+    
+    // Xóa tất cả ý kiến
+    deleteAllComments.addEventListener('click', function() {
+        if (confirm('Bạn có chắc chắn muốn xóa TẤT CẢ ý kiến? Hành động này không thể hoàn tác!')) {
+            localStorage.removeItem('userComments');
+            commentsList.innerHTML = '<div class="no-comments"><i class="fas fa-comment-slash"></i><br>Chưa có ý kiến nào. Hãy là người đầu tiên chia sẻ!</div>';
+            updateStats();
+            updateAdminStats();
+            alert('Đã xóa tất cả ý kiến!');
+        }
+    });
+    
+    // Hàm lưu ý kiến vào localStorage
+    function saveComment(comment) {
+        let comments = JSON.parse(localStorage.getItem('userComments')) || [];
+        comments.push(comment);
+        localStorage.setItem('userComments', JSON.stringify(comments));
+    }
+    
+    // Hàm tải các ý kiến từ localStorage
+    function loadComments() {
+        const comments = JSON.parse(localStorage.getItem('userComments')) || [];
+        
+        if (comments.length === 0) {
+            commentsList.innerHTML = '<div class="no-comments"><i class="fas fa-comment-slash"></i><br>Chưa có ý kiến nào. Hãy là người đầu tiên chia sẻ!</div>';
+            return;
+        }
+        
+        // Hiển thị các ý kiến theo bộ lọc và sắp xếp
+        filterAndSortComments();
+    }
+    
+    // Hàm lọc và sắp xếp ý kiến
+    function filterAndSortComments() {
+        const comments = JSON.parse(localStorage.getItem('userComments')) || [];
+        const categoryFilter = filterCategory.value;
+        const sortOrder = sortComments.value;
+        const searchTerm = searchComments.value.toLowerCase();
+        
+        // Lọc theo danh mục
+        let filteredComments = comments;
+        if (categoryFilter) {
+            filteredComments = filteredComments.filter(comment => comment.category === categoryFilter);
+        }
+        
+        // Lọc theo từ khóa tìm kiếm
+        if (searchTerm) {
+            filteredComments = filteredComments.filter(comment => 
+                comment.name.toLowerCase().includes(searchTerm) || 
+                comment.comment.toLowerCase().includes(searchTerm)
+            );
+        }
+        
+        // Sắp xếp
+        if (sortOrder === 'newest') {
+            filteredComments.sort((a, b) => b.dateObj - a.dateObj);
+        } else {
+            filteredComments.sort((a, b) => a.dateObj - b.dateObj);
+        }
+        
+        // Hiển thị kết quả
+        displayComments(filteredComments);
+    }
+    
+    // Hàm hiển thị danh sách ý kiến
+    function displayComments(comments) {
+        if (comments.length === 0) {
+            commentsList.innerHTML = '<div class="no-comments"><i class="fas fa-search"></i><br>Không tìm thấy ý kiến nào phù hợp với bộ lọc.</div>';
+            return;
+        }
+        
+        commentsList.innerHTML = '';
+        comments.forEach(comment => {
+            displayComment(comment);
+        });
+    }
+    
+    // Hàm hiển thị một ý kiến
+    function displayComment(comment) {
+        // Xóa thông báo "chưa có ý kiến" nếu có
+        const noComments = commentsList.querySelector('.no-comments');
+        if (noComments) {
+            noComments.remove();
+        }
+        
+        // Tạo phần tử ý kiến mới
+        const commentElement = document.createElement('div');
+        commentElement.className = 'comment';
+        commentElement.innerHTML = `
+            <div class="comment-header">
+                <span class="comment-author">${comment.name}</span>
+                <span class="comment-date">${comment.date}</span>
+            </div>
+            <div class="comment-content">${comment.comment}</div>
+            <div class="comment-category">${getCategoryName(comment.category)}</div>
+        `;
+        
+        // Thêm ý kiến mới vào danh sách
+        commentsList.appendChild(commentElement);
+    }
+    
+    // Hàm cập nhật thống kê
+    function updateStats() {
+        const comments = JSON.parse(localStorage.getItem('userComments')) || [];
+        const today = new Date().toDateString();
+        const todayComments = comments.filter(comment => 
+            new Date(comment.dateObj).toDateString() === today
+        ).length;
+        
+        document.getElementById('totalComments').textContent = comments.length;
+        document.getElementById('todayComments').textContent = todayComments;
+    }
+    
+    // Hàm cập nhật thống kê quản trị
+    function updateAdminStats() {
+        const comments = JSON.parse(localStorage.getItem('userComments')) || [];
+        const stats = {
+            total: comments.length,
+            byCategory: {}
+        };
+        
+        comments.forEach(comment => {
+            if (!stats.byCategory[comment.category]) {
+                stats.byCategory[comment.category] = 0;
+            }
+            stats.byCategory[comment.category]++;
+        });
+        
+        let statsHTML = `<p>Tổng số ý kiến: <strong>${stats.total}</strong></p>`;
+        statsHTML += '<p>Phân bổ theo danh mục:</p><ul>';
+        
+        for (const category in stats.byCategory) {
+            statsHTML += `<li>${getCategoryName(category)}: ${stats.byCategory[category]}</li>`;
+        }
+        
+        statsHTML += '</ul>';
+        document.getElementById('adminStats').innerHTML = statsHTML;
+    }
+    
+    // Hàm lấy tên danh mục
+    function getCategoryName(category) {
+        const categories = {
+            'gop-y': 'Góp ý',
+            'danh-gia': 'Đánh giá',
+            'hoi-dap': 'Hỏi đáp',
+            'khac': 'Khác'
+        };
+        
+        return categories[category] || 'Không xác định';
+    }
+});
+  // JavaScript cho footer (nếu cần thêm tính năng)
+document.addEventListener('DOMContentLoaded', function() {
+    // Code xử lý cho footer nếu cần
+    console.log('Footer loaded');
+});
+          </script>
+          
