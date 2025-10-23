@@ -2079,6 +2079,48 @@ document.addEventListener('click', function(e) {
         menuDropdown.style.display = 'none';
     }
 });
+              // Menu toggle
+const hamburgerMenu = document.getElementById('hamburgerMenu');
+const menuDropdown = document.getElementById('menuDropdown');
+
+if (hamburgerMenu && menuDropdown) {
+    hamburgerMenu.addEventListener('click', function(e) {
+        e.stopPropagation();
+        menuDropdown.style.display = menuDropdown.style.display === 'block' ? 'none' : 'block';
+    });
+}
+
+// Tính năng Download
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    const downloadMenuItem = document.getElementById('downloadMenuItem');
+    if (downloadMenuItem) {
+        downloadMenuItem.onclick = async (e) => {
+            e.preventDefault();
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('Added to home screen');
+                }
+                deferredPrompt = null;
+            }
+        };
+    }
+});
+
+// Đóng menu khi click bên ngoài
+document.addEventListener('click', function(e) {
+    if (menuDropdown && hamburgerMenu && 
+        !menuDropdown.contains(e.target) && 
+        !hamburgerMenu.contains(e.target)) {
+        menuDropdown.style.display = 'none';
+    }
+});
 </script>
 <!-- Thêm đoạn này vào trong thẻ <body> -->
 <div class="hamburger-menu" id="hamburgerMenu">
