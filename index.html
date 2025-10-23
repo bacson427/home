@@ -32,7 +32,6 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-/* Menu 3 gạch */
 .hamburger-menu {
     position: fixed;
     top: 20px;
@@ -41,63 +40,36 @@
     height: 24px;
     cursor: pointer;
     z-index: 1000;
-    display: none;
-    background: transparent;
-    border: none;
+    background: red;
+    padding: 5px;
+    border-radius: 3px;
 }
-
 .hamburger-menu span {
     display: block;
     height: 3px;
-    width: 100%;
-    background-color: #333;
-    margin-bottom: 6px;
-    transition: all 0.3s ease;
-    border-radius: 2px;
+    background: white;
+    margin: 4px 0;
 }
-
-.hamburger-menu:hover span {
-    background-color: #007bff;
-}
-
-/* Menu dropdown */
 .menu-dropdown {
     position: fixed;
     top: 60px;
     right: 20px;
     background: white;
     border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px 0;
+    padding: 10px;
     display: none;
-    z-index: 999;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    min-width: 150px;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
-
 .menu-dropdown a {
     display: block;
-    padding: 10px 20px;
+    padding: 8px 12px;
     text-decoration: none;
     color: #333;
-    border-bottom: 1px solid #f0f0f0;
-    transition: background-color 0.3s;
+    border-bottom: 1px solid #eee;
 }
-
-.menu-dropdown a:last-child {
-    border-bottom: none;
-}
-
 .menu-dropdown a:hover {
-    background-color: #f8f9fa;
-    color: #007bff;
-}
-
-/* Hiển thị menu trên mobile */
-@media (max-width: 768px) {
-    .hamburger-menu {
-        display: block;
-    }
+    background: #f5f5f5;
 }
   body { margin: 0; font-family: Arial; }
 
@@ -1962,29 +1934,24 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 // Thêm vào cuối file js hiện có
-document.addEventListener('DOMContentLoaded', function() {
-    const hamburger = document.getElementById('hamburgerMenu');
-    const menu = document.getElementById('menuDropdown');
+document.getElementById('hamburgerMenu').addEventListener('click', function() {
+    var menu = document.getElementById('menuDropdown');
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+});
 
-    if (hamburger && menu) {
-        hamburger.addEventListener('click', function(event) {
-            event.stopPropagation();
-            if (menu.style.display === 'block') {
-                menu.style.display = 'none';
-            } else {
-                menu.style.display = 'block';
-            }
-        });
+document.getElementById('addToHomeScreen').addEventListener('click', function(e) {
+    e.preventDefault();
+    alert('Để thêm vào màn hình chính: Menu → Thêm vào Màn hình chính');
+});
 
-        document.addEventListener('click', function(event) {
-            if (!hamburger.contains(event.target) && !menu.contains(event.target)) {
-                menu.style.display = 'none';
-            }
-        });
+document.addEventListener('click', function(e) {
+    var menu = document.getElementById('menuDropdown');
+    var hamburger = document.getElementById('hamburgerMenu');
+    if (!hamburger.contains(e.target) && !menu.contains(e.target)) {
+        menu.style.display = 'none';
     }
 });
 </script>
-<!-- Thêm đoạn này vào trong thẻ <body> -->
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
     <span></span>
@@ -1995,6 +1962,8 @@ document.addEventListener('DOMContentLoaded', function() {
     <a href="https://nguyenbacson.io.vn/cn/index.html">Chinese</a>
     <a href="https://nguyenbacson.io.vn/privacy-policy.html">Privacy Policy</a>
     <a href="https://nguyenbacson.io.vn/improve-the-website/index.html">Improve the website</a>
+    <a href="#" id="addToHomeScreen">Download</a>
+</div>
 </div>
 </body>
 </html>
