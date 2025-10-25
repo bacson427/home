@@ -344,105 +344,31 @@
     }
     100% {
         transform: scale(2.8);
-        opacity: 0;
-        filter: blur(2px);
-    }
+/* Hiệu ứng pháo hoa */
+.firework {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
 }
 
-@keyframes popScale {
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    animation: explode 1s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes explode {
     0% {
-        transform: scale(0.6) rotate(0deg);
+        transform: translate(0, 0) scale(1);
         opacity: 1;
     }
-    30% {
-        transform: scale(1.4) rotate(180deg);
-        opacity: 0.9;
-    }
-    70% {
-        transform: scale(1.8) rotate(360deg);
-        opacity: 0.6;
-    }
     100% {
-        transform: scale(2.2) rotate(540deg);
+        transform: translate(var(--tx), var(--ty)) scale(0);
         opacity: 0;
     }
-}
-
-@keyframes ripple {
-    0% {
-        width: 0;
-        height: 0;
-        opacity: 0.9;
-        transform: translate(-50%, -50%) scale(0.1);
-        border-width: 2px;
-    }
-    30% {
-        opacity: 0.6;
-        transform: translate(-50%, -50%) scale(0.8);
-        border-width: 1.5px;
-    }
-    60% {
-        opacity: 0.3;
-        transform: translate(-50%, -50%) scale(1.2);
-        border-width: 1px;
-    }
-    100% {
-        width: 150px;
-        height: 150px;
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(1.5);
-        border-width: 0.5px;
-    }
-}
-
-/* Hiệu ứng khi chạm */
-.bubble.touched {
-    animation: bubblePop 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-}
-
-@keyframes bubblePop {
-    0% {
-        transform: scale(1) translateZ(0) rotate(0deg);
-        opacity: 1;
-        filter: blur(0.3px) brightness(1);
-    }
-    25% {
-        transform: scale(1.4) translateZ(25px) rotate(45deg);
-        opacity: 0.8;
-        filter: blur(1px) brightness(1.3);
-    }
-    50% {
-        transform: scale(1.8) translateZ(40px) rotate(90deg);
-        opacity: 0.5;
-        filter: blur(1.5px) brightness(1.6);
-    }
-    100% {
-        transform: scale(2.2) translateZ(60px) rotate(180deg);
-        opacity: 0;
-        filter: blur(2px) brightness(2);
-    }
-}
-
-/* Tối ưu hiệu suất tối đa */
-* {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
-}
-
-.fullscreen-bubbles {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    perspective: 1000;
-}
-
-.bubble {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
 }
 /* ... các quy tắc CSS khác ... */
         /* Ẩn biểu tượng ngôi nhà (fa-house) */
@@ -1663,223 +1589,9 @@ function slotMachineToDate(element) {
     }, 90);
 }
 
-// Thêm hiệu ứng pulse cho CSS
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-        100% { transform: scale(1); }
-    }
-`;
-document.head.appendChild(style);
 
-// Gọi function khi trang load
-document.addEventListener('DOMContentLoaded', function() {
-    slotMachineToDate('.slot-machine');
-});
-
-class SmoothBubbleWorld {
-    constructor() {
-        this.container = document.querySelector('.fullscreen-bubbles');
-        this.bubbles = new Set();
-        this.maxBubbles = 15; // Giảm số lượng bong bóng tối đa
-        this.init();
-    }
-
-    init() {
-        this.setupEventListeners();
-        this.startGentleAnimation();
-        this.createInitialBubbles();
-    }
-
-    setupEventListeners() {
-        // Click to create bubble
-        this.container.addEventListener('click', (e) => {
-            if (e.target === this.container && this.bubbles.size < this.maxBubbles) {
-                this.createBubbleAtPosition(e.clientX, e.clientY);
-            }
-        });
-
-        // Touch to create bubble
-        this.container.addEventListener('touchstart', (e) => {
-            if (e.target === this.container && this.bubbles.size < this.maxBubbles) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                this.createBubbleAtPosition(touch.clientX, touch.clientY);
-            }
-        }, { passive: false });
-    }
-
-    createBubble() {
-        if (this.bubbles.size >= this.maxBubbles) return null;
-
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-
-        // Properties được tối ưu cho độ mượt
-        const size = this.getSmoothSize();
-        const speed = this.getSmoothSpeed();
-        const opacity = 0.6 + Math.random() * 0.3;
-
-        bubble.style.width = size + 'px';
-        bubble.style.height = size + 'px';
-        bubble.style.left = Math.random() * 100 + '%';
-        bubble.style.animationDuration = speed + 's';
-        bubble.style.animationDelay = (Math.random() * 1.5) + 's';
-
-        // Gradient mượt mà hơn
-        bubble.style.background = `radial-gradient(circle at 30% 30%, 
-            rgba(255, 255, 255, ${opacity}),
-            rgba(255, 255, 255, ${opacity * 0.35})
-        )`;
-
-        const handleInteraction = (e) => {
-            e.stopPropagation();
-            this.popBubble(bubble);
-        };
-
-        bubble.addEventListener('click', handleInteraction);
-        bubble.addEventListener('touchstart', handleInteraction, { passive: true });
-
-        this.container.appendChild(bubble);
-        this.bubbles.add(bubble);
-
-        // Auto remove
-        setTimeout(() => {
-            this.removeBubble(bubble);
-        }, (speed + 2) * 1000);
-
-        return bubble;
-    }
-
-    createBubbleAtPosition(x, y) {
-        if (this.bubbles.size >= this.maxBubbles) return;
-
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-
-        const size = this.getSmoothSize();
-        bubble.style.width = size + 'px';
-        bubble.style.height = size + 'px';
-        bubble.style.left = x + 'px';
-        bubble.style.bottom = (window.innerHeight - y) + 'px';
-        bubble.style.animationDuration = '12s'; // Chậm hơn để mượt
-        bubble.style.animationDelay = '0s';
-
-        const handleInteraction = (e) => {
-            e.stopPropagation();
-            this.popBubble(bubble);
-        };
-
-        bubble.addEventListener('click', handleInteraction);
-        bubble.addEventListener('touchstart', handleInteraction, { passive: true });
-
-        this.container.appendChild(bubble);
-        this.bubbles.add(bubble);
-
-        setTimeout(() => {
-            this.removeBubble(bubble);
-        }, 13000);
-    }
-
-    popBubble(bubble) {
-        if (!bubble.parentNode) return;
-
-        bubble.classList.add('touched');
-        this.createPopEffect(bubble);
-        this.createWaterRipple(bubble);
-
-        setTimeout(() => {
-            this.removeBubble(bubble);
-        }, 600);
-    }
-
-    createPopEffect(bubble) {
-        const rect = bubble.getBoundingClientRect();
-        const pop = document.createElement('div');
-        pop.className = 'bubble-pop';
-        pop.style.left = (rect.left + rect.width / 2) + 'px';
-        pop.style.top = (rect.top + rect.height / 2) + 'px';
-
-        this.container.appendChild(pop);
-
-        setTimeout(() => {
-            if (pop.parentNode) {
-                pop.parentNode.removeChild(pop);
-            }
-        }, 800);
-    }
-
-    createWaterRipple(bubble) {
-        const rect = bubble.getBoundingClientRect();
-        const ripple = document.createElement('div');
-        ripple.className = 'water-ripple';
-        ripple.style.left = (rect.left + rect.width / 2) + 'px';
-        ripple.style.top = (rect.top + rect.height / 2) + 'px';
-
-        this.container.appendChild(ripple);
-
-        setTimeout(() => {
-            if (ripple.parentNode) {
-                ripple.parentNode.removeChild(ripple);
-            }
-        }, 1200);
-    }
-
-    removeBubble(bubble) {
-        if (bubble.parentNode) {
-            bubble.parentNode.removeChild(bubble);
-        }
-        this.bubbles.delete(bubble);
-    }
-
-    getSmoothSize() {
-        // Ít kích thước hơn để tối ưu
-        const sizes = [12, 18, 24, 30];
-        return sizes[Math.floor(Math.random() * sizes.length)];
-    }
-
-    getSmoothSpeed() {
-        // Tốc độ chậm và ổn định hơn
-        return 10 + Math.random() * 8; // 10-18 giây
-    }
-
-    startGentleAnimation() {
-        // Tạo bong bóng ít hơn và chậm hơn
-        setInterval(() => {
-            if (this.bubbles.size < this.maxBubbles - 5) {
-                this.createBubble();
-            }
-        }, 1200); // Mỗi 1.2 giây 1 bong bóng
-
-        // Thỉnh thoảng tạo cụm nhỏ
-        setInterval(() => {
-            if (this.bubbles.size < this.maxBubbles - 3) {
-                this.createBubblePair();
-            }
-        }, 5000);
-    }
-
-    createBubblePair() {
-        // Chỉ tạo 2 bong bóng cùng lúc
-        this.createBubble();
-        setTimeout(() => this.createBubble(), 400);
-    }
-
-    createInitialBubbles() {
-        // Rất ít bong bóng ban đầu
-        for (let i = 0; i < 8; i++) {
-            setTimeout(() => this.createBubble(), i * 600);
-        }
-    }
-}
-
-// Khởi tạo
-document.addEventListener('DOMContentLoaded', () => {
-    new SmoothBubbleWorld();
-});
-
+        
+            
 
 document.addEventListener('DOMContentLoaded', function() {
   const audio = document.querySelector('.music-player');
@@ -1935,6 +1647,66 @@ document.addEventListener('DOMContentLoaded', function() {
     }, duration * 1000);
   }
 });
+              // Hiệu ứng pháo hoa
+document.addEventListener('DOMContentLoaded', function() {
+    // Tạo hiệu ứng pháo hoa khi click
+    document.addEventListener('click', function(e) {
+        createFirework(e.clientX, e.clientY);
+    });
+    
+    // Tự động tạo pháo hoa mỗi 3 giây
+    setInterval(function() {
+        if (Math.random() > 0.7) { // 30% cơ hội
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            createFirework(x, y);
+        }
+    }, 3000);
+});
+
+function createFirework(x, y) {
+    const firework = document.createElement('div');
+    firework.className = 'firework';
+    firework.style.left = x + 'px';
+    firework.style.top = y + 'px';
+    
+    const colors = [
+        '#ff0000', '#00ff00', '#0000ff', '#ffff00', 
+        '#ff00ff', '#00ffff', '#ff8000', '#ff0080'
+    ];
+    
+    const particleCount = 80 + Math.floor(Math.random() * 40);
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Random màu
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.backgroundColor = color;
+        
+        // Random hướng và khoảng cách
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 50 + Math.random() * 150;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
+        
+        particle.style.setProperty('--tx', tx + 'px');
+        particle.style.setProperty('--ty', ty + 'px');
+        
+        // Random delay
+        particle.style.animationDelay = (Math.random() * 0.3) + 's';
+        
+        firework.appendChild(particle);
+    }
+    
+    document.body.appendChild(firework);
+    
+    // Xóa sau khi animation kết thúc
+    setTimeout(() => {
+        firework.remove();
+    }, 1300);
+              }
 // Thêm vào cuối file js hiện có
 document.getElementById('hamburgerMenu').addEventListener('click', function() {
     var menu = document.getElementById('menuDropdown');
