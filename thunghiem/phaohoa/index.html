@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pháo Hoa Tự Động</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c2e, #1a1a4a);
+            color: white;
+            min-height: 100vh;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 100;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 2rem;
+            color: #a29bfe;
+        }
+        
+        .info-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem auto;
+            max-width: 600px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            min-width: 150px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #feca57;
+        }
+
+        /* Hiệu ứng pháo hoa thật */
+        .firework-shell {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Quả pháo bay lên */
+        .rocket {
+            position: absolute;
+            width: 4px;
+            height: 12px;
+            background: linear-gradient(to top, #ff4444, #ffff00);
+            border-radius: 2px;
+            animation: launch 1s ease-out forwards;
+        }
+
+        @keyframes launch {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            80% {
+                transform: translateY(var(--target-y)) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(var(--target-y)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Đuôi pháo */
+        .tail {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(to top, transparent, #ffa500);
+            animation: tail 1s ease-out forwards;
+        }
+
+        @keyframes tail {
+            0% {
+                height: 0px;
+                opacity: 0.8;
+            }
+            100% {
+                height: 30px;
+                opacity: 0;
+            }
+        }
+
+        /* Hạt pháo hoa nổ */
+        .firework-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            animation: burst 1.2s ease-out forwards;
+            opacity: 0;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        @keyframes burst {
+            0% {
+                transform: translate(0, 0) scale(0);
+                opacity: 1;
+            }
+            20% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--particle-x), var(--particle-y)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Tia lửa */
+        .spark-trail {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+            animation: spark 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes spark {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--spark-x), var(--spark-y)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Khói */
+        .smoke {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: smoke 2s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes smoke {
+            0% {
+                transform: scale(0);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎆 PHÁO HOA TỰ ĐỘNG 🎇</h1>
+        <p class="subtitle">Pháo hoa tự động bắn liên tục - Ngồi ngắm thôi!</p>
+        
+        <div class="info-box">
+            <h2>✨ Đang chạy chế độ TỰ ĐỘNG</h2>
+            <p>Pháo hoa sẽ tự động bắn ngẫu nhiên trên màn hình</p>
+            <p style="margin-top: 1rem; color: #feca57;">Bạn vẫn có thể click để bắn thêm pháo hoa!</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="fireworkCount">0</div>
+                <div>Pháo hoa đã bắn</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="particleCount">0</div>
+                <div>Hạt pháo hoa</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="fps">60</div>
+                <div>FPS</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let fireworkCount = 0;
+        let particleCount = 0;
+        let lastTime = performance.now();
+        let frameCount = 0;
+        let currentFPS = 60;
+
+        // Cập nhật FPS
+        function updateFPS() {
+            frameCount++;
+            const currentTime = performance.now();
+            if (currentTime - lastTime >= 1000) {
+                currentFPS = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+        }
+
+        // Cập nhật thống kê
+        function updateStats() {
+            document.getElementById('fireworkCount').textContent = fireworkCount;
+            document.getElementById('particleCount').textContent = particleCount;
+            document.getElementById('fps').textContent = currentFPS;
+        }
+
+        // Tạo pháo hoa tự động
+        function createAutoFirework() {
+            const x = 100 + Math.random() * (window.innerWidth - 200);
+            const y = 100 + Math.random() * (window.innerHeight - 300);
+            createRealFirework(x, y);
+        }
+
+        // Tạo nhiều pháo hoa cùng lúc
+        function createFireworkBurst() {
+            const burstCount = 2 + Math.floor(Math.random() * 3);
+            for (let i = 0; i < burstCount; i++) {
+                setTimeout(() => {
+                    createAutoFirework();
+                }, i * 200);
+            }
+        }
+
+        // Bắn pháo hoa tự động
+        function startAutoFireworks() {
+            // Bắn liên tục
+            setInterval(() => {
+                if (Math.random() > 0.3) { // 70% cơ hội bắn
+                    createAutoFirework();
+                }
+            }, 800);
+
+            // Bắn theo cụm
+            setInterval(() => {
+                if (Math.random() > 0.5) { // 50% cơ hội bắn cụm
+                    createFireworkBurst();
+                }
+            }, 2000);
+
+            // Bắn siêu cụm
+            setInterval(() => {
+                if (Math.random() > 0.7) { // 30% cơ hội bắn siêu cụm
+                    for (let i = 0; i < 5; i++) {
+                        setTimeout(() => {
+                            createFireworkBurst();
+                        }, i * 300);
+                    }
+                }
+            }, 5000);
+        }
+
+        // Hiệu ứng pháo hoa thật
+        function createRealFirework(targetX, targetY) {
+            fireworkCount++;
+            updateStats();
+
+            const shell = document.createElement('div');
+            shell.className = 'firework-shell';
+            shell.style.left = targetX + 'px';
+            shell.style.bottom = '0px';
+            
+            // Tạo quả pháo bay lên
+            const rocket = document.createElement('div');
+            rocket.className = 'rocket';
+            const launchHeight = targetY + 50;
+            rocket.style.setProperty('--target-y', '-' + launchHeight + 'px');
+            
+            // Tạo đuôi pháo
+            const tail = document.createElement('div');
+            tail.className = 'tail';
+            tail.style.left = '1px';
+            tail.style.bottom = '0px';
+            
+            shell.appendChild(rocket);
+            shell.appendChild(tail);
+            document.body.appendChild(shell);
+            
+            // Sau khi bay lên thì nổ
+            setTimeout(() => {
+                explodeFirework(targetX, targetY);
+                shell.remove();
+            }, 1000);
+        }
+
+        function explodeFirework(x, y) {
+            const explosion = document.createElement('div');
+            explosion.className = 'firework-shell';
+            explosion.style.left = x + 'px';
+            explosion.style.top = y + 'px';
+            
+            const colors = [
+                '#FF0000', '#00FF00', '#0000FF', '#FFFF00', 
+                '#FF00FF', '#00FFFF', '#FF8C00', '#FF1493',
+                '#32CD32', '#1E90FF', '#FFD700', '#FF69B4',
+                '#7B68EE', '#00FA9A', '#FF4500', '#DA70D6'
+            ];
+            
+            // Tạo các hạt pháo hoa
+            const particleCount = 80 + Math.floor(Math.random() * 60);
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework-particle';
+                
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.backgroundColor = color;
+                particle.style.color = color;
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 60 + Math.random() * 120;
+                const particleX = Math.cos(angle) * distance;
+                const particleY = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--particle-x', particleX + 'px');
+                particle.style.setProperty('--particle-y', particleY + 'px');
+                
+                particle.style.animationDelay = (Math.random() * 0.3) + 's';
+                particle.style.animationDuration = (0.8 + Math.random() * 0.6) + 's';
+                
+                explosion.appendChild(particle);
+                this.particleCount++;
+                
+                // Tạo tia lửa
+                if (Math.random() > 0.5) {
+                    const spark = document.createElement('div');
+                    spark.className = 'spark-trail';
+                    spark.style.backgroundColor = color;
+                    
+                    const sparkAngle = angle + (Math.random() - 0.5) * 0.5;
+                    const sparkDistance = distance * 0.3;
+                    const sparkX = Math.cos(sparkAngle) * sparkDistance;
+                    const sparkY = Math.sin(sparkAngle) * sparkDistance;
+                    
+                    spark.style.setProperty('--spark-x', sparkX + 'px');
+                    spark.style.setProperty('--spark-y', sparkY + 'px');
+                    
+                    spark.style.animationDelay = (0.2 + Math.random() * 0.3) + 's';
+                    
+                    explosion.appendChild(spark);
+                }
+            }
+            
+            // Tạo khói
+            const smoke = document.createElement('div');
+            smoke.className = 'smoke';
+            smoke.style.animationDelay = '0.1s';
+            explosion.appendChild(smoke);
+            
+            document.body.appendChild(explosion);
+            
+            setTimeout(() => {
+                explosion.remove();
+            }, 2000);
+        }
+
+        // Click để bắn thêm pháo hoa
+        document.addEventListener('click', function(e) {
+            createRealFirework(e.clientX, e.clientY);
+        });
+
+        // Khởi động
+        document.addEventListener('DOMContentLoaded', function() {
+            // Bắt đầu bắn tự động ngay lập tức
+            startAutoFireworks();
+            
+            // Bắn vài quả chào mừng
+            setTimeout(() => {
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        createAutoFirework();
+                    }, i * 500);
+                }
+            }, 1000);
+
+            // Cập nhật FPS
+            function gameLoop() {
+                updateFPS();
+                updateStats();
+                requestAnimationFrame(gameLoop);
+            }
+            gameLoop();
+        });
+    </script>
+</body>
+</html>
