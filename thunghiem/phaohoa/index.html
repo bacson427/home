@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hiệu ứng pháo hoa</title>
+    <title>Hiệu ứng pháo hoa tối ưu</title>
     <style>
         * {
             margin: 0;
@@ -64,11 +64,6 @@
             color: #ffcc00;
             margin-bottom: 15px;
             font-size: 1.5rem;
-        }
-
-        .card p {
-            line-height: 1.6;
-            margin-bottom: 15px;
         }
 
         .checkbox-item {
@@ -155,80 +150,96 @@
         </div>
         
         <footer>
-            <p>Hiệu ứng pháo hoa được tạo bằng HTML, CSS và JavaScript</p>
+            <p>Hiệu ứng pháo hoa được tối ưu hóa để giảm lag</p>
         </footer>
     </div>
 
     <script>
-        // Tạo hiệu ứng pháo hoa
+        // Tối ưu hóa hiệu ứng pháo hoa
         const fireworksContainer = document.getElementById('fireworks-container');
         
         // Màu sắc cho pháo hoa
         const colors = [
             '#ff0000', '#00ff00', '#0000ff', '#ffff00', 
-            '#ff00ff', '#00ffff', '#ff9900', '#ff66ff'
+            '#ff00ff', '#00ffff', '#ff9900'
         ];
+        
+        // Giới hạn số lượng particle đồng thời
+        const MAX_PARTICLES = 200;
+        let currentParticles = 0;
         
         // Tạo một pháo hoa
         function createFirework(x, y) {
-            const particles = 100;
+            // Giảm số lượng particle từ 100 xuống 30
+            const particles = 30;
             const angleIncrement = (Math.PI * 2) / particles;
             
             for (let i = 0; i < particles; i++) {
+                // Kiểm tra giới hạn particle
+                if (currentParticles >= MAX_PARTICLES) return;
+                currentParticles++;
+                
                 const particle = document.createElement('div');
                 particle.style.position = 'absolute';
-                particle.style.width = '4px';
-                particle.style.height = '4px';
+                particle.style.width = '3px';
+                particle.style.height = '3px';
                 particle.style.borderRadius = '50%';
                 particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 particle.style.left = x + 'px';
                 particle.style.top = y + 'px';
+                particle.style.opacity = '1';
+                particle.style.transition = 'opacity 0.5s';
                 
                 fireworksContainer.appendChild(particle);
                 
                 // Tính toán hướng bay
                 const angle = i * angleIncrement;
-                const speed = 2 + Math.random() * 3;
+                const speed = 1 + Math.random() * 2; // Giảm tốc độ
                 const vx = Math.cos(angle) * speed;
                 const vy = Math.sin(angle) * speed;
                 
-                // Animation
-                let opacity = 1;
-                let size = 4;
+                // Sử dụng CSS animation thay vì requestAnimationFrame
+                particle.style.animation = `fireworkMove 1.5s forwards`;
+                particle.style.setProperty('--vx', vx);
+                particle.style.setProperty('--vy', vy);
                 
-                const animate = () => {
-                    opacity -= 0.01;
-                    size -= 0.02;
-                    
-                    if (opacity <= 0 || size <= 0) {
-                        fireworksContainer.removeChild(particle);
-                        return;
+                // Xóa particle sau khi animation kết thúc
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                        currentParticles--;
                     }
-                    
-                    particle.style.opacity = opacity;
-                    particle.style.width = size + 'px';
-                    particle.style.height = size + 'px';
-                    particle.style.left = parseFloat(particle.style.left) + vx + 'px';
-                    particle.style.top = parseFloat(particle.style.top) + vy + 'px';
-                    
-                    requestAnimationFrame(animate);
-                };
-                
-                animate();
+                }, 1500);
             }
         }
         
-        // Tạo pháo hoa ngẫu nhiên
+        // Tạo pháo hoa ngẫu nhiên với tần suất thấp hơn
         function createRandomFirework() {
             const x = Math.random() * window.innerWidth;
-            const y = Math.random() * window.innerHeight;
+            const y = Math.random() * (window.innerHeight / 2); // Chỉ ở nửa trên màn hình
             createFirework(x, y);
         }
         
-        // Tạo pháo hoa theo chu kỳ
-        setInterval(createRandomFirework, 800);
+        // Giảm tần suất pháo hoa
+        setInterval(createRandomFirework, 1500);
         
-        // Tạo pháo hoa khi click
+        // Thêm CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fireworkMove {
+                0% {
+                    transform: translate(0, 0);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translate(calc(var(--vx) * 100px), calc(var(--vy) * 100px));
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Tạo pháo hoa khi click (tùy chọn)
         document.addEventListener('click', (e) => {
             createFirework(e.clientX, e.clientY);
         });
