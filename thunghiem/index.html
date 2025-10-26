@@ -221,229 +221,71 @@
     100% { border-color: #ff0000; }
 }
 
-
-/* Hiệu ứng bong bóng toàn màn hình */
-.fullscreen-bubbles {
+/* Hiệu ứng pháo hoa nở to */
+.firework {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: linear-gradient(to bottom, #1a2980, #26d0ce);
-    overflow: hidden;
-    z-index: -1;
-    cursor: pointer;
-    perspective: 1000px;
-}
-
-/* Bong bóng */
-.bubble {
-    position: absolute;
-    background: radial-gradient(circle at 30% 30%, 
-        rgba(255, 255, 255, 0.95),
-        rgba(255, 255, 255, 0.3)
-    );
-    border-radius: 50%;
-    bottom: -80px;
-    animation: rise ease-in-out infinite;
-    cursor: pointer;
-    box-shadow: 
-        0 0 25px rgba(255, 255, 255, 0.4),
-        inset 0 -8px 15px rgba(255, 255, 255, 0.3);
-    filter: blur(0.3px);
-    transform-style: preserve-3d;
-    will-change: transform, opacity;
-    backface-visibility: hidden;
-}
-
-/* Hiệu ứng bong bóng vỡ */
-.bubble-pop {
-    position: absolute;
-    animation: pop 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     pointer-events: none;
-    z-index: 1001;
+    z-index: 9999;
 }
 
-.bubble-pop::before {
-    content: '💧';
-    font-size: 28px;
-    display: block;
-    animation: popScale 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Hiệu ứng vòng tròn nước */
-.water-ripple {
+.particle {
     position: absolute;
-    border: 1.5px solid rgba(255, 255, 255, 0.7);
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    animation: ripple 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    pointer-events: none;
-    z-index: 999;
+    animation: explode 1.5s ease-out forwards;
+    opacity: 0;
+    box-shadow: 0 0 10px currentColor;
 }
 
-/* Animations siêu mượt với easing tự nhiên */
-@keyframes rise {
+.particle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle, currentColor 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    opacity: 0.6;
+}
+
+@keyframes explode {
     0% {
-        bottom: -80px;
-        opacity: 0;
-        transform: 
-            translateX(0) 
-            scale(0.3)
-            translateZ(0)
-            rotate(0deg);
-        animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transform: translate(0, 0) scale(0);
+        opacity: 1;
     }
     20% {
-        opacity: 0.8;
-        transform: 
-            translateX(8px) 
-            scale(0.6)
-            translateZ(15px)
-            rotate(5deg);
-        animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
-    }
-    50% {
-        opacity: 0.7;
-        transform: 
-            translateX(-12px) 
-            scale(0.85)
-            translateZ(25px)
-            rotate(-8deg);
-        animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
-    }
-    80% {
-        opacity: 0.5;
-        transform: 
-            translateX(15px) 
-            scale(1)
-            translateZ(35px)
-            rotate(12deg);
-        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-    }
-    100% {
-        bottom: 120vh;
-        opacity: 0;
-        transform: 
-            translateX(-20px) 
-            scale(1.1)
-            translateZ(50px)
-            rotate(-15deg);
-    }
-}
-
-@keyframes pop {
-    0% {
-        transform: scale(0.9);
-        opacity: 1;
-        filter: blur(0px);
-    }
-    40% {
-        transform: scale(1.8);
-        opacity: 0.7;
-        filter: blur(1px);
-    }
-    100% {
-        transform: scale(2.8);
-        opacity: 0;
-        filter: blur(2px);
-    }
-}
-
-@keyframes popScale {
-    0% {
-        transform: scale(0.6) rotate(0deg);
+        transform: translate(0, 0) scale(1);
         opacity: 1;
     }
-    30% {
-        transform: scale(1.4) rotate(180deg);
-        opacity: 0.9;
-    }
-    70% {
-        transform: scale(1.8) rotate(360deg);
-        opacity: 0.6;
-    }
     100% {
-        transform: scale(2.2) rotate(540deg);
+        transform: translate(var(--tx), var(--ty)) scale(0.5);
         opacity: 0;
     }
 }
 
-@keyframes ripple {
-    0% {
-        width: 0;
-        height: 0;
-        opacity: 0.9;
-        transform: translate(-50%, -50%) scale(0.1);
-        border-width: 2px;
-    }
-    30% {
-        opacity: 0.6;
-        transform: translate(-50%, -50%) scale(0.8);
-        border-width: 1.5px;
-    }
-    60% {
-        opacity: 0.3;
-        transform: translate(-50%, -50%) scale(1.2);
-        border-width: 1px;
-    }
-    100% {
-        width: 150px;
-        height: 150px;
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(1.5);
-        border-width: 0.5px;
-    }
+/* Hiệu ứng tia lửa */
+.spark {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    animation: sparkle 0.8s ease-out forwards;
+    opacity: 0;
 }
 
-/* Hiệu ứng khi chạm */
-.bubble.touched {
-    animation: bubblePop 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-}
-
-@keyframes bubblePop {
+@keyframes sparkle {
     0% {
-        transform: scale(1) translateZ(0) rotate(0deg);
+        transform: translate(0, 0) scale(1);
         opacity: 1;
-        filter: blur(0.3px) brightness(1);
-    }
-    25% {
-        transform: scale(1.4) translateZ(25px) rotate(45deg);
-        opacity: 0.8;
-        filter: blur(1px) brightness(1.3);
-    }
-    50% {
-        transform: scale(1.8) translateZ(40px) rotate(90deg);
-        opacity: 0.5;
-        filter: blur(1.5px) brightness(1.6);
     }
     100% {
-        transform: scale(2.2) translateZ(60px) rotate(180deg);
+        transform: translate(var(--spark-tx), var(--spark-ty)) scale(0);
         opacity: 0;
-        filter: blur(2px) brightness(2);
     }
 }
 
-/* Tối ưu hiệu suất tối đa */
-* {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
-}
-
-.fullscreen-bubbles {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    perspective: 1000;
-}
-
-.bubble {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-}
 /* ... các quy tắc CSS khác ... */
         /* Ẩn biểu tượng ngôi nhà (fa-house) */
 .fa-house {
@@ -1662,217 +1504,8 @@ function slotMachineToDate(element) {
     }, 90);
 }
 
-// Thêm hiệu ứng pulse cho CSS
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-        100% { transform: scale(1); }
-    }
-`;
-document.head.appendChild(style);
 
-// Gọi function khi trang load
-document.addEventListener('DOMContentLoaded', function() {
-    slotMachineToDate('.slot-machine');
-});
 
-class SmoothBubbleWorld {
-    constructor() {
-        this.container = document.querySelector('.fullscreen-bubbles');
-        this.bubbles = new Set();
-        this.maxBubbles = 15; // Giảm số lượng bong bóng tối đa
-        this.init();
-    }
-
-    init() {
-        this.setupEventListeners();
-        this.startGentleAnimation();
-        this.createInitialBubbles();
-    }
-
-    setupEventListeners() {
-        // Click to create bubble
-        this.container.addEventListener('click', (e) => {
-            if (e.target === this.container && this.bubbles.size < this.maxBubbles) {
-                this.createBubbleAtPosition(e.clientX, e.clientY);
-            }
-        });
-
-        // Touch to create bubble
-        this.container.addEventListener('touchstart', (e) => {
-            if (e.target === this.container && this.bubbles.size < this.maxBubbles) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                this.createBubbleAtPosition(touch.clientX, touch.clientY);
-            }
-        }, { passive: false });
-    }
-
-    createBubble() {
-        if (this.bubbles.size >= this.maxBubbles) return null;
-
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-
-        // Properties được tối ưu cho độ mượt
-        const size = this.getSmoothSize();
-        const speed = this.getSmoothSpeed();
-        const opacity = 0.6 + Math.random() * 0.3;
-
-        bubble.style.width = size + 'px';
-        bubble.style.height = size + 'px';
-        bubble.style.left = Math.random() * 100 + '%';
-        bubble.style.animationDuration = speed + 's';
-        bubble.style.animationDelay = (Math.random() * 1.5) + 's';
-
-        // Gradient mượt mà hơn
-        bubble.style.background = `radial-gradient(circle at 30% 30%, 
-            rgba(255, 255, 255, ${opacity}),
-            rgba(255, 255, 255, ${opacity * 0.35})
-        )`;
-
-        const handleInteraction = (e) => {
-            e.stopPropagation();
-            this.popBubble(bubble);
-        };
-
-        bubble.addEventListener('click', handleInteraction);
-        bubble.addEventListener('touchstart', handleInteraction, { passive: true });
-
-        this.container.appendChild(bubble);
-        this.bubbles.add(bubble);
-
-        // Auto remove
-        setTimeout(() => {
-            this.removeBubble(bubble);
-        }, (speed + 2) * 1000);
-
-        return bubble;
-    }
-
-    createBubbleAtPosition(x, y) {
-        if (this.bubbles.size >= this.maxBubbles) return;
-
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-
-        const size = this.getSmoothSize();
-        bubble.style.width = size + 'px';
-        bubble.style.height = size + 'px';
-        bubble.style.left = x + 'px';
-        bubble.style.bottom = (window.innerHeight - y) + 'px';
-        bubble.style.animationDuration = '12s'; // Chậm hơn để mượt
-        bubble.style.animationDelay = '0s';
-
-        const handleInteraction = (e) => {
-            e.stopPropagation();
-            this.popBubble(bubble);
-        };
-
-        bubble.addEventListener('click', handleInteraction);
-        bubble.addEventListener('touchstart', handleInteraction, { passive: true });
-
-        this.container.appendChild(bubble);
-        this.bubbles.add(bubble);
-
-        setTimeout(() => {
-            this.removeBubble(bubble);
-        }, 13000);
-    }
-
-    popBubble(bubble) {
-        if (!bubble.parentNode) return;
-
-        bubble.classList.add('touched');
-        this.createPopEffect(bubble);
-        this.createWaterRipple(bubble);
-
-        setTimeout(() => {
-            this.removeBubble(bubble);
-        }, 600);
-    }
-
-    createPopEffect(bubble) {
-        const rect = bubble.getBoundingClientRect();
-        const pop = document.createElement('div');
-        pop.className = 'bubble-pop';
-        pop.style.left = (rect.left + rect.width / 2) + 'px';
-        pop.style.top = (rect.top + rect.height / 2) + 'px';
-
-        this.container.appendChild(pop);
-
-        setTimeout(() => {
-            if (pop.parentNode) {
-                pop.parentNode.removeChild(pop);
-            }
-        }, 800);
-    }
-
-    createWaterRipple(bubble) {
-        const rect = bubble.getBoundingClientRect();
-        const ripple = document.createElement('div');
-        ripple.className = 'water-ripple';
-        ripple.style.left = (rect.left + rect.width / 2) + 'px';
-        ripple.style.top = (rect.top + rect.height / 2) + 'px';
-
-        this.container.appendChild(ripple);
-
-        setTimeout(() => {
-            if (ripple.parentNode) {
-                ripple.parentNode.removeChild(ripple);
-            }
-        }, 1200);
-    }
-
-    removeBubble(bubble) {
-        if (bubble.parentNode) {
-            bubble.parentNode.removeChild(bubble);
-        }
-        this.bubbles.delete(bubble);
-    }
-
-    getSmoothSize() {
-        // Ít kích thước hơn để tối ưu
-        const sizes = [12, 18, 24, 30];
-        return sizes[Math.floor(Math.random() * sizes.length)];
-    }
-
-    getSmoothSpeed() {
-        // Tốc độ chậm và ổn định hơn
-        return 10 + Math.random() * 8; // 10-18 giây
-    }
-
-    startGentleAnimation() {
-        // Tạo bong bóng ít hơn và chậm hơn
-        setInterval(() => {
-            if (this.bubbles.size < this.maxBubbles - 5) {
-                this.createBubble();
-            }
-        }, 1200); // Mỗi 1.2 giây 1 bong bóng
-
-        // Thỉnh thoảng tạo cụm nhỏ
-        setInterval(() => {
-            if (this.bubbles.size < this.maxBubbles - 3) {
-                this.createBubblePair();
-            }
-        }, 5000);
-    }
-
-    createBubblePair() {
-        // Chỉ tạo 2 bong bóng cùng lúc
-        this.createBubble();
-        setTimeout(() => this.createBubble(), 400);
-    }
-
-    createInitialBubbles() {
-        // Rất ít bong bóng ban đầu
-        for (let i = 0; i < 8; i++) {
-            setTimeout(() => this.createBubble(), i * 600);
-        }
-    }
-}
 
 // Khởi tạo
 document.addEventListener('DOMContentLoaded', () => {
@@ -1966,6 +1599,133 @@ document.addEventListener('click', function(e) {
     <a href="#" id="addToHomeScreen">Download</a>
 </div>
 </div>
+  <script>
+// Hiệu ứng pháo hoa nở to
+document.addEventListener('DOMContentLoaded', function() {
+    // Tạo hiệu ứng pháo hoa khi click
+    document.addEventListener('click', function(e) {
+        createBigFirework(e.clientX, e.clientY);
+    });
+    
+    // Tự động tạo pháo hoa mỗi 2 giây
+    setInterval(function() {
+        if (Math.random() > 0.5) { // 50% cơ hội
+            const x = 100 + Math.random() * (window.innerWidth - 200);
+            const y = 100 + Math.random() * (window.innerHeight - 200);
+            createBigFirework(x, y);
+        }
+    }, 2000);
+});
+
+function createBigFirework(x, y) {
+    const firework = document.createElement('div');
+    firework.className = 'firework';
+    firework.style.left = x + 'px';
+    firework.style.top = y + 'px';
+    
+    const colors = [
+        '#FF0000', '#00FF00', '#0000FF', '#FFFF00', 
+        '#FF00FF', '#00FFFF', '#FF8000', '#FF0080',
+        '#FF1493', '#00FF7F', '#1E90FF', '#FFD700'
+    ];
+    
+    // Tạo nhiều hạt hơn với kích thước lớn
+    const particleCount = 120 + Math.floor(Math.random() * 80);
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Random màu sáng hơn
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.backgroundColor = color;
+        particle.style.color = color;
+        
+        // Khoảng cách nở to hơn
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 80 + Math.random() * 250; // Nở to hơn
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
+        
+        particle.style.setProperty('--tx', tx + 'px');
+        particle.style.setProperty('--ty', ty + 'px');
+        
+        // Random delay và duration
+        particle.style.animationDelay = (Math.random() * 0.5) + 's';
+        particle.style.animationDuration = (0.8 + Math.random() * 0.7) + 's';
+        
+        firework.appendChild(particle);
+        
+        // Thêm tia lửa nhỏ
+        if (Math.random() > 0.7) {
+            createSpark(firework, x, y, color);
+        }
+    }
+    
+    // Hiệu ứng nổ trung tâm
+    createCenterExplosion(firework, x, y);
+    
+    document.body.appendChild(firework);
+    
+    // Xóa sau khi animation kết thúc
+    setTimeout(() => {
+        firework.remove();
+    }, 2000);
+}
+
+function createSpark(container, x, y, color) {
+    const spark = document.createElement('div');
+    spark.className = 'spark';
+    spark.style.backgroundColor = color;
+    
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 20 + Math.random() * 60;
+    const tx = Math.cos(angle) * distance;
+    const ty = Math.sin(angle) * distance;
+    
+    spark.style.setProperty('--spark-tx', tx + 'px');
+    spark.style.setProperty('--spark-ty', ty + 'px');
+    
+    spark.style.animationDelay = (0.3 + Math.random() * 0.4) + 's';
+    
+    container.appendChild(spark);
+}
+
+function createCenterExplosion(container, x, y) {
+    const center = document.createElement('div');
+    center.style.position = 'absolute';
+    center.style.left = '0px';
+    center.style.top = '0px';
+    center.style.width = '30px';
+    center.style.height = '30px';
+    center.style.borderRadius = '50%';
+    center.style.background = 'radial-gradient(circle, #ffffff 0%, #ff0000 50%, transparent 100%)';
+    center.style.animation = 'centerPop 0.5s ease-out forwards';
+    center.style.opacity = '0';
+    
+    container.appendChild(center);
+}
+
+// Thêm style cho hiệu ứng trung tâm
+const centerStyle = document.createElement('style');
+centerStyle.textContent = `
+    @keyframes centerPop {
+        0% {
+            transform: scale(0);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.5);
+            opacity: 0.8;
+        }
+        100% {
+            transform: scale(2);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(centerStyle);
+  </script>
 </body>
 </html>
 <!-- trigger -->
