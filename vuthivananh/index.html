@@ -4,7 +4,254 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý Công và Sản lượng</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e5799 0%, #207cca 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .login-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        button {
+            background-color: #1e5799;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: #154275;
+        }
+        
+        .main-section {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -8px;
+        }
+        
+        .form-col {
+            flex: 1;
+            padding: 0 8px;
+            min-width: 200px;
+            margin-bottom: 10px;
+        }
+        
+        .image-upload {
+            border: 2px dashed #ddd;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .image-upload:hover {
+            border-color: #1e5799;
+            background-color: #f8f9fa;
+        }
+        
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .image-preview img {
+            width: 80px;
+            height: 80px;
+            border-radius: 5px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .data-table th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-export {
+            background-color: #28a745;
+        }
+        
+        .btn-export:hover {
+            background-color: #218838;
+        }
+        
+        .btn-logout {
+            background-color: #dc3545;
+        }
+        
+        .btn-logout:hover {
+            background-color: #c82333;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            margin-top: 5px;
+            font-size: 13px;
+            text-align: center;
+        }
+        
+        .success-message {
+            color: #28a745;
+            margin-top: 5px;
+            font-size: 13px;
+            text-align: center;
+        }
+        
+        .btn-delete {
+            background-color: #dc3545;
+            padding: 5px 10px;
+            font-size: 12px;
+            width: auto;
+        }
+        
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 5px;
+            }
+            
+            header {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .main-section, .login-section {
+                padding: 15px;
+            }
+            
+            .form-col {
+                min-width: 100%;
+            }
+            
+            .data-table {
+                font-size: 12px;
+            }
+            
+            .data-table th, .data-table td {
+                padding: 6px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .image-preview img {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -26,90 +273,91 @@
             <button id="loginBtn">Đăng nhập</button>
             <div id="loginMessage" class="error-message"></div>
         </section>
-        
-        <section id="mainSection" class="main-section">
-            <h2>Nhập dữ liệu công việc</h2>
-            <form id="workForm">
-                <div class="form-row">
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label for="name">Tên nhân viên</label>
-                            <input type="text" id="name" required>
-                        </div>
-                    </div>
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label for="date">Ngày tháng năm</label>
-                            <input type="date" id="date" required>
-                        </div>
+    <section id="mainSection" class="main-section">
+        <h2>Nhập dữ liệu công việc</h2>
+        <form id="workForm">
+            <div class="form-row">
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="name">Tên nhân viên *</label>
+                        <input type="text" id="name" required>
                     </div>
                 </div>
-                
-                <div class="form-row">
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label for="startImage">Ảnh bắt đầu (yêu cầu)</label>
-                            <div class="image-upload" id="startImageUpload">
-                                <p>Nhấp để tải ảnh lên</p>
-                                <input type="file" id="startImage" accept="image/*" class="hidden" multiple>
-                            </div>
-                            <div id="startImagePreview" class="image-preview"></div>
-                        </div>
-                    </div>
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label for="endImage">Ảnh kết thúc (yêu cầu)</label>
-                            <div class="image-upload" id="endImageUpload">
-                                <p>Nhấp để tải ảnh lên</p>
-                                <input type="file" id="endImage" accept="image/*" class="hidden" multiple>
-                            </div>
-                            <div id="endImagePreview" class="image-preview"></div>
-                        </div>
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="date">Ngày tháng năm *</label>
+                        <input type="date" id="date" required>
                     </div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="additionalImage">Ảnh bổ sung (nếu có)</label>
-                    <div class="image-upload" id="additionalImageUpload">
-                        <p>Nhấp để tải ảnh bổ sung</p>
-                        <input type="file" id="additionalImage" accept="image/*" class="hidden" multiple>
-                    </div>
-                    <div id="additionalImagePreview" class="image-preview"></div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label for="workType">Công việc</label>
-                            <select id="workType">
-                                <option value="nhap_du_lieu">Nhập dữ liệu</option>
-                                <option value="ham_ech">Hàm ếch</option>
-                                <option value="san_luong">Sản lượng</option>
-                                <option value="them">Thêm</option>
-                                <option value="ham_ech_tinh_theo_san_pham">Hàm ếch tính theo sản phẩm</option>
-                                <option value="nhap_du_lieu_tinh_theo_to">Nhập dữ liệu tính theo tờ</option>
-                                <option value="khac">Khác</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label for="quantity">Số lượng</label>
-                            <input type="number" id="quantity" min="0" step="1">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="notes">Ghi chú</label>
-                    <textarea id="notes" rows="3"></textarea>
-                </div>
-                
-                <button type="submit">Thêm dữ liệu</button>
-                <div id="formMessage" class="success-message"></div>
-            </form>
+            </div>
             
-            <h2>Dữ liệu đã nhập</h2>
+            <div class="form-row">
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="startImage">Ảnh bắt đầu *</label>
+                        <div class="image-upload" id="startImageUpload">
+                            <p>📷 Nhấp để tải ảnh lên</p>
+                            <input type="file" id="startImage" accept="image/*" class="hidden" multiple>
+                        </div>
+                        <div id="startImagePreview" class="image-preview"></div>
+                    </div>
+                </div>
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="endImage">Ảnh kết thúc *</label>
+                        <div class="image-upload" id="endImageUpload">
+                            <p>📷 Nhấp để tải ảnh lên</p>
+                            <input type="file" id="endImage" accept="image/*" class="hidden" multiple>
+                        </div>
+                        <div id="endImagePreview" class="image-preview"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="additionalImage">Ảnh bổ sung (tùy chọn)</label>
+                <div class="image-upload" id="additionalImageUpload">
+                    <p>📷 Nhấp để tải ảnh bổ sung</p>
+                    <input type="file" id="additionalImage" accept="image/*" class="hidden" multiple>
+                </div>
+                <div id="additionalImagePreview" class="image-preview"></div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="workType">Công việc *</label>
+                        <select id="workType" required>
+                            <option value="">-- Chọn công việc --</option>
+                            <option value="nhap_du_lieu">Nhập dữ liệu</option>
+                            <option value="ham_ech">Hàm ếch</option>
+                            <option value="san_luong">Sản lượng</option>
+                            <option value="them">Thêm</option>
+                            <option value="ham_ech_tinh_theo_san_pham">Hàm ếch tính theo sản phẩm</option>
+                            <option value="nhap_du_lieu_tinh_theo_to">Nhập dữ liệu tính theo tờ</option>
+                            <option value="khac">Khác</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="quantity">Số lượng</label>
+                        <input type="number" id="quantity" min="0" step="1" placeholder="0">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="notes">Ghi chú</label>
+                <textarea id="notes" rows="2" placeholder="Nhập ghi chú nếu có..."></textarea>
+            </div>
+            
+            <button type="submit">➕ Thêm dữ liệu</button>
+            <div id="formMessage" class="success-message"></div>
+        </form>
+        
+        <h2>Dữ liệu đã nhập</h2>
+        <div style="overflow-x: auto;">
             <table class="data-table" id="dataTable">
                 <thead>
                     <tr>
@@ -128,482 +376,338 @@
                     <!-- Dữ liệu sẽ được thêm vào đây -->
                 </tbody>
             </table>
-            
-            <div class="action-buttons">
-                <button id="exportBtn" class="btn-export">Xuất dữ liệu</button>
-                <button id="logoutBtn" class="btn-logout">Đăng xuất</button>
-            </div>
-        </section>
-    </div>
-    
-    <script src="script.js"></script>
-</body>
-</html>
-/* style.css */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-    background-color: #f5f5f5;
-    color: #333;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-header {
-    background: linear-gradient(135deg, #1e5799 0%, #207cca 100%);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.login-section {
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    max-width: 400px;
-    margin: 20px auto;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 600;
-}
-
-input, select, textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-button {
-    background-color: #1e5799;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s;
-    width: 100%;
-}
-
-button:hover {
-    background-color: #154275;
-}
-
-.main-section {
-    display: none;
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
-
-.form-row {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -10px;
-}
-
-.form-col {
-    flex: 1;
-    padding: 0 10px;
-    min-width: 250px;
-}
-
-.image-upload {
-    border: 2px dashed #ddd;
-    padding: 20px;
-    text-align: center;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    cursor: pointer;
-}
-
-.image-upload:hover {
-    border-color: #1e5799;
-}
-
-.image-preview {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.image-preview img {
-    max-width: 100px;
-    max-height: 100px;
-    border-radius: 5px;
-    object-fit: cover;
-}
-
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-.data-table th, .data-table td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
-}
-
-.data-table th {
-    background-color: #f2f2f2;
-    font-weight: 600;
-}
-
-.data-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.btn-export {
-    background-color: #28a745;
-}
-
-.btn-export:hover {
-    background-color: #218838;
-}
-
-.btn-logout {
-    background-color: #dc3545;
-}
-
-.btn-logout:hover {
-    background-color: #c82333;
-}
-
-.hidden {
-    display: none;
-}
-
-.error-message {
-    color: #dc3545;
-    margin-top: 5px;
-    font-size: 14px;
-}
-
-.success-message {
-    color: #28a745;
-    margin-top: 5px;
-    font-size: 14px;
-}
-
-.btn-delete {
-    background-color: #dc3545;
-    padding: 5px 10px;
-    font-size: 14px;
-    width: auto;
-}
-
-.btn-delete:hover {
-    background-color: #c82333;
-}
-// script.js
-document.addEventListener('DOMContentLoaded', function() {
-    // Biến toàn cục - Thông tin đăng nhập đã được làm rối
-    let workData = [];
-    
-    // Thông tin đăng nhập đã được mã hóa và làm rối
-    const ENCODED_ADMIN_ID = 'MzA4ODQyNzM2OA==';
-    const ENCODED_ADMIN_PASSWORD = 'QCZWYW4yMDA3';
-    
-    // Giải mã thông tin đăng nhập
-    const ADMIN_ID = atob(ENCODED_ADMIN_ID);
-    const ADMIN_PASSWORD = atob(ENCODED_ADMIN_PASSWORD);
-    
-    // Tham chiếu đến các phần tử DOM
-    const loginSection = document.getElementById('loginSection');
-    const mainSection = document.getElementById('mainSection');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const userIdInput = document.getElementById('userId');
-    const passwordInput = document.getElementById('password');
-    const loginMessage = document.getElementById('loginMessage');
-    const workForm = document.getElementById('workForm');
-    const dataTableBody = document.getElementById('dataTableBody');
-    const exportBtn = document.getElementById('exportBtn');
-    
-    // Xử lý sự kiện đăng nhập
-    loginBtn.addEventListener('click', function() {
-        const userId = userIdInput.value.trim();
-        const password = passwordInput.value.trim();
+        </div>
         
-        if (userId === ADMIN_ID && password === ADMIN_PASSWORD) {
-            loginSection.style.display = 'none';
-            mainSection.style.display = 'block';
-            loginMessage.textContent = '';
-            loadWorkData();
-        } else {
-            loginMessage.textContent = 'ID hoặc mật khẩu không đúng!';
-        }
-    });
-    
-    // Xử lý sự kiện đăng xuất
-    logoutBtn.addEventListener('click', function() {
-        mainSection.style.display = 'none';
-        loginSection.style.display = 'block';
-        userIdInput.value = '';
-        passwordInput.value = '';
-    });
-    
-    // Xử lý upload ảnh
-    const imageUploads = [
-        { upload: 'startImageUpload', input: 'startImage', preview: 'startImagePreview' },
-        { upload: 'endImageUpload', input: 'endImage', preview: 'endImagePreview' },
-        { upload: 'additionalImageUpload', input: 'additionalImage', preview: 'additionalImagePreview' }
-    ];
-    
-    imageUploads.forEach(item => {
-        const uploadElement = document.getElementById(item.upload);
-        const inputElement = document.getElementById(item.input);
-        const previewElement = document.getElementById(item.preview);
+        <div class="action-buttons">
+            <button id="exportBtn" class="btn-export">📥 Xuất dữ liệu CSV</button>
+            <button id="clearDataBtn" class="btn-logout" style="background-color: #ffc107; color: #000;">🗑️ Xóa toàn bộ dữ liệu</button>
+            <button id="logoutBtn" class="btn-logout">🚪 Đăng xuất</button>
+        </div>
+    </section>
+</div>
+<script>
+    // ===== PHẦN JAVASCRIPT =====
+    document.addEventListener('DOMContentLoaded', function() {
+        // Biến toàn cục
+        let workData = [];
         
-        uploadElement.addEventListener('click', function() {
-            inputElement.click();
-        });
+        // Thông tin đăng nhập đã được mã hóa
+        const ENCODED_ADMIN_ID = 'MzA4ODQyNzM2OA=='; // 0388427368
+        const ENCODED_ADMIN_PASSWORD = 'QCZWYW4yMDA3'; // @Van2007
         
-        inputElement.addEventListener('change', function() {
-            previewElement.innerHTML = '';
-            if (inputElement.files) {
-                Array.from(inputElement.files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        previewElement.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                });
+        // Giải mã thông tin đăng nhập
+        const ADMIN_ID = atob(ENCODED_ADMIN_ID);
+        const ADMIN_PASSWORD = atob(ENCODED_ADMIN_PASSWORD);
+        
+        // Tham chiếu đến các phần tử DOM
+        const loginSection = document.getElementById('loginSection');
+        const mainSection = document.getElementById('mainSection');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const clearDataBtn = document.getElementById('clearDataBtn');
+        const userIdInput = document.getElementById('userId');
+        const passwordInput = document.getElementById('password');
+        const loginMessage = document.getElementById('loginMessage');
+        const workForm = document.getElementById('workForm');
+        const dataTableBody = document.getElementById('dataTableBody');
+        const exportBtn = document.getElementById('exportBtn');
+        
+        // Thiết lập ngày mặc định là hôm nay
+        document.getElementById('date').valueAsDate = new Date();
+        
+        // Xử lý sự kiện đăng nhập
+        loginBtn.addEventListener('click', handleLogin);
+        
+        // Cho phép đăng nhập bằng phím Enter
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleLogin();
             }
         });
-    });
-    
-    // Xử lý form thêm dữ liệu
-    workForm.addEventListener('submit', function(e) {
-        e.preventDefault();
         
-        const name = document.getElementById('name').value;
-        const date = document.getElementById('date').value;
-        const workType = document.getElementById('workType').value;
-        const quantity = document.getElementById('quantity').value;
-        const notes = document.getElementById('notes').value;
-        
-        // Lấy thông tin ảnh
-        const startImages = document.getElementById('startImage').files;
-        const endImages = document.getElementById('endImage').files;
-        const additionalImages = document.getElementById('additionalImage').files;
-        
-        // Kiểm tra ảnh bắt buộc
-        if (startImages.length === 0 || endImages.length === 0) {
-            alert('Vui lòng tải lên ảnh bắt đầu và ảnh kết thúc!');
-            return;
+        function handleLogin() {
+            const userId = userIdInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (userId === ADMIN_ID && password === ADMIN_PASSWORD) {
+                loginSection.style.display = 'none';
+                mainSection.style.display = 'block';
+                loginMessage.textContent = '';
+                loadWorkData();
+            } else {
+                loginMessage.textContent = 'ID hoặc mật khẩu không đúng!';
+                userIdInput.focus();
+            }
         }
         
-        // Tạo đối tượng dữ liệu công việc
-        const workItem = {
-            id: Date.now(),
-            name: name,
-            date: date,
-            workType: workType,
-            quantity: quantity,
-            notes: notes,
-            startImages: Array.from(startImages).map(file => ({
-                name: file.name,
-                size: file.size,
-                type: file.type
-            })),
-            endImages: Array.from(endImages).map(file => ({
-                name: file.name,
-                size: file.size,
-                type: file.type
-            })),
-            additionalImages: Array.from(additionalImages).map(file => ({
-                name: file.name,
-                size: file.size,
-                type: file.type
-            }))
-        };
-        
-        // Thêm vào mảng dữ liệu
-        workData.push(workItem);
-        
-        // Lưu vào localStorage
-        saveWorkData();
-        
-        // Cập nhật bảng
-        updateDataTable();
-        
-        // Reset form
-        workForm.reset();
-        document.getElementById('startImagePreview').innerHTML = '';
-        document.getElementById('endImagePreview').innerHTML = '';
-        document.getElementById('additionalImagePreview').innerHTML = '';
-        
-        // Hiển thị thông báo
-        document.getElementById('formMessage').textContent = 'Đã thêm dữ liệu thành công!';
-        setTimeout(() => {
-            document.getElementById('formMessage').textContent = '';
-        }, 3000);
-    });
-    
-    // Xử lý xuất dữ liệu
-    exportBtn.addEventListener('click', function() {
-        if (workData.length === 0) {
-            alert('Không có dữ liệu để xuất!');
-            return;
-        }
-        
-        // Tạo nội dung CSV
-        let csvContent = "Tên,Ngày,Công việc,Số lượng,Ghi chú,Số ảnh bắt đầu,Số ảnh kết thúc,Số ảnh bổ sung\n";
-        
-        workData.forEach(item => {
-            const row = [
-                `"${item.name}"`,
-                `"${item.date}"`,
-                `"${getWorkTypeLabel(item.workType)}"`,
-                `"${item.quantity}"`,
-                `"${item.notes}"`,
-                `"${item.startImages.length}"`,
-                `"${item.endImages.length}"`,
-                `"${item.additionalImages.length}"`
-            ].join(',');
-            csvContent += row + '\n';
+        // Xử lý sự kiện đăng xuất
+        logoutBtn.addEventListener('click', function() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                mainSection.style.display = 'none';
+                loginSection.style.display = 'block';
+                userIdInput.value = '';
+                passwordInput.value = '';
+                userIdInput.focus();
+            }
         });
         
-        // Tạo file và tải xuống
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.setAttribute('href', url);
-        link.setAttribute('download', `du_lieu_cong_viec_${new Date().toISOString().slice(0,10)}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    });
-    
-    // Hàm lưu dữ liệu vào localStorage
-    function saveWorkData() {
-        localStorage.setItem('workData', JSON.stringify(workData));
-    }
-    
-    // Hàm tải dữ liệu từ localStorage
-    function loadWorkData() {
-        const savedData = localStorage.getItem('workData');
-        if (savedData) {
-            workData = JSON.parse(savedData);
-            updateDataTable();
-        }
-    }
-    
-    // Hàm cập nhật bảng dữ liệu
-    function updateDataTable() {
-        dataTableBody.innerHTML = '';
-        
-        if (workData.length === 0) {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td colspan="9" style="text-align: center;">Chưa có dữ liệu</td>`;
-            dataTableBody.appendChild(row);
-            return;
-        }
-        
-        workData.forEach(item => {
-            const row = document.createElement('tr');
-            
-            // Tạo HTML cho ảnh
-            const startImagesHtml = item.startImages.length > 0 
-                ? `<span>${item.startImages.length} ảnh</span>` 
-                : '<span style="color: red;">Chưa có</span>';
-                
-            const endImagesHtml = item.endImages.length > 0 
-                ? `<span>${item.endImages.length} ảnh</span>` 
-                : '<span style="color: red;">Chưa có</span>';
-                
-            const additionalImagesHtml = item.additionalImages.length > 0 
-                ? `<span>${item.additionalImages.length} ảnh</span>` 
-                : 'Không có';
-            
-            row.innerHTML = `
-                <td>${item.name}</td>
-                <td>${item.date}</td>
-                <td>${getWorkTypeLabel(item.workType)}</td>
-                <td>${item.quantity}</td>
-                <td>${startImagesHtml}</td>
-                <td>${endImagesHtml}</td>
-                <td>${additionalImagesHtml}</td>
-                <td>${item.notes || 'Không có'}</td>
-                <td>
-                    <button class="btn-delete" data-id="${item.id}">Xóa</button>
-                </td>
-            `;
-            
-            dataTableBody.appendChild(row);
+        // Xử lý xóa toàn bộ dữ liệu
+        clearDataBtn.addEventListener('click', function() {
+            if (confirm('⚠️ Bạn có CHẮC CHẮN muốn xóa TOÀN BỘ dữ liệu? Hành động này không thể hoàn tác!')) {
+                workData = [];
+                localStorage.removeItem('workData');
+                updateDataTable();
+                alert('Đã xóa toàn bộ dữ liệu!');
+            }
         });
         
-        // Thêm sự kiện xóa
-        document.querySelectorAll('.btn-delete').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = parseInt(this.getAttribute('data-id'));
-                if (confirm('Bạn có chắc chắn muốn xóa dữ liệu này?')) {
-                    workData = workData.filter(item => item.id !== id);
-                    saveWorkData();
-                    updateDataTable();
+        // Xử lý upload ảnh
+        const imageUploads = [
+            { upload: 'startImageUpload', input: 'startImage', preview: 'startImagePreview' },
+            { upload: 'endImageUpload', input: 'endImage', preview: 'endImagePreview' },
+            { upload: 'additionalImageUpload', input: 'additionalImage', preview: 'additionalImagePreview' }
+        ];
+        
+        imageUploads.forEach(item => {
+            const uploadElement = document.getElementById(item.upload);
+            const inputElement = document.getElementById(item.input);
+            const previewElement = document.getElementById(item.preview);
+            
+            uploadElement.addEventListener('click', function() {
+                inputElement.click();
+            });
+            
+            inputElement.addEventListener('change', function() {
+                previewElement.innerHTML = '';
+                if (inputElement.files) {
+                    Array.from(inputElement.files).forEach(file => {
+                        if (file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const img = document.createElement('img');
+                                img.src = e.target.result;
+                                img.title = file.name;
+                                previewElement.appendChild(img);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
                 }
             });
         });
-    }
-    
-    // Hàm chuyển đổi mã công việc thành nhãn
-    function getWorkTypeLabel(workType) {
-        const workTypes = {
-            'nhap_du_lieu': 'Nhập dữ liệu',
-            'ham_ech': 'Hàm ếch',
-            'san_luong': 'Sản lượng',
-            'them': 'Thêm',
-            'ham_ech_tinh_theo_san_pham': 'Hàm ếch tính theo sản phẩm',
-            'nhap_du_lieu_tinh_theo_to': 'Nhập dữ liệu tính theo tờ',
-            'khac': 'Khác'
-        };
-        
-        return workTypes[workType] || workType;
-    }
-    
-    // Thiết lập ngày mặc định là hôm nay
-    document.getElementById('date').valueAsDate = new Date();
-});
+            // Xử lý form thêm dữ liệu
+            workForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value.trim();
+                const date = document.getElementById('date').value;
+                const workType = document.getElementById('workType').value;
+                const quantity = document.getElementById('quantity').value || '0';
+                const notes = document.getElementById('notes').value.trim();
+                
+                // Lấy thông tin ảnh
+                const startImages = document.getElementById('startImage').files;
+                const endImages = document.getElementById('endImage').files;
+                const additionalImages = document.getElementById('additionalImage').files;
+                
+                // Kiểm tra ảnh bắt buộc
+                if (startImages.length === 0 || endImages.length === 0) {
+                    alert('⚠️ Vui lòng tải lên ảnh bắt đầu và ảnh kết thúc!');
+                    return;
+                }
+                
+                // Kiểm tra công việc
+                if (!workType) {
+                    alert('⚠️ Vui lòng chọn loại công việc!');
+                    return;
+                }
+                
+                // Tạo đối tượng dữ liệu công việc
+                const workItem = {
+                    id: Date.now(),
+                    name: name,
+                    date: date,
+                    workType: workType,
+                    quantity: quantity,
+                    notes: notes,
+                    startImages: Array.from(startImages).map(file => ({
+                        name: file.name,
+                        size: file.size,
+                        type: file.type
+                    })),
+                    endImages: Array.from(endImages).map(file => ({
+                        name: file.name,
+                        size: file.size,
+                        type: file.type
+                    })),
+                    additionalImages: Array.from(additionalImages).map(file => ({
+                        name: file.name,
+                        size: file.size,
+                        type: file.type
+                    }))
+                };
+                
+                // Thêm vào mảng dữ liệu
+                workData.push(workItem);
+                
+                // Lưu vào localStorage
+                saveWorkData();
+                
+                // Cập nhật bảng
+                updateDataTable();
+                
+                // Reset form
+                workForm.reset();
+                document.getElementById('startImagePreview').innerHTML = '';
+                document.getElementById('endImagePreview').innerHTML = '';
+                document.getElementById('additionalImagePreview').innerHTML = '';
+                document.getElementById('date').valueAsDate = new Date();
+                
+                // Hiển thị thông báo
+                document.getElementById('formMessage').textContent = '✅ Đã thêm dữ liệu thành công!';
+                setTimeout(() => {
+                    document.getElementById('formMessage').textContent = '';
+                }, 3000);
+            });
+            
+            // Xử lý xuất dữ liệu
+            exportBtn.addEventListener('click', function() {
+                if (workData.length === 0) {
+                    alert('📭 Không có dữ liệu để xuất!');
+                    return;
+                }
+                
+                // Tạo nội dung CSV
+                let csvContent = "Tên,Ngày,Công việc,Số lượng,Ghi chú,Số ảnh bắt đầu,Số ảnh kết thúc,Số ảnh bổ sung\n";
+                
+                workData.forEach(item => {
+                    const row = [
+                        `"${item.name}"`,
+                        `"${item.date}"`,
+                        `"${getWorkTypeLabel(item.workType)}"`,
+                        `"${item.quantity}"`,
+                        `"${item.notes}"`,
+                        `"${item.startImages.length}"`,
+                        `"${item.endImages.length}"`,
+                        `"${item.additionalImages.length}"`
+                    ].join(',');
+                    csvContent += row + '\n';
+                });
+                
+                // Tạo file và tải xuống
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
+                link.setAttribute('download', `cong_viec_${timestamp}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+            
+            // Hàm lưu dữ liệu vào localStorage
+            function saveWorkData() {
+                localStorage.setItem('workData', JSON.stringify(workData));
+            }
+            
+            // Hàm tải dữ liệu từ localStorage
+            function loadWorkData() {
+                const savedData = localStorage.getItem('workData');
+                if (savedData) {
+                    try {
+                        workData = JSON.parse(savedData);
+                        updateDataTable();
+                    } catch (e) {
+                        console.error('Lỗi đọc dữ liệu:', e);
+                        workData = [];
+                    }
+                }
+            }
+            
+            // Hàm cập nhật bảng dữ liệu
+            function updateDataTable() {
+                dataTableBody.innerHTML = '';
+                
+                if (workData.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td colspan="9" style="text-align: center; padding: 20px; color: #666;">📝 Chưa có dữ liệu nào được thêm</td>`;
+                    dataTableBody.appendChild(row);
+                    return;
+                }
+                
+                // Sắp xếp theo ngày mới nhất
+                workData.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                workData.forEach(item => {
+                    const row = document.createElement('tr');
+                    
+                    // Tạo HTML cho ảnh
+                    const startImagesHtml = item.startImages.length > 0 
+                        ? `<span title="${item.startImages.map(img => img.name).join(', ')}">📸 ${item.startImages.length} ảnh</span>` 
+                        : '<span style="color: red;">❌ Chưa có</span>';
+                        
+                    const endImagesHtml = item.endImages.length > 0 
+                        ? `<span title="${item.endImages.map(img => img.name).join(', ')}">📸 ${item.endImages.length} ảnh</span>` 
+                        : '<span style="color: red;">❌ Chưa có</span>';
+                        
+                    const additionalImagesHtml = item.additionalImages.length > 0 
+                        ? `<span title="${item.additionalImages.map(img => img.name).join(', ')}">📸 ${item.additionalImages.length} ảnh</span>` 
+                        : '➖ Không có';
+                    
+                    row.innerHTML = `
+                        <td>${item.name}</td>
+                        <td>${formatDate(item.date)}</td>
+                        <td>${getWorkTypeLabel(item.workType)}</td>
+                        <td style="text-align: center;">${item.quantity}</td>
+                        <td style="text-align: center;">${startImagesHtml}</td>
+                        <td style="text-align: center;">${endImagesHtml}</td>
+                        <td style="text-align: center;">${additionalImagesHtml}</td>
+                        <td>${item.notes || '➖ Không có'}</td>
+                        <td style="text-align: center;">
+                            <button class="btn-delete" data-id="${item.id}">🗑️ Xóa</button>
+                        </td>
+                    `;
+                    
+                    dataTableBody.appendChild(row);
+                });
+                
+                // Thêm sự kiện xóa
+                document.querySelectorAll('.btn-delete').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        const item = workData.find(item => item.id === id);
+                        if (confirm(`Bạn có chắc muốn xóa dữ liệu của "${item.name}" ngày ${formatDate(item.date)}?`)) {
+                            workData = workData.filter(item => item.id !== id);
+                            saveWorkData();
+                            updateDataTable();
+                        }
+                    });
+                });
+            }
+            
+            // Hàm chuyển đổi mã công việc thành nhãn
+            function getWorkTypeLabel(workType) {
+                const workTypes = {
+                    'nhap_du_lieu': '📊 Nhập dữ liệu',
+                    'ham_ech': '🐸 Hàm ếch',
+                    'san_luong': '📦 Sản lượng',
+                    'them': '➕ Thêm',
+                    'ham_ech_tinh_theo_san_pham': '🐸 Hàm ếch (theo SP)',
+                    'nhap_du_lieu_tinh_theo_to': '📊 Nhập dữ liệu (theo tờ)',
+                    'khac': '🔧 Khác'
+                };
+                
+                return workTypes[workType] || workType;
+            }
+            
+            // Hàm định dạng ngày
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('vi-VN');
+            }
+        });
+    </script>
+</body>
+</html>
