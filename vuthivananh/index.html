@@ -642,6 +642,7 @@
                 alert('Đã xóa toàn bộ dữ liệu!');
             }
         });
+
 // Xuất file CSV
 exportCSVBtn.addEventListener('click', function() {
     if (workData.length === 0) {
@@ -650,22 +651,18 @@ exportCSVBtn.addEventListener('click', function() {
     }
     
     const BOM = '\uFEFF';
-    let csvContent = BOM + "STT,Tên nhân viên,Ngày làm việc,Công việc,Số lượng,Link ảnh bắt đầu,Link ảnh kết thúc,Link ảnh bổ sung,Ghi chú\n";
+    let csvContent = BOM + "STT,Tên nhân viên,Ngày làm việc,Công việc,Số lượng,Số ảnh bắt đầu,Số ảnh kết thúc,Số ảnh bổ sung,Ghi chú\n";
     
     workData.forEach((item, index) => {
-        const startImageLinks = item.startImages.map(img => img.url).join(' | ');
-        const endImageLinks = item.endImages.map(img => img.url).join(' | ');
-        const additionalImageLinks = item.additionalImages.map(img => img.url).join(' | ');
-        
         const row = [
             index + 1,
             `"${item.name}"`,
             `"${formatDate(item.date)}"`,
             `"${getWorkTypeLabel(item.workType)}"`,
             `"${item.quantity}"`,
-            `"${startImageLinks}"`,
-            `"${endImageLinks}"`,
-            `"${additionalImageLinks}"`,
+            `"${item.startImages.length}"`,
+            `"${item.endImages.length}"`,
+            `"${item.additionalImages.length}"`,
             `"${item.notes || ''}"`
         ].join(',');
         csvContent += row + '\n';
@@ -703,14 +700,12 @@ exportPDFBtn.addEventListener('click', function() {
                 th { background-color: #f2f2f2; font-weight: bold; }
                 .header { text-align: center; margin-bottom: 20px; }
                 .footer { margin-top: 30px; text-align: right; font-size: 12px; }
-                .image-links { font-size: 10px; color: #666; }
             </style>
         </head>
         <body>
         <div class="header">
             <h1>BÁO CÁO CÔNG VIỆC</h1>
             <p>Ngày xuất: ${new Date().toLocaleDateString('vi-VN')}</p>
-            <p><em>Ảnh được lưu tự động trên đám mây (60 ngày)</em></p>
         </div>
         <table>
             <thead>
@@ -736,8 +731,8 @@ exportPDFBtn.addEventListener('click', function() {
                 <td>${formatDate(item.date)}</td>
                 <td>${getWorkTypeLabel(item.workType)}</td>
                 <td>${item.quantity}</td>
-                <td class="image-links">${item.startImages.length} ảnh</td>
-                <td class="image-links">${item.endImages.length} ảnh</td>
+                <td>${item.startImages.length} ảnh</td>
+                <td>${item.endImages.length} ảnh</td>
                 <td>${item.notes || ''}</td>
             </tr>
         `;
@@ -748,7 +743,6 @@ exportPDFBtn.addEventListener('click', function() {
         </table>
         <div class="footer">
             <p>Tổng số bản ghi: ${workData.length}</p>
-            <p><em>Link ảnh chi tiết xem trong file Excel/CSV</em></p>
         </div>
         </body>
         </html>
@@ -794,17 +788,17 @@ function loadWorkData() {
                 workData.forEach(item => {
                     const row = document.createElement('tr');
                     
-                    // Tạo HTML cho ảnh với link xem
+                    // Tạo HTML cho ảnh
                     const startImagesHtml = item.startImages.length > 0 ? 
-                        `<div>${item.startImages.length} ảnh<br><small><a href="${item.startImages[0].url}" target="_blank">Xem ảnh</a></small></div>` : 
+                        `<div>${item.startImages.length} ảnh</div>` : 
                         '0 ảnh';
                         
                     const endImagesHtml = item.endImages.length > 0 ? 
-                        `<div>${item.endImages.length} ảnh<br><small><a href="${item.endImages[0].url}" target="_blank">Xem ảnh</a></small></div>` : 
+                        `<div>${item.endImages.length} ảnh</div>` : 
                         '0 ảnh';
                         
                     const additionalImagesHtml = item.additionalImages.length > 0 ? 
-                        `<div>${item.additionalImages.length} ảnh<br><small><a href="${item.additionalImages[0].url}" target="_blank">Xem ảnh</a></small></div>` : 
+                        `<div>${item.additionalImages.length} ảnh</div>` : 
                         '0 ảnh';
                     
                     row.innerHTML = `
@@ -847,6 +841,120 @@ function loadWorkData() {
                     });
                 });
             }
+            
+            // Hàm hiển thị chi tiết ảnh của bản ghi
+            function showImageDetail(item) {
+                detailTitle.textContent = `Ảnh công việc - ${item.name} - ${formatDate(item.date)}`;
+                
+                // Hiển thị ảnh bắt đầu
+                detailStartImages.innerHTML = '';
+                if (item.startImages && item.startImages.length > 0) {
+                    item.startImages.forEach(img => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = img.data; // Sử dụng data base64 thay vì URL cloud
+                        imgElement.title = img.name;
+                        imgElement.onclick = function() {
+                            modalImage.src = this.src;
+                            imageModal.style.display = 'block';
+                        };
+                        detailStartImages.appendChild(imgElement);
+                    });
+                } else {
+                    detailStartImages.innerHTML = '<p style="color: #ccc;">Không có ảnh</p>';
+                }
+                
+                // Hiển thị ảnh kết thúc
+                detailEndImages.innerHTML = '';
+                if (item.endImages && item.endImages.length > 0) {
+                    item.endImages.forEach(img => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = img.data;
+                        imgElement.title = img.name;
+                        imgElement.onclick = function() {
+                            modalImage.src = this.src;
+                            imageModal.style.display = 'block';
+                        };
+                        detailEndImages.appendChild(imgElement);
+                    });
+                } else {
+                    detailEndImages.innerHTML = '<p style="color: #ccc;">Không có ảnh</p>';
+                }
+                
+                // Hiển thị ảnh bổ sung
+                detailAdditionalImages.innerHTML = '';
+                if (item.additionalImages && item.additionalImages.length > 0) {
+                    item.additionalImages.forEach(img => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = img.data;
+                        imgElement.title = img.name;
+                        imgElement.onclick = function() {
+                            modalImage.src = this.src;
+                            imageModal.style.display = 'block';
+                        };
+                        detailAdditionalImages.appendChild(imgElement);
+                    });
+                } else {
+                    detailAdditionalImages.innerHTML = '<p style="color: #ccc;">Không có ảnh</p>';
+                }
+                
+                detailModal.style.display = 'block';
+            }
+            
+            // Xử lý form thêm dữ liệu - SỬA LẠI KHÔNG DÙNG CLOUD
+            workForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value.trim();
+                const date = document.getElementById('date').value;
+                const workType = document.getElementById('workType').value;
+                const quantity = document.getElementById('quantity').value || '0';
+                const notes = document.getElementById('notes').value.trim();
+                
+                if (currentImages.start.length === 0 || currentImages.end.length === 0) {
+                    alert('⚠️ Vui lòng tải lên ảnh bắt đầu và ảnh kết thúc!');
+                    return;
+                }
+                
+                if (!workType) {
+                    alert('⚠️ Vui lòng chọn loại công việc!');
+                    return;
+                }
+                
+                // Tạo đối tượng dữ liệu công việc - LƯU TRỰC TIẾP ẢNH BASE64
+                const workItem = {
+                    id: Date.now(),
+                    name: name,
+                    date: date,
+                    workType: workType,
+                    quantity: quantity,
+                    notes: notes,
+                    startImages: currentImages.start,
+                    endImages: currentImages.end,
+                    additionalImages: currentImages.additional,
+                    created_at: new Date().toISOString()
+                };
+                
+                workData.push(workItem);
+                saveWorkData();
+                updateDataTable();
+                
+                workForm.reset();
+                document.getElementById('startImagePreview').innerHTML = '';
+                document.getElementById('endImagePreview').innerHTML = '';
+                document.getElementById('additionalImagePreview').innerHTML = '';
+                document.getElementById('date').valueAsDate = new Date();
+                
+                currentImages = {
+                    start: [],
+                    end: [],
+                    additional: []
+                };
+                
+                document.getElementById('formMessage').textContent = '✅ Đã thêm dữ liệu thành công!';
+                setTimeout(() => {
+                    document.getElementById('formMessage').textContent = '';
+                }, 3000);
+            });
             
             // Hàm chuyển đổi mã công việc thành nhãn
             function getWorkTypeLabel(workType) {
