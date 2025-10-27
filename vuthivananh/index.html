@@ -106,7 +106,7 @@
             margin-bottom: 10px;
         }
         
-        .image-upload {
+        .file-upload {
             border: 2px dashed #ddd;
             padding: 15px;
             text-align: center;
@@ -116,30 +116,36 @@
             font-size: 14px;
         }
         
-        .image-upload:hover {
+        .file-upload:hover {
             border-color: #1e5799;
             background-color: #f8f9fa;
         }
         
-        .image-preview {
+        .file-preview {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             margin-top: 8px;
         }
         
-        .image-preview img {
-            width: 80px;
-            height: 80px;
-            border-radius: 5px;
-            object-fit: cover;
+        .file-item {
+            background: #f8f9fa;
             border: 1px solid #ddd;
-            cursor: pointer;
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 12px;
+            max-width: 150px;
         }
         
-        .image-preview img:hover {
-            transform: scale(1.1);
-            transition: transform 0.2s;
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+        
+        .file-size {
+            color: #666;
+            font-size: 11px;
         }
         
         .data-table {
@@ -229,14 +235,10 @@
             background-color: #138496;
         }
         
-        .debug-info {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
+        .file-size-warning {
+            color: #dc3545;
             font-size: 12px;
-            color: #856404;
+            margin-top: 5px;
         }
         
         .export-options {
@@ -249,57 +251,6 @@
         .export-btn {
             flex: 1;
             min-width: 150px;
-        }
-        
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 10px;
-            color: #1e5799;
-        }
-        
-        .image-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.9);
-        }
-        
-        .modal-content {
-            margin: auto;
-            display: block;
-            max-width: 90%;
-            max-height: 90%;
-            margin-top: 2%;
-        }
-        
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 35px;
-            color: #fff;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        .image-gallery {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 10px 0;
-        }
-        
-        .image-gallery img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 5px;
-            cursor: pointer;
         }
         
         @media (max-width: 768px) {
@@ -335,17 +286,6 @@
                 flex-direction: column;
             }
         }
-        
-        @media (max-width: 480px) {
-            .action-buttons {
-                flex-direction: column;
-            }
-            
-            .image-preview img {
-                width: 60px;
-                height: 60px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -367,109 +307,110 @@
             </div>
             <button id="loginBtn">Đăng nhập</button>
             <div id="loginMessage" class="error-message"></div>
-            <div id="debugInfo" class="debug-info" style="display: none;"></div>
         </section>
-    <section id="mainSection" class="main-section">
-        <h2>Nhập dữ liệu công việc</h2>
-        <form id="workForm">
-            <div class="form-row">
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="name">Tên nhân viên *</label>
-                        <input type="text" id="name" required>
-                    </div>
-                </div>
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="date">Ngày tháng năm *</label>
-                        <input type="date" id="date" required>
-                    </div>
+<section id="mainSection" class="main-section">
+    <h2>Nhập dữ liệu công việc</h2>
+    <form id="workForm">
+        <div class="form-row">
+            <div class="form-col">
+                <div class="form-group">
+                    <label for="name">Tên nhân viên *</label>
+                    <input type="text" id="name" required>
                 </div>
             </div>
-            
-            <div class="form-row">
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="startImage">Ảnh bắt đầu *</label>
-                        <div class="image-upload" id="startImageUpload">
-                            <p>📷 Nhấp để tải ảnh lên</p>
-                            <input type="file" id="startImage" accept="image/*" class="hidden" multiple>
-                        </div>
-                        <div id="startImagePreview" class="image-preview"></div>
-                    </div>
-                </div>
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="endImage">Ảnh kết thúc *</label>
-                        <div class="image-upload" id="endImageUpload">
-                            <p>📷 Nhấp để tải ảnh lên</p>
-                            <input type="file" id="endImage" accept="image/*" class="hidden" multiple>
-                        </div>
-                        <div id="endImagePreview" class="image-preview"></div>
-                    </div>
+            <div class="form-col">
+                <div class="form-group">
+                    <label for="date">Ngày tháng năm *</label>
+                    <input type="date" id="date" required>
                 </div>
             </div>
-            
-            <div class="form-group">
-                <label for="additionalImage">Ảnh bổ sung (tùy chọn)</label>
-                <div class="image-upload" id="additionalImageUpload">
-                    <p>📷 Nhấp để tải ảnh bổ sung</p>
-                    <input type="file" id="additionalImage" accept="image/*" class="hidden" multiple>
-                </div>
-                <div id="additionalImagePreview" class="image-preview"></div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="workType">Công việc *</label>
-                        <select id="workType" required>
-                            <option value="">-- Chọn công việc --</option>
-                            <option value="ham_ech_tinh_theo_san_pham">Hàm ếch tính theo sản phẩm</option>
-                            <option value="nhap_du_lieu_tinh_theo_to">Nhập dữ liệu tính theo tờ</option>
-                            <option value="khac">Khác</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="quantity">Số lượng</label>
-                        <input type="number" id="quantity" min="0" step="1" placeholder="0">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="notes">Ghi chú</label>
-                <textarea id="notes" rows="2" placeholder="Nhập ghi chú nếu có..."></textarea>
-            </div>
-            
-            <button type="submit" id="submitBtn">➕ Thêm dữ liệu</button>
-            <div id="formMessage" class="success-message"></div>
-        </form>
-        
-        <h2>Dữ liệu đã nhập</h2>
-        <div style="overflow-x: auto;">
-            <table class="data-table" id="dataTable">
-                <thead>
-                    <tr>
-                        <th>Tên</th>
-                        <th>Ngày</th>
-                        <th>Công việc</th>
-                        <th>Số lượng</th>
-                        <th>Ảnh bắt đầu</th>
-                        <th>Ảnh kết thúc</th>
-                        <th>Ảnh bổ sung</th>
-                        <th>Ghi chú</th>
-                        <th>Hành động</th>
-                    </tr>
-                </thead>
-                <tbody id="dataTableBody">
-                    <!-- Dữ liệu sẽ được thêm vào đây -->
-                </tbody>
-            </table>
         </div>
         
+        <div class="form-row">
+            <div class="form-col">
+                <div class="form-group">
+                    <label for="startFiles">File bắt đầu *</label>
+                    <div class="file-upload" id="startFilesUpload">
+                        <p>📁 Nhấp để chọn file (Tối đa 25MB/file)</p>
+                        <input type="file" id="startFiles" class="hidden" multiple>
+                    </div>
+                    <div id="startFilesPreview" class="file-preview"></div>
+                    <div class="file-size-warning" id="startFilesWarning"></div>
+                </div>
+            </div>
+            <div class="form-col">
+                <div class="form-group">
+                    <label for="endFiles">File kết thúc *</label>
+                    <div class="file-upload" id="endFilesUpload">
+                        <p>📁 Nhấp để chọn file (Tối đa 25MB/file)</p>
+                        <input type="file" id="endFiles" class="hidden" multiple>
+                    </div>
+                    <div id="endFilesPreview" class="file-preview"></div>
+                    <div class="file-size-warning" id="endFilesWarning"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="additionalFiles">File bổ sung (tùy chọn)</label>
+            <div class="file-upload" id="additionalFilesUpload">
+                <p>📁 Nhấp để chọn file bổ sung (Tối đa 25MB/file)</p>
+                <input type="file" id="additionalFiles" class="hidden" multiple>
+            </div>
+            <div id="additionalFilesPreview" class="file-preview"></div>
+            <div class="file-size-warning" id="additionalFilesWarning"></div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-col">
+                <div class="form-group">
+                    <label for="workType">Công việc *</label>
+                    <select id="workType" required>
+                        <option value="">-- Chọn công việc --</option>
+                        <option value="ham_ech_tinh_theo_san_pham">Hàm ếch tính theo sản phẩm</option>
+                        <option value="nhap_du_lieu_tinh_theo_to">Nhập dữ liệu tính theo tờ</option>
+                        <option value="khac">Khác</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-col">
+                <div class="form-group">
+                    <label for="quantity">Số lượng</label>
+                    <input type="number" id="quantity" min="0" step="1" placeholder="0">
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="notes">Ghi chú</label>
+            <textarea id="notes" rows="2" placeholder="Nhập ghi chú nếu có..."></textarea>
+        </div>
+        
+        <button type="submit" id="submitBtn">➕ Thêm dữ liệu</button>
+        <div id="formMessage" class="success-message"></div>
+    </form>
+    
+    <h2>Dữ liệu đã nhập</h2>
+    <div style="overflow-x: auto;">
+        <table class="data-table" id="dataTable">
+            <thead>
+                <tr>
+                    <th>Tên</th>
+                    <th>Ngày</th>
+                    <th>Công việc</th>
+                    <th>Số lượng</th>
+                    <th>File bắt đầu</th>
+                    <th>File kết thúc</th>
+                    <th>File bổ sung</th>
+                    <th>Ghi chú</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="dataTableBody">
+                <!-- Dữ liệu sẽ được thêm vào đây -->
+            </tbody>
+        </table>
+    </div>
         <h3>Xuất dữ liệu</h3>
         <div class="export-options">
             <button id="exportExcelBtn" class="btn-export export-btn">📊 Xuất Excel (.xlsx)</button>
@@ -484,33 +425,6 @@
     </section>
 </div>
 
-<!-- Modal xem ảnh -->
-<div id="imageModal" class="image-modal">
-    <span class="close-modal">&times;</span>
-    <img class="modal-content" id="modalImage">
-</div>
-
-<!-- Modal xem chi tiết ảnh của bản ghi -->
-<div id="detailModal" class="image-modal">
-    <span class="close-modal">&times;</span>
-    <div style="color: white; padding: 20px; max-width: 90%; margin: 0 auto;">
-        <h3 id="detailTitle" style="text-align: center; margin-bottom: 20px;"></h3>
-        <div class="form-row">
-            <div class="form-col">
-                <h4>Ảnh bắt đầu</h4>
-                <div id="detailStartImages" class="image-gallery"></div>
-            </div>
-            <div class="form-col">
-                <h4>Ảnh kết thúc</h4>
-                <div id="detailEndImages" class="image-gallery"></div>
-            </div>
-        </div>
-        <div class="form-group">
-            <h4>Ảnh bổ sung</h4>
-            <div id="detailAdditionalImages" class="image-gallery"></div>
-        </div>
-    </div>
-</div>
 <script>
     // ===== PHẦN JAVASCRIPT =====
     document.addEventListener('DOMContentLoaded', function() {
@@ -521,6 +435,9 @@
         const ADMIN_ID = '0388427368';
         const ADMIN_PASSWORD = '@Van2007';
         
+        // Giới hạn kích thước file (25MB)
+        const MAX_FILE_SIZE = 25 * 1024 * 1024;
+        
         // Tham chiếu đến các phần tử DOM
         const loginSection = document.getElementById('loginSection');
         const mainSection = document.getElementById('mainSection');
@@ -530,127 +447,51 @@
         const userIdInput = document.getElementById('userId');
         const passwordInput = document.getElementById('password');
         const loginMessage = document.getElementById('loginMessage');
-        const debugInfo = document.getElementById('debugInfo');
         const workForm = document.getElementById('workForm');
         const dataTableBody = document.getElementById('dataTableBody');
         const exportExcelBtn = document.getElementById('exportExcelBtn');
         const exportCSVBtn = document.getElementById('exportCSVBtn');
         const exportPDFBtn = document.getElementById('exportPDFBtn');
         const submitBtn = document.getElementById('submitBtn');
-        const imageModal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
-        const closeModal = document.querySelectorAll('.close-modal');
-        const detailModal = document.getElementById('detailModal');
-        const detailTitle = document.getElementById('detailTitle');
-        const detailStartImages = document.getElementById('detailStartImages');
-        const detailEndImages = document.getElementById('detailEndImages');
-        const detailAdditionalImages = document.getElementById('detailAdditionalImages');
-        
-        // Hiển thị thông tin debug
-        function showDebugInfo(message) {
-            debugInfo.style.display = 'block';
-            debugInfo.innerHTML = '<strong>Debug:</strong> ' + message;
-            console.log('Debug:', message);
-        }
-        
-        // Modal xem ảnh
-        closeModal.forEach(closeBtn => {
-            closeBtn.addEventListener('click', function() {
-                imageModal.style.display = 'none';
-                detailModal.style.display = 'none';
-            });
-        });
-        
-        imageModal.addEventListener('click', function(e) {
-            if (e.target === imageModal) {
-                imageModal.style.display = 'none';
-            }
-        });
-        
-        detailModal.addEventListener('click', function(e) {
-            if (e.target === detailModal) {
-                detailModal.style.display = 'none';
-            }
-        });
         
         // Thiết lập ngày mặc định là hôm nay
-        document.getElementById('date').valueAsDate = new Date();
-        
-        // Xử lý sự kiện đăng nhập
-        loginBtn.addEventListener('click', handleLogin);
-        
-        // Cho phép đăng nhập bằng phím Enter
-        passwordInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                handleLogin();
-            }
-        });
-        
-        function handleLogin() {
-            const userId = userIdInput.value.trim();
-            const password = passwordInput.value.trim();
-            
-            showDebugInfo(`Nhập: ID='${userId}', Password='${password}' | Mong đợi: ID='${ADMIN_ID}', Password='${ADMIN_PASSWORD}'`);
-            
-            if (userId === ADMIN_ID && password === ADMIN_PASSWORD) {
-                showDebugInfo('✅ Đăng nhập THÀNH CÔNG!');
-                loginSection.style.display = 'none';
-                mainSection.style.display = 'block';
-                loginMessage.textContent = '';
-                loadWorkData();
-            } else {
-                let errorMsg = 'ID hoặc mật khẩu không đúng!';
-                
-                if (userId !== ADMIN_ID) {
-                    errorMsg += ' (Sai ID)';
-                } else if (password !== ADMIN_PASSWORD) {
-                    errorMsg += ' (Sai mật khẩu)';
-                }
-                
-                loginMessage.textContent = errorMsg;
-                showDebugInfo('❌ Đăng nhập THẤT BẠI: ' + errorMsg);
-                userIdInput.focus();
-            }
-        }
-        
-        // Xử lý sự kiện đăng xuất
-        logoutBtn.addEventListener('click', function() {
-            if (confirm('Bạn có chắc muốn đăng xuất?')) {
-                mainSection.style.display = 'none';
-                loginSection.style.display = 'block';
-                userIdInput.value = '';
-                passwordInput.value = '';
-                debugInfo.style.display = 'none';
-                userIdInput.focus();
-            }
-        });
-        
-        // Xử lý xóa toàn bộ dữ liệu
-        clearDataBtn.addEventListener('click', function() {
-            if (confirm('⚠️ Bạn có CHẮC CHẮN muốn xóa TOÀN BỘ dữ liệu? Hành động này không thể hoàn tác!')) {
-                workData = [];
-                localStorage.removeItem('workData');
-                updateDataTable();
-                alert('Đã xóa toàn bộ dữ liệu!');
-            }
-        });
-// Xử lý upload ảnh
-const imageUploads = [
-    { upload: 'startImageUpload', input: 'startImage', preview: 'startImagePreview', type: 'start' },
-    { upload: 'endImageUpload', input: 'endImage', preview: 'endImagePreview', type: 'end' },
-    { upload: 'additionalImageUpload', input: 'additionalImage', preview: 'additionalImagePreview', type: 'additional' }
+        document.getElementById('date').valueAsDate = new Date());
+// Xử lý upload file
+const fileUploads = [
+    { 
+        upload: 'startFilesUpload', 
+        input: 'startFiles', 
+        preview: 'startFilesPreview', 
+        warning: 'startFilesWarning',
+        type: 'start' 
+    },
+    { 
+        upload: 'endFilesUpload', 
+        input: 'endFiles', 
+        preview: 'endFilesPreview', 
+        warning: 'endFilesWarning',
+        type: 'end' 
+    },
+    { 
+        upload: 'additionalFilesUpload', 
+        input: 'additionalFiles', 
+        preview: 'additionalFilesPreview', 
+        warning: 'additionalFilesWarning',
+        type: 'additional' 
+    }
 ];
 
-let currentImages = {
+let currentFiles = {
     start: [],
     end: [],
     additional: []
 };
 
-imageUploads.forEach(item => {
+fileUploads.forEach(item => {
     const uploadElement = document.getElementById(item.upload);
     const inputElement = document.getElementById(item.input);
     const previewElement = document.getElementById(item.preview);
+    const warningElement = document.getElementById(item.warning);
     
     uploadElement.addEventListener('click', function() {
         inputElement.click();
@@ -658,92 +499,52 @@ imageUploads.forEach(item => {
     
     inputElement.addEventListener('change', function() {
         previewElement.innerHTML = '';
-        currentImages[item.type] = [];
+        warningElement.textContent = '';
+        currentFiles[item.type] = [];
         
         if (inputElement.files) {
+            let hasOversizedFile = false;
+            
             Array.from(inputElement.files).forEach(file => {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        currentImages[item.type].push({
-                            name: file.name,
-                            data: e.target.result,
-                            type: file.type,
-                            size: file.size
-                        });
-                        
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.title = file.name;
-                        img.onclick = function() {
-                            modalImage.src = this.src;
-                            imageModal.style.display = 'block';
-                        };
-                        previewElement.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
+                // Kiểm tra kích thước file
+                if (file.size > MAX_FILE_SIZE) {
+                    hasOversizedFile = true;
+                    warningElement.textContent = `⚠️ File "${file.name}" vượt quá 25MB`;
+                    return;
                 }
+                
+                // Lưu thông tin file
+                currentFiles[item.type].push({
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    sizeFormatted: formatFileSize(file.size)
+                });
+                
+                // Hiển thị preview
+                const fileElement = document.createElement('div');
+                fileElement.className = 'file-item';
+                fileElement.innerHTML = `
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-size">${formatFileSize(file.size)}</div>
+                `;
+                previewElement.appendChild(fileElement);
             });
+            
+            if (hasOversizedFile) {
+                inputElement.value = '';
+            }
         }
     });
 });
 
-// Hàm hiển thị chi tiết ảnh của bản ghi
-function showImageDetail(item) {
-    detailTitle.textContent = `Ảnh công việc - ${item.name} - ${formatDate(item.date)}`;
-    
-    // Hiển thị ảnh bắt đầu
-    detailStartImages.innerHTML = '';
-    if (item.startImages && item.startImages.length > 0) {
-        item.startImages.forEach(img => {
-            const imgElement = document.createElement('img');
-            imgElement.src = img.data;
-            imgElement.title = img.name;
-            imgElement.onclick = function() {
-                modalImage.src = this.src;
-                imageModal.style.display = 'block';
-            };
-            detailStartImages.appendChild(imgElement);
-        });
-    } else {
-        detailStartImages.innerHTML = '<p style="color: #ccc;">Không có ảnh</p>';
-    }
-    
-    // Hiển thị ảnh kết thúc
-    detailEndImages.innerHTML = '';
-    if (item.endImages && item.endImages.length > 0) {
-        item.endImages.forEach(img => {
-            const imgElement = document.createElement('img');
-            imgElement.src = img.data;
-            imgElement.title = img.name;
-            imgElement.onclick = function() {
-                modalImage.src = this.src;
-                imageModal.style.display = 'block';
-            };
-            detailEndImages.appendChild(imgElement);
-        });
-    } else {
-        detailEndImages.innerHTML = '<p style="color: #ccc;">Không có ảnh</p>';
-    }
-    
-    // Hiển thị ảnh bổ sung
-    detailAdditionalImages.innerHTML = '';
-    if (item.additionalImages && item.additionalImages.length > 0) {
-        item.additionalImages.forEach(img => {
-            const imgElement = document.createElement('img');
-            imgElement.src = img.data;
-            imgElement.title = img.name;
-            imgElement.onclick = function() {
-                modalImage.src = this.src;
-                imageModal.style.display = 'block';
-            };
-            detailAdditionalImages.appendChild(imgElement);
-        });
-    } else {
-        detailAdditionalImages.innerHTML = '<p style="color: #ccc;">Không có ảnh</p>';
-    }
-    
-    detailModal.style.display = 'block';
+// Hàm định dạng kích thước file
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 // Xử lý form thêm dữ liệu
@@ -756,8 +557,9 @@ workForm.addEventListener('submit', function(e) {
     const quantity = document.getElementById('quantity').value || '0';
     const notes = document.getElementById('notes').value.trim();
     
-    if (currentImages.start.length === 0 || currentImages.end.length === 0) {
-        alert('⚠️ Vui lòng tải lên ảnh bắt đầu và ảnh kết thúc!');
+    // Kiểm tra file bắt buộc
+    if (currentFiles.start.length === 0 || currentFiles.end.length === 0) {
+        alert('⚠️ Vui lòng chọn file bắt đầu và file kết thúc!');
         return;
     }
     
@@ -774,9 +576,9 @@ workForm.addEventListener('submit', function(e) {
         workType: workType,
         quantity: quantity,
         notes: notes,
-        startImages: currentImages.start,
-        endImages: currentImages.end,
-        additionalImages: currentImages.additional,
+        startFiles: [...currentFiles.start],
+        endFiles: [...currentFiles.end],
+        additionalFiles: [...currentFiles.additional],
         created_at: new Date().toISOString()
     };
     
@@ -784,13 +586,17 @@ workForm.addEventListener('submit', function(e) {
     saveWorkData();
     updateDataTable();
     
+    // Reset form
     workForm.reset();
-    document.getElementById('startImagePreview').innerHTML = '';
-    document.getElementById('endImagePreview').innerHTML = '';
-    document.getElementById('additionalImagePreview').innerHTML = '';
+    document.getElementById('startFilesPreview').innerHTML = '';
+    document.getElementById('endFilesPreview').innerHTML = '';
+    document.getElementById('additionalFilesPreview').innerHTML = '';
     document.getElementById('date').valueAsDate = new Date();
+    document.getElementById('startFilesWarning').textContent = '';
+    document.getElementById('endFilesWarning').textContent = '';
+    document.getElementById('additionalFilesWarning').textContent = '';
     
-    currentImages = {
+    currentFiles = {
         start: [],
         end: [],
         additional: []
@@ -802,84 +608,132 @@ workForm.addEventListener('submit', function(e) {
     }, 3000);
 });
 
-// Xuất file Excel
-exportExcelBtn.addEventListener('click', function() {
-    if (workData.length === 0) {
-        alert('📭 Không có dữ liệu để xuất!');
-        return;
+// Xử lý sự kiện đăng nhập
+loginBtn.addEventListener('click', handleLogin);
+
+// Cho phép đăng nhập bằng phím Enter
+passwordInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        handleLogin();
     }
-    
-    const wb = XLSX.utils.book_new();
-    const wsData = [
-        ['DỮ LIỆU CÔNG VIỆC', '', '', '', '', '', '', ''],
-        ['Xuất ngày:', new Date().toLocaleDateString('vi-VN'), '', '', '', '', '', ''],
-        [],
-        ['STT', 'Tên nhân viên', 'Ngày làm việc', 'Công việc', 'Số lượng', 'Số ảnh bắt đầu', 'Số ảnh kết thúc', 'Số ảnh bổ sung', 'Ghi chú']
-    ];
-    
-    workData.forEach((item, index) => {
-        wsData.push([
-            index + 1,
-            item.name,
-            formatDate(item.date),
-            getWorkTypeLabel(item.workType),
-            item.quantity,
-            item.startImages.length,
-            item.endImages.length,
-            item.additionalImages.length,
-            item.notes || ''
-        ]);
-    });
-    
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    const colWidths = [
-        { wch: 5 }, { wch: 20 }, { wch: 12 }, { wch: 25 }, { wch: 10 },
-        { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 30 }
-    ];
-    ws['!cols'] = colWidths;
-    
-    XLSX.utils.book_append_sheet(wb, ws, 'CongViec');
-    const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
-    XLSX.writeFile(wb, `cong_viec_${timestamp}.xlsx`);
-    
-    alert('✅ Đã xuất file Excel thành công!');
 });
 
-// Xuất file CSV
-exportCSVBtn.addEventListener('click', function() {
-    if (workData.length === 0) {
-        alert('📭 Không có dữ liệu để xuất!');
-        return;
+function handleLogin() {
+    const userId = userIdInput.value.trim();
+    const password = passwordInput.value.trim();
+    
+    if (userId === ADMIN_ID && password === ADMIN_PASSWORD) {
+        loginSection.style.display = 'none';
+        mainSection.style.display = 'block';
+        loginMessage.textContent = '';
+        loadWorkData();
+    } else {
+        loginMessage.textContent = 'ID hoặc mật khẩu không đúng!';
     }
-    
-    const BOM = '\uFEFF';
-    let csvContent = BOM + "STT,Tên nhân viên,Ngày làm việc,Công việc,Số lượng,Số ảnh bắt đầu,Số ảnh kết thúc,Số ảnh bổ sung,Ghi chú\n";
-    
-    workData.forEach((item, index) => {
-        const row = [
-            index + 1,
-            `"${item.name}"`,
-            `"${formatDate(item.date)}"`,
-            `"${getWorkTypeLabel(item.workType)}"`,
-            `"${item.quantity}"`,
-            `"${item.startImages.length}"`,
-            `"${item.endImages.length}"`,
-            `"${item.additionalImages.length}"`,
-            `"${item.notes || ''}"`
-        ].join(',');
-        csvContent += row + '\n';
-    });
-    
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
-    link.setAttribute('download', `cong_viec_${timestamp}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-});
+}
+            // Xuất file Excel với danh sách file đầy đủ
+            exportExcelBtn.addEventListener('click', function() {
+                if (workData.length === 0) {
+                    alert('📭 Không có dữ liệu để xuất!');
+                    return;
+                }
+                
+                const wb = XLSX.utils.book_new();
+                const wsData = [
+                    ['DỮ LIỆU CÔNG VIỆC', '', '', '', '', '', '', '', ''],
+                    ['Xuất ngày:', new Date().toLocaleDateString('vi-VN'), '', '', '', '', '', '', ''],
+                    [],
+                    ['STT', 'Tên nhân viên', 'Ngày làm việc', 'Công việc', 'Số lượng', 'File bắt đầu', 'File kết thúc', 'File bổ sung', 'Ghi chú']
+                ];
+                
+                workData.forEach((item, index) => {
+                    const startFilesList = item.startFiles.map(file => 
+                        `${file.name} (${file.sizeFormatted})`
+                    ).join('\n');
+                    
+                    const endFilesList = item.endFiles.map(file => 
+                        `${file.name} (${file.sizeFormatted})`
+                    ).join('\n');
+                    
+                    const additionalFilesList = item.additionalFiles.map(file => 
+                        `${file.name} (${file.sizeFormatted})`
+                    ).join('\n');
+                    
+                    wsData.push([
+                        index + 1,
+                        item.name,
+                        formatDate(item.date),
+                        getWorkTypeLabel(item.workType),
+                        item.quantity,
+                        startFilesList,
+                        endFilesList,
+                        additionalFilesList,
+                        item.notes || ''
+                    ]);
+                });
+                
+                const ws = XLSX.utils.aoa_to_sheet(wsData);
+                const colWidths = [
+                    { wch: 5 }, { wch: 20 }, { wch: 12 }, { wch: 25 }, { wch: 10 },
+                    { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }
+                ];
+                ws['!cols'] = colWidths;
+                
+                XLSX.utils.book_append_sheet(wb, ws, 'CongViec');
+                const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
+                XLSX.writeFile(wb, `cong_viec_${timestamp}.xlsx`);
+                
+                alert('✅ Đã xuất file Excel thành công!\n📁 Danh sách file đã được bao gồm');
+            });
+            
+            // Xuất file CSV với danh sách file
+            exportCSVBtn.addEventListener('click', function() {
+                if (workData.length === 0) {
+                    alert('📭 Không có dữ liệu để xuất!');
+                    return;
+                }
+                
+                const BOM = '\uFEFF';
+                let csvContent = BOM + "STT,Tên nhân viên,Ngày làm việc,Công việc,Số lượng,File bắt đầu,File kết thúc,File bổ sung,Ghi chú\n";
+                
+                workData.forEach((item, index) => {
+                    const startFilesList = item.startFiles.map(file => 
+                        `${file.name} (${file.sizeFormatted})`
+                    ).join(' | ');
+                    
+                    const endFilesList = item.endFiles.map(file => 
+                        `${file.name} (${file.sizeFormatted})`
+                    ).join(' | ');
+                    
+                    const additionalFilesList = item.additionalFiles.map(file => 
+                        `${file.name} (${file.sizeFormatted})`
+                    ).join(' | ');
+                    
+                    const row = [
+                        index + 1,
+                        `"${item.name}"`,
+                        `"${formatDate(item.date)}"`,
+                        `"${getWorkTypeLabel(item.workType)}"`,
+                        `"${item.quantity}"`,
+                        `"${startFilesList}"`,
+                        `"${endFilesList}"`,
+                        `"${additionalFilesList}"`,
+                        `"${item.notes || ''}"`
+                    ].join(',');
+                    csvContent += row + '\n';
+                });
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
+                link.setAttribute('download', `cong_viec_${timestamp}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+            
             // Xuất file PDF
             exportPDFBtn.addEventListener('click', function() {
                 if (workData.length === 0) {
@@ -901,6 +755,7 @@ exportCSVBtn.addEventListener('click', function() {
                             th { background-color: #f2f2f2; font-weight: bold; }
                             .header { text-align: center; margin-bottom: 20px; }
                             .footer { margin-top: 30px; text-align: right; font-size: 12px; }
+                            .file-list { font-size: 10px; color: #666; }
                         </style>
                     </head>
                     <body>
@@ -916,8 +771,8 @@ exportCSVBtn.addEventListener('click', function() {
                                 <th>Ngày làm việc</th>
                                 <th>Công việc</th>
                                 <th>Số lượng</th>
-                                <th>Ảnh bắt đầu</th>
-                                <th>Ảnh kết thúc</th>
+                                <th>File bắt đầu</th>
+                                <th>File kết thúc</th>
                                 <th>Ghi chú</th>
                             </tr>
                         </thead>
@@ -925,6 +780,9 @@ exportCSVBtn.addEventListener('click', function() {
                 `;
                 
                 workData.forEach((item, index) => {
+                    const startFilesCount = item.startFiles.length;
+                    const endFilesCount = item.endFiles.length;
+                    
                     htmlContent += `
                         <tr>
                             <td>${index + 1}</td>
@@ -932,8 +790,8 @@ exportCSVBtn.addEventListener('click', function() {
                             <td>${formatDate(item.date)}</td>
                             <td>${getWorkTypeLabel(item.workType)}</td>
                             <td>${item.quantity}</td>
-                            <td>${item.startImages.length} ảnh</td>
-                            <td>${item.endImages.length} ảnh</td>
+                            <td class="file-list">${startFilesCount} file</td>
+                            <td class="file-list">${endFilesCount} file</td>
                             <td>${item.notes || ''}</td>
                         </tr>
                     `;
@@ -944,6 +802,7 @@ exportCSVBtn.addEventListener('click', function() {
                     </table>
                     <div class="footer">
                         <p>Tổng số bản ghi: ${workData.length}</p>
+                        <p><em>Danh sách file chi tiết xem trong file Excel/CSV</em></p>
                     </div>
                     </body>
                     </html>
@@ -990,43 +849,33 @@ exportCSVBtn.addEventListener('click', function() {
                 workData.forEach(item => {
                     const row = document.createElement('tr');
                     
-                    const startImagesHtml = item.startImages.length > 0 ? 
-                        `<div>${item.startImages.length} ảnh</div>` : 
-                        '0 ảnh';
+                    const startFilesHtml = item.startFiles.length > 0 ? 
+                        `<div>${item.startFiles.length} file</div>` : 
+                        '0 file';
                         
-                    const endImagesHtml = item.endImages.length > 0 ? 
-                        `<div>${item.endImages.length} ảnh</div>` : 
-                        '0 ảnh';
+                    const endFilesHtml = item.endFiles.length > 0 ? 
+                        `<div>${item.endFiles.length} file</div>` : 
+                        '0 file';
                         
-                    const additionalImagesHtml = item.additionalImages.length > 0 ? 
-                        `<div>${item.additionalImages.length} ảnh</div>` : 
-                        '0 ảnh';
+                    const additionalFilesHtml = item.additionalFiles.length > 0 ? 
+                        `<div>${item.additionalFiles.length} file</div>` : 
+                        '0 file';
                     
                     row.innerHTML = `
                         <td>${item.name}</td>
                         <td>${formatDate(item.date)}</td>
                         <td>${getWorkTypeLabel(item.workType)}</td>
                         <td style="text-align: center;">${item.quantity}</td>
-                        <td style="text-align: center;">${startImagesHtml}</td>
-                        <td style="text-align: center;">${endImagesHtml}</td>
-                        <td style="text-align: center;">${additionalImagesHtml}</td>
+                        <td style="text-align: center;">${startFilesHtml}</td>
+                        <td style="text-align: center;">${endFilesHtml}</td>
+                        <td style="text-align: center;">${additionalFilesHtml}</td>
                         <td>${item.notes || 'Không có'}</td>
                         <td style="text-align: center;">
-                            <button class="btn-view" data-id="${item.id}">👁️ Xem</button>
                             <button class="btn-delete" data-id="${item.id}">🗑️ Xóa</button>
                         </td>
                     `;
                     
                     dataTableBody.appendChild(row);
-                });
-                
-                // Thêm sự kiện xem chi tiết
-                document.querySelectorAll('.btn-view').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const id = parseInt(this.getAttribute('data-id'));
-                        const item = workData.find(item => item.id === id);
-                        showImageDetail(item);
-                    });
                 });
                 
                 // Thêm sự kiện xóa
@@ -1043,6 +892,27 @@ exportCSVBtn.addEventListener('click', function() {
                 });
             }
             
+            // Xử lý sự kiện đăng xuất
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                    mainSection.style.display = 'none';
+                    loginSection.style.display = 'block';
+                    userIdInput.value = '';
+                    passwordInput.value = '';
+                    userIdInput.focus();
+                }
+            });
+            
+            // Xử lý xóa toàn bộ dữ liệu
+            clearDataBtn.addEventListener('click', function() {
+                if (confirm('⚠️ Bạn có CHẮC CHẮN muốn xóa TOÀN BỘ dữ liệu? Hành động này không thể hoàn tác!')) {
+                    workData = [];
+                    localStorage.removeItem('workData');
+                    updateDataTable();
+                    alert('Đã xóa toàn bộ dữ liệu!');
+                }
+            });
+            
             // Hàm chuyển đổi mã công việc thành nhãn
             function getWorkTypeLabel(workType) {
                 const workTypes = {
@@ -1058,17 +928,6 @@ exportCSVBtn.addEventListener('click', function() {
                 const date = new Date(dateString);
                 return date.toLocaleDateString('vi-VN');
             }
-            
-            // Tự động đăng nhập nếu đã đăng nhập trước đó
-            function checkAutoLogin() {
-                const savedData = localStorage.getItem('workData');
-                if (savedData) {
-                    showDebugInfo('Đã tìm thấy dữ liệu cũ, có thể tự động đăng nhập...');
-                }
-            }
-            
-            // Kiểm tra auto login khi trang load
-            checkAutoLogin();
         });
     </script>
     
