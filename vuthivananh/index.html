@@ -390,7 +390,8 @@
             </div>
             
             <div class="action-buttons">
-                <button id="exportBtn" class="btn-export">📥 Xuất dữ liệu CSV</button>
+                <button id="exportBtn" class="btn-export">📥 Xuất dữ liệu CSV (UTF-8)</button>
+                <button id="exportExcelBtn" class="btn-export" style="background-color: #217346;">📊 Xuất Excel</button>
                 <button id="clearDataBtn" class="btn-logout" style="background-color: #ffc107; color: #000;">🗑️ Xóa toàn bộ dữ liệu</button>
                 <button id="logoutBtn" class="btn-logout">🚪 Đăng xuất</button>
             </div>
@@ -402,7 +403,7 @@
         // Biến toàn cục
         let workData = [];
         
-        // Thông tin đăng nhập - SỬ DỤNG TRỰC TIẾP KHÔNG MÃ HÓA
+        // Thông tin đăng nhập
         const ADMIN_ID = '0388427368';
         const ADMIN_PASSWORD = '@Van2007';
         
@@ -424,6 +425,7 @@
         const workForm = document.getElementById('workForm');
         const dataTableBody = document.getElementById('dataTableBody');
         const exportBtn = document.getElementById('exportBtn');
+        const exportExcelBtn = document.getElementById('exportExcelBtn');
         
         // Hiển thị thông tin debug
         function showDebugInfo(message) {
@@ -450,23 +452,6 @@
             const password = passwordInput.value.trim();
             
             showDebugInfo(`Nhập: ID='${userId}', Password='${password}' | Mong đợi: ID='${ADMIN_ID}', Password='${ADMIN_PASSWORD}'`);
-            
-            // Debug chi tiết
-            console.log('So sánh ID:', {
-                nhap: userId,
-                mong_doi: ADMIN_ID,
-                bang_nhau: userId === ADMIN_ID,
-                do_dai_nhap: userId.length,
-                do_dai_mong_doi: ADMIN_ID.length
-            });
-            
-            console.log('So sánh Password:', {
-                nhap: password,
-                mong_doi: ADMIN_PASSWORD,
-                bang_nhau: password === ADMIN_PASSWORD,
-                do_dai_nhap: password.length,
-                do_dai_mong_doi: ADMIN_PASSWORD.length
-            });
             
             if (userId === ADMIN_ID && password === ADMIN_PASSWORD) {
                 showDebugInfo('✅ Đăng nhập THÀNH CÔNG!');
@@ -510,41 +495,41 @@
                 alert('Đã xóa toàn bộ dữ liệu!');
             }
         });
-        
-        // Xử lý upload ảnh
-        const imageUploads = [
-            { upload: 'startImageUpload', input: 'startImage', preview: 'startImagePreview' },
-            { upload: 'endImageUpload', input: 'endImage', preview: 'endImagePreview' },
-            { upload: 'additionalImageUpload', input: 'additionalImage', preview: 'additionalImagePreview' }
-        ];
-        
-        imageUploads.forEach(item => {
-            const uploadElement = document.getElementById(item.upload);
-            const inputElement = document.getElementById(item.input);
-            const previewElement = document.getElementById(item.preview);
+            // Xử lý upload ảnh
+            const imageUploads = [
+                { upload: 'startImageUpload', input: 'startImage', preview: 'startImagePreview' },
+                { upload: 'endImageUpload', input: 'endImage', preview: 'endImagePreview' },
+                { upload: 'additionalImageUpload', input: 'additionalImage', preview: 'additionalImagePreview' }
+            ];
             
-            uploadElement.addEventListener('click', function() {
-                inputElement.click();
+            imageUploads.forEach(item => {
+                const uploadElement = document.getElementById(item.upload);
+                const inputElement = document.getElementById(item.input);
+                const previewElement = document.getElementById(item.preview);
+                
+                uploadElement.addEventListener('click', function() {
+                    inputElement.click();
+                });
+                
+                inputElement.addEventListener('change', function() {
+                    previewElement.innerHTML = '';
+                    if (inputElement.files) {
+                        Array.from(inputElement.files).forEach(file => {
+                            if (file.type.startsWith('image/')) {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    const img = document.createElement('img');
+                                    img.src = e.target.result;
+                                    img.title = file.name;
+                                    previewElement.appendChild(img);
+                                };
+                                reader.readAsDataURL(file);
+                            }
+                        });
+                    }
+                });
             });
             
-            inputElement.addEventListener('change', function() {
-                previewElement.innerHTML = '';
-                if (inputElement.files) {
-                    Array.from(inputElement.files).forEach(file => {
-                        if (file.type.startsWith('image/')) {
-                            const reader = new FileReader();
-                            reader.onload = function(e) {
-                                const img = document.createElement('img');
-                                img.src = e.target.result;
-                                img.title = file.name;
-                                previewElement.appendChild(img);
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                    });
-                }
-            });
-        });
             // Xử lý form thêm dữ liệu
             workForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -620,15 +605,16 @@
                 }, 3000);
             });
             
-            // Xử lý xuất dữ liệu
+            // Xử lý xuất dữ liệu CSV với UTF-8 BOM
             exportBtn.addEventListener('click', function() {
                 if (workData.length === 0) {
                     alert('📭 Không có dữ liệu để xuất!');
                     return;
                 }
                 
-                // Tạo nội dung CSV
-                let csvContent = "Tên,Ngày,Công việc,Số lượng,Ghi chú,Số ảnh bắt đầu,Số ảnh kết thúc,Số ảnh bổ sung\n";
+                // Tạo nội dung CSV với UTF-8 BOM để fix lỗi tiếng Việt
+                const BOM = '\uFEFF'; // UTF-8 BOM
+                let csvContent = BOM + "Tên,Ngày,Công việc,Số lượng,Ghi chú,Số ảnh bắt đầu,Số ảnh kết thúc,Số ảnh bổ sung\n";
                 
                 workData.forEach(item => {
                     const row = [
@@ -644,13 +630,84 @@
                     csvContent += row + '\n';
                 });
                 
-                // Tạo file và tải xuống
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                // Tạo file với encoding UTF-8
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.setAttribute('href', url);
                 const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
                 link.setAttribute('download', `cong_viec_${timestamp}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+            
+            // Xuất dữ liệu Excel (XLSX)
+            exportExcelBtn.addEventListener('click', function() {
+                if (workData.length === 0) {
+                    alert('📭 Không có dữ liệu để xuất!');
+                    return;
+                }
+                
+                // Tạo nội dung HTML table để copy vào Excel
+                let htmlContent = `
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <style>
+                            table { border-collapse: collapse; width: 100%; }
+                            th, td { border: 1px solid black; padding: 8px; text-align: left; }
+                            th { background-color: #f2f2f2; }
+                        </style>
+                    </head>
+                    <body>
+                    <h2>DỮ LIỆU CÔNG VIỆC</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tên</th>
+                                <th>Ngày</th>
+                                <th>Công việc</th>
+                                <th>Số lượng</th>
+                                <th>Ghi chú</th>
+                                <th>Số ảnh bắt đầu</th>
+                                <th>Số ảnh kết thúc</th>
+                                <th>Số ảnh bổ sung</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                workData.forEach(item => {
+                    htmlContent += `
+                        <tr>
+                            <td>${item.name}</td>
+                            <td>${item.date}</td>
+                            <td>${getWorkTypeLabel(item.workType)}</td>
+                            <td>${item.quantity}</td>
+                            <td>${item.notes || ''}</td>
+                            <td>${item.startImages.length}</td>
+                            <td>${item.endImages.length}</td>
+                            <td>${item.additionalImages.length}</td>
+                        </tr>
+                    `;
+                });
+                
+                htmlContent += `
+                        </tbody>
+                    </table>
+                    </body>
+                    </html>
+                `;
+                
+                // Tạo file HTML để mở trong Excel
+                const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
+                link.setAttribute('download', `cong_viec_${timestamp}.xls`);
                 link.style.visibility = 'hidden';
                 document.body.appendChild(link);
                 link.click();
@@ -740,13 +797,13 @@
             // Hàm chuyển đổi mã công việc thành nhãn
             function getWorkTypeLabel(workType) {
                 const workTypes = {
-                    'nhap_du_lieu': '📊 Nhập dữ liệu',
-                    'ham_ech': '🐸 Hàm ếch',
-                    'san_luong': '📦 Sản lượng',
-                    'them': '➕ Thêm',
-                    'ham_ech_tinh_theo_san_pham': '🐸 Hàm ếch (theo SP)',
-                    'nhap_du_lieu_tinh_theo_to': '📊 Nhập dữ liệu (theo tờ)',
-                    'khac': '🔧 Khác'
+                    'nhap_du_lieu': 'Nhập dữ liệu',
+                    'ham_ech': 'Hàm ếch',
+                    'san_luong': 'Sản lượng',
+                    'them': 'Thêm',
+                    'ham_ech_tinh_theo_san_pham': 'Hàm ếch tính theo sản phẩm',
+                    'nhap_du_lieu_tinh_theo_to': 'Nhập dữ liệu tính theo tờ',
+                    'khac': 'Khác'
                 };
                 
                 return workTypes[workType] || workType;
