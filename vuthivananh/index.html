@@ -211,6 +211,16 @@
             background-color: #c82333;
         }
         
+        .debug-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #856404;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 5px;
@@ -264,140 +274,142 @@
             <h2>Đăng nhập hệ thống</h2>
             <div class="form-group">
                 <label for="userId">ID đăng nhập</label>
-                <input type="text" id="userId" placeholder="Nhập ID đăng nhập">
+                <input type="text" id="userId" placeholder="Nhập ID đăng nhập" value="0388427368">
             </div>
             <div class="form-group">
                 <label for="password">Mật khẩu</label>
-                <input type="password" id="password" placeholder="Nhập mật khẩu">
+                <input type="password" id="password" placeholder="Nhập mật khẩu" value="@Van2007">
             </div>
             <button id="loginBtn">Đăng nhập</button>
             <div id="loginMessage" class="error-message"></div>
+            <div id="debugInfo" class="debug-info" style="display: none;"></div>
         </section>
-    <section id="mainSection" class="main-section">
-        <h2>Nhập dữ liệu công việc</h2>
-        <form id="workForm">
-            <div class="form-row">
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="name">Tên nhân viên *</label>
-                        <input type="text" id="name" required>
-                    </div>
-                </div>
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="date">Ngày tháng năm *</label>
-                        <input type="date" id="date" required>
-                    </div>
+<section id="mainSection" class="main-section">
+    <h2>Nhập dữ liệu công việc</h2>
+    <form id="workForm">
+        <div class="form-row">
+            <div class="form-col">
+                <div class="form-group">
+                    <label for="name">Tên nhân viên *</label>
+                    <input type="text" id="name" required>
                 </div>
             </div>
-            
-            <div class="form-row">
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="startImage">Ảnh bắt đầu *</label>
-                        <div class="image-upload" id="startImageUpload">
-                            <p>📷 Nhấp để tải ảnh lên</p>
-                            <input type="file" id="startImage" accept="image/*" class="hidden" multiple>
-                        </div>
-                        <div id="startImagePreview" class="image-preview"></div>
-                    </div>
-                </div>
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="endImage">Ảnh kết thúc *</label>
-                        <div class="image-upload" id="endImageUpload">
-                            <p>📷 Nhấp để tải ảnh lên</p>
-                            <input type="file" id="endImage" accept="image/*" class="hidden" multiple>
-                        </div>
-                        <div id="endImagePreview" class="image-preview"></div>
-                    </div>
+            <div class="form-col">
+                <div class="form-group">
+                    <label for="date">Ngày tháng năm *</label>
+                    <input type="date" id="date" required>
                 </div>
             </div>
-            
-            <div class="form-group">
-                <label for="additionalImage">Ảnh bổ sung (tùy chọn)</label>
-                <div class="image-upload" id="additionalImageUpload">
-                    <p>📷 Nhấp để tải ảnh bổ sung</p>
-                    <input type="file" id="additionalImage" accept="image/*" class="hidden" multiple>
-                </div>
-                <div id="additionalImagePreview" class="image-preview"></div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="workType">Công việc *</label>
-                        <select id="workType" required>
-                            <option value="">-- Chọn công việc --</option>
-                            <option value="nhap_du_lieu">Nhập dữ liệu</option>
-                            <option value="ham_ech">Hàm ếch</option>
-                            <option value="san_luong">Sản lượng</option>
-                            <option value="them">Thêm</option>
-                            <option value="ham_ech_tinh_theo_san_pham">Hàm ếch tính theo sản phẩm</option>
-                            <option value="nhap_du_lieu_tinh_theo_to">Nhập dữ liệu tính theo tờ</option>
-                            <option value="khac">Khác</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="quantity">Số lượng</label>
-                        <input type="number" id="quantity" min="0" step="1" placeholder="0">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="notes">Ghi chú</label>
-                <textarea id="notes" rows="2" placeholder="Nhập ghi chú nếu có..."></textarea>
-            </div>
-            
-            <button type="submit">➕ Thêm dữ liệu</button>
-            <div id="formMessage" class="success-message"></div>
-        </form>
-        
-        <h2>Dữ liệu đã nhập</h2>
-        <div style="overflow-x: auto;">
-            <table class="data-table" id="dataTable">
-                <thead>
-                    <tr>
-                        <th>Tên</th>
-                        <th>Ngày</th>
-                        <th>Công việc</th>
-                        <th>Số lượng</th>
-                        <th>Ảnh bắt đầu</th>
-                        <th>Ảnh kết thúc</th>
-                        <th>Ảnh bổ sung</th>
-                        <th>Ghi chú</th>
-                        <th>Hành động</th>
-                    </tr>
-                </thead>
-                <tbody id="dataTableBody">
-                    <!-- Dữ liệu sẽ được thêm vào đây -->
-                </tbody>
-            </table>
         </div>
         
-        <div class="action-buttons">
-            <button id="exportBtn" class="btn-export">📥 Xuất dữ liệu CSV</button>
-            <button id="clearDataBtn" class="btn-logout" style="background-color: #ffc107; color: #000;">🗑️ Xóa toàn bộ dữ liệu</button>
-            <button id="logoutBtn" class="btn-logout">🚪 Đăng xuất</button>
+        <div class="form-row">
+            <div class="form-col">
+                <div class="form-group">
+                    <label for="startImage">Ảnh bắt đầu *</label>
+                    <div class="image-upload" id="startImageUpload">
+                        <p>📷 Nhấp để tải ảnh lên</p>
+                        <input type="file" id="startImage" accept="image/*" class="hidden" multiple>
+                    </div>
+                    <div id="startImagePreview" class="image-preview"></div>
+                </div>
+            </div>
+            <div class="form-col">
+                <div class="form-group">
+                    <label for="endImage">Ảnh kết thúc *</label>
+                    <div class="image-upload" id="endImageUpload">
+                        <p>📷 Nhấp để tải ảnh lên</p>
+                        <input type="file" id="endImage" accept="image/*" class="hidden" multiple>
+                    </div>
+                    <div id="endImagePreview" class="image-preview"></div>
+                </div>
+            </div>
         </div>
-    </section>
-</div>
+        
+        <div class="form-group">
+            <label for="additionalImage">Ảnh bổ sung (tùy chọn)</label>
+            <div class="image-upload" id="additionalImageUpload">
+                <p>📷 Nhấp để tải ảnh bổ sung</p>
+                        <input type="file" id="additionalImage" accept="image/*" class="hidden" multiple>
+                    </div>
+                    <div id="additionalImagePreview" class="image-preview"></div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="workType">Công việc *</label>
+                            <select id="workType" required>
+                                <option value="">-- Chọn công việc --</option>
+                                <option value="nhap_du_lieu">Nhập dữ liệu</option>
+                                <option value="ham_ech">Hàm ếch</option>
+                                <option value="san_luong">Sản lượng</option>
+                                <option value="them">Thêm</option>
+                                <option value="ham_ech_tinh_theo_san_pham">Hàm ếch tính theo sản phẩm</option>
+                                <option value="nhap_du_lieu_tinh_theo_to">Nhập dữ liệu tính theo tờ</option>
+                                <option value="khac">Khác</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="quantity">Số lượng</label>
+                            <input type="number" id="quantity" min="0" step="1" placeholder="0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">Ghi chú</label>
+                    <textarea id="notes" rows="2" placeholder="Nhập ghi chú nếu có..."></textarea>
+                </div>
+                
+                <button type="submit">➕ Thêm dữ liệu</button>
+                <div id="formMessage" class="success-message"></div>
+            </form>
+            
+            <h2>Dữ liệu đã nhập</h2>
+            <div style="overflow-x: auto;">
+                <table class="data-table" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Tên</th>
+                            <th>Ngày</th>
+                            <th>Công việc</th>
+                            <th>Số lượng</th>
+                            <th>Ảnh bắt đầu</th>
+                            <th>Ảnh kết thúc</th>
+                            <th>Ảnh bổ sung</th>
+                            <th>Ghi chú</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <!-- Dữ liệu sẽ được thêm vào đây -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="exportBtn" class="btn-export">📥 Xuất dữ liệu CSV</button>
+                <button id="clearDataBtn" class="btn-logout" style="background-color: #ffc107; color: #000;">🗑️ Xóa toàn bộ dữ liệu</button>
+                <button id="logoutBtn" class="btn-logout">🚪 Đăng xuất</button>
+            </div>
+        </section>
+    </div>
 <script>
     // ===== PHẦN JAVASCRIPT =====
     document.addEventListener('DOMContentLoaded', function() {
         // Biến toàn cục
         let workData = [];
         
-        // Thông tin đăng nhập đã được mã hóa
-        const ENCODED_ADMIN_ID = 'MzA4ODQyNzM2OA=='; // 0388427368
-        const ENCODED_ADMIN_PASSWORD = 'QCZWYW4yMDA3'; // @Van2007
+        // Thông tin đăng nhập - SỬ DỤNG TRỰC TIẾP KHÔNG MÃ HÓA
+        const ADMIN_ID = '0388427368';
+        const ADMIN_PASSWORD = '@Van2007';
         
-        // Giải mã thông tin đăng nhập
-        const ADMIN_ID = atob(ENCODED_ADMIN_ID);
-        const ADMIN_PASSWORD = atob(ENCODED_ADMIN_PASSWORD);
+        console.log('Thông tin đăng nhập:', {
+            id: ADMIN_ID,
+            password: ADMIN_PASSWORD
+        });
         
         // Tham chiếu đến các phần tử DOM
         const loginSection = document.getElementById('loginSection');
@@ -408,9 +420,17 @@
         const userIdInput = document.getElementById('userId');
         const passwordInput = document.getElementById('password');
         const loginMessage = document.getElementById('loginMessage');
+        const debugInfo = document.getElementById('debugInfo');
         const workForm = document.getElementById('workForm');
         const dataTableBody = document.getElementById('dataTableBody');
         const exportBtn = document.getElementById('exportBtn');
+        
+        // Hiển thị thông tin debug
+        function showDebugInfo(message) {
+            debugInfo.style.display = 'block';
+            debugInfo.innerHTML = '<strong>Debug:</strong> ' + message;
+            console.log('Debug:', message);
+        }
         
         // Thiết lập ngày mặc định là hôm nay
         document.getElementById('date').valueAsDate = new Date();
@@ -429,13 +449,42 @@
             const userId = userIdInput.value.trim();
             const password = passwordInput.value.trim();
             
+            showDebugInfo(`Nhập: ID='${userId}', Password='${password}' | Mong đợi: ID='${ADMIN_ID}', Password='${ADMIN_PASSWORD}'`);
+            
+            // Debug chi tiết
+            console.log('So sánh ID:', {
+                nhap: userId,
+                mong_doi: ADMIN_ID,
+                bang_nhau: userId === ADMIN_ID,
+                do_dai_nhap: userId.length,
+                do_dai_mong_doi: ADMIN_ID.length
+            });
+            
+            console.log('So sánh Password:', {
+                nhap: password,
+                mong_doi: ADMIN_PASSWORD,
+                bang_nhau: password === ADMIN_PASSWORD,
+                do_dai_nhap: password.length,
+                do_dai_mong_doi: ADMIN_PASSWORD.length
+            });
+            
             if (userId === ADMIN_ID && password === ADMIN_PASSWORD) {
+                showDebugInfo('✅ Đăng nhập THÀNH CÔNG!');
                 loginSection.style.display = 'none';
                 mainSection.style.display = 'block';
                 loginMessage.textContent = '';
                 loadWorkData();
             } else {
-                loginMessage.textContent = 'ID hoặc mật khẩu không đúng!';
+                let errorMsg = 'ID hoặc mật khẩu không đúng!';
+                
+                if (userId !== ADMIN_ID) {
+                    errorMsg += ' (Sai ID)';
+                } else if (password !== ADMIN_PASSWORD) {
+                    errorMsg += ' (Sai mật khẩu)';
+                }
+                
+                loginMessage.textContent = errorMsg;
+                showDebugInfo('❌ Đăng nhập THẤT BẠI: ' + errorMsg);
                 userIdInput.focus();
             }
         }
@@ -447,6 +496,7 @@
                 loginSection.style.display = 'block';
                 userIdInput.value = '';
                 passwordInput.value = '';
+                debugInfo.style.display = 'none';
                 userIdInput.focus();
             }
         });
@@ -707,6 +757,17 @@
                 const date = new Date(dateString);
                 return date.toLocaleDateString('vi-VN');
             }
+            
+            // Tự động đăng nhập nếu đã đăng nhập trước đó
+            function checkAutoLogin() {
+                const savedData = localStorage.getItem('workData');
+                if (savedData) {
+                    showDebugInfo('Đã tìm thấy dữ liệu cũ, có thể tự động đăng nhập...');
+                }
+            }
+            
+            // Kiểm tra auto login khi trang load
+            checkAutoLogin();
         });
     </script>
 </body>
