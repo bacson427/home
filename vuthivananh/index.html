@@ -221,6 +221,18 @@
             color: #856404;
         }
         
+        .export-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .export-btn {
+            flex: 1;
+            min-width: 150px;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 5px;
@@ -248,6 +260,10 @@
             
             .data-table th, .data-table td {
                 padding: 6px;
+            }
+            
+            .export-options {
+                flex-direction: column;
             }
         }
         
@@ -284,6 +300,7 @@
             <div id="loginMessage" class="error-message"></div>
             <div id="debugInfo" class="debug-info" style="display: none;"></div>
         </section>
+
     <section id="mainSection" class="main-section">
         <h2>Nhập dữ liệu công việc</h2>
         <form id="workForm">
@@ -389,14 +406,19 @@
             </table>
         </div>
         
+        <h3>Xuất dữ liệu</h3>
+        <div class="export-options">
+            <button id="exportExcelBtn" class="btn-export export-btn">📊 Xuất Excel (.xlsx)</button>
+            <button id="exportCSVBtn" class="btn-export export-btn" style="background-color: #17a2b8;">📄 Xuất CSV</button>
+            <button id="exportPDFBtn" class="btn-export export-btn" style="background-color: #dc3545;">📋 Xuất PDF</button>
+        </div>
+        
         <div class="action-buttons">
-            <button id="exportBtn" class="btn-export">📥 Xuất Excel (Không lỗi tiếng Việt)</button>
             <button id="clearDataBtn" class="btn-logout" style="background-color: #ffc107; color: #000;">🗑️ Xóa toàn bộ dữ liệu</button>
             <button id="logoutBtn" class="btn-logout">🚪 Đăng xuất</button>
         </div>
     </section>
 </div>
-
 <script>
     // ===== PHẦN JAVASCRIPT =====
     document.addEventListener('DOMContentLoaded', function() {
@@ -424,7 +446,9 @@
         const debugInfo = document.getElementById('debugInfo');
         const workForm = document.getElementById('workForm');
         const dataTableBody = document.getElementById('dataTableBody');
-        const exportBtn = document.getElementById('exportBtn');
+        const exportExcelBtn = document.getElementById('exportExcelBtn');
+        const exportCSVBtn = document.getElementById('exportCSVBtn');
+        const exportPDFBtn = document.getElementById('exportPDFBtn');
         
         // Hiển thị thông tin debug
         function showDebugInfo(message) {
@@ -490,12 +514,11 @@
             if (confirm('⚠️ Bạn có CHẮC CHẮN muốn xóa TOÀN BỘ dữ liệu? Hành động này không thể hoàn tác!')) {
                 workData = [];
                 localStorage.removeItem('workData');
-                localStorage.removeItem('workImages');
                 updateDataTable();
                 alert('Đã xóa toàn bộ dữ liệu!');
             }
         });
-            // Xử lý upload ảnh và lưu ảnh thực sự
+            // Xử lý upload ảnh
             const imageUploads = [
                 { upload: 'startImageUpload', input: 'startImage', preview: 'startImagePreview', type: 'start' },
                 { upload: 'endImageUpload', input: 'endImage', preview: 'endImagePreview', type: 'end' },
@@ -526,15 +549,13 @@
                             if (file.type.startsWith('image/')) {
                                 const reader = new FileReader();
                                 reader.onload = function(e) {
-                                    // Lưu ảnh thực sự
                                     currentImages[item.type].push({
                                         name: file.name,
-                                        data: e.target.result, // Lưu base64 của ảnh
+                                        data: e.target.result,
                                         type: file.type,
                                         size: file.size
                                     });
                                     
-                                    // Hiển thị preview
                                     const img = document.createElement('img');
                                     img.src = e.target.result;
                                     img.title = file.name;
@@ -557,19 +578,16 @@
                 const quantity = document.getElementById('quantity').value || '0';
                 const notes = document.getElementById('notes').value.trim();
                 
-                // Kiểm tra ảnh bắt buộc
                 if (currentImages.start.length === 0 || currentImages.end.length === 0) {
                     alert('⚠️ Vui lòng tải lên ảnh bắt đầu và ảnh kết thúc!');
                     return;
                 }
                 
-                // Kiểm tra công việc
                 if (!workType) {
                     alert('⚠️ Vui lòng chọn loại công việc!');
                     return;
                 }
                 
-                // Tạo đối tượng dữ liệu công việc
                 const workItem = {
                     id: Date.now(),
                     name: name,
@@ -582,62 +600,153 @@
                     additionalImages: currentImages.additional
                 };
                 
-                // Thêm vào mảng dữ liệu
                 workData.push(workItem);
-                
-                // Lưu vào localStorage
                 saveWorkData();
-                
-                // Cập nhật bảng
                 updateDataTable();
                 
-                // Reset form và ảnh
                 workForm.reset();
                 document.getElementById('startImagePreview').innerHTML = '';
                 document.getElementById('endImagePreview').innerHTML = '';
                 document.getElementById('additionalImagePreview').innerHTML = '';
                 document.getElementById('date').valueAsDate = new Date();
                 
-                // Reset current images
                 currentImages = {
                     start: [],
                     end: [],
                     additional: []
                 };
                 
-                // Hiển thị thông báo
                 document.getElementById('formMessage').textContent = '✅ Đã thêm dữ liệu thành công!';
                 setTimeout(() => {
                     document.getElementById('formMessage').textContent = '';
                 }, 3000);
             });
             
-            // Xử lý xuất dữ liệu Excel (FIX LỖI TIẾNG VIỆT)
-            exportBtn.addEventListener('click', function() {
+            // Xuất file Excel (.xlsx) - SỬ DỤNG THƯ VIỆN SheetJS
+            exportExcelBtn.addEventListener('click', function() {
                 if (workData.length === 0) {
                     alert('📭 Không có dữ liệu để xuất!');
                     return;
                 }
                 
-                // Tạo nội dung HTML table để copy vào Excel (KHÔNG BỊ LỖI TIẾNG VIỆT)
+                // Tạo workbook Excel
+                const wb = XLSX.utils.book_new();
+                
+                // Tạo dữ liệu worksheet
+                const wsData = [
+                    ['DỮ LIỆU CÔNG VIỆC', '', '', '', '', '', '', ''],
+                    ['Xuất ngày:', new Date().toLocaleDateString('vi-VN'), '', '', '', '', '', ''],
+                    [], // Dòng trống
+                    ['STT', 'Tên nhân viên', 'Ngày làm việc', 'Công việc', 'Số lượng', 'Số ảnh bắt đầu', 'Số ảnh kết thúc', 'Số ảnh bổ sung', 'Ghi chú']
+                ];
+                
+                // Thêm dữ liệu
+                workData.forEach((item, index) => {
+                    wsData.push([
+                        index + 1,
+                        item.name,
+                        formatDate(item.date),
+                        getWorkTypeLabel(item.workType),
+                        item.quantity,
+                        item.startImages.length,
+                        item.endImages.length,
+                        item.additionalImages.length,
+                        item.notes || ''
+                    ]);
+                });
+                
+                const ws = XLSX.utils.aoa_to_sheet(wsData);
+                
+                // Thiết lập độ rộng cột
+                const colWidths = [
+                    { wch: 5 },  // STT
+                    { wch: 20 }, // Tên
+                    { wch: 12 }, // Ngày
+                    { wch: 25 }, // Công việc
+                    { wch: 10 }, // Số lượng
+                    { wch: 15 }, // Ảnh bắt đầu
+                    { wch: 15 }, // Ảnh kết thúc
+                    { wch: 15 }, // Ảnh bổ sung
+                    { wch: 30 }  // Ghi chú
+                ];
+                ws['!cols'] = colWidths;
+                
+                // Thêm worksheet vào workbook
+                XLSX.utils.book_append_sheet(wb, ws, 'CongViec');
+                
+                // Xuất file
+                const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
+                XLSX.writeFile(wb, `cong_viec_${timestamp}.xlsx`);
+                
+                alert('✅ Đã xuất file Excel thành công!\n\n📝 File .xlsx tương thích với:\n• Microsoft Excel 2007+\n• Google Sheets\n• LibreOffice\n• WPS Office');
+            });
+            
+            // Xuất file CSV với UTF-8 BOM
+            exportCSVBtn.addEventListener('click', function() {
+                if (workData.length === 0) {
+                    alert('📭 Không có dữ liệu để xuất!');
+                    return;
+                }
+                
+                const BOM = '\uFEFF';
+                let csvContent = BOM + "STT,Tên nhân viên,Ngày làm việc,Công việc,Số lượng,Số ảnh bắt đầu,Số ảnh kết thúc,Số ảnh bổ sung,Ghi chú\n";
+                
+                workData.forEach((item, index) => {
+                    const row = [
+                        index + 1,
+                        `"${item.name}"`,
+                        `"${formatDate(item.date)}"`,
+                        `"${getWorkTypeLabel(item.workType)}"`,
+                        `"${item.quantity}"`,
+                        `"${item.startImages.length}"`,
+                        `"${item.endImages.length}"`,
+                        `"${item.additionalImages.length}"`,
+                        `"${item.notes || ''}"`
+                    ].join(',');
+                    csvContent += row + '\n';
+                });
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
+                link.setAttribute('download', `cong_viec_${timestamp}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                alert('✅ Đã xuất file CSV thành công!\n\n📝 Hướng dẫn mở CSV:\n1. Mở Excel → Data → From Text/CSV\n2. Chọn file CSV\n3. Chọn encoding: Unicode (UTF-8)\n4. Load → Đảm bảo tiếng Việt hiển thị đúng');
+            });
+            
+            // Xuất file PDF
+            exportPDFBtn.addEventListener('click', function() {
+                if (workData.length === 0) {
+                    alert('📭 Không có dữ liệu để xuất!');
+                    return;
+                }
+                
+                // Tạo nội dung HTML cho PDF
                 let htmlContent = `
                     <!DOCTYPE html>
                     <html>
                     <head>
                         <meta charset="UTF-8">
-                        <title>Dữ liệu công việc</title>
+                        <title>Báo cáo công việc</title>
                         <style>
-                            body { font-family: Arial, sans-serif; }
-                            table { border-collapse: collapse; width: 100%; margin: 20px 0; }
-                            th, td { border: 1px solid #000; padding: 10px; text-align: left; }
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h1 { color: #1e5799; text-align: center; }
+                            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                            th, td { border: 1px solid #000; padding: 8px; text-align: left; }
                             th { background-color: #f2f2f2; font-weight: bold; }
                             .header { text-align: center; margin-bottom: 20px; }
+                            .footer { margin-top: 30px; text-align: right; font-size: 12px; }
                         </style>
                     </head>
                     <body>
                     <div class="header">
-                        <h1>DỮ LIỆU CÔNG VIỆC</h1>
-                        <p>Xuất ngày: ${new Date().toLocaleDateString('vi-VN')}</p>
+                        <h1>BÁO CÁO CÔNG VIỆC</h1>
+                        <p>Ngày xuất: ${new Date().toLocaleDateString('vi-VN')}</p>
                     </div>
                     <table>
                         <thead>
@@ -647,9 +756,9 @@
                                 <th>Ngày làm việc</th>
                                 <th>Công việc</th>
                                 <th>Số lượng</th>
-                                <th>Số ảnh bắt đầu</th>
-                                <th>Số ảnh kết thúc</th>
-                                <th>Số ảnh bổ sung</th>
+                                <th>Ảnh bắt đầu</th>
+                                <th>Ảnh kết thúc</th>
+                                <th>Ảnh bổ sung</th>
                                 <th>Ghi chú</th>
                             </tr>
                         </thead>
@@ -675,30 +784,22 @@
                 htmlContent += `
                         </tbody>
                     </table>
+                    <div class="footer">
+                        <p>Tổng số bản ghi: ${workData.length}</p>
+                    </div>
                     </body>
                     </html>
                 `;
                 
-                // Tạo file HTML để mở trong Excel
-                const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.setAttribute('href', url);
-                const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
-                link.setAttribute('download', `cong_viec_${timestamp}.xls`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                // Hướng dẫn sử dụng
-                setTimeout(() => {
-                    alert(`✅ Đã xuất file Excel thành công!\n\n📝 Hướng dẫn:\n1. Mở file .xls bằng Microsoft Excel\n2. Chọn "Yes" khi hỏi có mở file không\n3. Tiếng Việt sẽ hiển thị chuẩn\n4. Có thể Save As thành .xlsx nếu cần`);
-                }, 1000);
+                // Mở cửa sổ in để xuất PDF
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(htmlContent);
+                printWindow.document.close();
+                printWindow.print();
             });
             
             // Hàm lưu dữ liệu vào localStorage
             function saveWorkData() {
-                // Lưu dữ liệu công việc (không bao gồm ảnh base64 để tránh quá lớn)
                 const workDataToSave = workData.map(item => ({
                     ...item,
                     startImages: item.startImages.map(img => ({ name: img.name, size: img.size })),
@@ -733,7 +834,6 @@
                     return;
                 }
                 
-                // Sắp xếp theo ngày mới nhất
                 workData.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
                 workData.forEach(item => {
@@ -756,7 +856,6 @@
                     dataTableBody.appendChild(row);
                 });
                 
-                // Thêm sự kiện xóa
                 document.querySelectorAll('.btn-delete').forEach(button => {
                     button.addEventListener('click', function() {
                         const id = parseInt(this.getAttribute('data-id'));
@@ -781,7 +880,6 @@
                     'nhap_du_lieu_tinh_theo_to': 'Nhập dữ liệu tính theo tờ',
                     'khac': 'Khác'
                 };
-                
                 return workTypes[workType] || workType;
             }
             
@@ -803,5 +901,8 @@
             checkAutoLogin();
         });
     </script>
+    
+    <!-- Thêm thư viện SheetJS để xuất Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </body>
 </html>
