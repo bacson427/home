@@ -411,51 +411,52 @@
             </tbody>
         </table>
     </div>
-        <h3>Xuất dữ liệu</h3>
-        <div class="export-options">
-            <button id="exportExcelBtn" class="btn-export export-btn">📊 Xuất Excel (.xlsx)</button>
-            <button id="exportCSVBtn" class="btn-export export-btn" style="background-color: #17a2b8;">📄 Xuất CSV</button>
-            <button id="exportPDFBtn" class="btn-export export-btn" style="background-color: #dc3545;">📋 Xuất PDF</button>
-        </div>
-        
-        <div class="action-buttons">
-            <button id="clearDataBtn" class="btn-logout" style="background-color: #ffc107; color: #000;">🗑️ Xóa toàn bộ dữ liệu</button>
-            <button id="logoutBtn" class="btn-logout">🚪 Đăng xuất</button>
-        </div>
-    </section>
-</div>
+// Xử lý sự kiện đăng nhập
+loginBtn.addEventListener('click', function() {
+    const userId = userIdInput.value.trim();
+    const password = passwordInput.value.trim();
+    
+    console.log('Thử đăng nhập:', userId, password);
+    
+    if (userId === ADMIN_ID && password === ADMIN_PASSWORD) {
+        console.log('Đăng nhập thành công!');
+        loginSection.style.display = 'none';
+        mainSection.style.display = 'block';
+        loginMessage.textContent = '';
+        loadWorkData();
+    } else {
+        console.log('Đăng nhập thất bại');
+        loginMessage.textContent = 'ID hoặc mật khẩu không đúng!';
+    }
+});
 
-<script>
-    // ===== PHẦN JAVASCRIPT =====
-    document.addEventListener('DOMContentLoaded', function() {
-        // Biến toàn cục
-        let workData = [];
-        
-        // Thông tin đăng nhập
-        const ADMIN_ID = '0388427368';
-        const ADMIN_PASSWORD = '@Van2007';
-        
-        // Giới hạn kích thước file (25MB)
-        const MAX_FILE_SIZE = 25 * 1024 * 1024;
-        
-        // Tham chiếu đến các phần tử DOM
-        const loginSection = document.getElementById('loginSection');
-        const mainSection = document.getElementById('mainSection');
-        const loginBtn = document.getElementById('loginBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const clearDataBtn = document.getElementById('clearDataBtn');
-        const userIdInput = document.getElementById('userId');
-        const passwordInput = document.getElementById('password');
-        const loginMessage = document.getElementById('loginMessage');
-        const workForm = document.getElementById('workForm');
-        const dataTableBody = document.getElementById('dataTableBody');
-        const exportExcelBtn = document.getElementById('exportExcelBtn');
-        const exportCSVBtn = document.getElementById('exportCSVBtn');
-        const exportPDFBtn = document.getElementById('exportPDFBtn');
-        const submitBtn = document.getElementById('submitBtn');
-        
-        // Thiết lập ngày mặc định là hôm nay
-        document.getElementById('date').valueAsDate = new Date());
+// Đăng nhập bằng Enter
+passwordInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        loginBtn.click();
+    }
+});
+
+// Xử lý đăng xuất
+logoutBtn.addEventListener('click', function() {
+    if (confirm('Bạn có chắc muốn đăng xuất?')) {
+        mainSection.style.display = 'none';
+        loginSection.style.display = 'block';
+        userIdInput.value = '';
+        passwordInput.value = '';
+    }
+});
+
+// Xử lý xóa toàn bộ dữ liệu
+clearDataBtn.addEventListener('click', function() {
+    if (confirm('⚠️ Bạn có CHẮC CHẮN muốn xóa TOÀN BỘ dữ liệu?')) {
+        workData = [];
+        localStorage.removeItem('workData');
+        updateDataTable();
+        alert('Đã xóa toàn bộ dữ liệu!');
+    }
+});
+
 // Xử lý upload file
 const fileUploads = [
     { 
@@ -506,14 +507,12 @@ fileUploads.forEach(item => {
             let hasOversizedFile = false;
             
             Array.from(inputElement.files).forEach(file => {
-                // Kiểm tra kích thước file
                 if (file.size > MAX_FILE_SIZE) {
                     hasOversizedFile = true;
                     warningElement.textContent = `⚠️ File "${file.name}" vượt quá 25MB`;
                     return;
                 }
                 
-                // Lưu thông tin file
                 currentFiles[item.type].push({
                     name: file.name,
                     type: file.type,
@@ -521,7 +520,6 @@ fileUploads.forEach(item => {
                     sizeFormatted: formatFileSize(file.size)
                 });
                 
-                // Hiển thị preview
                 const fileElement = document.createElement('div');
                 fileElement.className = 'file-item';
                 fileElement.innerHTML = `
@@ -546,7 +544,6 @@ function formatFileSize(bytes) {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
-
 // Xử lý form thêm dữ liệu
 workForm.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -568,7 +565,7 @@ workForm.addEventListener('submit', function(e) {
         return;
     }
     
-    // Tạo đối tượng dữ liệu công việc
+    // Tạo đối tượng dữ liệu
     const workItem = {
         id: Date.now(),
         name: name,
@@ -608,30 +605,100 @@ workForm.addEventListener('submit', function(e) {
     }, 3000);
 });
 
-// Xử lý sự kiện đăng nhập
-loginBtn.addEventListener('click', handleLogin);
+// Hàm lưu dữ liệu
+function saveWorkData() {
+    localStorage.setItem('workData', JSON.stringify(workData));
+}
 
-// Cho phép đăng nhập bằng phím Enter
-passwordInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        handleLogin();
-    }
-});
-
-function handleLogin() {
-    const userId = userIdInput.value.trim();
-    const password = passwordInput.value.trim();
-    
-    if (userId === ADMIN_ID && password === ADMIN_PASSWORD) {
-        loginSection.style.display = 'none';
-        mainSection.style.display = 'block';
-        loginMessage.textContent = '';
-        loadWorkData();
-    } else {
-        loginMessage.textContent = 'ID hoặc mật khẩu không đúng!';
+// Hàm tải dữ liệu
+function loadWorkData() {
+    const savedData = localStorage.getItem('workData');
+    if (savedData) {
+        try {
+            workData = JSON.parse(savedData);
+            updateDataTable();
+        } catch (e) {
+            console.error('Lỗi đọc dữ liệu:', e);
+            workData = [];
+        }
     }
 }
-            // Xuất file Excel với danh sách file đầy đủ
+
+// Hàm cập nhật bảng
+function updateDataTable() {
+    dataTableBody.innerHTML = '';
+    
+    if (workData.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td colspan="9" style="text-align: center; padding: 20px; color: #666;">📝 Chưa có dữ liệu nào được thêm</td>`;
+        dataTableBody.appendChild(row);
+        return;
+    }
+    
+    workData.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    workData.forEach(item => {
+        const row = document.createElement('tr');
+        
+        const startFilesHtml = item.startFiles.length > 0 ? 
+            `<div>${item.startFiles.length} file</div>` : 
+            '0 file';
+            
+        const endFilesHtml = item.endFiles.length > 0 ? 
+            `<div>${item.endFiles.length} file</div>` : 
+            '0 file';
+            
+        const additionalFilesHtml = item.additionalFiles.length > 0 ? 
+            `<div>${item.additionalFiles.length} file</div>` : 
+            '0 file';
+        
+        row.innerHTML = `
+            <td>${item.name}</td>
+            <td>${formatDate(item.date)}</td>
+            <td>${getWorkTypeLabel(item.workType)}</td>
+            <td style="text-align: center;">${item.quantity}</td>
+            <td style="text-align: center;">${startFilesHtml}</td>
+            <td style="text-align: center;">${endFilesHtml}</td>
+            <td style="text-align: center;">${additionalFilesHtml}</td>
+            <td>${item.notes || 'Không có'}</td>
+            <td style="text-align: center;">
+                <button class="btn-delete" data-id="${item.id}">🗑️ Xóa</button>
+            </td>
+        `;
+        
+        dataTableBody.appendChild(row);
+    });
+    
+    // Thêm sự kiện xóa
+    document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = parseInt(this.getAttribute('data-id'));
+            const item = workData.find(item => item.id === id);
+            if (confirm(`Xóa dữ liệu của "${item.name}" ngày ${formatDate(item.date)}?`)) {
+                workData = workData.filter(item => item.id !== id);
+                saveWorkData();
+                updateDataTable();
+            }
+        });
+    });
+}
+
+// Hàm chuyển đổi công việc
+function getWorkTypeLabel(workType) {
+    const workTypes = {
+        'ham_ech_tinh_theo_san_pham': 'Hàm ếch tính theo sản phẩm',
+        'nhap_du_lieu_tinh_theo_to': 'Nhập dữ liệu tính theo tờ',
+        'khac': 'Khác'
+    };
+    return workTypes[workType] || workType;
+}
+
+// Hàm định dạng ngày
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN');
+}
+            // Xuất file Excel
             exportExcelBtn.addEventListener('click', function() {
                 if (workData.length === 0) {
                     alert('📭 Không có dữ liệu để xuất!');
@@ -683,10 +750,10 @@ function handleLogin() {
                 const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
                 XLSX.writeFile(wb, `cong_viec_${timestamp}.xlsx`);
                 
-                alert('✅ Đã xuất file Excel thành công!\n📁 Danh sách file đã được bao gồm');
+                alert('✅ Đã xuất file Excel thành công!');
             });
             
-            // Xuất file CSV với danh sách file
+            // Xuất file CSV
             exportCSVBtn.addEventListener('click', function() {
                 if (workData.length === 0) {
                     alert('📭 Không có dữ liệu để xuất!');
@@ -755,7 +822,6 @@ function handleLogin() {
                             th { background-color: #f2f2f2; font-weight: bold; }
                             .header { text-align: center; margin-bottom: 20px; }
                             .footer { margin-top: 30px; text-align: right; font-size: 12px; }
-                            .file-list { font-size: 10px; color: #666; }
                         </style>
                     </head>
                     <body>
@@ -780,9 +846,6 @@ function handleLogin() {
                 `;
                 
                 workData.forEach((item, index) => {
-                    const startFilesCount = item.startFiles.length;
-                    const endFilesCount = item.endFiles.length;
-                    
                     htmlContent += `
                         <tr>
                             <td>${index + 1}</td>
@@ -790,8 +853,8 @@ function handleLogin() {
                             <td>${formatDate(item.date)}</td>
                             <td>${getWorkTypeLabel(item.workType)}</td>
                             <td>${item.quantity}</td>
-                            <td class="file-list">${startFilesCount} file</td>
-                            <td class="file-list">${endFilesCount} file</td>
+                            <td>${item.startFiles.length} file</td>
+                            <td>${item.endFiles.length} file</td>
                             <td>${item.notes || ''}</td>
                         </tr>
                     `;
@@ -802,7 +865,6 @@ function handleLogin() {
                     </table>
                     <div class="footer">
                         <p>Tổng số bản ghi: ${workData.length}</p>
-                        <p><em>Danh sách file chi tiết xem trong file Excel/CSV</em></p>
                     </div>
                     </body>
                     </html>
@@ -813,125 +875,9 @@ function handleLogin() {
                 printWindow.document.close();
                 printWindow.print();
             });
-            
-            // Hàm lưu dữ liệu vào localStorage
-            function saveWorkData() {
-                localStorage.setItem('workData', JSON.stringify(workData));
-            }
-            
-            // Hàm tải dữ liệu từ localStorage
-            function loadWorkData() {
-                const savedData = localStorage.getItem('workData');
-                if (savedData) {
-                    try {
-                        workData = JSON.parse(savedData);
-                        updateDataTable();
-                    } catch (e) {
-                        console.error('Lỗi đọc dữ liệu:', e);
-                        workData = [];
-                    }
-                }
-            }
-            
-            // Hàm cập nhật bảng dữ liệu
-            function updateDataTable() {
-                dataTableBody.innerHTML = '';
-                
-                if (workData.length === 0) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td colspan="9" style="text-align: center; padding: 20px; color: #666;">📝 Chưa có dữ liệu nào được thêm</td>`;
-                    dataTableBody.appendChild(row);
-                    return;
-                }
-                
-                workData.sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                workData.forEach(item => {
-                    const row = document.createElement('tr');
-                    
-                    const startFilesHtml = item.startFiles.length > 0 ? 
-                        `<div>${item.startFiles.length} file</div>` : 
-                        '0 file';
-                        
-                    const endFilesHtml = item.endFiles.length > 0 ? 
-                        `<div>${item.endFiles.length} file</div>` : 
-                        '0 file';
-                        
-                    const additionalFilesHtml = item.additionalFiles.length > 0 ? 
-                        `<div>${item.additionalFiles.length} file</div>` : 
-                        '0 file';
-                    
-                    row.innerHTML = `
-                        <td>${item.name}</td>
-                        <td>${formatDate(item.date)}</td>
-                        <td>${getWorkTypeLabel(item.workType)}</td>
-                        <td style="text-align: center;">${item.quantity}</td>
-                        <td style="text-align: center;">${startFilesHtml}</td>
-                        <td style="text-align: center;">${endFilesHtml}</td>
-                        <td style="text-align: center;">${additionalFilesHtml}</td>
-                        <td>${item.notes || 'Không có'}</td>
-                        <td style="text-align: center;">
-                            <button class="btn-delete" data-id="${item.id}">🗑️ Xóa</button>
-                        </td>
-                    `;
-                    
-                    dataTableBody.appendChild(row);
-                });
-                
-                // Thêm sự kiện xóa
-                document.querySelectorAll('.btn-delete').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const id = parseInt(this.getAttribute('data-id'));
-                        const item = workData.find(item => item.id === id);
-                        if (confirm(`Bạn có chắc muốn xóa dữ liệu của "${item.name}" ngày ${formatDate(item.date)}?`)) {
-                            workData = workData.filter(item => item.id !== id);
-                            saveWorkData();
-                            updateDataTable();
-                        }
-                    });
-                });
-            }
-            
-            // Xử lý sự kiện đăng xuất
-            logoutBtn.addEventListener('click', function() {
-                if (confirm('Bạn có chắc muốn đăng xuất?')) {
-                    mainSection.style.display = 'none';
-                    loginSection.style.display = 'block';
-                    userIdInput.value = '';
-                    passwordInput.value = '';
-                    userIdInput.focus();
-                }
-            });
-            
-            // Xử lý xóa toàn bộ dữ liệu
-            clearDataBtn.addEventListener('click', function() {
-                if (confirm('⚠️ Bạn có CHẮC CHẮN muốn xóa TOÀN BỘ dữ liệu? Hành động này không thể hoàn tác!')) {
-                    workData = [];
-                    localStorage.removeItem('workData');
-                    updateDataTable();
-                    alert('Đã xóa toàn bộ dữ liệu!');
-                }
-            });
-            
-            // Hàm chuyển đổi mã công việc thành nhãn
-            function getWorkTypeLabel(workType) {
-                const workTypes = {
-                    'ham_ech_tinh_theo_san_pham': 'Hàm ếch tính theo sản phẩm',
-                    'nhap_du_lieu_tinh_theo_to': 'Nhập dữ liệu tính theo tờ',
-                    'khac': 'Khác'
-                };
-                return workTypes[workType] || workType;
-            }
-            
-            // Hàm định dạng ngày
-            function formatDate(dateString) {
-                const date = new Date(dateString);
-                return date.toLocaleDateString('vi-VN');
-            }
         });
     </script>
     
-    <!-- Thêm thư viện SheetJS để xuất Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </body>
 </html>
