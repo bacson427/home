@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Công và Sản Lượng</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Màn hình đăng nhập -->
+    <div id="login-screen" class="screen active">
+        <div class="login-container">
+            <h1>ĐĂNG NHẬP HỆ THỐNG</h1>
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="user-id">ID đăng nhập</label>
+                    <input type="text" id="user-id" placeholder="Nhập ID đăng nhập">
+                </div>
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" placeholder="Nhập mật khẩu">
+                </div>
+                <button id="login-btn" class="btn btn-primary">Đăng nhập</button>
+                <div class="login-hint">
+                    <p><strong>Thông tin đăng nhập:</strong></p>
+                    <p>ID: 0388427368</p>
+                    <p>Mật khẩu: @Van2007</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Màn hình chính -->
+    <div id="main-screen" class="screen">
+        <div class="container">
+            <header>
+                <h1>QUẢN LÝ CÔNG VÀ SẢN LƯỢNG</h1>
+                <p>Nhập thông tin công việc và sản lượng để tính toán hiệu quả làm việc</p>
+                <button id="logout-btn" class="btn btn-secondary">Đăng xuất</button>
+            </header>
+            
+            <div class="form-container">
+                <div class="form-section">
+                    <h2>Thông tin chung</h2>
+                    
+                    <div class="form-group">
+                        <label for="name" class="required">Tên công việc</label>
+                        <input type="text" id="name" placeholder="Nhập tên công việc">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date" class="required">Ngày tháng năm</label>
+                        <input type="date" id="date">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="work-type" class="required">Loại công việc</label>
+                        <select id="work-type">
+                            <option value="">-- Chọn loại công việc --</option>
+                            <option value="nhap-du-lieu">Nhập dữ liệu</option>
+                            <option value="ham-ech">Hàm ếch</option>
+                            <option value="khac">Khác</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productivity" class="required">Sản lượng</label>
+                        <input type="number" id="productivity" placeholder="Nhập sản lượng">
+                        <div class="unit-display" id="unit-display">(Đơn vị: )</div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h2>Hình ảnh công việc</h2>
+                    
+                    <div class="form-group">
+                        <label class="required">Ảnh bắt đầu</label>
+                        <div class="image-upload" id="start-image-upload">
+                            <p>Nhấn để chọn ảnh bắt đầu</p>
+                            <input type="file" id="start-image" accept="image/*" class="hidden">
+                        </div>
+                        <div class="image-preview" id="start-preview"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Ảnh kết thúc</label>
+                        <div class="image-upload" id="end-image-upload">
+                            <p>Nhấn để chọn ảnh kết thúc</p>
+                            <input type="file" id="end-image" accept="image/*" class="hidden">
+                        </div>
+                        <div class="image-preview" id="end-preview"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Ảnh bổ sung (nếu có)</label>
+                        <div class="image-upload" id="additional-image-upload">
+                            <p>Nhấn để chọn ảnh bổ sung</p>
+                            <input type="file" id="additional-image" accept="image/*" multiple class="hidden">
+                        </div>
+                        <div class="image-preview" id="additional-preview"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="btn btn-add" id="add-work">Thêm công việc</button>
+            </div>
+            
+            <div id="work-list">
+                <!-- Danh sách công việc sẽ được thêm vào đây -->
+            </div>
+            
+            <div class="summary">
+                <h2>Tổng kết</h2>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div>Tổng số công việc</div>
+                        <div class="summary-value" id="total-work">0</div>
+                    </div>
+                    <div class="summary-item">
+                        <div>Tổng sản lượng</div>
+                        <div class="summary-value" id="total-productivity">0</div>
+                    </div>
+                    <div class="summary-item">
+                        <div>Công việc nhập dữ liệu</div>
+                        <div class="summary-value" id="data-entry-count">0</div>
+                        <div class="summary-unit" id="data-entry-unit">(tờ)</div>
+                    </div>
+                    <div class="summary-item">
+                        <div>Công việc hàm ếch</div>
+                        <div class="summary-value" id="frog-function-count">0</div>
+                        <div class="summary-unit" id="frog-function-unit">(sản phẩm)</div>
+                    </div>
+                    <div class="summary-item">
+                        <div>Công việc khác</div>
+                        <div class="summary-value" id="other-work-count">0</div>
+                        <div class="summary-unit" id="other-work-unit">(công việc)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+/* style.css */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* Login Screen */
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.login-container h1 {
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+.login-form {
+    text-align: left;
+}
+
+.login-hint {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.login-hint p {
+    margin-bottom: 5px;
+}
+
+/* Main Screen */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.form-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-section {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+.unit-display {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+}
+
+.image-upload {
+    border: 2px dashed #ddd;
+    padding: 20px;
+    text-align: center;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.image-upload:hover {
+    border-color: #3498db;
+    background-color: #f0f8ff;
+}
+
+.image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.image-preview img {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}
+
+.btn-secondary {
+    background-color: #95a5a6;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.btn-secondary:hover {
+    background-color: #7f8c8d;
+}
+
+.btn-add {
+    background-color: #2ecc71;
+    margin-top: 10px;
+}
+
+.btn-add:hover {
+    background-color: #27ae60;
+}
+
+.btn-remove {
+    background-color: #e74c3c;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+.btn-remove:hover {
+    background-color: #c0392b;
+}
+
+.work-item {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 4px solid #2ecc71;
+}
+
+.work-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.work-item-title {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.work-item-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+@media (max-width: 768px) {
+    .work-item-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+.summary {
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+.summary h2 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.summary-item {
+    text-align: center;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.summary-value {
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 5px;
+}
+
+.summary-unit {
+    font-size: 14px;
+    margin-top: 5px;
+    opacity: 0.8;
+}
+
+.hidden {
+    display: none;
+}
+
+.required::after {
+    content: " *";
+    color: #e74c3c;
+}
+// script.js
+// Biến lưu trữ danh sách công việc
+let workList = [];
+
+// Tham chiếu đến các phần tử DOM
+const loginScreen = document.getElementById('login-screen');
+const mainScreen = document.getElementById('main-screen');
+const userIdInput = document.getElementById('user-id');
+const passwordInput = document.getElementById('password');
+const loginBtn = document.getElementById('login-btn');
+const logoutBtn = document.getElementById('logout-btn');
+
+const nameInput = document.getElementById('name');
+const dateInput = document.getElementById('date');
+const workTypeInput = document.getElementById('work-type');
+const productivityInput = document.getElementById('productivity');
+const unitDisplay = document.getElementById('unit-display');
+const startImageInput = document.getElementById('start-image');
+const endImageInput = document.getElementById('end-image');
+const additionalImageInput = document.getElementById('additional-image');
+const startPreview = document.getElementById('start-preview');
+const endPreview = document.getElementById('end-preview');
+const additionalPreview = document.getElementById('additional-preview');
+const addWorkButton = document.getElementById('add-work');
+const workListContainer = document.getElementById('work-list');
+const totalWorkElement = document.getElementById('total-work');
+const totalProductivityElement = document.getElementById('total-productivity');
+const dataEntryCountElement = document.getElementById('data-entry-count');
+const frogFunctionCountElement = document.getElementById('frog-function-count');
+const otherWorkCountElement = document.getElementById('other-work-count');
+const dataEntryUnitElement = document.getElementById('data-entry-unit');
+const frogFunctionUnitElement = document.getElementById('frog-function-unit');
+const otherWorkUnitElement = document.getElementById('other-work-unit');
+
+// Thông tin đăng nhập
+const VALID_USER_ID = '0388427368';
+const VALID_PASSWORD = '@Van2007';
+
+// Đặt ngày mặc định là hôm nay
+const today = new Date().toISOString().split('T')[0];
+dateInput.value = today;
+
+// Xử lý sự kiện đăng nhập
+loginBtn.addEventListener('click', function() {
+    const userId = userIdInput.value.trim();
+    const password = passwordInput.value;
+    
+    if (userId === VALID_USER_ID && password === VALID_PASSWORD) {
+        loginScreen.classList.remove('active');
+        mainScreen.classList.add('active');
+    } else {
+        alert('ID hoặc mật khẩu không chính xác!');
+        passwordInput.value = '';
+    }
+});
+
+// Xử lý sự kiện đăng xuất
+logoutBtn.addEventListener('click', function() {
+    mainScreen.classList.remove('active');
+    loginScreen.classList.add('active');
+    userIdInput.value = '';
+    passwordInput.value = '';
+});
+
+// Cập nhật đơn vị sản lượng khi thay đổi loại công việc
+workTypeInput.addEventListener('change', function() {
+    updateUnitDisplay();
+});
+
+// Hàm cập nhật hiển thị đơn vị
+function updateUnitDisplay() {
+    const workType = workTypeInput.value;
+    let unit = '';
+    
+    switch(workType) {
+        case 'nhap-du-lieu':
+            unit = 'tờ';
+            break;
+        case 'ham-ech':
+            unit = 'sản phẩm';
+            break;
+        case 'khac':
+            unit = 'công việc';
+            break;
+        default:
+            unit = '';
+    }
+    
+    unitDisplay.textContent = `(Đơn vị: ${unit})`;
+}
+
+// Xử lý sự kiện upload ảnh
+document.getElementById('start-image-upload').addEventListener('click', () => {
+    startImageInput.click();
+});
+
+document.getElementById('end-image-upload').addEventListener('click', () => {
+    endImageInput.click();
+});
+
+document.getElementById('additional-image-upload').addEventListener('click', () => {
+    additionalImageInput.click();
+});
+
+// Xử lý hiển thị ảnh preview
+startImageInput.addEventListener('change', function() {
+    handleImagePreview(this, startPreview);
+});
+
+endImageInput.addEventListener('change', function() {
+    handleImagePreview(this, endPreview);
+});
+
+additionalImageInput.addEventListener('change', function() {
+    handleImagePreview(this, additionalPreview, true);
+});
+
+// Hàm xử lý hiển thị ảnh preview
+function handleImagePreview(input, previewContainer, multiple = false) {
+    previewContainer.innerHTML = '';
+    
+    if (multiple) {
+        for (let file of input.files) {
+            displayImage(file, previewContainer);
+        }
+    } else {
+        if (input.files && input.files[0]) {
+            displayImage(input.files[0], previewContainer);
+        }
+    }
+}
+
+// Hàm hiển thị ảnh
+function displayImage(file, container) {
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        container.appendChild(img);
+    }
+    
+    reader.readAsDataURL(file);
+}
+
+// Xử lý thêm công việc
+addWorkButton.addEventListener('click', function() {
+    // Kiểm tra các trường bắt buộc
+    if (!nameInput.value || !dateInput.value || !workTypeInput.value || !productivityInput.value || 
+        !startImageInput.files[0] || !endImageInput.files[0]) {
+        alert('Vui lòng điền đầy đủ các trường bắt buộc!');
+        return;
+    }
+    
+    // Tạo đối tượng công việc mới
+    const newWork = {
+        id: Date.now(),
+        name: nameInput.value,
+        date: dateInput.value,
+        workType: workTypeInput.value,
+        productivity: parseInt(productivityInput.value),
+        startImage: startImageInput.files[0].name,
+        endImage: endImageInput.files[0].name,
+        additionalImages: []
+    };
+    
+    // Thêm ảnh bổ sung nếu có
+    if (additionalImageInput.files.length > 0) {
+        for (let file of additionalImageInput.files) {
+            newWork.additionalImages.push(file.name);
+        }
+    }
+    
+    // Thêm vào danh sách
+    workList.push(newWork);
+    
+    // Cập nhật giao diện
+    renderWorkList();
+    updateSummary();
+    
+    // Reset form
+    resetForm();
+});
+
+// Hàm render danh sách công việc
+function renderWorkList() {
+    workListContainer.innerHTML = '';
+    
+    workList.forEach(work => {
+        const workItem = document.createElement('div');
+        workItem.className = 'work-item';
+        
+        let additionalImagesHTML = '';
+        if (work.additionalImages.length > 0) {
+            additionalImagesHTML = `
+                <div>
+                    <strong>Ảnh bổ sung:</strong>
+                    <ul>
+                        ${work.additionalImages.map(img => `<li>${img}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+        
+        // Xác định đơn vị sản lượng
+        let unit = '';
+        switch(work.workType) {
+            case 'nhap-du-lieu':
+                unit = 'tờ';
+                break;
+            case 'ham-ech':
+                unit = 'sản phẩm';
+                break;
+            case 'khac':
+                unit = 'công việc';
+                break;
+        }
+        
+        workItem.innerHTML = `
+            <div class="work-item-header">
+                <div class="work-item-title">${work.name}</div>
+                <button class="btn btn-remove" data-id="${work.id}">Xóa</button>
+            </div>
+            <div class="work-item-content">
+                <div>
+                    <p><strong>Ngày:</strong> ${formatDate(work.date)}</p>
+                    <p><strong>Loại công việc:</strong> ${getWorkTypeName(work.workType)}</p>
+                    <p><strong>Sản lượng:</strong> ${work.productivity} ${unit}</p>
+                </div>
+                <div>
+                    <p><strong>Ảnh bắt đầu:</strong> ${work.startImage}</p>
+                    <p><strong>Ảnh kết thúc:</strong> ${work.endImage}</p>
+                    ${additionalImagesHTML}
+                </div>
+            </div>
+        `;
+        
+        workListContainer.appendChild(workItem);
+    });
+    
+    // Thêm sự kiện xóa cho các nút
+    document.querySelectorAll('.btn-remove').forEach(button => {
+        button.addEventListener('click', function() {
+            const workId = parseInt(this.getAttribute('data-id'));
+            removeWork(workId);
+        });
+    });
+}
+
+// Hàm xóa công việc
+function removeWork(id) {
+    workList = workList.filter(work => work.id !== id);
+    renderWorkList();
+    updateSummary();
+}
+
+// Hàm cập nhật tổng kết
+function updateSummary() {
+    totalWorkElement.textContent = workList.length;
+    
+    const totalProductivity = workList.reduce((sum, work) => sum + work.productivity, 0);
+    totalProductivityElement.textContent = totalProductivity;
+    
+    const dataEntryWorks = workList.filter(work => work.workType === 'nhap-du-lieu');
+    dataEntryCountElement.textContent = dataEntryWorks.length;
+    
+    const frogFunctionWorks = workList.filter(work => work.workType === 'ham-ech');
+    frogFunctionCountElement.textContent = frogFunctionWorks.length;
+    
+    const otherWorks = workList.filter(work => work.workType === 'khac');
+    otherWorkCountElement.textContent = otherWorks.length;
+}
+
+// Hàm reset form
+function resetForm() {
+    nameInput.value = '';
+    workTypeInput.value = '';
+    productivityInput.value = '';
+    startImageInput.value = '';
+    endImageInput.value = '';
+    additionalImageInput.value = '';
+    startPreview.innerHTML = '';
+    endPreview.innerHTML = '';
+    additionalPreview.innerHTML = '';
+    updateUnitDisplay();
+}
+
+// Hàm định dạng ngày tháng
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN');
+}
+
+// Hàm lấy tên loại công việc
+function getWorkTypeName(workType) {
+    switch(workType) {
+        case 'nhap-du-lieu':
+            return 'Nhập dữ liệu';
+        case 'ham-ech':
+            return 'Hàm ếch';
+        case 'khac':
+            return 'Khác';
+        default:
+            return workType;
+    }
+}
+
+// Khởi tạo
+updateUnitDisplay();
