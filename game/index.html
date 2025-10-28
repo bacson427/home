@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Flappy Fish Realistic</title>
+<title>Flappy Plane</title>
 <style>
     /* CSS TỐI GIẢN */
     body {
@@ -11,7 +11,7 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
-        background-color: #0077be;
+        background-color: #5bb3f0; /* Màu nền trời */
         font-family: Arial, sans-serif;
         color: white;
     }
@@ -62,7 +62,7 @@
 <body>
 
 <div id="startScreen">
-    <h1>Flappy Fish</h1>
+    <h1>Flappy Plane</h1>
     
     <div id="leaderboard">
         <h3>🏆 Bảng Xếp Hạng 🏆</h3>
@@ -84,30 +84,30 @@
     const leaderboardList = document.getElementById('leaderboardList');
     
     // --- CẤU HÌNH GAME ---
-    const FISH_WIDTH = 45; // Kích thước cá
-    const FISH_HEIGHT = 35;
-    const SEAWEED_WIDTH = 60; // Chiều rộng rong biển
-    const GAP = 120; // Khoảng trống giữa rong biển
-    const GRAVITY = 0.4;
-    const SWIM_FORCE = -6; 
-    const SPEED = 2.0;
-    const GROUND_HEIGHT = 40;
+    const PLANE_WIDTH = 45;
+    const PLANE_HEIGHT = 35;
+    const TOWER_WIDTH = 60; // Chiều rộng cột trụ
+    const GAP = 120;
+    const GRAVITY = 0.6; // Trọng lực mạnh hơn (Không khí)
+    const THRUST_FORCE = -8; // Lực đẩy lên mạnh hơn
+    const SPEED = 2.5;
+    const GROUND_HEIGHT = 40; // Mặt đất
     
     // --- TRẠNG THÁI ---
     let playerName = '';
-    let fishY, fishVelocity;
-    let seaweed = [];
-    let bubbles = [];
+    let planeY, planeVelocity;
+    let towers = [];
+    let smokeParticles = [];
     let score;
     let isGameOver;
     let isGameRunning = false;
     let pipeInterval;
-    const LEADERBOARD_KEY = 'flappyFishLeaderboard';
+    const LEADERBOARD_KEY = 'flappyPlaneLeaderboard';
 
     // --- TẢI HÌNH ẢNH ---
     const assets = {};
     let assetsLoaded = 0;
-    const totalAssets = 4; // Cập nhật số lượng ảnh
+    const totalAssets = 4;
 
     function loadImage(name, src) {
         const img = new Image();
@@ -115,42 +115,38 @@
         img.onload = () => {
             assets[name] = img;
             assetsLoaded++;
-            if (assetsLoaded === totalAssets) {
-                console.log("All assets loaded!");
-                // Có thể bỏ nút disabled của start button ở đây nếu muốn đợi ảnh load
-            }
         };
         img.onerror = () => {
             console.error(`Failed to load image: ${src}. Using fallback color.`);
-            assetsLoaded++; // Vẫn tăng để game có thể chạy
-             if (assetsLoaded === totalAssets) {
-                console.log("All assets processed (some might have failed to load).");
-            }
+            assetsLoaded++;
         };
     }
 
     // ĐƯỜNG DẪN HÌNH ẢNH CỦA BẠN (Cần đặt hình ảnh vào đây)
-    loadImage('fish', 'assets/fish.png'); 
-    loadImage('seaweed_top', 'assets/seaweed_top.png'); 
-    loadImage('seaweed_bottom', 'assets/seaweed_bottom.png'); 
-    loadImage('background_water', 'assets/background_water.png'); 
+    loadImage('plane', 'assets/plane.png'); 
+    loadImage('tower_top', 'assets/tower_top.png'); 
+    loadImage('tower_bottom', 'assets/tower_bottom.png'); 
+    loadImage('background_sky', 'assets/background_sky.png'); 
     
-
-    // --- LỚP BONG BÓNG ---
-    class Bubble {
+    // --- LỚP KHÓI (Smoke Particle) ---
+    class SmokeParticle {
         constructor(x, y) {
-            this.x = x + FISH_WIDTH / 2;
-            this.y = y + FISH_HEIGHT / 2;
-            this.size = Math.random() * 2 + 1;
-            this.vy = -(Math.random() * 0.5 + 0.3);
-            this.life = 150;
+            this.x = x - PLANE_WIDTH / 2; // Khói từ phía sau máy bay
+            this.y = y + PLANE_HEIGHT / 2;
+            this.size = Math.random() * 4 + 2;
+            this.vx = -(Math.random() * 0.5 + 0.1); // Di chuyển ngược lại (do quán tính)
+            this.vy = (Math.random() - 0.5) * 0.5; // Lên hoặc xuống nhẹ
+            this.life = 100; // Tuổi thọ ngắn hơn
         }
         update() {
+            this.x += this.vx;
             this.y += this.vy;
-            this.life -= 1;
+            this.size *= 0.98; // Khói tan dần
+            this.life -= 2;
         }
         draw() {
-            ctx.fillStyle = `rgba(255, 255, 255, ${this.life / 150})`;
+            // Khói màu xám nhạt, mờ dần
+            ctx.fillStyle = `rgba(180, 180, 180, ${this.life / 100 * 0.6})`;
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.fill();
@@ -179,7 +175,7 @@
         leaderboardList.innerHTML = ''; 
 
         if (top10.length === 0) {
-            leaderboardList.innerHTML = '<li>Chơi để lập kỷ lục!</li>';
+            leaderboardList.innerHTML = '<li>Bay để lập kỷ lục!</li>';
             return;
         }
 
@@ -196,74 +192,76 @@
 
     // --- VẼ VÀ CẬP NHẬT GAME ---
 
-    function drawFish() {
-        if (assets.fish) {
-            ctx.drawImage(assets.fish, 50, fishY, FISH_WIDTH, FISH_HEIGHT);
+    function drawPlane() {
+        if (assets.plane) {
+            ctx.drawImage(assets.plane, 50, planeY, PLANE_WIDTH, PLANE_HEIGHT);
         } else {
-            // Fallback nếu không load được ảnh
-            ctx.fillStyle = '#ff8c00'; 
-            ctx.fillRect(50, fishY, FISH_WIDTH, FISH_HEIGHT);
+            // Fallback: Hình chữ nhật màu xám
+            ctx.fillStyle = '#a0a0a0'; 
+            ctx.fillRect(50, planeY, PLANE_WIDTH, PLANE_HEIGHT);
         }
     }
 
-    function drawSeaweed(x, height) {
-        // Rong biển trên
-        if (assets.seaweed_top) {
-            ctx.drawImage(assets.seaweed_top, x, 0, SEAWEED_WIDTH, height);
+    function drawTower(x, height) {
+        // Cột trụ trên
+        if (assets.tower_top) {
+            ctx.drawImage(assets.tower_top, x, 0, TOWER_WIDTH, height);
         } else {
-            ctx.fillStyle = '#005e00';
-            ctx.fillRect(x, 0, SEAWEED_WIDTH, height); 
+            ctx.fillStyle = 'gray';
+            ctx.fillRect(x, 0, TOWER_WIDTH, height); 
         }
-        // Rong biển dưới
-        if (assets.seaweed_bottom) {
-            ctx.drawImage(assets.seaweed_bottom, x, height + GAP, SEAWEED_WIDTH, canvas.height - height - GAP - GROUND_HEIGHT);
+        // Cột trụ dưới
+        if (assets.tower_bottom) {
+            ctx.drawImage(assets.tower_bottom, x, height + GAP, TOWER_WIDTH, canvas.height - height - GAP - GROUND_HEIGHT);
         } else {
-            ctx.fillStyle = '#005e00';
-            ctx.fillRect(x, height + GAP, SEAWEED_WIDTH, canvas.height - height - GAP - GROUND_HEIGHT); 
+            ctx.fillStyle = 'gray';
+            ctx.fillRect(x, height + GAP, TOWER_WIDTH, canvas.height - height - GAP - GROUND_HEIGHT); 
         }
     }
 
-    function updateFish() {
-        fishVelocity += GRAVITY;
-        fishY += fishVelocity;
+    function updatePlane() {
+        planeVelocity += GRAVITY;
+        planeY += planeVelocity;
 
-        if (Math.random() < 0.3) bubbles.push(new Bubble(50 + FISH_WIDTH/2, fishY + FISH_HEIGHT/2)); // Bong bóng từ giữa cá
+        // Tạo khói từ đuôi máy bay (giả định đuôi ở X=50)
+        if (Math.random() < 0.4) smokeParticles.push(new SmokeParticle(50, planeY));
 
-        if (fishY + FISH_HEIGHT > canvas.height - GROUND_HEIGHT) gameOver();
-        if (fishY < 0) fishY = 0;
+        // Va chạm Đất/Trần
+        if (planeY + PLANE_HEIGHT > canvas.height - GROUND_HEIGHT) gameOver();
+        if (planeY < 0) planeY = 0;
     }
 
-    function updateSeaweeds() {
-        seaweed.forEach((item, index) => {
+    function updateTowers() {
+        towers.forEach((item, index) => {
             item.x -= SPEED;
 
             // KIỂM TRA TÍNH ĐIỂM
-            if (item.x + SEAWEED_WIDTH < 50 && !item.passed) {
+            if (item.x + TOWER_WIDTH < 50 && !item.passed) {
                 score++;
                 item.passed = true;
             }
 
-            // KIỂM TRA VA CHẠM (sử dụng kích thước cá và rong biển thực)
+            // KIỂM TRA VA CHẠM
             if (
-                50 + FISH_WIDTH > item.x && 
-                50 < item.x + SEAWEED_WIDTH && 
-                (fishY < item.height || fishY + FISH_HEIGHT > item.height + GAP)
+                50 + PLANE_WIDTH > item.x && 
+                50 < item.x + TOWER_WIDTH && 
+                (planeY < item.height || planeY + PLANE_HEIGHT > item.height + GAP)
             ) {
                 gameOver();
             }
 
-            if (item.x + SEAWEED_WIDTH < 0) seaweed.splice(index, 1);
+            if (item.x + TOWER_WIDTH < 0) towers.splice(index, 1);
         });
     }
 
-    function generateSeaweed() {
+    function generateTower() {
         const minHeight = 50;
         const maxHeight = canvas.height - GROUND_HEIGHT - GAP - minHeight;
         const randomHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
-        seaweed.push({ x: canvas.width, height: randomHeight, passed: false });
+        towers.push({ x: canvas.width, height: randomHeight, passed: false });
     }
 
-    function swim() { if (!isGameOver) fishVelocity = SWIM_FORCE; }
+    function thrust() { if (!isGameOver) planeVelocity = THRUST_FORCE; }
 
     function gameOver() {
         isGameOver = true;
@@ -273,10 +271,10 @@
     }
     
     function restartGame() {
-        fishY = canvas.height / 2;
-        fishVelocity = 0;
-        seaweed = [];
-        bubbles = [];
+        planeY = canvas.height / 2;
+        planeVelocity = 0;
+        towers = [];
+        smokeParticles = [];
         score = 0;
         isGameOver = false;
         isGameRunning = false;
@@ -293,10 +291,10 @@
             renderLeaderboard();
         } else if (!isGameRunning) {
             isGameRunning = true;
-            pipeInterval = setInterval(generateSeaweed, 2500); 
-            swim();
+            pipeInterval = setInterval(generateTower, 2500); 
+            thrust();
         } else {
-            swim();
+            thrust();
         }
     }
 
@@ -319,25 +317,26 @@
     
     // --- VÒNG LẶP CHÍNH ---
     function gameLoop() {
-        // Vẽ nền nước (hình ảnh nếu có, hoặc màu sắc)
-        if (assets.background_water) {
-            ctx.drawImage(assets.background_water, 0, 0, canvas.width, canvas.height);
+        // Vẽ nền trời
+        if (assets.background_sky) {
+            ctx.drawImage(assets.background_sky, 0, 0, canvas.width, canvas.height);
         } else {
-            ctx.fillStyle = '#00aaff';
+            ctx.fillStyle = '#5bb3f0';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
         
         if (isGameRunning && !isGameOver) {
-            updateFish();
-            updateSeaweeds();
+            updatePlane();
+            updateTowers();
         }
         
-        seaweed.forEach(item => drawSeaweed(item.x, item.height)); 
-        // Đáy biển
-        ctx.fillStyle = '#ccaa66'; 
+        towers.forEach(item => drawTower(item.x, item.height)); 
+        // Mặt đất
+        ctx.fillStyle = '#666666'; 
         ctx.fillRect(0, canvas.height - GROUND_HEIGHT, canvas.width, GROUND_HEIGHT); 
-        drawFish();
-        bubbles.forEach(bubble => { bubble.update(); bubble.draw(); });
+        
+        smokeParticles.forEach(smoke => { smoke.update(); smoke.draw(); }); // Vẽ khói trước máy bay
+        drawPlane(); // Vẽ máy bay lên trên khói
         
         // Vẽ điểm số
         ctx.fillStyle = 'white';
@@ -350,7 +349,7 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'white';
             ctx.font = '30px Arial';
-            ctx.fillText('Chạm để BẮT ĐẦU BƠI', canvas.width / 2 - 140, canvas.height / 2);
+            ctx.fillText('Chạm để CẤT CÁNH', canvas.width / 2 - 130, canvas.height / 2);
         }
         
         if (isGameOver) {
