@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Flappy Bird All Devices</title>
+<style>
+    /* CSS để làm game căn giữa và chiếm toàn bộ chiều cao màn hình */
+    body {
+        margin: 0;
+        display: flex;
+        justify-content: center; /* Căn giữa theo chiều ngang */
+        align-items: center;    /* Căn giữa theo chiều dọc */
+        height: 100vh;          /* Chiếm 100% chiều cao viewport */
+        background-color: #38b4d8; 
+        overflow: hidden; 
+    }
+    #gameCanvas {
+        /* Kích thước tiêu chuẩn của game, có thể điều chỉnh */
+        width: 320px;
+        height: 480px;
+        border: 2px solid #000;
+        background-color: #4ec0ca; /* Nền trời */
+        /* Đảm bảo game không bị bóp méo khi chạm */
+        touch-action: manipulation; 
+    }
+</style>
+</head>
+<body>
+
+<canvas id="gameCanvas" width="320" height="480"></canvas>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // --- CẤU HÌNH GAME ---
+    const BIRD_SIZE = 30;
+    const PIPE_WIDTH = 50;
+    const PIPE_GAP = 100;
+    const GRAVITY = 0.5;
+    const JUMP_FORCE = -8;
+    const PIPE_SPEED = 2;
+    const GROUND_HEIGHT = 50; // Chiều cao mặt đất
+
+    let birdY = canvas.height / 2;
+    let birdVelocity = 0;
+    let pipes = [];
+    let score = 0;
+    let isGameOver = false;
+    let pipeInterval; // Dùng để lưu trữ bộ hẹn giờ tạo ống
+
+    // --- VẼ CÁC THÀNH PHẦN ---
+
+    function drawBird() {
+        ctx.fillStyle = 'yellow';
+        // Vị trí chim cố định ở X=50
+        ctx.fillRect(50, birdY, BIRD_SIZE, BIRD_SIZE);
+    }
+
+    function drawPipe(x, height) {
+        ctx.fillStyle = 'green';
+        // Ống trên
+        ctx.fillRect(x, 0, PIPE_WIDTH, height); 
+        // Ống dưới
+        ctx.fillRect(x, height + PIPE_GAP, PIPE_WIDTH, canvas.height - height - PIPE_GAP - GROUND_HEIGHT); 
+    }
+
+    function drawPipes() {
+        pipes.forEach(pipe => {
+            drawPipe(pipe.x, pipe.height);
+        });
+    }
+
+    function drawScore() {
+        ctx.fillStyle = 'white';
+        ctx.font = '24px Arial';
+        ctx.fillText('Score: ' + score, 10, 30);
+    }
+    
+    function drawGround() {
+        ctx.fillStyle = '#E8DA7E'; // Màu đất
+        ctx.fillRect(0, canvas.height - GROUND_HEIGHT, canvas.width, GROUND_HEIGHT);
+        ctx.fillStyle = 'green'; // Cỏ
+        ctx.fillRect(0, canvas.height - GROUND_HEIGHT - 5, canvas.width, 5);
+    }
+
+    // --- LOGIC GAME ---
+
+    function updateBird() {
+        birdVelocity += GRAVITY;
+        birdY += birdVelocity;
+
+        // Va chạm với đất
+        if (birdY + BIRD_SIZE > canvas.height - GROUND_HEIGHT) {
+            birdY = canvas.height - GROUND_HEIGHT - BIRD_SIZE;
+            gameOver();
+        }
+        // Va chạm với trần
+        if (birdY < 0) {
+            birdY = 0;
+            birdVelocity = 0;
+        }
+    }
+
+    function updatePipes() {
+        pipes.forEach((pipe, index) => {
+            pipe.x -= PIPE_SPEED;
+
+            // Kiểm tra tính điểm: Chim vượt qua ống
+            if (pipe.x + PIPE_WIDTH < 50 && !pipe.passed) {
+                score++;
+                pipe.passed = true;
+            }
+
+            // Kiểm tra va chạm
+            if (
+                50 + BIRD_SIZE > pipe.x && 
+                50 < pipe.x + PIPE_WIDTH && 
+                (birdY < pipe.height || birdY + BIRD_SIZE > pipe.height + PIPE_GAP)
+            ) {
+                gameOver();
+            }
+
+            // Xóa ống đã đi qua
+            if (pipe.x + PIPE_WIDTH < 0) {
+                pipes.splice(index, 1);
+            }
+        });
+    }
+
+    function generatePipes() {
+        const minHeight = 50;
+        const maxHeight = canvas.height - GROUND_HEIGHT - PIPE_GAP - minHeight;
+        const randomHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
+
+        pipes.push({
+            x: canvas.width,
+            height: randomHeight,
+            passed: false // Dùng để đảm bảo chỉ tính điểm 1 lần
+        });
+    }
+
+    // --- CÁC HÀM ĐIỀU KHIỂN VÀ TRẠNG THÁI ---
+
+    function jump() {
+        if (!isGameOver) {
+            birdVelocity = JUMP_FORCE;
+        }
+    }
+
+    function gameOver() {
+        isGameOver = true;
+        clearInterval(pipeInterval);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'white';
+        ctx.font = '30px Arial';
+        ctx.fillText('GAME OVER', canvas.width / 2 - 80, canvas.height / 2 - 30);
+        ctx.font = '20px Arial';
+        ctx.fillText('Tap/Click to Restart', canvas.width / 2 - 80, canvas.height / 2 + 10);
+    }
+
+    function restartGame() {
+        birdY = canvas.height / 2;
+        birdVelocity = 0;
+        pipes = [];
+        score = 0;
+        isGameOver = false;
+        pipeInterval = setInterval(generatePipes, 2000); // Bắt đầu lại hẹn giờ
+    }
+    
+    // Xử lý sự kiện CHẠM (Mobile) và CLICK (Desktop)
+    canvas.addEventListener('click', handleInput);
+    canvas.addEventListener('touchstart', handleInput); 
+    
+    function handleInput(e) {
+        e.preventDefault(); // Ngăn chặn hành vi mặc định (như cuộn trang)
+        if (isGameOver) {
+            restartGame();
+        } else {
+            jump();
+        }
+    }
+    
+    // Xử lý sự kiện nhấn phím (SPACE)
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+            handleInput(e);
+        }
+    });
+
+    // --- VÒNG LẶP GAME CHÍNH (Dùng requestAnimationFrame cho mượt) ---
+    function gameLoop() {
+        if (!isGameOver) {
+            // Xóa Canvas (vẽ nền trời)
+            ctx.fillStyle = '#4ec0ca';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Cập nhật
+            updateBird();
+            updatePipes();
+            
+            // Vẽ
+            drawPipes();
+            drawGround();
+            drawBird();
+            drawScore();
+        }
+
+        // Tự động gọi lại hàm gameLoop cho khung hình tiếp theo
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Bắt đầu game
+    restartGame();
+    gameLoop();
+
+</script>
+
+</body>
+</html>
