@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Flappy Fish Large Screen</title>
+<title>Flappy Fish Rotated</title>
 <style>
     /* CSS TỐI GIẢN (Giữ nguyên) */
     body {
@@ -82,15 +82,16 @@
     const startButton = document.getElementById('startButton');
     const leaderboardList = document.getElementById('leaderboardList');
     
-    // --- CẤU HÌNH GAME (Được điều chỉnh cho màn hình lớn hơn) ---
+    // --- CẤU HÌNH GAME ---
     const FISH_WIDTH = 45; 
     const FISH_HEIGHT = 35;
     const SEAWEED_WIDTH = 60;
-    const GAP = 140; // Khoảng trống có thể lớn hơn một chút
-    const GRAVITY = 0.5; // Trọng lực tăng nhẹ
-    const SWIM_FORCE = -8; // Lực bơi tăng
-    const SPEED = 2.5; // Tốc độ tăng nhẹ
-    const GROUND_HEIGHT = 50; // Đáy biển to hơn
+    const GAP = 140; 
+    const GRAVITY = 0.5;
+    const SWIM_FORCE = -8;
+    const SPEED = 2.5;
+    const GROUND_HEIGHT = 50; 
+    const FISH_X = 50; // Vị trí X cố định của cá
     
     // --- TRẠNG THÁI ---
     let playerName = '';
@@ -103,7 +104,7 @@
     let pipeInterval;
     const LEADERBOARD_KEY = 'flappyFishLeaderboard';
 
-    // --- TẢI HÌNH ẢNH (Giữ nguyên logic của bạn) ---
+    // --- TẢI HÌNH ẢNH (Giữ nguyên) ---
     const assets = {};
     let assetsLoaded = 0;
     const totalAssets = 3;
@@ -121,12 +122,10 @@
         };
     }
 
-    // ĐƯỜNG DẪN HÌNH ẢNH CỦA BẠN (Cần đặt hình ảnh vào đây)
     loadImage('seaweed_top', 'assets/seaweed_top.png'); 
     loadImage('seaweed_bottom', 'assets/seaweed_bottom.png'); 
     loadImage('background_water', 'assets/background_water.png'); 
     
-
     // --- LỚP BONG BÓNG ---
     class Bubble {
         constructor(x, y) {
@@ -148,7 +147,7 @@
         }
     }
     
-    // --- CHỨC NĂNG LƯU/TẢI BẢNG XẾP HẠNG (Giữ nguyên) ---
+    // --- BẢNG XẾP HẠNG (Giữ nguyên) ---
     function getLeaderboard() {
         const data = localStorage.getItem(LEADERBOARD_KEY);
         return data ? JSON.parse(data) : [];
@@ -185,21 +184,41 @@
         });
     }
 
-    // --- VẼ CÁ CẬP NHẬT (Giữ nguyên hình dạng cá hình học) ---
+    // --- HÀM VẼ CÁ ĐÃ CẬP NHẬT PHÉP XOAY ---
     function drawFish() {
-        const x = 50;
+        const x = FISH_X;
         const y = fishY;
         const w = FISH_WIDTH;
         const h = FISH_HEIGHT;
+        const centerX = x + w * 0.45;
+        const centerY = y + h / 2;
+        
+        // Tính góc xoay dựa trên vận tốc
+        // Max 90 độ khi rơi nhanh, Max -30 độ khi bay lên
+        let rotationAngle = Math.min(Math.PI / 2, fishVelocity * 0.08); 
+        rotationAngle = Math.max(-Math.PI / 6, rotationAngle); 
+        
+        if (isGameRunning && !isGameOver) {
+            // Lưu trạng thái canvas trước khi xoay
+            ctx.save();
+            // Di chuyển tâm xoay về giữa con cá
+            ctx.translate(centerX, centerY);
+            // Áp dụng góc xoay
+            ctx.rotate(rotationAngle);
+            // Di chuyển lại để vẽ từ tâm xoay
+            ctx.translate(-centerX, -centerY);
+        }
 
+        // --- Bắt đầu vẽ hình dạng cá ---
+        
         // Thân cá (Hình elip/bo tròn)
-        ctx.fillStyle = '#ff8c00'; // Màu cam
+        ctx.fillStyle = '#ff8c00';
         ctx.beginPath();
-        ctx.ellipse(x + w * 0.45, y + h / 2, w * 0.45, h / 2, 0, 0, 2 * Math.PI);
+        ctx.ellipse(centerX, centerY, w * 0.45, h / 2, 0, 0, 2 * Math.PI);
         ctx.fill();
 
         // Đuôi cá (Hình tam giác)
-        ctx.fillStyle = '#ffcc00'; // Màu vàng hơn
+        ctx.fillStyle = '#ffcc00';
         ctx.beginPath();
         ctx.moveTo(x + w * 0.9, y + h * 0.2);
         ctx.lineTo(x + w, y + h / 2);
@@ -220,19 +239,24 @@
         ctx.lineTo(x + w * 0.15, y + h * 0.55);
         ctx.lineTo(x + w * 0.1, y + h * 0.6);
         ctx.fill();
+
+        // --- Kết thúc xoay ---
+        if (isGameRunning && !isGameOver) {
+            // Khôi phục trạng thái canvas về trước khi xoay
+            ctx.restore();
+        }
     }
 
+    // --- Các hàm khác (Giữ nguyên) ---
+
     function drawSeaweed(x, height) {
-        // Rong biển trên 
         if (assets.seaweed_top) {
             ctx.drawImage(assets.seaweed_top, x, 0, SEAWEED_WIDTH, height);
         } else {
             ctx.fillStyle = '#005e00';
             ctx.fillRect(x, 0, SEAWEED_WIDTH, height); 
         }
-        // Rong biển dưới
         if (assets.seaweed_bottom) {
-            // Chiều cao phải tính lại dựa trên canvas.height mới
             ctx.drawImage(assets.seaweed_bottom, x, height + GAP, SEAWEED_WIDTH, canvas.height - height - GAP - GROUND_HEIGHT);
         } else {
             ctx.fillStyle = '#005e00';
@@ -244,7 +268,7 @@
         fishVelocity += GRAVITY;
         fishY += fishVelocity;
 
-        if (Math.random() < 0.3) bubbles.push(new Bubble(50, fishY)); 
+        if (Math.random() < 0.3) bubbles.push(new Bubble(FISH_X, fishY)); 
 
         if (fishY + FISH_HEIGHT > canvas.height - GROUND_HEIGHT) gameOver();
         if (fishY < 0) fishY = 0;
@@ -254,16 +278,14 @@
         seaweed.forEach((item, index) => {
             item.x -= SPEED;
 
-            // KIỂM TRA TÍNH ĐIỂM
-            if (item.x + SEAWEED_WIDTH < 50 && !item.passed) {
+            if (item.x + SEAWEED_WIDTH < FISH_X && !item.passed) {
                 score++;
                 item.passed = true;
             }
 
-            // KIỂM TRA VA CHẠM
             if (
-                50 + FISH_WIDTH > item.x && 
-                50 < item.x + SEAWEED_WIDTH && 
+                FISH_X + FISH_WIDTH > item.x && 
+                FISH_X < item.x + SEAWEED_WIDTH && 
                 (fishY < item.height || fishY + FISH_HEIGHT > item.height + GAP)
             ) {
                 gameOver();
@@ -334,7 +356,7 @@
         restartGame();
     });
     
-    // --- VÒNG LẶP CHÍNH (Điều chỉnh vị trí chữ cho màn hình lớn) ---
+    // --- VÒNG LẶP CHÍNH (Giữ nguyên) ---
     function gameLoop() {
         // Vẽ nền nước 
         if (assets.background_water) {
@@ -350,7 +372,6 @@
         }
         
         seaweed.forEach(item => drawSeaweed(item.x, item.height)); 
-        // Đáy biển
         ctx.fillStyle = '#ccaa66'; 
         ctx.fillRect(0, canvas.height - GROUND_HEIGHT, canvas.width, GROUND_HEIGHT); 
         drawFish();
@@ -358,7 +379,7 @@
         
         // Vẽ điểm số
         ctx.fillStyle = 'white';
-        ctx.font = '28px Arial'; // Font chữ to hơn
+        ctx.font = '28px Arial';
         ctx.fillText(`Score: ${score}`, 10, 35);
         ctx.fillText(`Player: ${playerName}`, 10, 70);
 
@@ -366,7 +387,7 @@
             ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'white';
-            ctx.font = '36px Arial'; // Font chữ to hơn
+            ctx.font = '36px Arial';
             ctx.fillText('Chạm để BẮT ĐẦU BƠI', canvas.width / 2 - 180, canvas.height / 2);
         }
         
@@ -374,7 +395,7 @@
             ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'white';
-            ctx.font = '40px Arial'; // Font chữ to hơn
+            ctx.font = '40px Arial';
             ctx.fillText('GAME OVER', canvas.width / 2 - 110, canvas.height / 2 - 30);
             ctx.font = '24px Arial';
             ctx.fillText('Chạm/Click để trở lại Menu', canvas.width / 2 - 130, canvas.height / 2 + 15);
