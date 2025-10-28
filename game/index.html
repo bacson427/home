@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Flappy Fish Delayed Start</title>
+<title>Flappy Fish Realistic</title>
 <style>
     /* CSS TỐI GIẢN */
     body {
@@ -18,7 +18,7 @@
     #gameCanvas {
         display: none;
         border: 2px solid #000;
-        background-color: #00aaff;
+        /* Nền của canvas sẽ được vẽ bằng JS */
         touch-action: manipulation;
     }
     #startScreen {
@@ -84,9 +84,10 @@
     const leaderboardList = document.getElementById('leaderboardList');
     
     // --- CẤU HÌNH GAME ---
-    const FISH_SIZE = 30;
-    const SEAWEED_WIDTH = 40;
-    const GAP = 120;
+    const FISH_WIDTH = 45; // Kích thước cá
+    const FISH_HEIGHT = 35;
+    const SEAWEED_WIDTH = 60; // Chiều rộng rong biển
+    const GAP = 120; // Khoảng trống giữa rong biển
     const GRAVITY = 0.4;
     const SWIM_FORCE = -6; 
     const SPEED = 2.0;
@@ -99,15 +100,47 @@
     let bubbles = [];
     let score;
     let isGameOver;
-    let isGameRunning = false; // <<< TRẠNG THÁI MỚI: Game đã bắt đầu chạy chưa?
+    let isGameRunning = false;
     let pipeInterval;
     const LEADERBOARD_KEY = 'flappyFishLeaderboard';
+
+    // --- TẢI HÌNH ẢNH ---
+    const assets = {};
+    let assetsLoaded = 0;
+    const totalAssets = 4; // Cập nhật số lượng ảnh
+
+    function loadImage(name, src) {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+            assets[name] = img;
+            assetsLoaded++;
+            if (assetsLoaded === totalAssets) {
+                console.log("All assets loaded!");
+                // Có thể bỏ nút disabled của start button ở đây nếu muốn đợi ảnh load
+            }
+        };
+        img.onerror = () => {
+            console.error(`Failed to load image: ${src}. Using fallback color.`);
+            assetsLoaded++; // Vẫn tăng để game có thể chạy
+             if (assetsLoaded === totalAssets) {
+                console.log("All assets processed (some might have failed to load).");
+            }
+        };
+    }
+
+    // ĐƯỜNG DẪN HÌNH ẢNH CỦA BẠN (Cần đặt hình ảnh vào đây)
+    loadImage('fish', 'assets/fish.png'); 
+    loadImage('seaweed_top', 'assets/seaweed_top.png'); 
+    loadImage('seaweed_bottom', 'assets/seaweed_bottom.png'); 
+    loadImage('background_water', 'assets/background_water.png'); 
+    
 
     // --- LỚP BONG BÓNG ---
     class Bubble {
         constructor(x, y) {
-            this.x = x + FISH_SIZE / 2;
-            this.y = y + FISH_SIZE / 2;
+            this.x = x + FISH_WIDTH / 2;
+            this.y = y + FISH_HEIGHT / 2;
             this.size = Math.random() * 2 + 1;
             this.vy = -(Math.random() * 0.5 + 0.3);
             this.life = 150;
@@ -164,27 +197,39 @@
     // --- VẼ VÀ CẬP NHẬT GAME ---
 
     function drawFish() {
-        ctx.fillStyle = '#ff8c00';
-        ctx.beginPath();
-        ctx.moveTo(50, fishY);
-        ctx.lineTo(50, fishY + FISH_SIZE);
-        ctx.lineTo(50 + FISH_SIZE, fishY + FISH_SIZE / 2);
-        ctx.fill();
+        if (assets.fish) {
+            ctx.drawImage(assets.fish, 50, fishY, FISH_WIDTH, FISH_HEIGHT);
+        } else {
+            // Fallback nếu không load được ảnh
+            ctx.fillStyle = '#ff8c00'; 
+            ctx.fillRect(50, fishY, FISH_WIDTH, FISH_HEIGHT);
+        }
     }
 
     function drawSeaweed(x, height) {
-        ctx.fillStyle = '#005e00';
-        ctx.fillRect(x, 0, SEAWEED_WIDTH, height); 
-        ctx.fillRect(x, height + GAP, SEAWEED_WIDTH, canvas.height - height - GAP - GROUND_HEIGHT); 
+        // Rong biển trên
+        if (assets.seaweed_top) {
+            ctx.drawImage(assets.seaweed_top, x, 0, SEAWEED_WIDTH, height);
+        } else {
+            ctx.fillStyle = '#005e00';
+            ctx.fillRect(x, 0, SEAWEED_WIDTH, height); 
+        }
+        // Rong biển dưới
+        if (assets.seaweed_bottom) {
+            ctx.drawImage(assets.seaweed_bottom, x, height + GAP, SEAWEED_WIDTH, canvas.height - height - GAP - GROUND_HEIGHT);
+        } else {
+            ctx.fillStyle = '#005e00';
+            ctx.fillRect(x, height + GAP, SEAWEED_WIDTH, canvas.height - height - GAP - GROUND_HEIGHT); 
+        }
     }
 
     function updateFish() {
         fishVelocity += GRAVITY;
         fishY += fishVelocity;
 
-        if (Math.random() < 0.3) bubbles.push(new Bubble(50, fishY));
+        if (Math.random() < 0.3) bubbles.push(new Bubble(50 + FISH_WIDTH/2, fishY + FISH_HEIGHT/2)); // Bong bóng từ giữa cá
 
-        if (fishY + FISH_SIZE > canvas.height - GROUND_HEIGHT) gameOver();
+        if (fishY + FISH_HEIGHT > canvas.height - GROUND_HEIGHT) gameOver();
         if (fishY < 0) fishY = 0;
     }
 
@@ -198,11 +243,11 @@
                 item.passed = true;
             }
 
-            // KIỂM TRA VA CHẠM
+            // KIỂM TRA VA CHẠM (sử dụng kích thước cá và rong biển thực)
             if (
-                50 + FISH_SIZE > item.x && 
+                50 + FISH_WIDTH > item.x && 
                 50 < item.x + SEAWEED_WIDTH && 
-                (fishY < item.height || fishY + FISH_SIZE > item.height + GAP)
+                (fishY < item.height || fishY + FISH_HEIGHT > item.height + GAP)
             ) {
                 gameOver();
             }
@@ -222,7 +267,7 @@
 
     function gameOver() {
         isGameOver = true;
-        isGameRunning = false; // Dừng chạy khi Game Over
+        isGameRunning = false;
         clearInterval(pipeInterval);
         saveScore(playerName, score);
     }
@@ -234,9 +279,8 @@
         bubbles = [];
         score = 0;
         isGameOver = false;
-        isGameRunning = false; // Quan trọng: Đặt lại trạng thái chờ
+        isGameRunning = false;
         if (pipeInterval) clearInterval(pipeInterval);
-        // Không khởi động pipeInterval ở đây!
     }
 
     // --- XỬ LÝ SỰ KIỆN ---
@@ -244,18 +288,14 @@
         e.preventDefault();
         
         if (isGameOver) {
-            // Quay lại Menu sau khi thua
             canvas.style.display = 'none';
             startScreen.style.display = 'block';
             renderLeaderboard();
         } else if (!isGameRunning) {
-            // <<< LOGIC KHỞI ĐỘNG CHẬM >>>
             isGameRunning = true;
-            // Bắt đầu tạo rong biển chỉ sau lần chạm đầu tiên
             pipeInterval = setInterval(generateSeaweed, 2500); 
             swim();
         } else {
-            // Game đang chạy, chỉ bơi
             swim();
         }
     }
@@ -274,22 +314,28 @@
         playerName = nameInput.value.trim();
         startScreen.style.display = 'none';
         canvas.style.display = 'block';
-        restartGame(); // Reset trạng thái, chờ chạm để bắt đầu
+        restartGame();
     });
     
     // --- VÒNG LẶP CHÍNH ---
     function gameLoop() {
-        // Xóa Canvas (nền nước)
-        ctx.fillStyle = '#00aaff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Vẽ nền nước (hình ảnh nếu có, hoặc màu sắc)
+        if (assets.background_water) {
+            ctx.drawImage(assets.background_water, 0, 0, canvas.width, canvas.height);
+        } else {
+            ctx.fillStyle = '#00aaff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
         
         if (isGameRunning && !isGameOver) {
             updateFish();
             updateSeaweeds();
         }
         
-        seaweed.forEach(item => drawSeaweed(item.x, item.height));
-        ctx.fillStyle = '#ccaa66'; ctx.fillRect(0, canvas.height - GROUND_HEIGHT, canvas.width, GROUND_HEIGHT); 
+        seaweed.forEach(item => drawSeaweed(item.x, item.height)); 
+        // Đáy biển
+        ctx.fillStyle = '#ccaa66'; 
+        ctx.fillRect(0, canvas.height - GROUND_HEIGHT, canvas.width, GROUND_HEIGHT); 
         drawFish();
         bubbles.forEach(bubble => { bubble.update(); bubble.draw(); });
         
@@ -300,7 +346,6 @@
         ctx.fillText(`Player: ${playerName}`, 10, 60);
 
         if (!isGameOver && !isGameRunning) {
-            // Màn hình Chờ Khởi động
             ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'white';
@@ -309,7 +354,6 @@
         }
         
         if (isGameOver) {
-            // Màn hình Game Over
             ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'white';
