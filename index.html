@@ -1966,26 +1966,18 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// THAY code cũ bằng code này - chạy sau khi trang load hoàn toàn
-window.addEventListener('load', function() {
-    setTimeout(function() {
-        // Tìm chính xác hơn - chỉ target phần thông báo lỗi
-        var errorSelectors = [
-            '*:contains("Câu trả lời không đúng")',
-            '*:contains("Hệ thống: Al Assistant")',
-            '.error', '.system-message', '.alert'
-        ];
         
-        errorSelectors.forEach(function(selector) {
-            var elements = document.querySelectorAll(selector);
-            elements.forEach(function(el) {
-                if (el.textContent.includes('Câu trả lời không đúng') || 
-                    el.textContent.includes('Hệ thống: Al Assistant')) {
-                    el.remove(); // XÓA HOÀN TOÀN khỏi DOM
-                }
-            });
+        // XÓA CỨNG - dán vào script
+document.addEventListener('DOMContentLoaded', function() {
+    setInterval(function() {
+        document.querySelectorAll('div, p, span').forEach(function(el) {
+            if (el.textContent.includes('Câu trả lời không đúng') || 
+                el.textContent.includes('Hệ thống: Al Assistant') ||
+                el.textContent.includes('Chọn câu hỏi có sẵn')) {
+                el.remove(); // XÓA HOÀN TOÀN
+            }
         });
-    }, 2000); // Chờ 2 giây cho hệ thống load xong
+    }, 1000);
 });
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
