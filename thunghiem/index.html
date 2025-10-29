@@ -68,27 +68,155 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-<div id="simpleEvent" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border:2px solid #667eea;padding:20px;z-index:9999;max-width:350px;width:90%;box-shadow:0 5px 15px rgba(0,0,0,0.3);">
-    <div style="text-align:center;">
-        <h3 style="margin:0 0 10px 0;color:#333;">SỰ KIỆN SẮP TỚI</h3>
-        <p style="margin:5px 0;color:#666;">Hội thảo Công nghệ 2024</p>
-        <p style="margin:5px 0;color:#666;">📅 25/12/2024</p>
-        <div style="margin:15px 0;">
-            <a href="https://your-website.com/event" style="background:#667eea;color:white;padding:8px 20px;text-decoration:none;border-radius:5px;display:inline-block;margin:5px;" target="_blank">
-                XEM NGAY
-            </a>
-            <button onclick="document.getElementById('simpleEvent').style.display='none'" style="background:#ccc;color:#333;border:none;padding:8px 20px;border-radius:5px;cursor:pointer;margin:5px;">
-                ĐÓNG
-            </button>
-        </div>
-    </div>
-</div>
+.event-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
 
-<script>
-setTimeout(function(){
-    document.getElementById('simpleEvent').style.display='block';
-}, 3000);
-</script>
+.popup-content {
+    background: white;
+    border-radius: 15px;
+    max-width: 450px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: popupShow 0.3s ease-out;
+    overflow: hidden;
+}
+
+@keyframes popupShow {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    z-index: 2;
+    background: rgba(0,0,0,0.5);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    color: #ff4757;
+    background: rgba(0,0,0,0.7);
+}
+
+.popup-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.popup-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.popup-header {
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 20px 20px 0;
+}
+
+.event-badge {
+    background: #ff6b6b;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.popup-header h3 {
+    margin: 10px 0;
+    color: #333;
+    font-size: 22px;
+}
+
+.popup-body {
+    margin: 15px 0;
+    color: #555;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.popup-body p {
+    margin: 10px 0;
+    font-size: 15px;
+}
+
+.popup-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+    padding: 0 20px 20px;
+    flex-wrap: wrap;
+}
+
+.btn-details {
+    background: #2196F3;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    flex: 1;
+    min-width: 200px;
+}
+
+.btn-details:hover {
+    background: #0b7dda;
+}
+
+.btn-later {
+    background: #f1f1f1;
+    color: #666;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    flex: 1;
+    min-width: 100px;
+}
+
+.btn-later:hover {
+    background: #ddd;
+}
+
+      
 /* Target theo cấu trúc HTML */
 body > div:last-child,
 div[style*="position: fixed"],
@@ -2038,26 +2166,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 // Hiển thị popup sau 3 giây
 setTimeout(function() {
     var popup = document.getElementById('eventPopup');
-    if(popup) popup.style.display = 'flex';
+    if(popup) {
+        popup.style.display = 'flex';
+    }
 }, 3000);
 
 // Đóng popup
 function closePopup() {
     var popup = document.getElementById('eventPopup');
-    if(popup) popup.style.display = 'none';
+    if(popup) {
+        popup.style.display = 'none';
+    }
 }
 
 // Đóng khi click ra ngoài
-document.addEventListener('click', function(e) {
-    var popup = document.getElementById('eventPopup');
-    if(popup && e.target === popup) {
-        popup.style.display = 'none';
+document.getElementById('eventPopup').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePopup();
     }
 });
-
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
