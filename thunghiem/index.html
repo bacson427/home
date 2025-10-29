@@ -32,26 +32,32 @@
     <div class="popup-content">
         <span class="close-btn" onclick="closePopup()">×</span>
         
+ <div id="eventPopup" class="event-popup">
+    <div class="popup-content">
+        <span class="close-btn" onclick="closePopup()">×</span>
+        
+        <div class="popup-image">
+            <img src="https://via.placeholder.com/500x300/667eea/ffffff?text=Hình+Ảnh+Sự+Kiện" alt="Hình ảnh sự kiện">
+        </div>
+        
         <div class="popup-header">
-            <div class="event-badge">SỰ KIỆN MỚI</div>
-            <h3>HỘI THẢO DIGITAL MARKETING 2024</h3>
+            <div class="event-badge">SỰ KIỆN SẮP DIỄN RA</div>
+            <h3>HỘI THẢO CÔNG NGHỆ 2024</h3>
         </div>
         
         <div class="popup-body">
-            <p>🎯 Cập nhật xu hướng Digital Marketing mới nhất</p>
-            <p>📅 <strong>Thời gian:</strong> 20/12/2024 | 14:00-17:00</p>
-            <p>📍 <strong>Địa điểm:</strong> Online qua Zoom</p>
-            <p>👥 <strong>Diễn giả:</strong> Chuyên gia Nguyễn Văn A</p>
+            <p>🎯 Khám phá những công nghệ mới nhất trong năm 2024</p>
+            <p>📅 <strong>Thời gian:</strong> 25/12/2024 | 09:00-17:00</p>
+            <p>📍 <strong>Địa điểm:</strong> Trung tâm Hội nghị Quốc gia</p>
+            <p>👥 <strong>Diễn giả:</strong> Các chuyên gia hàng đầu</p>
         </div>
         
         <div class="popup-footer">
-            <a href="https://your-website.com/dang-ky" class="btn-register" target="_blank">ĐĂNG KÝ NGAY</a>
-            <a href="https://your-website.com/chi-tiet" class="btn-details" target="_blank">XEM CHI TIẾT</a>
-            <button class="btn-later" onclick="closePopup()">ĐỂ SAU</button>
+            <a href="https://your-website.com/chi-tiet-su-kien" class="btn-details" target="_blank">XEM CHI TIẾT SỰ KIỆN</a>
+            <button class="btn-later" onclick="closePopup()">ĐÓNG</button>
         </div>
     </div>
 </div>
-
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
@@ -70,13 +76,13 @@
 
 .popup-content {
     background: white;
-    padding: 30px;
     border-radius: 15px;
     max-width: 500px;
     width: 90%;
     position: relative;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     animation: popupShow 0.3s ease-out;
+    overflow: hidden;
 }
 
 @keyframes popupShow {
@@ -96,19 +102,40 @@
     right: 20px;
     font-size: 28px;
     cursor: pointer;
-    color: #999;
+    color: white;
     font-weight: bold;
     transition: color 0.3s;
+    z-index: 2;
+    background: rgba(0,0,0,0.5);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .close-btn:hover {
     color: #ff4757;
+    background: rgba(0,0,0,0.7);
+}
+
+.popup-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.popup-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .popup-header {
     text-align: center;
     margin-bottom: 20px;
-    padding-right: 30px;
+    padding: 20px 20px 0;
 }
 
 .event-badge {
@@ -131,6 +158,7 @@
 .popup-body {
     margin: 20px 0;
     color: #555;
+    padding: 0 20px;
 }
 
 .popup-body p {
@@ -143,27 +171,8 @@
     gap: 10px;
     justify-content: center;
     margin-top: 25px;
+    padding: 0 20px 20px;
     flex-wrap: wrap;
-}
-
-.btn-register {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 25px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
-}
-
-.btn-register:hover {
-    background: #45a049;
-    color: white;
-    text-decoration: none;
 }
 
 .btn-details {
@@ -178,12 +187,15 @@
     text-decoration: none;
     display: inline-block;
     text-align: center;
+    flex: 1;
+    min-width: 200px;
 }
 
 .btn-details:hover {
     background: #0b7dda;
     color: white;
     text-decoration: none;
+    transform: translateY(-2px);
 }
 
 .btn-later {
@@ -194,11 +206,14 @@
     border-radius: 25px;
     cursor: pointer;
     transition: background 0.3s;
+    flex: 1;
+    min-width: 100px;
 }
 
 .btn-later:hover {
     background: #ddd;
 }
+
 /* Target theo cấu trúc HTML */
 body > div:last-child,
 div[style*="position: fixed"],
@@ -2146,6 +2161,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+
 // Hiển thị popup sau 3 giây
 setTimeout(function() {
     document.getElementById('eventPopup').style.display = 'flex';
@@ -2163,16 +2179,12 @@ document.getElementById('eventPopup').addEventListener('click', function(e) {
     }
 });
 
-// Theo dõi click vào link (Google Analytics)
-document.querySelector('.btn-register').addEventListener('click', function() {
-    console.log('Clicked register link');
-    // gtag('event', 'click', {'event_category': 'Popup', 'event_label': 'Register'});
-});
-
+// Theo dõi click vào link
 document.querySelector('.btn-details').addEventListener('click', function() {
     console.log('Clicked details link');
-    // gtag('event', 'click', {'event_category': 'Popup', 'event_label': 'Details'});
+    // gtag('event', 'click', {'event_category': 'Popup', 'event_label': 'Event Details'});
 });
+
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
