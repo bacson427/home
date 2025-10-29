@@ -32,7 +32,7 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-      .app-popup-overlay {
+.event-popup {
     display: none;
     position: fixed;
     top: 0;
@@ -40,14 +40,14 @@
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,0.7);
-    z-index: 10000;
+    z-index: 1000;
     justify-content: center;
     align-items: center;
 }
 
-.app-popup-content {
+.popup-content {
     background: white;
-    padding: 0 30px 30px 30px; 
+    padding: 30px;
     border-radius: 15px;
     max-width: 500px;
     width: 90%;
@@ -67,22 +67,7 @@
     }
 }
 
-/* Style cho hình ảnh */
-.app-popup-image {
-    margin: 0 -30px 20px -30px; 
-    overflow: hidden; 
-    border-radius: 15px 15px 0 0; 
-}
-
-.app-popup-image img {
-    width: 100%; 
-    height: 180px; 
-    display: block;
-    object-fit: cover; 
-}
-
-
-.app-close-btn {
+.close-btn {
     position: absolute;
     top: 15px;
     right: 20px;
@@ -91,21 +76,19 @@
     color: #999;
     font-weight: bold;
     transition: color 0.3s;
-    z-index: 10001; 
 }
 
-.app-close-btn:hover {
+.close-btn:hover {
     color: #ff4757;
 }
 
-.app-popup-header {
+.popup-header {
     text-align: center;
     margin-bottom: 20px;
     padding-right: 30px;
-    padding-top: 30px; 
 }
 
-.app-event-badge {
+.event-badge {
     background: #ff6b6b;
     color: white;
     padding: 5px 15px;
@@ -116,30 +99,30 @@
     margin-bottom: 10px;
 }
 
-.app-popup-header h3 {
+.popup-header h3 {
     margin: 10px 0;
     color: #333;
     font-size: 22px;
 }
 
-.app-popup-body {
+.popup-body {
     margin: 20px 0;
     color: #555;
 }
 
-.app-popup-body p {
+.popup-body p {
     margin: 12px 0;
     font-size: 15px;
 }
 
-.app-popup-footer {
+.popup-footer {
     display: flex;
     gap: 10px;
     justify-content: center;
     margin-top: 25px;
 }
 
-.app-btn-register {
+.btn-register {
     background: #4CAF50;
     color: white;
     border: none;
@@ -150,11 +133,11 @@
     transition: background 0.3s;
 }
 
-.app-btn-register:hover {
+.btn-register:hover {
     background: #45a049;
 }
 
-.app-btn-later {
+.btn-later {
     background: #f1f1f1;
     color: #666;
     border: none;
@@ -164,10 +147,9 @@
     transition: background 0.3s;
 }
 
-.app-btn-later:hover {
+.btn-later:hover {
     background: #ddd;
-      }
-
+}
 
       
 /* Target theo cấu trúc HTML */
@@ -2119,30 +2101,28 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-              // Dễ thay đổi: Chỉ cần thay đổi giá trị này nếu ID HTML thay đổi
-const eventPopupId = 'app-event-popup';
-
+              
 // Hiển thị popup sau 3 giây
 setTimeout(function() {
-    document.getElementById(eventPopupId).style.display = 'flex';
+    document.getElementById('eventPopup').style.display = 'flex';
 }, 3000);
 
 // Đóng popup
-function closeAppPopup() {
-    document.getElementById(eventPopupId).style.display = 'none';
+function closePopup() {
+    document.getElementById('eventPopup').style.display = 'none';
 }
 
 // Đăng ký sự kiện
-function registerAppEvent() {
+function registerEvent() {
     alert('Chuyển hướng đến trang đăng ký...');
     // window.location.href = 'link-dang-ky.html';
-    closeAppPopup();
+    closePopup();
 }
 
 // Đóng khi click ra ngoài
-document.getElementById(eventPopupId).addEventListener('click', function(e) {
-    if (e.target.id === eventPopupId) { 
-        closeAppPopup();
+document.getElementById('eventPopup').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePopup();
     }
 });
 </script>
@@ -2162,30 +2142,25 @@ document.getElementById(eventPopupId).addEventListener('click', function(e) {
 </div>
   
 
-<div id="app-event-popup" class="app-popup-overlay">
-    <div class="app-popup-content">
-        <span class="app-close-btn" onclick="closeAppPopup()">×</span>
+<div id="eventPopup" class="event-popup">
+    <div class="popup-content">
+        <span class="close-btn" onclick="closePopup()">×</span>
         
-        <div class="halloween.jpeg">
-            <img src="https://vi.wikipedia.org/wiki/Halloween" alt="Halloween">
+        <div class="popup-header">
+            <div class="event-badge">NEW EVENT</div>
+            <h3>HALLOWEEN 2025 👻</h3>
         </div>
         
-        <div class="app-popup-header">
-            <div class="app-event-badge">NEW EVENT</div>
-            <h3>🧛 HALLOWEEN 👻</h3>
+        <div class="popup-body">
+            <p>🎯 Update the latest trends</p>
+            <p>📅 <strong>Time:</strong> 31/10/2025 | 00:00 - 23:59</p>
+            <p>📍 <strong>Location:</strong> Taking place worldwide </p>
+            <p>👥 <strong>Celebrated by:</strong> Western Christians and many others around the world</p>
         </div>
         
-        <div class="app-popup-body">
-            <p>🎯 Update trends</p>
-            <p>📅 <strong>Thời gian:</strong> 31/10/2025</p>
-            <p>👥 <strong>Celebrated by:</strong>
-Western Christians and many others around the world</p>
-            <p>📍 <strong>Location :</strong> Worldwide </p>
-        </div>
-        
-        <div class="app-popup-footer">
-            <button class="app-btn-register" onclick="registerAppEvent()">See details</button>
-            <button class="app-btn-later" onclick="closeAppPopup()">Later</button>
+        <div class="popup-footer">
+            <a href="https://vi.wikipedia.org/wiki/Halloween" class="btn-register" target="_blank">SEE DETAILS</a>
+            <button class="btn-later" onclick="closePopup()">LATER</button>
         </div>
     </div>
 </div>
