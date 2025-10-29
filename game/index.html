@@ -3,6 +3,7 @@
 <head>
 <title>Flappy Ball - Nguyen Bac Son</title>
 <style>
+/* --- CSS --- */
 .footer {
     background-color: #f8f9fa;
     padding: 15px 20px;
@@ -27,11 +28,9 @@
     text-decoration: underline;
 }
 
-/* Đảm bảo nội dung không bị footer che */
 body {
     margin-bottom: 70px;
 }
-    /* CSS TỐI GIẢN */
     body {
         margin: 0;
         display: flex;
@@ -39,7 +38,8 @@ body {
         justify-content: center;
         align-items: center;
         height: 100vh;
-        background-color: #0077be;
+        /* Màu nền tổng thể cho màn hình Start (sử dụng màu tối hơn cho không gian) */
+        background-color: #12121e; 
         font-family: Arial, sans-serif;
         color: white;
     }
@@ -51,17 +51,20 @@ body {
     #startScreen {
         text-align: center;
         padding: 20px;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.7); /* Tối hơn */
         border-radius: 10px;
         width: 90%;
         max-width: 400px;
     }
-    input, button {
+    input, button, select { 
         padding: 15px;
         margin: 10px 0;
         font-size: 20px;
         border-radius: 8px;
         border: none;
+        box-sizing: border-box;
+        width: 100%;
+        color: #333;
     }
     #startButton {
         background-color: #4CAF50;
@@ -84,16 +87,30 @@ body {
         justify-content: space-between;
         padding: 5px 0;
         font-size: 18px;
-        /* Highlight điểm của người chơi hiện tại */
         transition: background-color 0.3s;
     }
     .current-player {
         background-color: rgba(255, 255, 255, 0.2);
         border-radius: 5px;
     }
+    /* Thống kê Game Over */
+    #gameOverStats {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    #gameOverStats p {
+        margin: 5px 0;
+        font-size: 18px;
+        font-weight: bold;
+    }
 </style>
 </head>
 <body>
+
+<audio id="bgm" src="assets/bgm.mp3" loop></audio>
 
 <div id="startScreen">
     <h1>Flappy Ball ⚽</h1>
@@ -103,37 +120,91 @@ body {
         <ol id="leaderboardList"></ol>
     </div>
 
+    <select id="difficultySelect">
+        <option value="easy">Dễ (Tốc độ chậm, Khoảng cách rộng)</option>
+        <option value="normal" selected>Thường (Mặc định)</option>
+        <option value="hard">Khó (Tốc độ nhanh, Khoảng cách hẹp)</option>
+        <option value="extreme">Cực Khó (Siêu nhanh, Siêu hẹp)</option>
+    </select>
+    
     <input type="text" id="nameInput" placeholder="Nhập tên" maxlength="15">
     <button id="startButton" disabled>BẮT ĐẦU</button>
+    
+    <div id="gameOverStats" style="display: none;">
+        <h4 style="margin: 5px 0; color: #ffeb3b;">THỐNG KÊ TRẬN ĐẤU</h4>
+        <p id="finalScore"></p>
+        <p id="highScore"></p>
+        <p id="difficultyPlayed"></p>
+    </div>
 </div>
 
 <canvas id="gameCanvas" width="800" height="1200"></canvas>
 
+<div class="footer">
+    Bản quyền © 2025 thuộc về Nguyen Bac Son. | 
+    <a href="https://nguyenbacson.io.vn/privacy-policy.html">Chính sách bảo mật</a>
+</div>
+
 <script>
+    // --- PHẦN 1: KHAI BÁO & CẤU HÌNH ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const startScreen = document.getElementById('startScreen');
     const nameInput = document.getElementById('nameInput');
     const startButton = document.getElementById('startButton');
     const leaderboardList = document.getElementById('leaderboardList');
+    const difficultySelect = document.getElementById('difficultySelect');
     
-    // --- CẤU HÌNH GAME ---
+    // UI Elements
+    const gameOverStats = document.getElementById('gameOverStats');
+    const finalScoreDisplay = document.getElementById('finalScore');
+    const highScoreDisplay = document.getElementById('highScore');
+    const difficultyPlayedDisplay = document.getElementById('difficultyPlayed');
+    
+    // Audio
+    const bgm = document.getElementById('bgm');
+    const soundFlap = new Audio('assets/flap.wav');
+    const soundScore = new Audio('assets/score.wav');
+    const soundHit = new Audio('assets/hit.wav');
+
+    bgm.volume = 0.5;
+    soundFlap.volume = 0.8;
+    soundScore.volume = 0.7;
+    soundHit.volume = 1.0;
+    
+    // Game Physics & Constants
     const BALL_RADIUS = 30;
     const BALL_SIZE = BALL_RADIUS * 2;
     const SEAWEED_WIDTH = 120;
-    const GAP = 280;
     const GRAVITY = 1.2;
     const DRAG = 0.96;
     const FLAP_FORCE = -20;
-    const SPEED = 5.0;
     const GROUND_HEIGHT = 100;
     const BALL_X = 100;
     
-    // --- HIỆU ỨNG PARALLAX ---
-    let backgroundScrollX = 0;
-    const BACKGROUND_SPEED_MULTIPLIER = 0.5; 
+    // Optimized Constants
+    const CANVAS_WIDTH = canvas.width;
+    const CANVAS_HEIGHT = canvas.height;
+
+    // Difficulty Settings
+    const DIFFICULTY_SETTINGS = {
+        easy: { speed: 4.0, gap: 320, interval: 2200, name: "Dễ" }, 
+        normal: { speed: 5.0, gap: 280, interval: 2000, name: "Thường" }, 
+        hard: { speed: 6.5, gap: 250, interval: 1800, name: "Khó" }, 
+        extreme: { speed: 8.0, gap: 220, interval: 1600, name: "Cực Khó" } 
+    };
     
-    // --- TRẠNG THÁI ---
+    let currentSpeed = DIFFICULTY_SETTINGS.normal.speed;
+    let currentGap = DIFFICULTY_SETTINGS.normal.gap;
+    let currentInterval = DIFFICULTY_SETTINGS.normal.interval;
+    let currentDifficulty = 'normal';
+
+    // Parallax Color Setup
+    let backgroundScrollOffset = 0; 
+    const PARALLAX_SLOW = 0.5; 
+    const PARALLAX_FAST = 0.8; 
+    
+    // Game State
     let playerName = '';
     let ballY, ballVelocity;
     let seaweed = [];
@@ -143,18 +214,19 @@ body {
     let isGameRunning = false;
     let pipeInterval;
     const LEADERBOARD_KEY = 'flappyBallLeaderboard';
+    const HIGHSCORE_KEY = 'flappyBallHighScores';
 
-    // --- DỮ LIỆU MẪU (Giả lập Bảng xếp hạng công khai) ---
+    // Sample Data
     const SAMPLE_LEADERBOARD = [
         { name: 'Server: Top1', score: 99, timestamp: Date.now() - 50000000 },
         { name: 'Server: CaoThu', score: 75, timestamp: Date.now() - 40000000 },
         { name: 'Server: NguoiMoi', score: 30, timestamp: Date.now() - 30000000 },
     ];
 
-    // --- TẢI HÌNH ẢNH (Giữ nguyên) ---
+    // Asset Loading (Reduced to essentials)
     const assets = {};
     let assetsLoaded = 0;
-    const totalAssets = 3;
+    const totalAssets = 2; 
 
     function loadImage(name, src) {
         const img = new Image();
@@ -162,60 +234,159 @@ body {
         img.onload = () => {
             assets[name] = img;
             assetsLoaded++;
+            checkAssetsLoaded();
         };
         img.onerror = () => {
-            console.error(`Failed to load image: ${src}. Using fallback color.`);
+            console.warn(`Failed to load image: ${src}. Using fallback color.`);
             assetsLoaded++;
+            checkAssetsLoaded();
         };
     }
-
+    
     loadImage('seaweed_top', 'assets/seaweed_top.png'); 
     loadImage('seaweed_bottom', 'assets/seaweed_bottom.png'); 
-    loadImage('background_water', 'assets/background_water.png'); 
+
+    function checkAssetsLoaded() {
+         if (assetsLoaded === totalAssets && nameInput.value.trim().length > 0) {
+             startButton.disabled = false;
+         }
+    }
     
-    // --- LỚP BỤI NƯỚC (Giữ nguyên) ---
+    // Drawing Functions
+    function drawSeaweed(x, height) {
+        const topImg = assets.seaweed_top;
+        const bottomImg = assets.seaweed_bottom;
+
+        if (topImg && bottomImg) {
+            ctx.drawImage(topImg, x, height - topImg.height, SEAWEED_WIDTH, topImg.height);
+            ctx.drawImage(bottomImg, x, height + currentGap, SEAWEED_WIDTH, CANVAS_HEIGHT - GROUND_HEIGHT - (height + currentGap));
+        } else {
+            // Fallback: Use solid color
+            ctx.fillStyle = '#4CAF50'; 
+            ctx.fillRect(x, 0, SEAWEED_WIDTH, height);
+            ctx.fillRect(x, height + currentGap, SEAWEED_WIDTH, CANVAS_HEIGHT - GROUND_HEIGHT - (height + currentGap));
+        }
+    }
+
+    function drawBall() {
+        const ballImg = assets.ball; 
+
+        ctx.save();
+        ctx.translate(BALL_X + BALL_RADIUS, ballY + BALL_RADIUS);
+
+        if (ballImg) {
+             ctx.drawImage(ballImg, -BALL_RADIUS, -BALL_RADIUS, BALL_SIZE, BALL_SIZE);
+        } else {
+             // Fallback: Draw circle
+             ctx.beginPath();
+             ctx.arc(0, 0, BALL_RADIUS, 0, Math.PI * 2);
+             ctx.fillStyle = '#ffcc00'; 
+             ctx.fill();
+             ctx.lineWidth = 3;
+             ctx.strokeStyle = '#333';
+             ctx.stroke();
+             ctx.closePath();
+        }
+        ctx.restore();
+    }
+    
+    // Parallax Gradient Initialization
+    let backgroundGradientSlow;
+    let backgroundGradientFast;
+    
+    function createGradients() {
+        backgroundGradientSlow = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        backgroundGradientSlow.addColorStop(0, '#10002b'); 
+        backgroundGradientSlow.addColorStop(1, '#000033'); 
+        
+        backgroundGradientFast = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        backgroundGradientFast.addColorStop(0, 'rgba(30, 0, 80, 0.5)'); 
+        backgroundGradientFast.addColorStop(1, 'rgba(0, 50, 100, 0.5)'); 
+    }
+    createGradients(); 
+
+    function drawParallaxBackground() {
+        if (isGameRunning && !isGameOver) {
+            backgroundScrollOffset = (backgroundScrollOffset - currentSpeed) % CANVAS_WIDTH;
+        }
+
+        // 1. Static dark background
+        ctx.fillStyle = '#12121e';
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        
+        // 2. Slow layer
+        ctx.fillStyle = backgroundGradientSlow;
+        ctx.save();
+        ctx.translate(backgroundScrollOffset * PARALLAX_SLOW, 0); 
+        ctx.fillRect(-CANVAS_WIDTH, 0, CANVAS_WIDTH * 2, CANVAS_HEIGHT); 
+        ctx.restore();
+        
+        // 3. Fast layer
+        ctx.fillStyle = backgroundGradientFast;
+        ctx.save();
+        ctx.translate(backgroundScrollOffset * PARALLAX_FAST, 0); 
+        ctx.fillRect(-CANVAS_WIDTH, 0, CANVAS_WIDTH * 2, CANVAS_HEIGHT); 
+        ctx.restore();
+    }
+    
+    // Bubble Class
     class Bubble {
         constructor(x, y) {
-            this.x = x + BALL_RADIUS + (Math.random() - 0.5) * 10;
-            this.y = y + BALL_RADIUS + (Math.random() - 0.5) * 10;
-            this.size = Math.random() * 4 + 3; 
-            this.vy = -(Math.random() * 2 + 1);
-            this.vx = (Math.random() - 0.5) * 1;
-            this.life = 80;
-            this.color = `rgba(255, 255, 255, 1)`;
+            this.x = x + Math.random() * 10 - 5;
+            this.y = y;
+            this.radius = Math.random() * 5 + 1;
+            this.life = 60;
+            this.vx = (Math.random() - 0.5) * 1.5;
+            this.vy = Math.random() * -2 - 1;
+            this.alpha = 1;
         }
+
         update() {
-            this.y += this.vy;
             this.x += this.vx;
-            this.size *= 0.97;
-            this.life -= 2;
+            this.y += this.vy;
+            this.life--;
+            this.alpha = this.life / 60;
         }
+
         draw() {
-            ctx.fillStyle = this.color.replace('1', (this.life / 80));
+            ctx.globalAlpha = this.alpha;
             ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
             ctx.fill();
+            ctx.closePath();
+            ctx.globalAlpha = 1.0;
         }
     }
     
-    // --- BẢNG XẾP HẠNG CÔNG KHAI (Server Mock) ---
+    // Data/Leaderboard Functions
+    function getHighScores() {
+        const data = localStorage.getItem(HIGHSCORE_KEY);
+        return data ? JSON.parse(data) : {};
+    }
+
+    function updateHighScores(difficulty, newScore) {
+        const highScores = getHighScores();
+        if (!highScores[difficulty] || newScore > highScores[difficulty]) {
+            highScores[difficulty] = newScore;
+            localStorage.setItem(HIGHSCORE_KEY, JSON.stringify(highScores));
+            return true; 
+        }
+        return false;
+    }
+
     function getCombinedLeaderboard() {
         const localData = localStorage.getItem(LEADERBOARD_KEY);
         const localLeaderboard = localData ? JSON.parse(localData) : [];
-        
-        // Kết hợp dữ liệu cục bộ và dữ liệu mẫu (giả lập server)
         let combined = [...SAMPLE_LEADERBOARD, ...localLeaderboard];
         
-        // Sắp xếp: Điểm giảm dần, nếu điểm bằng nhau thì người chơi mới nhất xếp trên
         combined.sort((a, b) => {
             if (b.score !== a.score) return b.score - a.score;
             return a.timestamp - b.timestamp; 
         });
         
-        // Đảm bảo tên người chơi là duy nhất (chỉ giữ điểm cao nhất)
         const uniquePlayers = {};
         combined.forEach(p => {
-            // Nếu người chơi chưa có hoặc điểm cao hơn
             if (!uniquePlayers[p.name] || p.score > uniquePlayers[p.name].score) {
                  uniquePlayers[p.name] = p;
             }
@@ -224,34 +395,29 @@ body {
         return Object.values(uniquePlayers).sort((a, b) => {
             if (b.score !== a.score) return b.score - a.score;
             return a.timestamp - b.timestamp; 
-        }).slice(0, 10); // Chỉ lấy Top 10
+        }).slice(0, 10);
     }
 
     function saveScore(name, finalScore) {
-        // Lưu điểm của người chơi hiện tại vào LocalStorage
         const localLeaderboard = localStorage.getItem(LEADERBOARD_KEY);
         const data = localLeaderboard ? JSON.parse(localLeaderboard) : [];
-        
-        // Kiểm tra xem đã có tên này chưa
-        const existingIndex = data.findIndex(p => p.name === name);
+        const fullName = `${name} [${currentDifficulty.toUpperCase()}]`; 
+        const existingIndex = data.findIndex(p => p.name === fullName);
 
         if (existingIndex !== -1) {
-            // Cập nhật điểm nếu điểm mới cao hơn
             if (finalScore > data[existingIndex].score) {
                 data[existingIndex].score = finalScore;
                 data[existingIndex].timestamp = Date.now();
             }
         } else {
-            // Thêm người chơi mới
-            data.push({ name: name, score: finalScore, timestamp: Date.now() });
+            data.push({ name: fullName, score: finalScore, timestamp: Date.now() });
         }
-        
         localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(data));
+        updateHighScores(currentDifficulty, finalScore);
         renderLeaderboard();
     }
 
     function renderLeaderboard() {
-        // Lấy bảng xếp hạng kết hợp (giả lập server)
         const top10 = getCombinedLeaderboard();
         leaderboardList.innerHTML = ''; 
 
@@ -261,10 +427,9 @@ body {
         }
 
         top10.forEach((player, index) => {
-            const isCurrentPlayer = player.name === playerName && playerName.length > 0 && !player.name.startsWith('Server:');
+            const isCurrentPlayer = player.name.includes(playerName) && playerName.length > 0 && !player.name.startsWith('Server:'); 
             const li = document.createElement('li');
             
-            // Highlight người chơi hiện tại
             if (isCurrentPlayer) {
                 li.classList.add('current-player');
             }
@@ -278,131 +443,35 @@ body {
         });
     }
 
-    // --- HÀM VẼ BÓNG, VẬT LÝ, GAME LOOP (Giữ nguyên) ---
-    function drawBall() {
-        const x = BALL_X;
-        const y = ballY;
-        const r = BALL_RADIUS;
-        const centerX = x + r;
-        const centerY = y + r;
-        
-        let rotationAngle = Math.min(Math.PI / 2, ballVelocity * 0.05); 
-        rotationAngle = Math.max(-Math.PI / 8, rotationAngle); 
-        
-        if (isGameRunning && !isGameOver) {
-            ctx.save();
-            ctx.translate(centerX, centerY);
-            ctx.rotate(rotationAngle);
-            ctx.translate(-centerX, -centerY);
-        }
-
-        ctx.fillStyle = '#666666'; 
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, r, 0, 2 * Math.PI);
-        ctx.fill();
-
-        ctx.fillStyle = '#ffcc00'; 
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, r * 0.9, 0, 2 * Math.PI);
-        ctx.fill();
-        
-        ctx.strokeStyle = 'rgba(0,0,0,0.5)';
-        ctx.lineWidth = 6;
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY - r * 0.9);
-        ctx.lineTo(centerX, centerY + r * 0.9);
-        ctx.moveTo(centerX - r * 0.9, centerY);
-        ctx.lineTo(centerX + r * 0.9, centerY);
-        ctx.stroke();
-
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.beginPath();
-        ctx.arc(centerX - r * 0.3, centerY - r * 0.3, r * 0.2, 0, 2 * Math.PI);
-        ctx.fill();
-
-        if (isGameRunning && !isGameOver) {
-            ctx.restore();
-        }
+    function setDifficulty(level) {
+        const settings = DIFFICULTY_SETTINGS[level];
+        currentSpeed = settings.speed;
+        currentGap = settings.gap;
+        currentInterval = settings.interval;
+        currentDifficulty = level;
     }
 
-    function drawSeaweed(x, height) {
-        const h_bottom = canvas.height - height - GAP - GROUND_HEIGHT;
+    function showGameOverStats(finalScore) {
+        const highScores = getHighScores();
+        const currentHighScore = highScores[currentDifficulty] || 0;
+        const difficultyName = DIFFICULTY_SETTINGS[currentDifficulty].name;
         
-        // 1. Rong biển trên
-        if (assets.seaweed_top) {
-            ctx.drawImage(assets.seaweed_top, x, 0, SEAWEED_WIDTH, height);
-        } else {
-            ctx.fillStyle = '#004d00';
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-            ctx.shadowBlur = 10;
-            ctx.fillRect(x, 0, SEAWEED_WIDTH, height); 
-            ctx.shadowBlur = 0;
-        }
+        finalScoreDisplay.innerHTML = `Điểm của bạn: <span style="color: #4CAF50;">${finalScore}</span>`;
+        highScoreDisplay.innerHTML = `Kỷ lục (${difficultyName}): <span style="color: #ffeb3b;">${currentHighScore}</span>`;
+        difficultyPlayedDisplay.innerHTML = `Cấp độ: <span style="text-transform: uppercase;">${difficultyName}</span>`;
         
-        // 2. Rong biển dưới
-        if (assets.seaweed_bottom) {
-            ctx.drawImage(assets.seaweed_bottom, x, height + GAP, SEAWEED_WIDTH, h_bottom);
-        } else {
-            ctx.fillStyle = '#004d00';
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-            ctx.shadowBlur = 10;
-            ctx.fillRect(x, height + GAP, SEAWEED_WIDTH, h_bottom); 
-            ctx.shadowBlur = 0;
-        }
-
-        // 3. Thêm độ sâu/viền
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-        ctx.fillRect(x, 0, 5, height); 
-        ctx.fillRect(x + SEAWEED_WIDTH - 5, height + GAP, 5, h_bottom); 
+        gameOverStats.style.display = 'block';
     }
 
-    function updateBall() {
-        ballVelocity *= DRAG; 
-        ballVelocity += GRAVITY;
-
-        if (ballVelocity < -5) {
-             for (let i = 0; i < 2; i++) {
-                 bubbles.push(new Bubble(BALL_X - BALL_RADIUS, ballY + BALL_RADIUS));
-             }
-        }
-        
-        ballY += ballVelocity;
-
-        if (ballY + BALL_SIZE > canvas.height - GROUND_HEIGHT) gameOver();
-        if (ballY < 0) ballY = 0;
+    function hideGameOverStats() {
+        gameOverStats.style.display = 'none';
     }
-
-    function updateSeaweeds() {
-        seaweed.forEach((item, index) => {
-            item.x -= SPEED;
-
-            if (item.x + SEAWEED_WIDTH < BALL_X && !item.passed) {
-                score++;
-                item.passed = true;
-            }
-
-            if (
-                BALL_X + BALL_SIZE > item.x && 
-                BALL_X < item.x + SEAWEED_WIDTH && 
-                (ballY < item.height || ballY + BALL_SIZE > item.height + GAP)
-            ) {
-                gameOver();
-            }
-
-            if (item.x + SEAWEED_WIDTH < 0) seaweed.splice(index, 1);
-        });
-    }
-
-    function generateSeaweed() {
-        const minHeight = 100;
-        const maxHeight = canvas.height - GROUND_HEIGHT - GAP - minHeight;
-        const randomHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
-        seaweed.push({ x: canvas.width, height: randomHeight, passed: false });
-    }
-
+    // --- PHẦN 2: LOGIC GAME VÀ VÒNG LẶP CHÍNH ---
     function flap() { 
         if (!isGameOver) {
             ballVelocity = FLAP_FORCE; 
+            soundFlap.currentTime = 0;
+            soundFlap.play();
         }
     } 
 
@@ -410,117 +479,190 @@ body {
         isGameOver = true;
         isGameRunning = false;
         clearInterval(pipeInterval);
-        saveScore(playerName, score); // Lưu điểm và hiển thị BXH mới
+        bgm.pause(); 
+        
+        saveScore(playerName, score);
+        showGameOverStats(score); 
     }
     
     function restartGame() {
-        ballY = canvas.height / 2;
+        ballY = CANVAS_HEIGHT / 2;
         ballVelocity = 0;
         seaweed = [];
         bubbles = [];
         score = 0;
         isGameOver = false;
         isGameRunning = false;
+        backgroundScrollOffset = 0; 
         if (pipeInterval) clearInterval(pipeInterval);
-    }
-
-    // --- XỬ LÝ SỰ KIỆN (Giữ nguyên) ---
-    function handleInput(e) {
-        e.preventDefault();
         
-        if (isGameOver) {
-            canvas.style.display = 'none';
-            startScreen.style.display = 'block';
-            renderLeaderboard();
-        } else if (!isGameRunning) {
-            isGameRunning = true;
-            pipeInterval = setInterval(generateSeaweed, 2000); 
-            flap();
-        } else {
-            flap();
-        }
+        hideGameOverStats(); 
     }
-
-    canvas.addEventListener('click', handleInput);
-    canvas.addEventListener('touchstart', handleInput); 
-    document.addEventListener('keydown', (e) => {
-        if (e.code === 'Space') handleInput(e);
-    });
-
-    nameInput.addEventListener('input', () => {
-        startButton.disabled = nameInput.value.trim().length === 0;
-    });
-
-    startButton.addEventListener('click', () => {
-        playerName = nameInput.value.trim();
-        startScreen.style.display = 'none';
-        canvas.style.display = 'block';
-        restartGame();
-    });
     
-    // --- VÒNG LẶP CHÍNH (Giữ nguyên) ---
-    function gameLoop() {
-        if (isGameRunning && !isGameOver) {
-            backgroundScrollX = (backgroundScrollX - SPEED * BACKGROUND_SPEED_MULTIPLIER) % canvas.width;
-        }
+    function updateBall() {
+        ballVelocity *= DRAG; 
+        ballVelocity += GRAVITY;
 
-        if (assets.background_water) {
-            ctx.drawImage(assets.background_water, backgroundScrollX, 0, canvas.width, canvas.height);
-            ctx.drawImage(assets.background_water, backgroundScrollX + canvas.width, 0, canvas.width, canvas.height);
-        } else {
-            ctx.fillStyle = '#00aaff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (ballVelocity < -5) {
+             for (let i = 0; i < 2; i++) {
+                 bubbles.push(new Bubble(BALL_X + BALL_RADIUS, ballY + BALL_RADIUS));
+             }
         }
         
+        ballY += ballVelocity;
+
+        if (ballY + BALL_SIZE > CANVAS_HEIGHT - GROUND_HEIGHT) {
+            gameOver();
+            soundHit.play();
+        }
+        if (ballY < 0) ballY = 0;
+    }
+
+    function updateSeaweeds() {
+        let i = seaweed.length;
+        // Tối ưu: Lặp ngược để loại bỏ phần tử hiệu quả hơn
+        while (i--) {
+            const item = seaweed[i];
+            item.x -= currentSpeed;
+
+            // 1. Kiểm tra ghi điểm
+            if (item.x + SEAWEED_WIDTH < BALL_X && !item.passed) {
+                score++;
+                item.passed = true;
+                soundScore.play();
+            }
+
+            // 2. Kiểm tra va chạm
+            if (
+                BALL_X + BALL_SIZE > item.x && 
+                BALL_X < item.x + SEAWEED_WIDTH && 
+                (ballY < item.height || ballY + BALL_SIZE > item.height + currentGap)
+            ) {
+                gameOver();
+                soundHit.play();
+                return; // Thoát ngay khi va chạm
+            }
+
+            // 3. Loại bỏ vật cản
+            if (item.x + SEAWEED_WIDTH < 0) {
+                seaweed.splice(i, 1);
+            }
+        }
+    }
+
+    function generateSeaweed() {
+        const minHeight = 100;
+        const maxHeight = CANVAS_HEIGHT - GROUND_HEIGHT - currentGap - minHeight; 
+        const randomHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
+        seaweed.push({ x: CANVAS_WIDTH, height: randomHeight, passed: false });
+    }
+    
+    // --- VÒNG LẶP CHÍNH ---
+    function gameLoop() {
+        
+        // 1. VẼ NỀN VŨ TRỤ (Parallax Color Gradient)
+        drawParallaxBackground();
+
         if (isGameRunning && !isGameOver) {
             updateBall();
             updateSeaweeds();
         }
         
+        // 2. Vẽ vật cản
         seaweed.forEach(item => drawSeaweed(item.x, item.height)); 
         
+        // 3. VẼ ĐẤT
         ctx.fillStyle = '#ccaa66'; 
-        ctx.fillRect(0, canvas.height - GROUND_HEIGHT, canvas.width, GROUND_HEIGHT); 
+        ctx.fillRect(0, CANVAS_HEIGHT - GROUND_HEIGHT, CANVAS_WIDTH, GROUND_HEIGHT); 
         
+        // 4. Vẽ bóng và hiệu ứng
         drawBall(); 
-        bubbles.forEach(bubble => { bubble.update(); bubble.draw(); });
+        
+        // Cập nhật và vẽ bọt nước
+        for (let i = 0; i < bubbles.length; i++) {
+             bubbles[i].update();
+             bubbles[i].draw();
+        }
         bubbles = bubbles.filter(bubble => bubble.life > 0); 
 
+        // 5. Vẽ điểm số và UI
         ctx.fillStyle = 'white';
         ctx.font = '50px Arial';
         ctx.fillText(`Score: ${score}`, 20, 60);
+        
         ctx.font = '36px Arial';
-        ctx.fillText(`Player: ${playerName}`, 20, 110);
+        const displayPlayerName = isGameRunning ? `${playerName} [${DIFFICULTY_SETTINGS[currentDifficulty].name}]` : playerName;
+        ctx.fillText(`Player: ${displayPlayerName}`, 20, 110);
 
         if (!isGameOver && !isGameRunning) {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             ctx.fillStyle = 'white';
             ctx.font = '60px Arial';
-            ctx.fillText('Chạm để BẮT ĐẦU CHƠI', canvas.width / 2 - 350, canvas.height / 2);
+            ctx.fillText('Chạm để BẮT ĐẦU CHƠI', CANVAS_WIDTH / 2 - 350, CANVAS_HEIGHT / 2);
         }
         
         if (isGameOver) {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             ctx.fillStyle = 'white';
             ctx.font = '70px Arial';
-            ctx.fillText('GAME OVER', canvas.width / 2 - 200, canvas.height / 2 - 50);
+            ctx.fillText('GAME OVER', CANVAS_WIDTH / 2 - 200, CANVAS_HEIGHT / 2 - 50);
             ctx.font = '36px Arial';
-            ctx.fillText('Chạm/Click để trở lại Menu', canvas.width / 2 - 250, canvas.height / 2 + 30);
+            ctx.fillText('Chạm/Click để trở lại Menu', CANVAS_WIDTH / 2 - 250, CANVAS_HEIGHT / 2 + 30);
         }
 
         requestAnimationFrame(gameLoop);
     }
+    
+    // --- XỬ LÝ ĐẦU VÀO & SỰ KIỆN ---
+    function handleInput() {
+        if (!playerName) return;
+        
+        if (isGameOver) {
+            document.getElementById('gameCanvas').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+            restartGame();
+            renderLeaderboard();
+        } else if (!isGameRunning) {
+            restartGame();
+            playerName = nameInput.value.trim();
+            isGameRunning = true;
+            bgm.currentTime = 0;
+            bgm.play().catch(e => console.log('BGM Autoplay blocked:', e)); 
+            pipeInterval = setInterval(generateSeaweed, currentInterval);
+        } else {
+            flap();
+        }
+    }
 
-    // Khởi tạo ban đầu
+    // Event Listeners
+    canvas.addEventListener('mousedown', handleInput);
+    canvas.addEventListener('touchstart', handleInput);
+    startButton.addEventListener('click', () => {
+        document.getElementById('startScreen').style.display = 'none';
+        document.getElementById('gameCanvas').style.display = 'block';
+        handleInput();
+    });
+
+    difficultySelect.addEventListener('change', (e) => {
+        setDifficulty(e.target.value);
+        restartGame();
+        renderLeaderboard();
+    });
+    
+    nameInput.addEventListener('input', () => {
+        nameInput.value = nameInput.value.replace(/[^a-zA-Z0-9 ]/g, ''); 
+        checkAssetsLoaded();
+    });
+    
+    // Khởi tạo Game
     renderLeaderboard();
+    setDifficulty(difficultySelect.value); 
+    restartGame(); 
+    checkAssetsLoaded(); 
     requestAnimationFrame(gameLoop); 
-
 </script>
-<div class="footer">
-    Bản quyền © 2025 thuộc về Nguyen Bac Son. | 
-    <a href="https://nguyenbacson.io.vn/privacy-policy.html">Chính sách bảo mật</a>
-</div>
+
 </body>
 </html>
