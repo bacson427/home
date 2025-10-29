@@ -209,7 +209,7 @@ body {
     let ballY, ballVelocity;
     let seaweed = [];
     let bubbles = [];
-    let particles = []; // <-- KHAI BÁO MỚI CHO TIA LỬA
+    let particles = []; 
     let score;
     let isGameOver;
     let isGameRunning = false;
@@ -390,7 +390,7 @@ body {
         }
     }
     
-    // Data/Leaderboard Functions (Giữ nguyên)
+    // Data/Leaderboard Functions 
     function getHighScores() {
         const data = localStorage.getItem(HIGHSCORE_KEY);
         return data ? JSON.parse(data) : {};
@@ -497,6 +497,7 @@ body {
     function hideGameOverStats() {
         gameOverStats.style.display = 'none';
     }
+// ĐÓNG PHẦN 1
     // --- PHẦN 2: LOGIC GAME VÀ VÒNG LẶP CHÍNH ---
     function flap() { 
         if (!isGameOver) {
@@ -521,7 +522,7 @@ body {
         ballVelocity = 0;
         seaweed = [];
         bubbles = [];
-        particles = []; // <-- RESET MỚI
+        particles = []; 
         score = 0;
         isGameOver = false;
         isGameRunning = false;
@@ -544,16 +545,15 @@ body {
         
         ballY += ballVelocity;
         
-        // --- LOGIC MỚI: TẠO TIA LỬA KHI GẦN CHẠM ĐẤT ---
+        // LOGIC TẠO TIA LỬA KHI GẦN CHẠM ĐẤT
         const groundThreshold = CANVAS_HEIGHT - GROUND_HEIGHT - BALL_SIZE;
         const proximity = groundThreshold - ballY;
         
-        if (proximity < 50 && ballVelocity > 0) { // Gần đất (50px) và đang rơi xuống
-            const intensity = 1 - (proximity / 50); // Càng gần đất, cường độ càng cao
-            const particleCount = Math.floor(intensity * 4); // Tối đa 4 tia lửa
+        if (proximity < 50 && ballVelocity > 0) { 
+            const intensity = 1 - (proximity / 50); 
+            const particleCount = Math.floor(intensity * 4); 
             
             for(let i = 0; i < particleCount; i++) {
-                // Tạo particle từ vị trí dưới cùng của bóng
                 particles.push(new Particle(
                     BALL_X + BALL_RADIUS + (Math.random() * 10 - 5), 
                     ballY + BALL_SIZE - 5
@@ -571,7 +571,6 @@ body {
 
     function updateSeaweeds() {
         let i = seaweed.length;
-        // Tối ưu: Lặp ngược để loại bỏ phần tử hiệu quả hơn
         while (i--) {
             const item = seaweed[i];
             item.x -= currentSpeed;
@@ -591,7 +590,7 @@ body {
             ) {
                 gameOver();
                 soundHit.play();
-                return; // Thoát ngay khi va chạm
+                return; 
             }
 
             // 3. Loại bỏ vật cản
@@ -636,7 +635,7 @@ body {
         }
         bubbles = bubbles.filter(bubble => bubble.life > 0); 
         
-        // --- LOGIC MỚI: Cập nhật và vẽ tia lửa ---
+        // Cập nhật và vẽ tia lửa
         for (let i = 0; i < particles.length; i++) {
              particles[i].update();
              particles[i].draw();
@@ -678,18 +677,23 @@ body {
         if (!playerName) return;
         
         if (isGameOver) {
+            // Logic trở về Menu
             document.getElementById('gameCanvas').style.display = 'none';
             document.getElementById('startScreen').style.display = 'block';
             restartGame();
             renderLeaderboard();
         } else if (!isGameRunning) {
+            // Logic BẮT ĐẦU CHƠI (Bao gồm cú FLAP đầu tiên)
             restartGame();
-            playerName = nameInput.value.trim();
             isGameRunning = true;
             bgm.currentTime = 0;
             bgm.play().catch(e => console.log('BGM Autoplay blocked:', e)); 
             pipeInterval = setInterval(generateSeaweed, currentInterval);
+            
+            // Thực hiện cú FLAP đầu tiên
+            flap(); 
         } else {
+            // Logic FLAP (Nhảy) khi đang chơi
             flap();
         }
     }
@@ -697,10 +701,15 @@ body {
     // Event Listeners
     canvas.addEventListener('mousedown', handleInput);
     canvas.addEventListener('touchstart', handleInput);
+
+    // THAY ĐỔI: Chỉ chuyển màn hình, không gọi handleInput() để game chưa chạy ngay
     startButton.addEventListener('click', () => {
+        playerName = nameInput.value.trim(); // Lấy tên
+        if (!playerName) return;
+
         document.getElementById('startScreen').style.display = 'none';
         document.getElementById('gameCanvas').style.display = 'block';
-        handleInput();
+        // Lần click/chạm tiếp theo trên Canvas sẽ khởi động game.
     });
 
     difficultySelect.addEventListener('change', (e) => {
