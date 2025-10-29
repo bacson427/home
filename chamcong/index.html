@@ -24,7 +24,7 @@
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             width: 100%;
             background-color: white;
             border-radius: 10px;
@@ -208,7 +208,7 @@
             border: 1px solid #e0e0e0;
             border-radius: 5px;
             padding: 15px 10px;
-            min-height: 120px;
+            min-height: 140px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -222,6 +222,9 @@
         .day-number {
             font-weight: bold;
             margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .day-status {
@@ -240,6 +243,20 @@
         .status-off {
             background-color: #fdedec;
             color: #e74c3c;
+        }
+        
+        .status-paid {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .paid-badge {
+            background-color: #ffc107;
+            color: #856404;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: bold;
         }
         
         .day-actions {
@@ -271,6 +288,15 @@
         
         .off-btn:hover {
             background-color: #c0392b;
+        }
+        
+        .paid-btn {
+            background-color: #ffc107;
+            color: #856404;
+        }
+        
+        .paid-btn:hover {
+            background-color: #e0a800;
         }
         
         .summary {
@@ -307,6 +333,41 @@
             color: #7f8c8d;
         }
         
+        .payment-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3cd;
+            border-radius: 5px;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .payment-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .payment-stats {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .payment-actions {
+            flex: 1;
+            min-width: 200px;
+            text-align: right;
+        }
+        
+        .reset-btn {
+            background-color: #17a2b8;
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            background-color: #138496;
+        }
+        
         @media (max-width: 768px) {
             .calendar {
                 grid-template-columns: repeat(2, 1fr);
@@ -314,6 +375,15 @@
             
             .day-header {
                 display: none;
+            }
+            
+            .payment-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .payment-actions {
+                text-align: center;
             }
         }
         
@@ -400,6 +470,20 @@
                         <div class="stat-label">Ngày chưa chọn</div>
                     </div>
                 </div>
+                
+                <div class="payment-section">
+                    <div class="payment-info">
+                        <div class="payment-stats">
+                            <h4>Thống kê thanh toán</h4>
+                            <p>Tổng ngày làm việc chưa thanh toán: <strong id="unpaid-days">0</strong> ngày</p>
+                            <p>Ngày thanh toán gần nhất: <strong id="last-payment-date">Chưa có</strong></p>
+                        </div>
+                        <div class="payment-actions">
+                            <button id="mark-paid-btn" class="paid-btn">Đánh dấu đã thanh toán</button>
+                            <button id="reset-paid-btn" class="reset-btn">Reset tất cả thanh toán</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -413,6 +497,7 @@
 
         // Dữ liệu lịch làm việc
         let workSchedule = {};
+        let paymentHistory = [];
         let currentDate = new Date();
         let isLoggedIn = false;
         
@@ -497,6 +582,7 @@
             let workingDays = 0;
             let offDays = 0;
             let remainingDays = 0;
+            let unpaidDays = 0;
             
             while (currentDateObj <= endDate) {
                 const dayEl = document.createElement('div');
@@ -507,28 +593,46 @@
                     dayEl.classList.add('other-month');
                 }
                 
+                // Tạo key cho ngày hiện tại
+                const dateKey = formatDate(currentDateObj);
+                
                 // Hiển thị số ngày
                 const dayNumber = document.createElement('div');
                 dayNumber.className = 'day-number';
                 dayNumber.textContent = currentDateObj.getDate();
-                dayEl.appendChild(dayNumber);
                 
-                // Tạo key cho ngày hiện tại
-                const dateKey = formatDate(currentDateObj);
+                // Thêm badge nếu đã thanh toán
+                if (workSchedule[dateKey] && workSchedule[dateKey].paid) {
+                    const paidBadge = document.createElement('span');
+                    paidBadge.className = 'paid-badge';
+                    paidBadge.textContent = 'ĐÃ TRẢ';
+                    dayNumber.appendChild(paidBadge);
+                }
+                
+                dayEl.appendChild(dayNumber);
                 
                 // Kiểm tra trạng thái làm việc
                 let statusText = 'Chưa chọn';
                 let statusClass = '';
                 
                 if (workSchedule[dateKey]) {
-                    if (workSchedule[dateKey] === 'working') {
+                    if (workSchedule[dateKey].status === 'working') {
                         statusText = 'Đi làm';
                         statusClass = 'status-working';
-                        if (currentDateObj.getMonth() === month) workingDays++;
-                    } else if (workSchedule[dateKey] === 'off') {
+                        if (currentDateObj.getMonth() === month) {
+                            workingDays++;
+                            // Đếm ngày chưa thanh toán
+                            if (!workSchedule[dateKey].paid) {
+                                unpaidDays++;
+                            }
+                        }
+                    } else if (workSchedule[dateKey].status === 'off') {
                         statusText = 'Nghỉ';
                         statusClass = 'status-off';
                         if (currentDateObj.getMonth() === month) offDays++;
+                    } else if (workSchedule[dateKey].status === 'paid') {
+                        statusText = 'Đã thanh toán';
+                        statusClass = 'status-paid';
                     }
                 } else {
                     if (currentDateObj.getMonth() === month && 
@@ -537,7 +641,7 @@
                     }
                 }
                 
-                // Hiển thị trạng thái
+                               // Hiển thị trạng thái
                 const statusEl = document.createElement('div');
                 statusEl.className = `day-status ${statusClass}`;
                 statusEl.textContent = statusText;
@@ -548,18 +652,28 @@
                     const actionsEl = document.createElement('div');
                     actionsEl.className = 'day-actions';
                     
-                    const workBtn = document.createElement('button');
-                    workBtn.className = 'action-btn work-btn';
-                    workBtn.textContent = 'Đi Làm';
-                    workBtn.onclick = () => setWorkStatus(dateKey, 'working');
+                    // Chỉ hiển thị nút nếu chưa thanh toán
+                    if (!workSchedule[dateKey] || !workSchedule[dateKey].paid) {
+                        const workBtn = document.createElement('button');
+                        workBtn.className = 'action-btn work-btn';
+                        workBtn.textContent = 'Đi Làm';
+                        workBtn.onclick = () => setWorkStatus(dateKey, 'working');
+                        
+                        const offBtn = document.createElement('button');
+                        offBtn.className = 'action-btn off-btn';
+                        offBtn.textContent = 'Nghỉ';
+                        offBtn.onclick = () => setWorkStatus(dateKey, 'off');
+                        
+                        actionsEl.appendChild(workBtn);
+                        actionsEl.appendChild(offBtn);
+                    } else {
+                        const paidBtn = document.createElement('button');
+                        paidBtn.className = 'action-btn paid-btn';
+                        paidBtn.textContent = 'Đã thanh toán';
+                        paidBtn.onclick = () => unmarkPaid(dateKey);
+                        actionsEl.appendChild(paidBtn);
+                    }
                     
-                    const offBtn = document.createElement('button');
-                    offBtn.className = 'action-btn off-btn';
-                    offBtn.textContent = 'Nghỉ';
-                    offBtn.onclick = () => setWorkStatus(dateKey, 'off');
-                    
-                    actionsEl.appendChild(workBtn);
-                    actionsEl.appendChild(offBtn);
                     dayEl.appendChild(actionsEl);
                 }
                 
@@ -573,6 +687,10 @@
             document.getElementById('working-days').textContent = workingDays;
             document.getElementById('off-days').textContent = offDays;
             document.getElementById('remaining-days').textContent = remainingDays;
+            document.getElementById('unpaid-days').textContent = unpaidDays;
+            
+            // Cập nhật ngày thanh toán gần nhất
+            updateLastPaymentDate();
         }
         
         // Định dạng ngày thành key (YYYY-MM-DD)
@@ -585,21 +703,113 @@
         
         // Thiết lập trạng thái làm việc
         function setWorkStatus(dateKey, status) {
-            workSchedule[dateKey] = status;
+            if (!workSchedule[dateKey]) {
+                workSchedule[dateKey] = {};
+            }
+            workSchedule[dateKey].status = status;
+            workSchedule[dateKey].paid = false;
             
             // Lưu vào localStorage
-            localStorage.setItem('workSchedule', JSON.stringify(workSchedule));
+            saveData();
             
             // Tạo lại lịch
             generateCalendar();
+        }
+        
+        // Đánh dấu đã thanh toán
+        function markAllAsPaid() {
+            const today = new Date();
+            const paymentDate = formatDate(today);
+            
+            // Đánh dấu tất cả ngày làm việc là đã thanh toán
+            Object.keys(workSchedule).forEach(dateKey => {
+                if (workSchedule[dateKey].status === 'working' && !workSchedule[dateKey].paid) {
+                    workSchedule[dateKey].paid = true;
+                }
+            });
+            
+            // Thêm vào lịch sử thanh toán
+            paymentHistory.push({
+                date: paymentDate,
+                count: Object.keys(workSchedule).filter(key => 
+                    workSchedule[key].status === 'working' && workSchedule[key].paid
+                ).length
+            });
+            
+            // Lưu vào localStorage
+            saveData();
+            
+            // Tạo lại lịch
+            generateCalendar();
+            
+            alert(`Đã đánh dấu thanh toán cho tất cả ngày làm việc!`);
+        }
+        
+        // Bỏ đánh dấu thanh toán
+        function unmarkPaid(dateKey) {
+            if (workSchedule[dateKey]) {
+                workSchedule[dateKey].paid = false;
+                
+                // Lưu vào localStorage
+                saveData();
+                
+                // Tạo lại lịch
+                generateCalendar();
+            }
+        }
+        
+        // Reset tất cả thanh toán
+        function resetAllPayments() {
+            if (confirm('Bạn có chắc muốn reset tất cả trạng thái thanh toán?')) {
+                Object.keys(workSchedule).forEach(dateKey => {
+                    if (workSchedule[dateKey].paid) {
+                        workSchedule[dateKey].paid = false;
+                    }
+                });
+                
+                paymentHistory = [];
+                
+                // Lưu vào localStorage
+                saveData();
+                
+                // Tạo lại lịch
+                generateCalendar();
+                
+                alert('Đã reset tất cả trạng thái thanh toán!');
+            }
+        }
+        
+        // Cập nhật ngày thanh toán gần nhất
+        function updateLastPaymentDate() {
+            const lastPayment = paymentHistory[paymentHistory.length - 1];
+            const lastPaymentElement = document.getElementById('last-payment-date');
+            
+            if (lastPayment) {
+                const [year, month, day] = lastPayment.date.split('-');
+                lastPaymentElement.textContent = `${day}/${month}/${year}`;
+            } else {
+                lastPaymentElement.textContent = 'Chưa có';
+            }
+        }
+        
+        // Lưu dữ liệu
+        function saveData() {
+            localStorage.setItem('workSchedule', JSON.stringify(workSchedule));
+            localStorage.setItem('paymentHistory', JSON.stringify(paymentHistory));
         }
         
         // Khởi tạo ứng dụng
         function initApp() {
             // Tải dữ liệu từ localStorage nếu có
             const savedSchedule = localStorage.getItem('workSchedule');
+            const savedPaymentHistory = localStorage.getItem('paymentHistory');
+            
             if (savedSchedule) {
                 workSchedule = JSON.parse(savedSchedule);
+            }
+            
+            if (savedPaymentHistory) {
+                paymentHistory = JSON.parse(savedPaymentHistory);
             }
             
             // Khởi tạo thời gian
@@ -624,6 +834,10 @@
                 currentDate = new Date();
                 generateCalendar();
             });
+            
+            // Sự kiện cho nút thanh toán
+            document.getElementById('mark-paid-btn').addEventListener('click', markAllAsPaid);
+            document.getElementById('reset-paid-btn').addEventListener('click', resetAllPayments);
         }
         
         // Sự kiện khi trang được tải
