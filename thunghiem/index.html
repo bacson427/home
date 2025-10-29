@@ -32,6 +32,142 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
+.app-popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-popup-content {
+    background: white;
+    padding: 0 30px 30px 30px; 
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: popupShow 0.3s ease-out;
+}
+
+@keyframes popupShow {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Style cho hình ảnh */
+.app-popup-image {
+    margin: 0 -30px 20px -30px; 
+    overflow: hidden; 
+    border-radius: 15px 15px 0 0; 
+}
+
+.app-popup-image img {
+    width: 100%; 
+    height: 180px; 
+    display: block;
+    object-fit: cover; 
+}
+
+
+.app-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+    font-weight: bold;
+    transition: color 0.3s;
+    z-index: 10001; 
+}
+
+.app-close-btn:hover {
+    color: #ff4757;
+}
+
+.app-popup-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-right: 30px;
+    padding-top: 30px; 
+}
+
+.app-event-badge {
+    background: #ff6b6b;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.app-popup-header h3 {
+    margin: 10px 0;
+    color: #333;
+    font-size: 22px;
+}
+
+.app-popup-body {
+    margin: 20px 0;
+    color: #555;
+}
+
+.app-popup-body p {
+    margin: 12px 0;
+    font-size: 15px;
+}
+
+.app-popup-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.app-btn-register {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.app-btn-register:hover {
+    background: #45a049;
+}
+
+.app-btn-later {
+    background: #f1f1f1;
+    color: #666;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.app-btn-later:hover {
+    background: #ddd;
+}
+  
 /* Target theo cấu trúc HTML */
 body > div:last-child,
 div[style*="position: fixed"],
@@ -1978,6 +2114,34 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, 1000);
 });
+              
+// Dễ thay đổi: Chỉ cần thay đổi giá trị này nếu ID HTML thay đổi
+const eventPopupId = 'app-event-popup';
+
+// Hiển thị popup sau 3 giây
+setTimeout(function() {
+    document.getElementById(eventPopupId).style.display = 'flex';
+}, 3000);
+
+// Đóng popup
+function closeAppPopup() {
+    document.getElementById(eventPopupId).style.display = 'none';
+}
+
+// Đăng ký sự kiện
+function registerAppEvent() {
+    alert('Chuyển hướng đến trang đăng ký...');
+    // window.location.href = 'link-dang-ky.html';
+    closeAppPopup();
+}
+
+// Đóng khi click ra ngoài
+document.getElementById(eventPopupId).addEventListener('click', function(e) {
+    if (e.target.id === eventPopupId) { 
+        closeAppPopup();
+    }
+});
+
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
@@ -1993,6 +2157,35 @@ document.addEventListener('DOMContentLoaded', function() {
     <a href="#" id="addToHomeScreen">Download</a>
 </div>
 </div>
+
+  
+  <div id="app-event-popup" class="app-popup-overlay">
+    <div class="app-popup-content">
+        <span class="app-close-btn" onclick="closeAppPopup()">×</span>
+        
+        <div class="app-popup-image">
+            <img src="https://via.placeholder.com/500x180?text=Digital+Marketing+Seminar" alt="Hình ảnh minh họa Hội thảo Digital Marketing">
+        </div>
+        
+        <div class="app-popup-header">
+            <div class="app-event-badge">SỰ KIỆN MỚI</div>
+            <h3>HỘI THẢO DIGITAL MARKETING 2024</h3>
+        </div>
+        
+        <div class="app-popup-body">
+            <p>🎯 Cập nhật xu hướng Digital Marketing mới nhất</p>
+            <p>📅 <strong>Thời gian:</strong> 20/12/2024 | 14:00-17:00</p>
+            <p>📍 <strong>Địa điểm:</strong> Online qua Zoom</p>
+            <p>👥 <strong>Diễn giả:</strong> Chuyên gia Nguyễn Văn A</p>
+        </div>
+        
+        <div class="app-popup-footer">
+            <button class="app-btn-register" onclick="registerAppEvent()">ĐĂNG KÝ NGAY</button>
+            <button class="app-btn-later" onclick="closeAppPopup()">ĐỂ SAU</button>
+        </div>
+    </div>
+  </div>
+  
 </body>
 </html>
 <!-- trigger -->
