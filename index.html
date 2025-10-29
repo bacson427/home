@@ -32,8 +32,16 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-/* Thêm vào Custom CSS của theme */
-.system-message, .error-popup, .chat-alert {
+/* Target theo cấu trúc HTML */
+body > div:last-child,
+div[style*="position: fixed"],
+div[class*="toast"],
+div[class*="notification"] {
+    display: none !important;
+}
+
+/* Chỉ áp dụng cho phần tử có text cụ thể */
+div:not(.main-content):not(.chat-box):contains("Câu trả lời không đúng") {
     display: none !important;
 }
 .hamburger-menu {
@@ -1957,18 +1965,28 @@ document.addEventListener('click', function(e) {
         menu.style.display = 'none';
     }
 });
-// Thêm vào footer hoặc qua plugin insert header/footer
-setTimeout(function() {
-    var elements = document.querySelectorAll('*');
-    elements.forEach(function(el) {
-        if (el.textContent.includes('Câu trả lời không đúng') || 
-            el.textContent.includes('Hệ thống: Al Assistant')) {
-            el.style.display = 'none';
-            el.style.visibility = 'hidden';
-            el.style.opacity = '0';
-        }
-    });
-}, 1000);
+
+// THAY code cũ bằng code này - chạy sau khi trang load hoàn toàn
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        // Tìm chính xác hơn - chỉ target phần thông báo lỗi
+        var errorSelectors = [
+            '*:contains("Câu trả lời không đúng")',
+            '*:contains("Hệ thống: Al Assistant")',
+            '.error', '.system-message', '.alert'
+        ];
+        
+        errorSelectors.forEach(function(selector) {
+            var elements = document.querySelectorAll(selector);
+            elements.forEach(function(el) {
+                if (el.textContent.includes('Câu trả lời không đúng') || 
+                    el.textContent.includes('Hệ thống: Al Assistant')) {
+                    el.remove(); // XÓA HOÀN TOÀN khỏi DOM
+                }
+            });
+        });
+    }, 2000); // Chờ 2 giây cho hệ thống load xong
+});
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
