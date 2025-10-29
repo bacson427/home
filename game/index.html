@@ -209,6 +209,7 @@ body {
     let ballY, ballVelocity;
     let seaweed = [];
     let bubbles = [];
+    let particles = []; // <-- KHAI BÁO MỚI CHO TIA LỬA
     let score;
     let isGameOver;
     let isGameRunning = false;
@@ -223,7 +224,7 @@ body {
         { name: 'Server: NguoiMoi', score: 30, timestamp: Date.now() - 30000000 },
     ];
 
-    // Asset Loading (Reduced to essentials)
+    // Asset Loading 
     const assets = {};
     let assetsLoaded = 0;
     const totalAssets = 2; 
@@ -329,7 +330,7 @@ body {
         ctx.restore();
     }
     
-    // Bubble Class
+    // Bubble Class (Hiệu ứng bong bóng khi bay lên)
     class Bubble {
         constructor(x, y) {
             this.x = x + Math.random() * 10 - 5;
@@ -358,8 +359,38 @@ body {
             ctx.globalAlpha = 1.0;
         }
     }
+
+    // Particle Class (Hiệu ứng tia lửa khi gần đất)
+    class Particle {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.size = Math.random() * 5 + 1;
+            this.life = 30; // 0.5 giây
+            this.vx = (Math.random() * 6) - 3;
+            this.vy = Math.random() * -5 - 2;
+            this.gravity = 0.3;
+            this.color = `hsl(${Math.random() * 60 + 20}, 100%, 50%)`; // Vàng cam
+        }
+
+        update() {
+            this.x += this.vx;
+            this.vy += this.gravity;
+            this.y += this.vy;
+            this.life--;
+        }
+
+        draw() {
+            ctx.globalAlpha = this.life / 30;
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+        }
+    }
     
-    // Data/Leaderboard Functions
+    // Data/Leaderboard Functions (Giữ nguyên)
     function getHighScores() {
         const data = localStorage.getItem(HIGHSCORE_KEY);
         return data ? JSON.parse(data) : {};
@@ -490,6 +521,7 @@ body {
         ballVelocity = 0;
         seaweed = [];
         bubbles = [];
+        particles = []; // <-- RESET MỚI
         score = 0;
         isGameOver = false;
         isGameRunning = false;
@@ -503,6 +535,7 @@ body {
         ballVelocity *= DRAG; 
         ballVelocity += GRAVITY;
 
+        // Tạo bong bóng khi bay lên (Flap)
         if (ballVelocity < -5) {
              for (let i = 0; i < 2; i++) {
                  bubbles.push(new Bubble(BALL_X + BALL_RADIUS, ballY + BALL_RADIUS));
@@ -510,7 +543,25 @@ body {
         }
         
         ballY += ballVelocity;
+        
+        // --- LOGIC MỚI: TẠO TIA LỬA KHI GẦN CHẠM ĐẤT ---
+        const groundThreshold = CANVAS_HEIGHT - GROUND_HEIGHT - BALL_SIZE;
+        const proximity = groundThreshold - ballY;
+        
+        if (proximity < 50 && ballVelocity > 0) { // Gần đất (50px) và đang rơi xuống
+            const intensity = 1 - (proximity / 50); // Càng gần đất, cường độ càng cao
+            const particleCount = Math.floor(intensity * 4); // Tối đa 4 tia lửa
+            
+            for(let i = 0; i < particleCount; i++) {
+                // Tạo particle từ vị trí dưới cùng của bóng
+                particles.push(new Particle(
+                    BALL_X + BALL_RADIUS + (Math.random() * 10 - 5), 
+                    ballY + BALL_SIZE - 5
+                ));
+            }
+        }
 
+        // Kiểm tra va chạm đất
         if (ballY + BALL_SIZE > CANVAS_HEIGHT - GROUND_HEIGHT) {
             gameOver();
             soundHit.play();
@@ -584,6 +635,13 @@ body {
              bubbles[i].draw();
         }
         bubbles = bubbles.filter(bubble => bubble.life > 0); 
+        
+        // --- LOGIC MỚI: Cập nhật và vẽ tia lửa ---
+        for (let i = 0; i < particles.length; i++) {
+             particles[i].update();
+             particles[i].draw();
+        }
+        particles = particles.filter(particle => particle.life > 0); 
 
         // 5. Vẽ điểm số và UI
         ctx.fillStyle = 'white';
