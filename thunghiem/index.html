@@ -28,10 +28,177 @@
     <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="Nguyen Bac Son" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<div id="eventPopup" class="event-popup">
+    <div class="popup-content">
+        <span class="close-btn" onclick="closePopup()">×</span>
+        
+        <div class="popup-header">
+            <div class="event-badge">SỰ KIỆN MỚI</div>
+            <h3>HỘI THẢO DIGITAL MARKETING 2024</h3>
+        </div>
+        
+        <div class="popup-body">
+            <p>🎯 Cập nhật xu hướng Digital Marketing mới nhất</p>
+            <p>📅 <strong>Thời gian:</strong> 20/12/2024 | 14:00-17:00</p>
+            <p>📍 <strong>Địa điểm:</strong> Online qua Zoom</p>
+            <p>👥 <strong>Diễn giả:</strong> Chuyên gia Nguyễn Văn A</p>
+        </div>
+        
+        <div class="popup-footer">
+            <a href="https://your-website.com/dang-ky" class="btn-register" target="_blank">ĐĂNG KÝ NGAY</a>
+            <a href="https://your-website.com/chi-tiet" class="btn-details" target="_blank">XEM CHI TIẾT</a>
+            <button class="btn-later" onclick="closePopup()">ĐỂ SAU</button>
+        </div>
+    </div>
+</div>
 
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
+.event-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: popupShow 0.3s ease-out;
+}
+
+@keyframes popupShow {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.close-btn:hover {
+    color: #ff4757;
+}
+
+.popup-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-right: 30px;
+}
+
+.event-badge {
+    background: #ff6b6b;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.popup-header h3 {
+    margin: 10px 0;
+    color: #333;
+    font-size: 22px;
+}
+
+.popup-body {
+    margin: 20px 0;
+    color: #555;
+}
+
+.popup-body p {
+    margin: 12px 0;
+    font-size: 15px;
+}
+
+.popup-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+.btn-register {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-register:hover {
+    background: #45a049;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-details {
+    background: #2196F3;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-details:hover {
+    background: #0b7dda;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-later {
+    background: #f1f1f1;
+    color: #666;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-later:hover {
+    background: #ddd;
+}
 /* Target theo cấu trúc HTML */
 body > div:last-child,
 div[style*="position: fixed"],
@@ -1976,6 +2143,35 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }, 1000);
+});
+
+
+// Hiển thị popup sau 3 giây
+setTimeout(function() {
+    document.getElementById('eventPopup').style.display = 'flex';
+}, 3000);
+
+// Đóng popup
+function closePopup() {
+    document.getElementById('eventPopup').style.display = 'none';
+}
+
+// Đóng khi click ra ngoài
+document.getElementById('eventPopup').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePopup();
+    }
+});
+
+// Theo dõi click vào link (Google Analytics)
+document.querySelector('.btn-register').addEventListener('click', function() {
+    console.log('Clicked register link');
+    // gtag('event', 'click', {'event_category': 'Popup', 'event_label': 'Register'});
+});
+
+document.querySelector('.btn-details').addEventListener('click', function() {
+    console.log('Clicked details link');
+    // gtag('event', 'click', {'event_category': 'Popup', 'event_label': 'Details'});
 });
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
