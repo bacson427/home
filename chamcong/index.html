@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống chấm công cho Nguyen Bac Son</title>
+    <title>Hệ thống chấm công cho sinh viên</title>
     <style>
         * {
             box-sizing: border-box;
@@ -284,6 +284,7 @@
             margin-bottom: 15px;
             color: #2c3e50;
         }
+        
         .summary-stats {
             display: flex;
             justify-content: space-around;
@@ -335,8 +336,8 @@
             <div class="login-form">
                 <h2 class="login-title">Đăng nhập hệ thống</h2>
                 <div class="form-group">
-                    <label for="user-id">Nhập ID</label>
-                    <input type="text" id="user-id" placeholder="Nhập ID">
+                    <label for="user-id">Mã sinh viên</label>
+                    <input type="text" id="user-id" placeholder="Nhập mã sinh viên">
                 </div>
                 <div class="form-group">
                     <label for="password">Mật khẩu</label>
@@ -344,7 +345,7 @@
                 </div>
                 <button class="login-btn" id="login-btn">Đăng nhập</button>
                 <div class="error-message" id="error-message">
-                    ID hoặc mật khẩu không đúng!
+                    Mã sinh viên hoặc mật khẩu không đúng!
                 </div>
             </div>
         </div>
@@ -360,8 +361,8 @@
             
             <div class="user-info">
                 <div class="user-details">
-                    <h3>Họ Và Tên: Nguyễn Bắc Sơn</h3>
-                    <p>Số điện thoại: <span id="display-user-id">04-02-2007</span></p>
+                    <h3>Sinh viên: Nguyễn Văn A</h3>
+                    <p>MSSV: <span id="display-user-id">SV2024001</span></p>
                 </div>
                 <div class="current-time">
                     <p>Thời gian hiện tại:</p>
@@ -405,25 +406,16 @@
 
     <script>
         // Mã hóa mật khẩu để tránh nhìn thấy trong F12
-        // Mật khẩu gốc: @Son2007
-        // Được mã hóa bằng cách: 
-        // 1. Chuyển sang base64
-        // 2. Đảo ngược chuỗi
-        // 3. Thêm ký tự ngẫu nhiên
         const encodedPassword = "NzAwMlNvbkAj";
         
         // Hàm giải mã mật khẩu
         function decodePassword(encoded) {
-            // Loại bỏ ký tự ngẫu nhiên (nếu có)
             let clean = encoded;
             if (encoded.length > 12) {
                 clean = encoded.substring(0, 12);
             }
             
-            // Đảo ngược chuỗi
             const reversed = clean.split('').reverse().join('');
-            
-            // Giải mã base64
             return atob(reversed);
         }
         
@@ -437,20 +429,16 @@
             const userId = document.getElementById('user-id').value;
             const password = document.getElementById('password').value;
             
-            // Giải mã mật khẩu đã lưu và so sánh
             const correctPassword = decodePassword(encodedPassword);
             
             if (userId === '040207' && password === correctPassword) {
-                // Đăng nhập thành công
                 isLoggedIn = true;
                 document.getElementById('login-container').style.display = 'none';
                 document.getElementById('main-content').style.display = 'block';
                 document.getElementById('display-user-id').textContent = userId;
                 
-                // Khởi tạo ứng dụng
                 initApp();
             } else {
-                // Hiển thị thông báo lỗi
                 document.getElementById('error-message').style.display = 'block';
             }
         }
@@ -480,7 +468,6 @@
             const calendarEl = document.getElementById('calendar');
             calendarEl.innerHTML = '';
             
-            // Thêm tiêu đề các ngày trong tuần
             const daysOfWeek = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
             daysOfWeek.forEach(day => {
                 const dayHeader = document.createElement('div');
@@ -488,28 +475,22 @@
                 dayHeader.textContent = day;
                 calendarEl.appendChild(dayHeader);
             });
-            // Lấy thông tin tháng và năm hiện tại
+            
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
             
-            // Cập nhật tiêu đề tháng
             document.getElementById('current-month').textContent = 
                 `Tháng ${month + 1}, ${year}`;
             
-            // Ngày đầu tiên của tháng
             const firstDay = new Date(year, month, 1);
-            // Ngày cuối cùng của tháng
             const lastDay = new Date(year, month + 1, 0);
             
-            // Ngày đầu tiên hiển thị trên lịch (có thể là ngày cuối tháng trước)
             const startDate = new Date(firstDay);
             startDate.setDate(startDate.getDate() - firstDay.getDay());
             
-            // Ngày cuối cùng hiển thị trên lịch (có thể là ngày đầu tháng sau)
             const endDate = new Date(lastDay);
             endDate.setDate(endDate.getDate() + (6 - lastDay.getDay()));
             
-            // Tạo các ô ngày trong lịch
             const currentDateObj = new Date(startDate);
             let workingDays = 0;
             let offDays = 0;
@@ -519,21 +500,17 @@
                 const dayEl = document.createElement('div');
                 dayEl.className = 'day';
                 
-                // Kiểm tra xem ngày này có thuộc tháng hiện tại không
                 if (currentDateObj.getMonth() !== month) {
                     dayEl.classList.add('other-month');
                 }
                 
-                // Hiển thị số ngày
                 const dayNumber = document.createElement('div');
                 dayNumber.className = 'day-number';
                 dayNumber.textContent = currentDateObj.getDate();
                 dayEl.appendChild(dayNumber);
                 
-                // Tạo key cho ngày hiện tại
                 const dateKey = formatDate(currentDateObj);
                 
-                // Kiểm tra trạng thái làm việc
                 let statusText = 'Chưa chọn';
                 let statusClass = '';
                 
@@ -554,13 +531,11 @@
                     }
                 }
                 
-                // Hiển thị trạng thái
                 const statusEl = document.createElement('div');
                 statusEl.className = `day-status ${statusClass}`;
                 statusEl.textContent = statusText;
                 dayEl.appendChild(statusEl);
                 
-                // Thêm nút hành động cho các ngày trong tháng hiện tại
                 if (currentDateObj.getMonth() === month) {
                     const actionsEl = document.createElement('div');
                     actionsEl.className = 'day-actions';
@@ -581,12 +556,9 @@
                 }
                 
                 calendarEl.appendChild(dayEl);
-                
-                // Chuyển sang ngày tiếp theo
                 currentDateObj.setDate(currentDateObj.getDate() + 1);
             }
             
-            // Cập nhật thống kê
             document.getElementById('working-days').textContent = workingDays;
             document.getElementById('off-days').textContent = offDays;
             document.getElementById('remaining-days').textContent = remainingDays;
@@ -603,30 +575,22 @@
         // Thiết lập trạng thái làm việc
         function setWorkStatus(dateKey, status) {
             workSchedule[dateKey] = status;
-            
-            // Lưu vào localStorage
             localStorage.setItem('workSchedule', JSON.stringify(workSchedule));
-            
-            // Tạo lại lịch
             generateCalendar();
         }
         
         // Khởi tạo ứng dụng
         function initApp() {
-            // Tải dữ liệu từ localStorage nếu có
             const savedSchedule = localStorage.getItem('workSchedule');
             if (savedSchedule) {
                 workSchedule = JSON.parse(savedSchedule);
             }
             
-            // Khởi tạo thời gian
             updateCurrentTime();
             setInterval(updateCurrentTime, 1000);
             
-            // Tạo lịch ban đầu
             generateCalendar();
             
-            // Thêm sự kiện cho các nút điều hướng
             document.getElementById('prev-month').addEventListener('click', function() {
                 currentDate.setMonth(currentDate.getMonth() - 1);
                 generateCalendar();
@@ -645,17 +609,14 @@
         
         // Sự kiện khi trang được tải
         document.addEventListener('DOMContentLoaded', function() {
-            // Sự kiện đăng nhập
             document.getElementById('login-btn').addEventListener('click', checkLogin);
             
-            // Cho phép đăng nhập bằng phím Enter
             document.getElementById('password').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     checkLogin();
                 }
             });
             
-            // Sự kiện đăng xuất
             document.getElementById('logout-btn').addEventListener('click', logout);
         });
     </script>
