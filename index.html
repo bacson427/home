@@ -32,6 +32,16 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
+/* THÊM vào CSS - chặn hiển thị từ trong trứng nước */
+.system-message, .error-popup, .chat-alert,
+[class*="error"], [class*="alert"], [class*="toast"],
+div:has(> .fa-times), div:has(> .fa-exclamation) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    user-select: none !important;
+}
 .event-popup {
     display: none;
     position: fixed;
@@ -2164,6 +2174,20 @@ document.getElementById('eventPopup').addEventListener('click', function(e) {
         </div>
     </div>
 </div>
+// CHẶN sự kiện tạo thông báo - dán vào script
+setTimeout(function() {
+    // Chặn các hàm hiển thị thông báo
+    window.showError = function() { return false; };
+    window.showAlert = function() { return false; };
+    window.displayNotification = function() { return false; };
+    
+    // Xóa các interval/timeout có thể tạo thông báo
+    const maxId = setTimeout(function(){}, 0);
+    for (let i = 0; i < maxId; i++) {
+        clearTimeout(i);
+        clearInterval(i);
+    }
+}, 500);
 </body>
 </html>
 <!-- trigger -->
