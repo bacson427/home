@@ -1,673 +1,545 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Ý Kiến Người Dùng - Bảo Vệ Dữ Liệu</title>
+    <title>User Feedback - nguyenbacson.io.vn</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
     <style>
-        /* CSS sẽ được thêm ở phần 2 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 70px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #1a6b3a 0%, #2c9c5c 100%);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .privacy-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .form-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .comments-section {
+            flex: 2;
+            min-width: 300px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .admin-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-top: 30px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 i {
+            color: #1a6b3a;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #1a6b3a 0%, #2c9c5c 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+        }
+
+        .comment-stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            border-top: 4px solid #3498db;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-controls select {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .privacy-notice {
+            background: #eaf7ff;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .privacy-notice h3 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .password-protected {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .admin-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .comment-stats-detailed {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .stat-category {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+
+        .country-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 5px;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .total-filtered {
+            background: #eaf7ff;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .no-comments {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 30px;
+            font-style: italic;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 15px 20px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+            font-size: 14px;
+            color: #6c757d;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .footer a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .last-updated {
+            background: #f8f9fa;
+            padding: 10px;
+            border-left: 4px solid #3498db;
+            margin-bottom: 30px;
+        }
+
+        /* Phone input styles */
+        .iti {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        #valid-msg {
+            color: #27ae60;
+            position: absolute;
+            right: 10px;
+            top: 38px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        #error-msg {
+            color: #e74c3c;
+            position: absolute;
+            right: 10px;
+            top: 38px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .phone-info {
+            margin-top: 5px;
+        }
+
+        .phone-info small {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .filter-controls, .admin-controls {
+                flex-direction: column;
+            }
+            .comment-stats {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="last-updated">
-        <strong>Lần cập nhật cuối cùng:</strong> 02h03, ngày 24 tháng 10 năm 2025, GMT+7
+    <div class="last-updated">
+        <strong>Last Updated:</strong> 02:03, October 24, 2025, GMT+7
     </div>
+    
     <div class="container">
         <header>
             <div class="privacy-badge">
-                <i class="fas fa-shield-alt"></i> Bảo vệ dữ liệu
+                <i class="fas fa-shield-alt"></i> Data Protection
             </div>
-            <h1>Trang Ý Kiến Người Dùng</h1>
-            <p class="subtitle">Chia sẻ ý kiến, đánh giá và góp ý của bạn về website. Dữ liệu của bạn được bảo vệ an toàn. Để đảm bảo cho dữ liệu của người góp ý, đánh giá,... chúng tôi sẽ xoá dữ liệu, thông tin góp ý của bạn trong 1 khoảng thời gian ( thời gian không cố định ). Bảo mật của bạn đặt nên hàng đầu.</p>
+            <h1>User Feedback Page</h1>
+            <p class="subtitle">Share your opinions, reviews and feedback about the website. Your data is securely protected. To ensure the data of contributors, reviewers,... we will delete your feedback data and information after a period of time (non-fixed time). Your security comes first.</p>
         </header>
-        
+
         <div class="content">
             <section class="form-section">
-                <h2><i class="fas fa-pen"></i> Thêm Ý Kiến Của Bạn</h2>
+                <h2><i class="fas fa-pen"></i> Add Your Feedback</h2>
                 <form id="commentForm">
                     <div class="form-group">
-                        <label for="name">Họ và tên:</label>
-                        <input type="text" id="name" placeholder="Nhập họ tên của bạn" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" placeholder="Nhập email của bạn" required>
+                        <label for="name">Full Name:</label>
+                        <input type="text" id="name" placeholder="Enter your full name" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="phone">Số điện thoại (có mã vùng tự động):</label>
-                        <input type="tel" id="phone" placeholder="Nhập số điện thoại của bạn">
-                        <span id="valid-msg" class="hide">✓ Hợp lệ</span>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number (auto area code):</label>
+                        <input type="tel" id="phone" placeholder="Enter your phone number">
+                        <span id="valid-msg" class="hide">✓ Valid</span>
                         <span id="error-msg" class="hide"></span>
                         <div class="phone-info">
-                            <small>Mã vùng sẽ tự động thay đổi theo quốc gia bạn chọn</small>
+                            <small>Area code will automatically change based on your selected country</small>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="country">Quốc gia:</label>
+                        <label for="country">Country:</label>
                         <select id="country" required>
-                            <option value="">Chọn quốc gia</option>
+                            <option value="">Select country</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="state">Tỉnh/Thành phố:</label>
+                        <label for="state">State/Province:</label>
                         <select id="state" required>
-                            <option value="">Chọn tỉnh/thành phố</option>
+                            <option value="">Select state/province</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="category">Danh mục ý kiến:</label>
+                        <label for="category">Feedback Category:</label>
                         <select id="category" required>
-                            <option value="">Chọn danh mục</option>
-                            <option value="gop-y">Góp ý</option>
-                            <option value="danh-gia">Đánh giá</option>
-                            <option value="hoi-dap">Hỏi đáp</option>
-                            <option value="khac">Khác</option>
+                            <option value="">Select category</option>
+                            <option value="suggestion">Suggestion</option>
+                            <option value="review">Review</option>
+                            <option value="question">Q&A</option>
+                            <option value="other">Other</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="comment">Ý kiến của bạn:</label>
-                        <textarea id="comment" placeholder="Chia sẻ ý kiến, đánh giá hoặc góp ý của bạn..." required></textarea>
+                        <label for="comment">Your Feedback:</label>
+                        <textarea id="comment" placeholder="Share your opinions, reviews or feedback..." required></textarea>
                     </div>
-                    
+
                     <div class="privacy-notice">
-                        <h3><i class="fas fa-lock"></i> Cam kết bảo vệ dữ liệu</h3>
-                        <p>Thông tin cá nhân của bạn sẽ được bảo vệ và chỉ sử dụng cho mục đích quản lý ý kiến. Chúng tôi không chia sẻ thông tin với bên thứ ba.</p>
+                        <h3><i class="fas fa-lock"></i> Data Protection Commitment</h3>
+                        <p>Your personal information will be protected and used only for feedback management purposes. We do not share information with third parties.</p>
                     </div>
-                    
+
                     <button type="submit" class="btn">
-                        <i class="fas fa-paper-plane"></i> Gửi Ý Kiến
+                        <i class="fas fa-paper-plane"></i> Submit Feedback
                     </button>
                 </form>
             </section>
-            
+
             <section class="comments-section">
-                <h2><i class="fas fa-comments"></i> Ý Kiến Từ Người Dùng</h2>
-                
+                <h2><i class="fas fa-comments"></i> Feedback From Users</h2>
+
                 <div class="comment-stats">
                     <div class="stat-box">
                         <div class="stat-number" id="totalComments">0</div>
-                        <div class="stat-label">Tổng số ý kiến</div>
+                        <div class="stat-label">Total feedback</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-number" id="todayComments">0</div>
-                        <div class="stat-label">Ý kiến hôm nay</div>
+                        <div class="stat-label">Today's feedback</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-number" id="countryCount">0</div>
-                        <div class="stat-label">Quốc gia</div>
+                        <div class="stat-label">Countries</div>
                     </div>
                 </div>
-                
+
                 <div class="filter-controls">
                     <select id="filterCategory">
-                        <option value="">Tất cả danh mục</option>
-                        <option value="gop-y">Góp ý</option>
-                        <option value="danh-gia">Đánh giá</option>
-                        <option value="hoi-dap">Hỏi đáp</option>
-                        <option value="khac">Khác</option>
+                        <option value="">All categories</option>
+                        <option value="suggestion">Suggestion</option>
+                        <option value="review">Review</option>
+                        <option value="question">Q&A</option>
+                        <option value="other">Other</option>
                     </select>
-                    
+
                     <select id="filterCountry">
-                        <option value="">Tất cả quốc gia</option>
+                        <option value="">All countries</option>
                     </select>
 
                     <select id="sortComments">
-                        <option value="newest">Mới nhất</option>
-                        <option value="oldest">Cũ nhất</option>
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
                     </select>
                 </div>
-                
+
                 <div id="commentsList">
                     <div class="no-comments">
                         <i class="fas fa-comment-slash"></i><br>
-                        Chưa có ý kiến nào. Hãy là người đầu tiên chia sẻ!
+                        No feedback yet. Be the first to share!
                     </div>
                 </div>
             </section>
         </div>
-        
+
         <section class="admin-section">
-            <h2><i class="fas fa-user-shield"></i> Khu vực Quản trị</h2>
-            
+            <h2><i class="fas fa-user-shield"></i> Admin Area</h2>
+
             <div class="password-protected">
-                <p><i class="fas fa-lock"></i> Khu vực này được bảo vệ bằng mật khẩu. Chỉ quản trị viên mới có thể truy cập.</p>
+                <p><i class="fas fa-lock"></i> This area is password protected. Only administrators can access.</p>
                 <div class="form-group">
-                    <label for="adminPassword">Mật khẩu quản trị:</label>
-                    <input type="password" id="adminPassword" placeholder="Nhập mật khẩu quản trị">
+                    <label for="adminPassword">Admin password:</label>
+                    <input type="password" id="adminPassword" placeholder="Enter admin password">
                 </div>
                 <button id="adminLogin" class="btn">
-                    <i class="fas fa-sign-in-alt"></i> Đăng nhập quản trị
+                    <i class="fas fa-sign-in-alt"></i> Admin Login
                 </button>
             </div>
-            
+
             <div id="adminPanel" style="display: none;">
                 <div class="admin-controls">
                     <button id="exportComments" class="btn btn-secondary">
-                        <i class="fas fa-download"></i> Xuất dữ liệu
+                        <i class="fas fa-download"></i> Export Data
                     </button>
                     <button id="deleteAllComments" class="btn btn-danger">
-                        <i class="fas fa-trash"></i> Xóa tất cả
+                        <i class="fas fa-trash"></i> Delete All
                     </button>
                 </div>
-                
+
                 <div class="admin-stats">
-                    <h3>Thống kê dữ liệu</h3>
+                    <h3>Data Statistics</h3>
                     <div id="adminStats"></div>
                 </div>
             </div>
         </section>
-        
+
         <footer>
-            <p><i class="fas fa-shield-alt"></i> © 2023 Trang Ý Kiến Người Dùng. Tất cả dữ liệu được bảo vệ theo chính sách riêng tư.</p>
+            <p><i class="fas fa-shield-alt"></i> © 2025 User Feedback Page. All data is protected according to privacy policy.</p>
         </footer>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-    <script>
-        // JavaScript sẽ được thêm ở phần tiếp theo
-    </script>
-<!-- Footer -->
-<div class="footer">
-    Bản quyền © 2025 thuộc về Nguyen Bac Son. | 
-    <a href="https://nguyenbacson.io.vn/privacy-policy.html">Chính sách bảo mật</a>
-</div>
-</body>
-</html>
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-    background-color: #f5f7fa;
-    color: #333;
-    line-height: 1.6;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-header {
-    text-align: center;
-    padding: 30px 0;
-    background: linear-gradient(135deg, #1a6b3a 0%, #2c9c5c 100%);
-    color: white;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    position: relative;
-    overflow: hidden;
-}
-
-.privacy-badge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-}
-
-.subtitle {
-    font-size: 1.2rem;
-    opacity: 0.9;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.content {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-}
-
-.form-section {
-    flex: 1;
-    min-width: 300px;
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-}
-
-.comments-section {
-    flex: 2;
-    min-width: 300px;
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-}
-
-.admin-section {
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    margin-top: 30px;
-    border-left: 4px solid #e74c3c;
-}
-
-h2 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #f0f0f0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-h2 i {
-    color: #1a6b3a;
-}
-
-.form-group {
-    margin-bottom: 20px;
-    position: relative;
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #2c3e50;
-}
-
-input, textarea, select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: border 0.3s;
-}
-
-input:focus, textarea:focus, select:focus {
-    border-color: #3498db;
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-}
-
-textarea {
-    min-height: 150px;
-    resize: vertical;
-}
-
-.btn {
-    background: linear-gradient(135deg, #1a6b3a 0%, #2c9c5c 100%);
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: all 0.3s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.btn-secondary {
-    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
-}
-
-.btn-danger {
-    background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
-}
-
-.comment {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border-left: 4px solid #3498db;
-    transition: transform 0.3s;
-    position: relative;
-}
-
-.comment:hover {
-    transform: translateX(5px);
-}
-
-.comment-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.comment-author {
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-.comment-date {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
-
-.comment-content {
-    color: #34495e;
-    margin-bottom: 10px;
-}
-
-.comment-category {
-    display: inline-block;
-    background: #eaf2f8;
-    color: #3498db;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    margin-top: 5px;
-}
-
-.comment-location {
-    display: inline-block;
-    background: #e8f6f3;
-    color: #27ae60;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    margin-top: 5px;
-    margin-left: 5px;
-}
-
-.no-comments {
-    text-align: center;
-    color: #7f8c8d;
-    padding: 30px;
-    font-style: italic;
-}
-
-.privacy-notice {
-    background: #eaf7ff;
-    border-left: 4px solid #3498db;
-    padding: 15px;
-    border-radius: 4px;
-    margin-top: 20px;
-    font-size: 0.9rem;
-}
-
-.privacy-notice h3 {
-    color: #2c3e50;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.filter-controls {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
-
-.filter-controls select, .filter-controls input {
-    flex: 1;
-    min-width: 150px;
-}
-
-.admin-controls {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-    flex-wrap: wrap;
-}
-
-.comment-stats {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
-
-.stat-box {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    flex: 1;
-    min-width: 120px;
-    text-align: center;
-    border-top: 4px solid #3498db;
-}
-
-.stat-number {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-.stat-label {
-    font-size: 0.9rem;
-    color: #7f8c8d;
-}
-
-footer {
-    text-align: center;
-    margin-top: 40px;
-    padding: 20px;
-    color: #7f8c8d;
-    border-top: 1px solid #eee;
-}
-
-.password-protected {
-    background: #fff3cd;
-    border: 1px solid #ffeaa7;
-    padding: 15px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-}
-
-/* International Telephone Input Styles */
-.iti {
-    width: 100%;
-    margin-bottom: 5px;
-}
-
-.iti__flag {
-    background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/img/flags.png");
-}
-
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .iti__flag {
-        background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/img/flags@2x.png");
-    }
-}
-
-.iti__selected-flag {
-    background-color: #f8f9fa;
-    border-radius: 6px 0 0 6px;
-    padding: 0 8px;
-}
-
-.iti__country-list {
-    border-radius: 6px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.hide {
-    display: none;
-}
-
-#valid-msg {
-    color: #27ae60;
-    position: absolute;
-    right: 10px;
-    top: 38px;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-#error-msg {
-    color: #e74c3c;
-    position: absolute;
-    right: 10px;
-    top: 38px;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.phone-info {
-    margin-top: 5px;
-}
-
-.phone-info small {
-    color: #7f8c8d;
-    font-style: italic;
-}
-
-.comment-stats-detailed {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-.comment-stats-detailed h3 {
-    color: #2c3e50;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.stat-category {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    margin-bottom: 8px;
-    background: white;
-    border-radius: 6px;
-    border-left: 4px solid #3498db;
-}
-
-.category-name {
-    font-weight: 600;
-    color: #2c3e50;
-}
-
-.category-count {
-    color: #1a6b3a;
-    font-weight: bold;
-}
-
-.total-filtered {
-    background: #eaf7ff;
-    padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.country-stat {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    margin-bottom: 5px;
-    background: white;
-    border-radius: 4px;
-}
-
-.phone-preview {
-    background: #e8f6f3;
-    padding: 8px 12px;
-    border-radius: 4px;
-    margin-top: 5px;
-    font-size: 0.9rem;
-    color: #27ae60;
-}
-
-@media (max-width: 768px) {
-    .content {
-        flex-direction: column;
-    }
-    
-    h1 {
-        font-size: 2rem;
-    }
-    
-    .filter-controls, .admin-controls {
-        flex-direction: column;
-    }
-    
-    .comment-stats {
-        flex-direction: column;
-    }
-    
-    .stat-box {
-        min-width: auto;
-    }
-    
-    .iti {
-        font-size: 14px;
-    }
-}
-.footer {
-    background-color: #f8f9fa;
-    padding: 15px 20px;
-    border-top: 1px solid #e9ecef;
-    text-align: center;
-    font-size: 14px;
-    color: #6c757d;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    z-index: 1000;
-}
-
-.footer a {
-    color: #007bff;
-    text-decoration: none;
-    margin: 0 10px;
-}
-
-.footer a:hover {
-    text-decoration: underline;
-}
-
-body {
-    margin-bottom: 70px;
-}
-</style>
+    <div class="footer">
+        Bản quyền © 2025 thuộc về Nguyen Bac Son. | 
+        <a href="https://nguyenbacson.io.vn/privacy-policy.html">Chính Sách Bảo Mật</a>
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 <script>
-// Dữ liệu quốc gia cơ bản
+// Country data matching phone input
 const allCountries = [
-    { code: 'VN', name: 'Việt Nam', states: ['Hà Nội', 'Hồ Chí Minh', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'An Giang', 'Bà Rịa - Vũng Tàu', 'Bắc Giang', 'Bắc Kạn', 'Bạc Liêu', 'Bắc Ninh', 'Bến Tre', 'Bình Định', 'Bình Dương', 'Bình Phước', 'Bình Thuận', 'Cà Mau', 'Cao Bằng', 'Đắk Lắk', 'Đắk Nông', 'Điện Biên', 'Đồng Nai', 'Đồng Tháp', 'Gia Lai', 'Hà Giang', 'Hà Nam', 'Hà Tĩnh', 'Hải Dương', 'Hậu Giang', 'Hòa Bình', 'Hưng Yên', 'Khánh Hòa', 'Kiên Giang', 'Kon Tum', 'Lai Châu', 'Lâm Đồng', 'Lạng Sơn', 'Lào Cai', 'Long An', 'Nam Định', 'Nghệ An', 'Ninh Bình', 'Ninh Thuận', 'Phú Thọ', 'Phú Yên', 'Quảng Bình', 'Quảng Nam', 'Quảng Ngãi', 'Quảng Ninh', 'Quảng Trị', 'Sóc Trăng', 'Sơn La', 'Tây Ninh', 'Thái Bình', 'Thái Nguyên', 'Thanh Hóa', 'Thừa Thiên Huế', 'Tiền Giang', 'Trà Vinh', 'Tuyên Quang', 'Vĩnh Long', 'Vĩnh Phúc', 'Yên Bái'] },
+    { code: 'VN', name: 'Vietnam', states: ['Hanoi', 'Ho Chi Minh', 'Da Nang', 'Hai Phong', 'Can Tho', 'An Giang', 'Ba Ria - Vung Tau', 'Bac Giang', 'Bac Kan', 'Bac Lieu', 'Bac Ninh', 'Ben Tre', 'Binh Dinh', 'Binh Duong', 'Binh Phuoc', 'Binh Thuan', 'Ca Mau', 'Cao Bang', 'Dak Lak', 'Dak Nong', 'Dien Bien', 'Dong Nai', 'Dong Thap', 'Gia Lai', 'Ha Giang', 'Ha Nam', 'Ha Tinh', 'Hai Duong', 'Hau Giang', 'Hoa Binh', 'Hung Yen', 'Khanh Hoa', 'Kien Giang', 'Kon Tum', 'Lai Chau', 'Lam Dong', 'Lang Son', 'Lao Cai', 'Long An', 'Nam Dinh', 'Nghe An', 'Ninh Binh', 'Ninh Thuan', 'Phu Tho', 'Phu Yen', 'Quang Binh', 'Quang Nam', 'Quang Ngai', 'Quang Ninh', 'Quang Tri', 'Soc Trang', 'Son La', 'Tay Ninh', 'Thai Binh', 'Thai Nguyen', 'Thanh Hoa', 'Thua Thien Hue', 'Tien Giang', 'Tra Vinh', 'Tuyen Quang', 'Vinh Long', 'Vinh Phuc', 'Yen Bai'] },
     { code: 'US', name: 'United States', states: ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'] },
     { code: 'CN', name: 'China', states: ['Beijing', 'Shanghai', 'Tianjin', 'Chongqing', 'Guangdong', 'Zhejiang', 'Jiangsu', 'Shandong', 'Henan', 'Hubei', 'Hunan', 'Sichuan', 'Anhui', 'Fujian', 'Heilongjiang', 'Jilin', 'Liaoning', 'Shaanxi', 'Shanxi', 'Hebei'] },
     { code: 'JP', name: 'Japan', states: ['Tokyo', 'Osaka', 'Kyoto', 'Hokkaido', 'Aichi', 'Chiba', 'Fukuoka', 'Hyogo', 'Kanagawa', 'Saitama'] },
@@ -699,8 +571,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const countrySelect = document.getElementById('country');
     const stateSelect = document.getElementById('state');
     const phoneInputField = document.getElementById('phone');
-    
-    // Khởi tạo International Telephone Input
+
+    // Initialize International Telephone Input
     const phoneInput = window.intlTelInput(phoneInputField, {
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         separateDialCode: true,
@@ -714,11 +586,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Các biến để validate số điện thoại
+    // Variables for phone validation
     const validMsg = document.getElementById("valid-msg");
     const errorMsg = document.getElementById("error-msg");
 
-    // Validate số điện thoại real-time
+    // Real-time phone number validation
     function validatePhoneNumber() {
         if (phoneInput.isValidNumber()) {
             validMsg.classList.remove("hide");
@@ -732,12 +604,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Event listeners cho số điện thoại
+    // Event listeners for phone number
     phoneInputField.addEventListener('input', validatePhoneNumber);
     phoneInputField.addEventListener('blur', validatePhoneNumber);
     phoneInputField.addEventListener('countrychange', validatePhoneNumber);
 
-    // Cơ chế đánh lừa mật khẩu
+    // Password mechanism
     function getRealPassword() {
         const part1 = String.fromCharCode(64); // @
         const part2 = "Son";
@@ -751,7 +623,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return input === realPassword;
     }
 
-    // Khởi tạo danh sách quốc gia
+    // Initialize country list
     function initializeCountries() {
         allCountries.forEach(country => {
             const option = document.createElement('option');
@@ -766,11 +638,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Cập nhật danh sách tỉnh/thành phố khi chọn quốc gia
+    // Update state/province list when country is selected
     countrySelect.addEventListener('change', function() {
         const selectedCountry = allCountries.find(c => c.code === this.value);
-        stateSelect.innerHTML = '<option value="">Chọn tỉnh/thành phố</option>';
-        
+        stateSelect.innerHTML = '<option value="">Select state/province</option>';
+
         if (selectedCountry) {
             selectedCountry.states.forEach(state => {
                 const option = document.createElement('option');
@@ -778,30 +650,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 option.textContent = state;
                 stateSelect.appendChild(option);
             });
-            
-            // Tự động cập nhật mã vùng điện thoại khi chọn quốc gia
+
+            // Automatically update phone area code when country is selected
             phoneInput.setCountry(selectedCountry.code);
             validatePhoneNumber();
         }
     });
 
-    // Tải các ý kiến từ localStorage khi trang được tải
+    // Load comments from localStorage when page loads
     initializeCountries();
     loadComments();
     updateStats();
 
-    // Xử lý sự kiện gửi form
+    // Handle form submission
     commentForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        // Validate số điện thoại
+
+        // Validate phone number
         if (!validatePhoneNumber()) {
-            alert('Vui lòng nhập số điện thoại hợp lệ!');
+            alert('Please enter a valid phone number!');
             phoneInputField.focus();
             return;
         }
 
-        // Lấy dữ liệu từ form
+        // Get data from form
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const phone = phoneInput.getNumber();
@@ -810,8 +682,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const state = stateSelect.value;
         const category = document.getElementById('category').value;
         const comment = document.getElementById('comment').value;
-        
-        // Tạo đối tượng ý kiến mới
+
+        // Create new comment object
         const newComment = {
             id: Date.now(),
             name: name,
@@ -822,33 +694,33 @@ document.addEventListener('DOMContentLoaded', function() {
             state: state,
             category: category,
             comment: comment,
-            date: new Date().toLocaleString('vi-VN'),
+            date: new Date().toLocaleString('en-US'),
             dateObj: new Date()
         };
-        
-        // Lưu ý kiến mới
+
+        // Save new comment
         saveComment(newComment);
-        
+
         // Reset form
         commentForm.reset();
         phoneInput.setNumber("");
-        stateSelect.innerHTML = '<option value="">Chọn tỉnh/thành phố</option>';
+        stateSelect.innerHTML = '<option value="">Select state/province</option>';
         validMsg.classList.add("hide");
         errorMsg.classList.add("hide");
-        
-        // Cập nhật thống kê
+
+        // Update statistics
         updateStats();
-        
-        // Hiển thị thông báo
-        alert('Cảm ơn bạn đã gửi ý kiến! Ý kiến của bạn đã được lưu an toàn.');
+
+        // Show notification
+        alert('Thank you for your feedback! Your feedback has been securely saved.');
     });
 
-    // Xử lý bộ lọc và tìm kiếm
+    // Handle filters and search
     filterCategory.addEventListener('change', filterAndSortComments);
     filterCountry.addEventListener('change', filterAndSortComments);
     sortComments.addEventListener('change', filterAndSortComments);
 
-    // Xử lý đăng nhập quản trị
+    // Handle admin login
     adminLogin.addEventListener('click', function() {
         const password = document.getElementById('adminPassword').value;
         if (validatePassword(password)) {
@@ -856,283 +728,285 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('.password-protected').style.display = 'none';
             updateAdminStats();
         } else {
-            alert('Mật khẩu không đúng!');
+            alert('Incorrect password!');
         }
     });
 
-    // Xuất dữ liệu
+    // Export data
     exportComments.addEventListener('click', function() {
         const comments = JSON.parse(localStorage.getItem('userComments')) || [];
         if (comments.length === 0) {
-            alert('Không có dữ liệu để xuất!');
+            alert('No data to export!');
             return;
         }
-        
-        // Tạo nội dung file CSV
-        let csvContent = "Tên,Email,Số điện thoại,Quốc gia,Tỉnh/Thành phố,Danh mục,Ý kiến,Ngày gửi\n";
+
+        // Create CSV file content
+        let csvContent = "Name,Email,Phone Number,Country,State/Province,Category,Feedback,Submission Date\n";
         comments.forEach(comment => {
             csvContent += `"${comment.name}","${comment.email}","${comment.phone}","${comment.country}","${comment.state}","${getCategoryName(comment.category)}","${comment.comment.replace(/"/g, '""')}","${comment.date}"\n`;
         });
-        
-        // Tạo file và tải về
+
+        // Create file and download
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.setAttribute("href", url);
-        link.setAttribute("download", "y_kien_nguoi_dung.csv");
+        link.setAttribute("download", "user_feedback.csv");
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     });
 
-    // Xóa tất cả ý kiến
+    // Delete all comments
     deleteAllComments.addEventListener('click', function() {
-        if (confirm('Bạn có chắc chắn muốn xóa TẤT CẢ ý kiến? Hành động này không thể hoàn tác!')) {
+        if (confirm('Are you sure you want to delete ALL feedback? This action cannot be undone!')) {
             localStorage.removeItem('userComments');
-            commentsList.innerHTML = '<div class="no-comments"><i class="fas fa-comment-slash"></i><br>Chưa có ý kiến nào. Hãy là người đầu tiên chia sẻ!</div>';
+            commentsList.innerHTML = '<div class="no-comments"><i class="fas fa-comment-slash"></i><br>No feedback yet. Be the first to share!</div>';
             updateStats();
             updateAdminStats();
-            alert('Đã xóa tất cả ý kiến!');
+            alert('All feedback has been deleted!');
         }
     });
-    // Hàm lưu ý kiến vào localStorage
+    // Function to save comment to localStorage
     function saveComment(comment) {
         let comments = JSON.parse(localStorage.getItem('userComments')) || [];
         comments.push(comment);
         localStorage.setItem('userComments', JSON.stringify(comments));
     }
 
-    // Hàm tải các ý kiến từ localStorage
+    // Function to load comments from localStorage
     function loadComments() {
         const comments = JSON.parse(localStorage.getItem('userComments')) || [];
-        
+
         if (comments.length === 0) {
-            commentsList.innerHTML = '<div class="no-comments"><i class="fas fa-comment-slash"></i><br>Chưa có ý kiến nào. Hãy là người đầu tiên chia sẻ!</div>';
+            commentsList.innerHTML = '<div class="no-comments"><i class="fas fa-comment-slash"></i><br>No feedback yet. Be the first to share!</div>';
             return;
         }
-        
-        // Hiển thị thống kê thay vì danh sách ý kiến
+
+        // Display statistics instead of comment list
         displayCommentStats();
     }
 
-    // Hàm hiển thị thống kê ý kiến
+    // Function to display comment statistics
     function displayCommentStats() {
         const comments = JSON.parse(localStorage.getItem('userComments')) || [];
-        
+
         if (comments.length === 0) {
-            commentsList.innerHTML = '<div class="no-comments"><i class="fas fa-comment-slash"></i><br>Chưa có ý kiến nào. Hãy là người đầu tiên chia sẻ!</div>';
+            commentsList.innerHTML = '<div class="no-comments"><i class="fas fa-comment-slash"></i><br>No feedback yet. Be the first to share!</div>';
             return;
         }
-        
-        // Thống kê theo danh mục
+
+        // Statistics by category
         const statsByCategory = {};
         const statsByCountry = {};
-        
+
         comments.forEach(comment => {
-            // Thống kê danh mục
+            // Category statistics
             if (!statsByCategory[comment.category]) {
                 statsByCategory[comment.category] = 0;
             }
             statsByCategory[comment.category]++;
-            
-            // Thống kê quốc gia
+
+            // Country statistics
             if (!statsByCountry[comment.country]) {
                 statsByCountry[comment.country] = 0;
             }
             statsByCountry[comment.country]++;
         });
-        
-        // Tạo HTML hiển thị thống kê
+
+        // Create HTML to display statistics
         let statsHTML = '<div class="comment-stats-detailed">';
-        statsHTML += '<h3><i class="fas fa-chart-bar"></i> Thống kê ý kiến</h3>';
-        
-        // Hiển thị thống kê theo danh mục
-        statsHTML += '<h4><i class="fas fa-tags"></i> Theo danh mục:</h4>';
+        statsHTML += '<h3><i class="fas fa-chart-bar"></i> Feedback Statistics</h3>';
+
+        // Display statistics by category
+        statsHTML += '<h4><i class="fas fa-tags"></i> By Category:</h4>';
         for (const category in statsByCategory) {
             statsHTML += `
                 <div class="stat-category">
                     <span class="category-name">${getCategoryName(category)}</span>
-                    <span class="category-count">${statsByCategory[category]} ý kiến</span>
+                    <span class="category-count">${statsByCategory[category]} feedback</span>
                 </div>
             `;
         }
-        
-        // Hiển thị thống kê theo quốc gia
-        statsHTML += '<h4 style="margin-top: 20px;"><i class="fas fa-globe"></i> Theo quốc gia:</h4>';
+
+        // Display statistics by country
+        statsHTML += '<h4 style="margin-top: 20px;"><i class="fas fa-globe"></i> By Country:</h4>';
         for (const country in statsByCountry) {
             statsHTML += `
                 <div class="country-stat">
                     <span class="category-name">${country}</span>
-                    <span class="category-count">${statsByCountry[country]} ý kiến</span>
+                    <span class="category-count">${statsByCountry[country]} feedback</span>
                 </div>
             `;
         }
-        
+
         statsHTML += '</div>';
         commentsList.innerHTML = statsHTML;
     }
 
-    // Hàm lọc và sắp xếp ý kiến
+    // Function to filter and sort comments
     function filterAndSortComments() {
         const comments = JSON.parse(localStorage.getItem('userComments')) || [];
         const categoryFilter = filterCategory.value;
         const countryFilter = filterCountry.value;
         const sortOrder = sortComments.value;
-        
-        // Lọc theo danh mục
+
+        // Filter by category
         let filteredComments = comments;
         if (categoryFilter) {
             filteredComments = filteredComments.filter(comment => comment.category === categoryFilter);
         }
-        
-        // Lọc theo quốc gia
+
+        // Filter by country
         if (countryFilter) {
             filteredComments = filteredComments.filter(comment => comment.countryCode === countryFilter);
         }
-        
-        // Sắp xếp
+
+        // Sort
         if (sortOrder === 'newest') {
             filteredComments.sort((a, b) => b.dateObj - a.dateObj);
         } else {
             filteredComments.sort((a, b) => a.dateObj - b.dateObj);
         }
-        
-        // Hiển thị thống kê sau khi lọc
+
+        // Display statistics after filtering
         displayFilteredStats(filteredComments);
     }
 
-    // Hàm hiển thị thống kê sau khi lọc
+    // Function to display statistics after filtering
     function displayFilteredStats(comments) {
         if (comments.length === 0) {
-            commentsList.innerHTML = '<div class="no-comments"><i class="fas fa-search"></i><br>Không tìm thấy ý kiến nào phù hợp với bộ lọc.</div>';
+            commentsList.innerHTML = '<div class="no-comments"><i class="fas fa-search"></i><br>No feedback found matching the filter.</div>';
             return;
         }
-        
-        // Thống kê theo danh mục
+
+        // Statistics by category
         const statsByCategory = {};
         const statsByCountry = {};
-        
+
         comments.forEach(comment => {
-            // Thống kê danh mục
+            // Category statistics
             if (!statsByCategory[comment.category]) {
                 statsByCategory[comment.category] = 0;
             }
             statsByCategory[comment.category]++;
-            
-            // Thống kê quốc gia
+
+            // Country statistics
             if (!statsByCountry[comment.country]) {
                 statsByCountry[comment.country] = 0;
             }
             statsByCountry[comment.country]++;
         });
-        
-        // Tạo HTML hiển thị thống kê
+
+        // Create HTML to display statistics
         let statsHTML = '<div class="comment-stats-detailed">';
-        statsHTML += '<h3><i class="fas fa-chart-bar"></i> Thống kê ý kiến</h3>';
-        statsHTML += `<p class="total-filtered">Tìm thấy <strong>${comments.length}</strong> ý kiến phù hợp</p>`;
-        
-        // Hiển thị thống kê theo danh mục
-        statsHTML += '<h4><i class="fas fa-tags"></i> Theo danh mục:</h4>';
+        statsHTML += '<h3><i class="fas fa-chart-bar"></i> Feedback Statistics</h3>';
+        statsHTML += `<p class="total-filtered">Found <strong>${comments.length}</strong> matching feedback</p>`;
+
+        // Display statistics by category
+        statsHTML += '<h4><i class="fas fa-tags"></i> By Category:</h4>';
         for (const category in statsByCategory) {
             statsHTML += `
                 <div class="stat-category">
                     <span class="category-name">${getCategoryName(category)}</span>
-                    <span class="category-count">${statsByCategory[category]} ý kiến</span>
+                    <span class="category-count">${statsByCategory[category]} feedback</span>
                 </div>
             `;
         }
-        
-        // Hiển thị thống kê theo quốc gia
-        statsHTML += '<h4 style="margin-top: 20px;"><i class="fas fa-globe"></i> Theo quốc gia:</h4>';
+
+        // Display statistics by country
+        statsHTML += '<h4 style="margin-top: 20px;"><i class="fas fa-globe"></i> By Country:</h4>';
         for (const country in statsByCountry) {
             statsHTML += `
                 <div class="country-stat">
                     <span class="category-name">${country}</span>
-                    <span class="category-count">${statsByCountry[country]} ý kiến</span>
+                    <span class="category-count">${statsByCountry[country]} feedback</span>
                 </div>
             `;
         }
-        
+
         statsHTML += '</div>';
         commentsList.innerHTML = statsHTML;
     }
 
-    // Hàm cập nhật thống kê tổng quan
+    // Function to update overview statistics
     function updateStats() {
         const comments = JSON.parse(localStorage.getItem('userComments')) || [];
         const today = new Date().toDateString();
         const todayComments = comments.filter(comment => 
             new Date(comment.dateObj).toDateString() === today
         ).length;
-        
-        // Đếm số quốc gia duy nhất
+
+        // Count unique countries
         const uniqueCountries = [...new Set(comments.map(comment => comment.country))];
-        
+
         document.getElementById('totalComments').textContent = comments.length;
         document.getElementById('todayComments').textContent = todayComments;
         document.getElementById('countryCount').textContent = uniqueCountries.length;
-        
-        // Cập nhật hiển thị thống kê chi tiết
+
+        // Update detailed statistics display
         displayCommentStats();
     }
 
-    // Hàm cập nhật thống kê quản trị
+    // Function to update admin statistics
     function updateAdminStats() {
         const comments = JSON.parse(localStorage.getItem('userComments')) || [];
         const stats = {
             total: comments.length,
             byCategory: {},
-            byCountry: {},
-            byPhoneCode: {}
+            byCountry: {}
         };
-        
+
         comments.forEach(comment => {
-            // Thống kê danh mục
+            // Category statistics
             if (!stats.byCategory[comment.category]) {
                 stats.byCategory[comment.category] = 0;
             }
             stats.byCategory[comment.category]++;
-            
-            // Thống kê quốc gia
+
+            // Country statistics
             if (!stats.byCountry[comment.country]) {
                 stats.byCountry[comment.country] = 0;
             }
             stats.byCountry[comment.country]++;
         });
-        
-        let statsHTML = `<p>Tổng số ý kiến: <strong>${stats.total}</strong></p>`;
-        statsHTML += '<p>Phân bổ theo danh mục:</p><ul>';
-        
+
+        let statsHTML = `<p>Total feedback: <strong>${stats.total}</strong></p>`;
+        statsHTML += '<p>Distribution by category:</p><ul>';
+
         for (const category in stats.byCategory) {
             statsHTML += `<li>${getCategoryName(category)}: ${stats.byCategory[category]}</li>`;
         }
-        
-        statsHTML += '</ul><p>Phân bổ theo quốc gia:</p><ul>';
-        
+
+        statsHTML += '</ul><p>Distribution by country:</p><ul>';
+
         for (const country in stats.byCountry) {
             statsHTML += `<li>${country}: ${stats.byCountry[country]}</li>`;
         }
-        
+
         statsHTML += '</ul>';
         document.getElementById('adminStats').innerHTML = statsHTML;
     }
-    
-    // Hàm lấy tên danh mục
+
+    // Function to get category name
     function getCategoryName(category) {
         const categories = {
-            'gop-y': 'Góp ý',
-            'danh-gia': 'Đánh giá',
-            'hoi-dap': 'Hỏi đáp',
-            'khac': 'Khác'
+            'suggestion': 'Suggestion',
+            'review': 'Review',
+            'question': 'Q&A',
+            'other': 'Other'
         };
-        
-        return categories[category] || 'Không xác định';
+
+        return categories[category] || 'Unknown';
     }
 });
-// JavaScript cho footer (nếu cần thêm tính năng)
+
+// JavaScript for footer (if additional features needed)
 document.addEventListener('DOMContentLoaded', function() {
-    // Code xử lý cho footer nếu cần
+    // Code for footer if needed
     console.log('Footer loaded');
 });
 </script>
+</body>
+</html>
