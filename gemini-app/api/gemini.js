@@ -53,6 +53,8 @@ module.exports = async (req, res) => {
     let errorMessage = 'Internal server error';
     if (error.message.includes('API_KEY_INVALID')) {
       errorMessage = 'Invalid API Key';
+    } else if (error.message.includes('QUOTA_EXCEEDED')) {
+      errorMessage = 'API quota exceeded';
     }
 
     res.status(500).json({ 
