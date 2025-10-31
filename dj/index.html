@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LED Nguyen Bac Son - Hiệu ứng Vũ Trường</title>
+    <title>QUẺ BÓI - LED VŨ TRƯỜNG</title>
     <style>
         * {
             margin: 0;
@@ -35,40 +35,49 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
-            background: rgba(0,0,0,0.8);
-            padding: 15px 25px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.85);
+            padding: 20px 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
             text-align: center;
+            box-shadow: 0 0 30px rgba(255,0,128,0.3);
         }
         
         .title {
-            font-size: 24px;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #ff0080, #00ffcc);
+            font-size: 28px;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #ff0080, #00ffcc, #ff0080);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: bold;
+            text-shadow: 0 0 20px rgba(255,0,128,0.5);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 10px;
         }
         
         button {
             background: linear-gradient(45deg, #ff0080, #00ffcc);
             border: none;
             color: white;
-            padding: 12px 24px;
-            margin: 5px;
-            border-radius: 25px;
+            padding: 15px 30px;
+            border-radius: 30px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
-            transition: all 0.2s;
-            min-width: 120px;
+            transition: all 0.3s ease;
+            min-width: 140px;
+            box-shadow: 0 0 20px rgba(255,0,128,0.3);
         }
         
         button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(255,0,128,0.5);
+            transform: scale(1.08);
+            box-shadow: 0 0 30px rgba(255,0,128,0.6);
         }
         
         button:active {
@@ -76,10 +85,11 @@
         }
         
         .status {
-            margin-top: 8px;
-            font-size: 12px;
+            margin-top: 12px;
+            font-size: 14px;
             color: #00ffcc;
             opacity: 0.9;
+            font-weight: 500;
         }
         
         /* Canvas tối ưu */
@@ -92,7 +102,7 @@
             z-index: 1;
         }
         
-        /* LED strips - tối ưu hiệu suất */
+        /* LED strips */
         .led-container {
             position: absolute;
             left: 0;
@@ -100,38 +110,42 @@
             z-index: 2;
             display: flex;
             justify-content: space-around;
+            padding: 0 20px;
         }
         
         .led-top {
-            top: 80px;
+            top: 120px;
         }
         
         .led-bottom {
-            bottom: 60px;
+            bottom: 80px;
         }
         
         .led {
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background: #222;
-            transition: all 0.15s ease-out;
+            background: #1a1a1a;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             will-change: transform, background-color;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
         
-        /* Disco ball đơn giản */
+        /* Disco ball */
         .disco-ball {
             position: absolute;
-            top: 45%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #fff, #888 70%);
+            background: radial-gradient(circle at 35% 35%, #fff, #666 60%, #333 90%);
             z-index: 2;
-            animation: rotate 6s linear infinite;
-            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+            animation: rotate 8s linear infinite;
+            box-shadow: 
+                0 0 30px rgba(255,255,255,0.4),
+                inset -5px -5px 10px rgba(0,0,0,0.6);
         }
         
         @keyframes rotate {
@@ -139,32 +153,44 @@
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
         
-        /* Hiệu ứng đơn giản cho mobile */
-        .mobile-pulse {
+        /* Hiệu ứng nền */
+        .bg-effect {
             position: absolute;
-            width: 100px;
-            height: 100px;
             border-radius: 50%;
-            background: radial-gradient(circle, transparent 30%, rgba(255,0,128,0.1) 70%);
-            animation: mobilePulse 3s ease-out infinite;
+            background: radial-gradient(circle, transparent 10%, rgba(255,0,128,0.1) 40%);
+            animation: bgPulse 4s ease-in-out infinite alternate;
             z-index: 0;
         }
         
-        @keyframes mobilePulse {
-            0% { transform: scale(0.8); opacity: 0.5; }
-            50% { transform: scale(1.2); opacity: 0.2; }
-            100% { transform: scale(0.8); opacity: 0.5; }
+        @keyframes bgPulse {
+            0% { transform: scale(1); opacity: 0.3; }
+            100% { transform: scale(1.5); opacity: 0.1; }
         }
         
-        /* Loading indicator */
+        /* Loading */
         .loading {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             color: #00ffcc;
-            font-size: 18px;
+            font-size: 20px;
             z-index: 1000;
+            background: rgba(0,0,0,0.8);
+            padding: 20px 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Equalizer bars */
+        .eq-bar {
+            position: absolute;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(to top, #ff0080, #00ffcc);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.15s ease-out;
+            will-change: height;
         }
     </style>
 </head>
@@ -172,12 +198,14 @@
     <div class="container">
         <div class="controls">
             <div class="title">QUẺ BÓI - LED VŨ TRƯỜNG</div>
-            <button id="playBtn">🎵 BẬT NHẠC</button>
-            <button id="stopBtn">⏹️ DỪNG</button>
+            <div class="button-group">
+                <button id="playBtn">🎵 BẬT NHẠC</button>
+                <button id="stopBtn">⏹️ DỪNG</button>
+            </div>
             <div class="status" id="status">Nhấn BẬT NHẠC để bắt đầu</div>
         </div>
         
-        <div class="loading" id="loading">Đang tải nhạc...</div>
+        <div class="loading" id="loading">🎵 Đang tải nhạc Quẻ Bói...</div>
         
         <canvas id="visualizer"></canvas>
         
@@ -185,8 +213,13 @@
         <div class="led-container led-bottom" id="ledBottom"></div>
         
         <div class="disco-ball"></div>
-        <div class="mobile-pulse" style="top:30%;left:20%;"></div>
-        <div class="mobile-pulse" style="top:70%;left:80%;"></div>
+        
+        <!-- Hiệu ứng nền -->
+        <div class="bg-effect" style="top:20%;left:10%;width:300px;height:300px;animation-delay:0s;"></div>
+        <div class="bg-effect" style="top:60%;left:70%;width:400px;height:400px;animation-delay:2s;"></div>
+        
+        <!-- Equalizer bars container -->
+        <div id="eqContainer"></div>
     </div>
 
     <audio id="audio" preload="metadata">
@@ -194,13 +227,14 @@
     </audio>
 
     <script>
-        // ===== TỐI ƯU HÓA CAO =====
+        // ===== CẤU HÌNH TỐI ƯU =====
         const config = {
-            fftSize: 64,           // Rất thấp để tối ưu
-            smoothing: 0.7,        // Làm mượt
-            ledCount: 20,          // Ít LED hơn
-            barSkip: 3,            // Bỏ qua nhiều thanh
-            maxFPS: 30             // Giới hạn FPS
+            fftSize: 128,
+            smoothing: 0.8,        // Tăng smoothing để mượt hơn
+            ledCount: 24,
+            barCount: 40,          // Số thanh cố định
+            maxFPS: 30,
+            historySize: 5         // Làm mượt bằng history
         };
 
         // Cache DOM elements
@@ -212,7 +246,8 @@
             loading: document.getElementById('loading'),
             canvas: document.getElementById('visualizer'),
             ledTop: document.getElementById('ledTop'),
-            ledBottom: document.getElementById('ledBottom')
+            ledBottom: document.getElementById('ledBottom'),
+            eqContainer: document.getElementById('eqContainer')
         };
 
         const ctx = el.canvas.getContext('2d', { 
@@ -220,20 +255,24 @@
             desynchronized: true 
         });
 
-        // State management
+        // State với history để làm mượt
         let state = {
             audioContext: null,
             analyser: null,
             dataArray: null,
             animationId: null,
             isPlaying: false,
-            lastFrameTime: 0
+            lastFrameTime: 0,
+            volumeHistory: new Array(config.historySize).fill(0),
+            historyIndex: 0,
+            eqBars: []
         };
 
         // ===== KHỞI TẠO =====
         function init() {
             setupCanvas();
             createLEDs();
+            createEqualizerBars();
             preloadAudio();
             setupEventListeners();
         }
@@ -241,7 +280,12 @@
         function setupCanvas() {
             el.canvas.width = window.innerWidth;
             el.canvas.height = window.innerHeight;
-            ctx.fillStyle = '#000';
+            // Nền gradient tĩnh
+            const gradient = ctx.createLinearGradient(0, 0, el.canvas.width, el.canvas.height);
+            gradient.addColorStop(0, '#0f0c29');
+            gradient.addColorStop(0.5, '#302b63');
+            gradient.addColorStop(1, '#24243e');
+            ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, el.canvas.width, el.canvas.height);
         }
 
@@ -252,7 +296,7 @@
 
         function createLEDStrip(container) {
             container.innerHTML = '';
-            const count = Math.min(config.ledCount, Math.floor(window.innerWidth / 25));
+            const count = config.ledCount;
             
             for (let i = 0; i < count; i++) {
                 const led = document.createElement('div');
@@ -261,11 +305,29 @@
             }
         }
 
+        function createEqualizerBars() {
+            el.eqContainer.innerHTML = '';
+            state.eqBars = [];
+            const barWidth = 8;
+            const spacing = 4;
+            const totalWidth = (barWidth + spacing) * config.barCount - spacing;
+            const startX = (window.innerWidth - totalWidth) / 2;
+            
+            for (let i = 0; i < config.barCount; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'eq-bar';
+                bar.style.left = (startX + i * (barWidth + spacing)) + 'px';
+                bar.style.height = '10px';
+                el.eqContainer.appendChild(bar);
+                state.eqBars.push(bar);
+            }
+        }
+
         function preloadAudio() {
             el.audio.load();
             setTimeout(() => {
                 el.loading.style.display = 'none';
-            }, 2000);
+            }, 1500);
         }
 
         function setupEventListeners() {
@@ -274,7 +336,7 @@
             window.addEventListener('resize', handleResize);
         }
 
-        // ===== AUDIO HANDLING =====
+        // ===== XỬ LÝ AUDIO =====
         function initAudio() {
             try {
                 state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -292,13 +354,13 @@
                 
                 return true;
             } catch (error) {
-                console.error('Audio init error:', error);
-                updateStatus('❌ Lỗi audio', '#ff0080');
+                console.error('Lỗi audio:', error);
+                updateStatus('❌ Lỗi khởi tạo audio', '#ff0080');
                 return false;
             }
         }
 
-        // ===== RENDERING =====
+        // ===== RENDER MƯỢT MÀ =====
         function render(currentTime) {
             if (!state.isPlaying) return;
             
@@ -312,33 +374,71 @@
             if (!state.analyser || !state.dataArray) return;
             
             state.analyser.getByteFrequencyData(state.dataArray);
-            drawVisualizer();
+            drawSmoothVisualizer();
             updateLEDs();
+            updateEqualizer();
             
             state.animationId = requestAnimationFrame(render);
         }
 
-        function drawVisualizer() {
-            // Clear canvas nhanh
-            ctx.fillStyle = '#000';
+        function drawSmoothVisualizer() {
+            // Nền gradient
+            const gradient = ctx.createLinearGradient(0, 0, el.canvas.width, el.canvas.height);
+            gradient.addColorStop(0, 'rgba(15, 12, 41, 0.3)');
+            gradient.addColorStop(1, 'rgba(36, 36, 62, 0.3)');
+            ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, el.canvas.width, el.canvas.height);
             
-            const barWidth = (el.canvas.width / state.dataArray.length) * 3;
-            let x = 0;
+            const centerY = el.canvas.height / 2;
+            const maxAmplitude = el.canvas.height * 0.4;
             
-            // Vẽ ít thanh hơn
-            for (let i = 0; i < state.dataArray.length; i += config.barSkip) {
+            // Vẽ sóng âm thanh mượt mà
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            
+            for (let i = 0; i < state.dataArray.length; i++) {
                 const value = state.dataArray[i];
-                const barHeight = (value / 255) * el.canvas.height * 0.7;
                 
-                if (barHeight > 5) { // Chỉ vẽ thanh đủ lớn
-                    const hue = (i * 5 + Date.now() * 0.02) % 360;
-                    ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
-                    ctx.fillRect(x, el.canvas.height - barHeight, barWidth, barHeight);
+                // Làm mượt bằng cách lấy trung bình
+                const smoothValue = getSmoothedValue(value);
+                const x = (i / state.dataArray.length) * el.canvas.width;
+                const y = centerY + (smoothValue / 255 - 0.5) * maxAmplitude;
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
                 }
-                
-                x += barWidth + 2;
             }
+            
+            // Tạo gradient cho sóng
+            const waveGradient = ctx.createLinearGradient(0, 0, el.canvas.width, 0);
+            waveGradient.addColorStop(0, '#ff0080');
+            waveGradient.addColorStop(0.5, '#00ffcc');
+            waveGradient.addColorStop(1, '#ff0080');
+            
+            ctx.strokeStyle = waveGradient;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Đổ bóng cho sóng
+            ctx.shadowColor = '#00ffcc';
+            ctx.shadowBlur = 20;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+
+        function getSmoothedValue(currentValue) {
+            // Cập nhật history
+            state.volumeHistory[state.historyIndex] = currentValue;
+            state.historyIndex = (state.historyIndex + 1) % config.historySize;
+            
+            // Tính trung bình
+            let sum = 0;
+            for (let i = 0; i < config.historySize; i++) {
+                sum += state.volumeHistory[i];
+            }
+            return sum / config.historySize;
         }
 
         function updateLEDs() {
@@ -352,21 +452,46 @@
             
             for (let i = 0; i < ledCount; i++) {
                 const led = leds[i];
-                const dataIndex = Math.floor(i * state.dataArray.length / ledCount);
-                const intensity = state.dataArray[dataIndex] / 255;
+                const dataIndex = Math.floor((i / ledCount) * state.dataArray.length);
+                const intensity = getSmoothedValue(state.dataArray[dataIndex]) / 255;
                 
-                if (intensity > 0.2) {
-                    const hue = (i * 20 + Date.now() * 0.05) % 360;
-                    led.style.background = `hsl(${hue}, 100%, 50%)`;
-                    led.style.transform = `scale(${1 + intensity * 0.3})`;
+                if (intensity > 0.15) {
+                    const hue = (i * 15 + Date.now() * 0.03) % 360;
+                    const saturation = 80 + intensity * 20;
+                    const lightness = 40 + intensity * 30;
+                    
+                    led.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                    led.style.transform = `scale(${1 + intensity * 0.4})`;
+                    led.style.boxShadow = `0 0 ${10 + intensity * 20}px hsl(${hue}, 100%, 50%)`;
                 } else {
-                    led.style.background = '#222';
+                    led.style.background = '#1a1a1a';
                     led.style.transform = 'scale(1)';
+                    led.style.boxShadow = '0 0 10px rgba(0,0,0,0.5)';
                 }
             }
         }
 
-        // ===== EVENT HANDLERS =====
+        function updateEqualizer() {
+            const bars = state.eqBars;
+            const barCount = bars.length;
+            
+            for (let i = 0; i < barCount; i++) {
+                const bar = bars[i];
+                const dataIndex = Math.floor((i / barCount) * state.dataArray.length);
+                const intensity = getSmoothedValue(state.dataArray[dataIndex]) / 255;
+                const height = 10 + intensity * 150;
+                
+                bar.style.height = `${height}px`;
+                
+                // Gradient màu theo cường độ
+                const hue = (i * 18 + Date.now() * 0.02) % 360;
+                bar.style.background = `linear-gradient(to top, 
+                    hsl(${hue}, 100%, 50%), 
+                    hsl(${hue + 60}, 100%, 50%))`;
+            }
+        }
+
+        // ===== XỬ LÝ SỰ KIỆN =====
         async function handlePlay() {
             if (state.isPlaying) return;
             
@@ -385,7 +510,7 @@
                 state.animationId = requestAnimationFrame(render);
                 
             } catch (error) {
-                console.error('Play error:', error);
+                console.error('Lỗi phát nhạc:', error);
                 updateStatus('❌ Lỗi phát nhạc', '#ff0080');
             }
         }
@@ -409,9 +534,10 @@
         function handleResize() {
             setupCanvas();
             createLEDs();
+            createEqualizerBars();
         }
 
-        // ===== UTILITIES =====
+        // ===== TIỆN ÍCH =====
         function updateStatus(text, color) {
             el.status.textContent = text;
             el.status.style.color = color;
@@ -419,21 +545,31 @@
 
         function resetVisuals() {
             // Reset canvas
-            ctx.fillStyle = '#000';
+            const gradient = ctx.createLinearGradient(0, 0, el.canvas.width, el.canvas.height);
+            gradient.addColorStop(0, '#0f0c29');
+            gradient.addColorStop(0.5, '#302b63');
+            gradient.addColorStop(1, '#24243e');
+            ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, el.canvas.width, el.canvas.height);
             
             // Reset LEDs
             const allLEDs = document.querySelectorAll('.led');
             allLEDs.forEach(led => {
-                led.style.background = '#222';
+                led.style.background = '#1a1a1a';
                 led.style.transform = 'scale(1)';
+                led.style.boxShadow = '0 0 10px rgba(0,0,0,0.5)';
+            });
+            
+            // Reset equalizer
+            state.eqBars.forEach(bar => {
+                bar.style.height = '10px';
             });
         }
 
-        // ===== INITIALIZATION =====
+        // ===== KHỞI CHẠY =====
         window.addEventListener('load', init);
 
-        // Cleanup
+        // Dọn dẹp
         window.addEventListener('beforeunload', () => {
             if (state.animationId) cancelAnimationFrame(state.animationId);
             if (el.audio) {
@@ -442,7 +578,7 @@
             }
         });
 
-        // Touch support for mobile
+        // Hỗ trợ mobile
         document.addEventListener('touchstart', function() {
             if (state.audioContext && state.audioContext.state === 'suspended') {
                 state.audioContext.resume();
