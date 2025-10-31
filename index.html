@@ -32,17 +32,14 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-/* CONTAINER: Vị trí cố định, ưu tiên hiển thị */
 .custom-notification-container {
     position: fixed;
     bottom: 20px; 
     right: 20px;
     z-index: 9999;
 }
-
-/* TOAST: Cơ bản, nhẹ nhàng */
 .custom-toast {
-    background-color: #ffffff; /* Nền trắng */
+    background-color: #ffffff; 
     border: 1px solid #e0e0e0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     border-radius: 8px;
@@ -50,53 +47,40 @@
     margin-bottom: 15px;
     overflow: hidden; 
     font-family: Arial, sans-serif;
-    
-    /* Hiệu ứng trượt và ẩn/hiện */
     opacity: 0; 
     transform: translateX(100%); 
     transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
-
-/* Hiển thị thông báo */
 .custom-toast.show {
     opacity: 1;
     transform: translateX(0);
 }
-
-/* HÌNH ẢNH */
 .toast-image-link {
     display: block;
     cursor: pointer;
 }
-
 .toast-image {
     width: 100%;
     height: auto;
     max-height: 120px;
     object-fit: cover;
 }
-
-/* NỘI DUNG */
 .toast-content {
     padding: 10px 15px;
     color: #333;
     font-size: 14px;
 }
-
 .toast-title {
     font-weight: bold;
     margin-bottom: 5px;
-    color: #004d99; /* Màu nổi bật cho tiêu đề sự kiện */
+    color: #004d99;
 }
-
-/* CÁC NÚT */
 .toast-actions {
     display: flex;
-    justify-content: flex-end; /* Căn nút sang phải */
+    justify-content: flex-end; 
     padding: 8px 15px;
     border-top: 1px solid #f0f0f0;
 }
-
 .toast-button {
     background: none;
     border: none;
@@ -107,14 +91,13 @@
     font-weight: 600;
     transition: color 0.2s;
 }
-
 .toast-button.detail {
-    color: #007bff; /* Màu xanh: View Details */
+    color: #007bff;
+}
+.toast-button.dismiss {
+    color: #6c757d;
 }
 
-.toast-button.dismiss {
-    color: #6c757d; /* Màu xám: Dismiss */
-}
 
 
 
@@ -2146,49 +2129,38 @@ document.addEventListener('click', function(e) {
 
 
  
+ 
     // DỮ LIỆU SỰ KIỆN: Dễ dàng chỉnh sửa tại đây
     const toastData = {
-        // Thay bằng link ảnh Banner sự kiện của bạn (300x120px)
         img: 'https://via.placeholder.com/300x120?text=Free+Webinar+Alert', 
-        
-        // Link đích khi bấm vào ảnh
         imgLink: 'https://yourwebsite.com/event-info-page', 
-        
-        // Tiêu đề sự kiện (Nội dung hiển thị bằng TIẾNG ANH)
         title: '📢 Exclusive Tech Webinar: Future of AI!', 
-        
-        // Mô tả ngắn gọn (Nội dung hiển thị bằng TIẾNG ANH)
         text: 'Register now to secure your free spot! Time: 10:00 AM, Friday (Nov 15).', 
-        
-        // Link đích cho nút "Xem chi tiết"
         detailLink: 'https://yourwebsite.com/registration-form' 
     };
 
     const container = document.querySelector('.custom-notification-container');
 
-    // Hàm xử lý Bỏ qua/Đóng thông báo (Tên hàm giữ nguyên Tiếng Việt)
+    // Hàm xử lý Bỏ qua/Đóng thông báo
     window.handleDismiss = function(event, toastElement) {
         if (event) {
-            event.preventDefault(); // Ngăn hành động mặc định của <a>
+            event.preventDefault(); 
         }
-        // Xóa phần tử toast khỏi DOM
         toastElement.closest('.custom-toast').remove(); 
     }
 
-    // Hàm xử lý nút Xem chi tiết (Tên hàm giữ nguyên Tiếng Việt)
+    // Hàm xử lý nút Xem chi tiết
     window.handleDetailClick = function(event) {
         const link = event.target.getAttribute('data-link');
         window.open(link, '_blank');
-        // Đóng thông báo sau khi mở link
         event.target.closest('.custom-toast').remove(); 
     }
 
-    // Hàm chính tạo và hiển thị thông báo (Tên hàm giữ nguyên Tiếng Việt)
+    // Hàm chính tạo và hiển thị thông báo
     function createCustomToast(data, duration = 8000) { 
         const toast = document.createElement('div');
         toast.classList.add('custom-toast');
 
-        // Template Literal tạo HTML gọn gàng
         toast.innerHTML = `
             <a href="${data.imgLink}" target="_blank" class="toast-image-link" 
                onclick="handleDismiss(event, this.parentNode)">
@@ -2202,10 +2174,12 @@ document.addEventListener('click', function(e) {
                 <button class="toast-button detail" 
                         data-link="${data.detailLink}" 
                         onclick="handleDetailClick(event)">
-                    View Details  </button>
+                    View Details
+                </button>
                 <button class="toast-button dismiss" 
                         onclick="handleDismiss(event, this.parentNode.parentNode)">
-                    Dismiss </button>
+                    Dismiss
+                </button>
             </div>
         `;
 
@@ -2219,17 +2193,16 @@ document.addEventListener('click', function(e) {
         // 2. Tự động biến mất sau thời gian đã định
         setTimeout(() => {
             if (toast.parentNode) { 
-                // Gọi hàm xóa nếu người dùng chưa tương tác
                 toast.closest('.custom-toast').remove();
             }
         }, duration);
     }
 
     // --------------------------------------------------------
-    // LOGIC TỰ ĐỘNG HIỆN SAU KHI TẢI TRANG
+    // LOGIC TỰ ĐỘNG HIỆN SAU KHI TOÀN BỘ TRANG ĐƯỢC TẢI
     // --------------------------------------------------------
 
-    document.addEventListener('DOMContentLoaded', function() {
+    window.onload = function() { // Sử dụng window.onload để đảm bảo mọi thứ đã sẵn sàng
         
         // Nút thử nghiệm
         const showButton = document.getElementById('showCustomToast');
@@ -2243,7 +2216,8 @@ document.addEventListener('click', function(e) {
         setTimeout(() => {
             createCustomToast(toastData);
         }, 2000);
-    });
+    };
+
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
@@ -2263,10 +2237,10 @@ document.addEventListener('click', function(e) {
   
 
 
-    <button id="showCustomToast">Click to Test Notification</button> 
-
     <div class="custom-notification-container">
-        </div>
+    <button id="showCustomToast" style="position:fixed; bottom:150px; right:20px; z-index:9999;">Click to Test Notification</button> 
+</div>
+
 
 </body>
 </html>
