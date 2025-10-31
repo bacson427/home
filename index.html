@@ -32,73 +32,6 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-.custom-notification-container {
-    position: fixed;
-    bottom: 20px; 
-    right: 20px;
-    z-index: 9999;
-}
-.custom-toast {
-    background-color: #ffffff; 
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-radius: 8px;
-    width: 300px; 
-    margin-bottom: 15px;
-    overflow: hidden; 
-    font-family: Arial, sans-serif;
-    opacity: 0; 
-    transform: translateX(100%); 
-    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-}
-.custom-toast.show {
-    opacity: 1;
-    transform: translateX(0);
-}
-.toast-image-link {
-    display: block;
-    cursor: pointer;
-}
-.toast-image {
-    width: 100%;
-    height: auto;
-    max-height: 120px;
-    object-fit: cover;
-}
-.toast-content {
-    padding: 10px 15px;
-    color: #333;
-    font-size: 14px;
-}
-.toast-title {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #004d99;
-}
-.toast-actions {
-    display: flex;
-    justify-content: flex-end; 
-    padding: 8px 15px;
-    border-top: 1px solid #f0f0f0;
-}
-.toast-button {
-    background: none;
-    border: none;
-    padding: 5px 10px;
-    margin-left: 10px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-    transition: color 0.2s;
-}
-.toast-button.detail {
-    color: #007bff;
-}
-.toast-button.dismiss {
-    color: #6c757d;
-}
-
-
 
 
 /* Target theo cấu trúc HTML */
@@ -805,11 +738,6 @@ body {
 <meta property="og:image" content="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png">
 </head>
 <body>
-<div class="custom-notification-container">
-    <button id="showCustomToast" style="position:fixed; bottom:150px; right:20px; z-index:9999;">Click to Test Notification</button> 
-</div>
-
-
 
 <div class="fullscreen-bubbles"></div>
   <div class="container">
@@ -2189,40 +2117,7 @@ document.addEventListener('click', function(e) {
             </div>
         `;
 
-        container.appendChild(toast);
-
-        // 1. Hiển thị (Trượt vào)
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 50);
-
-        // 2. Tự động biến mất sau thời gian đã định
-        setTimeout(() => {
-            if (toast.parentNode) { 
-                toast.closest('.custom-toast').remove();
-            }
-        }, duration);
-    }
-
-    // --------------------------------------------------------
-    // LOGIC TỰ ĐỘNG HIỆN SAU KHI TOÀN BỘ TRANG ĐƯỢC TẢI
-    // --------------------------------------------------------
-
-    window.onload = function() { // Sử dụng window.onload để đảm bảo mọi thứ đã sẵn sàng
         
-        // Nút thử nghiệm
-        const showButton = document.getElementById('showCustomToast');
-        if (showButton) {
-            showButton.addEventListener('click', () => {
-                createCustomToast(toastData);
-            });
-        }
-
-        // Tự động hiện thông báo sau 2 giây (2000ms)
-        setTimeout(() => {
-            createCustomToast(toastData);
-        }, 2000);
-    };
 
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
