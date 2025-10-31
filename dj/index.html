@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đèn LED Vũ Trường - Tối ưu</title>
+    <title>LED Nguyen Bac Son - Hiệu ứng Vũ Trường</title>
     <style>
         * {
             margin: 0;
@@ -14,11 +14,12 @@
         body {
             background: #000;
             color: white;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             overflow: hidden;
             position: fixed;
             width: 100%;
             height: 100%;
+            user-select: none;
         }
         
         .container {
@@ -34,10 +35,21 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
-            background: rgba(0,0,0,0.7);
-            padding: 15px;
-            border-radius: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 15px 25px;
+            border-radius: 15px;
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        
+        .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff0080, #00ffcc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
         }
         
         button {
@@ -45,16 +57,18 @@
             border: none;
             color: white;
             padding: 12px 24px;
-            margin: 0 10px;
+            margin: 5px;
             border-radius: 25px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
-            transition: transform 0.2s;
+            transition: all 0.2s;
+            min-width: 120px;
         }
         
         button:hover {
             transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255,0,128,0.5);
         }
         
         button:active {
@@ -62,13 +76,13 @@
         }
         
         .status {
-            margin-top: 10px;
-            font-size: 14px;
+            margin-top: 8px;
+            font-size: 12px;
             color: #00ffcc;
-            text-align: center;
+            opacity: 0.9;
         }
         
-        /* Tối ưu hóa canvas */
+        /* Canvas tối ưu */
         #visualizer {
             position: absolute;
             top: 0;
@@ -78,253 +92,360 @@
             z-index: 1;
         }
         
-        /* LED strip - sử dụng transform thay vì thay đổi nhiều thuộc tính */
-        .led-strip {
+        /* LED strips - tối ưu hiệu suất */
+        .led-container {
             position: absolute;
-            bottom: 50px;
             left: 0;
             width: 100%;
+            z-index: 2;
             display: flex;
             justify-content: space-around;
-            z-index: 2;
+        }
+        
+        .led-top {
+            top: 80px;
+        }
+        
+        .led-bottom {
+            bottom: 60px;
         }
         
         .led {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            background: #333;
-            transition: transform 0.1s;
-            will-change: transform;
+            background: #222;
+            transition: all 0.15s ease-out;
+            will-change: transform, background-color;
         }
         
-        /* Disco ball đơn giản hóa */
+        /* Disco ball đơn giản */
         .disco-ball {
             position: absolute;
-            top: 30%;
+            top: 45%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #fff, #aaa 70%);
+            background: radial-gradient(circle at 30% 30%, #fff, #888 70%);
             z-index: 2;
-            animation: rotate 8s linear infinite;
+            animation: rotate 6s linear infinite;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
         }
         
         @keyframes rotate {
             from { transform: translate(-50%, -50%) rotate(0deg); }
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
+        
+        /* Hiệu ứng đơn giản cho mobile */
+        .mobile-pulse {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, transparent 30%, rgba(255,0,128,0.1) 70%);
+            animation: mobilePulse 3s ease-out infinite;
+            z-index: 0;
+        }
+        
+        @keyframes mobilePulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.2; }
+            100% { transform: scale(0.8); opacity: 0.5; }
+        }
+        
+        /* Loading indicator */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00ffcc;
+            font-size: 18px;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="controls">
+            <div class="title">QUẺ BÓI - LED VŨ TRƯỜNG</div>
             <button id="playBtn">🎵 BẬT NHẠC</button>
             <button id="stopBtn">⏹️ DỪNG</button>
-            <div class="status" id="status">Sẵn sàng</div>
+            <div class="status" id="status">Nhấn BẬT NHẠC để bắt đầu</div>
         </div>
+        
+        <div class="loading" id="loading">Đang tải nhạc...</div>
         
         <canvas id="visualizer"></canvas>
         
-        <div class="led-strip" id="ledStrip"></div>
+        <div class="led-container led-top" id="ledTop"></div>
+        <div class="led-container led-bottom" id="ledBottom"></div>
+        
         <div class="disco-ball"></div>
+        <div class="mobile-pulse" style="top:30%;left:20%;"></div>
+        <div class="mobile-pulse" style="top:70%;left:80%;"></div>
     </div>
 
     <audio id="audio" preload="metadata">
-        <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mpeg">
+        <source src="https://nguyenbacson.io.vn/que-boi.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-        // Tối ưu hóa biến toàn cục
-        const elements = {
+        // ===== TỐI ƯU HÓA CAO =====
+        const config = {
+            fftSize: 64,           // Rất thấp để tối ưu
+            smoothing: 0.7,        // Làm mượt
+            ledCount: 20,          // Ít LED hơn
+            barSkip: 3,            // Bỏ qua nhiều thanh
+            maxFPS: 30             // Giới hạn FPS
+        };
+
+        // Cache DOM elements
+        const el = {
             audio: document.getElementById('audio'),
             playBtn: document.getElementById('playBtn'),
             stopBtn: document.getElementById('stopBtn'),
             status: document.getElementById('status'),
+            loading: document.getElementById('loading'),
             canvas: document.getElementById('visualizer'),
-            ledStrip: document.getElementById('ledStrip')
+            ledTop: document.getElementById('ledTop'),
+            ledBottom: document.getElementById('ledBottom')
         };
 
-        const ctx = elements.canvas.getContext('2d', { alpha: false });
-        let audioContext, analyser, dataArray;
-        let animationId = null;
-        let isPlaying = false;
+        const ctx = el.canvas.getContext('2d', { 
+            alpha: false,
+            desynchronized: true 
+        });
 
-        // Khởi tạo kích thước canvas
-        function initCanvas() {
-            elements.canvas.width = window.innerWidth;
-            elements.canvas.height = window.innerHeight;
+        // State management
+        let state = {
+            audioContext: null,
+            analyser: null,
+            dataArray: null,
+            animationId: null,
+            isPlaying: false,
+            lastFrameTime: 0
+        };
+
+        // ===== KHỞI TẠO =====
+        function init() {
+            setupCanvas();
+            createLEDs();
+            preloadAudio();
+            setupEventListeners();
         }
 
-        // Tạo LED với số lượng vừa phải
+        function setupCanvas() {
+            el.canvas.width = window.innerWidth;
+            el.canvas.height = window.innerHeight;
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, el.canvas.width, el.canvas.height);
+        }
+
         function createLEDs() {
-            const ledCount = Math.min(30, Math.floor(window.innerWidth / 15));
-            elements.ledStrip.innerHTML = '';
+            createLEDStrip(el.ledTop);
+            createLEDStrip(el.ledBottom);
+        }
+
+        function createLEDStrip(container) {
+            container.innerHTML = '';
+            const count = Math.min(config.ledCount, Math.floor(window.innerWidth / 25));
             
-            for (let i = 0; i < ledCount; i++) {
+            for (let i = 0; i < count; i++) {
                 const led = document.createElement('div');
                 led.className = 'led';
-                elements.ledStrip.appendChild(led);
+                container.appendChild(led);
             }
         }
 
-        // Khởi tạo audio với error handling
+        function preloadAudio() {
+            el.audio.load();
+            setTimeout(() => {
+                el.loading.style.display = 'none';
+            }, 2000);
+        }
+
+        function setupEventListeners() {
+            el.playBtn.addEventListener('click', handlePlay);
+            el.stopBtn.addEventListener('click', handleStop);
+            window.addEventListener('resize', handleResize);
+        }
+
+        // ===== AUDIO HANDLING =====
         function initAudio() {
             try {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioContext.createAnalyser();
-                const source = audioContext.createMediaElementSource(elements.audio);
+                state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                state.analyser = state.audioContext.createAnalyser();
+                const source = state.audioContext.createMediaElementSource(el.audio);
                 
-                source.connect(analyser);
-                analyser.connect(audioContext.destination);
+                source.connect(state.analyser);
+                state.analyser.connect(state.audioContext.destination);
                 
-                analyser.fftSize = 128; // Giảm độ phân giải để tối ưu
-                analyser.smoothingTimeConstant = 0.8;
+                state.analyser.fftSize = config.fftSize;
+                state.analyser.smoothingTimeConstant = config.smoothing;
                 
-                const bufferLength = analyser.frequencyBinCount;
-                dataArray = new Uint8Array(bufferLength);
+                const bufferLength = state.analyser.frequencyBinCount;
+                state.dataArray = new Uint8Array(bufferLength);
                 
                 return true;
             } catch (error) {
-                console.error('Lỗi khởi tạo audio:', error);
-                elements.status.textContent = 'Lỗi khởi tạo audio';
+                console.error('Audio init error:', error);
+                updateStatus('❌ Lỗi audio', '#ff0080');
                 return false;
             }
         }
 
-        // Hàm vẽ visualizer được tối ưu
-        function draw() {
-            if (!isPlaying) return;
+        // ===== RENDERING =====
+        function render(currentTime) {
+            if (!state.isPlaying) return;
             
-            animationId = requestAnimationFrame(draw);
-            
-            if (!analyser || !dataArray) return;
-            
-            analyser.getByteFrequencyData(dataArray);
-            
-            // Xóa canvas với hiệu suất cao
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, elements.canvas.width, elements.canvas.height);
-            
-            // Vẽ các thanh tần số đơn giản
-            const barWidth = (elements.canvas.width / dataArray.length) * 2;
-            let x = 0;
-            
-            for (let i = 0; i < dataArray.length; i += 2) { // Giảm số lượng thanh
-                const barHeight = (dataArray[i] / 255) * elements.canvas.height * 0.6;
-                
-                // Gradient đơn giản
-                const hue = (i * 360 / dataArray.length + Date.now() * 0.05) % 360;
-                ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
-                ctx.fillRect(x, elements.canvas.height - barHeight, barWidth, barHeight);
-                
-                x += barWidth + 1;
+            // Giới hạn FPS
+            if (currentTime - state.lastFrameTime < 1000 / config.maxFPS) {
+                state.animationId = requestAnimationFrame(render);
+                return;
             }
+            state.lastFrameTime = currentTime;
+
+            if (!state.analyser || !state.dataArray) return;
             
-            // Cập nhật LED với hiệu suất cao
+            state.analyser.getByteFrequencyData(state.dataArray);
+            drawVisualizer();
             updateLEDs();
+            
+            state.animationId = requestAnimationFrame(render);
         }
 
-        // Cập nhật LED tối ưu
+        function drawVisualizer() {
+            // Clear canvas nhanh
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, el.canvas.width, el.canvas.height);
+            
+            const barWidth = (el.canvas.width / state.dataArray.length) * 3;
+            let x = 0;
+            
+            // Vẽ ít thanh hơn
+            for (let i = 0; i < state.dataArray.length; i += config.barSkip) {
+                const value = state.dataArray[i];
+                const barHeight = (value / 255) * el.canvas.height * 0.7;
+                
+                if (barHeight > 5) { // Chỉ vẽ thanh đủ lớn
+                    const hue = (i * 5 + Date.now() * 0.02) % 360;
+                    ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
+                    ctx.fillRect(x, el.canvas.height - barHeight, barWidth, barHeight);
+                }
+                
+                x += barWidth + 2;
+            }
+        }
+
         function updateLEDs() {
-            const leds = elements.ledStrip.children;
+            updateLEDStrip(el.ledTop);
+            updateLEDStrip(el.ledBottom);
+        }
+
+        function updateLEDStrip(container) {
+            const leds = container.children;
             const ledCount = leds.length;
             
             for (let i = 0; i < ledCount; i++) {
                 const led = leds[i];
-                const dataIndex = Math.floor(i * dataArray.length / ledCount);
-                const intensity = dataArray[dataIndex] / 255;
+                const dataIndex = Math.floor(i * state.dataArray.length / ledCount);
+                const intensity = state.dataArray[dataIndex] / 255;
                 
-                if (intensity > 0.3) {
-                    const hue = (i * 360 / ledCount + Date.now() * 0.1) % 360;
+                if (intensity > 0.2) {
+                    const hue = (i * 20 + Date.now() * 0.05) % 360;
                     led.style.background = `hsl(${hue}, 100%, 50%)`;
-                    led.style.transform = `scale(${1 + intensity * 0.5})`;
+                    led.style.transform = `scale(${1 + intensity * 0.3})`;
                 } else {
-                    led.style.background = '#333';
+                    led.style.background = '#222';
                     led.style.transform = 'scale(1)';
                 }
             }
         }
 
-        // Xử lý sự kiện play
-        elements.playBtn.addEventListener('click', async () => {
-            if (isPlaying) return;
+        // ===== EVENT HANDLERS =====
+        async function handlePlay() {
+            if (state.isPlaying) return;
             
             try {
-                if (!audioContext && !initAudio()) return;
+                if (!state.audioContext && !initAudio()) return;
                 
-                if (audioContext.state === 'suspended') {
-                    await audioContext.resume();
+                if (state.audioContext.state === 'suspended') {
+                    await state.audioContext.resume();
                 }
                 
-                await elements.audio.play();
-                isPlaying = true;
-                elements.status.textContent = '🎶 ĐANG PHÁT - ĐÈN LED NHẤP NHÁY';
-                elements.status.style.color = '#00ffcc';
+                await el.audio.play();
+                state.isPlaying = true;
+                updateStatus('🎶 QUẺ BÓI ĐANG PHÁT - LED NHẤP NHÁY', '#00ffcc');
                 
-                draw();
+                state.lastFrameTime = performance.now();
+                state.animationId = requestAnimationFrame(render);
                 
             } catch (error) {
-                console.error('Lỗi phát nhạc:', error);
-                elements.status.textContent = '❌ Lỗi phát nhạc';
+                console.error('Play error:', error);
+                updateStatus('❌ Lỗi phát nhạc', '#ff0080');
             }
-        });
+        }
 
-        // Xử lý sự kiện stop
-        elements.stopBtn.addEventListener('click', () => {
-            if (!isPlaying) return;
+        function handleStop() {
+            if (!state.isPlaying) return;
             
-            elements.audio.pause();
-            elements.audio.currentTime = 0;
-            isPlaying = false;
+            el.audio.pause();
+            el.audio.currentTime = 0;
+            state.isPlaying = false;
             
-            if (animationId) {
-                cancelAnimationFrame(animationId);
-                animationId = null;
+            if (state.animationId) {
+                cancelAnimationFrame(state.animationId);
+                state.animationId = null;
             }
             
-            elements.status.textContent = '⏹️ ĐÃ DỪNG';
-            elements.status.style.color = '#ff0080';
-            
-            // Reset LEDs
-            const leds = elements.ledStrip.children;
-            for (let led of leds) {
-                led.style.background = '#333';
-                led.style.transform = 'scale(1)';
-            }
-            
-            // Xóa canvas
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, elements.canvas.width, elements.canvas.height);
-        });
+            updateStatus('⏹️ ĐÃ DỪNG - BẤM PHÁT ĐỂ THƯỞNG THỨC', '#ff0080');
+            resetVisuals();
+        }
 
-        // Xử lý resize
         function handleResize() {
-            initCanvas();
+            setupCanvas();
             createLEDs();
         }
 
-        // Khởi tạo
-        window.addEventListener('load', () => {
-            initCanvas();
-            createLEDs();
+        // ===== UTILITIES =====
+        function updateStatus(text, color) {
+            el.status.textContent = text;
+            el.status.style.color = color;
+        }
+
+        function resetVisuals() {
+            // Reset canvas
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, el.canvas.width, el.canvas.height);
             
-            // Preload audio
-            elements.audio.load();
+            // Reset LEDs
+            const allLEDs = document.querySelectorAll('.led');
+            allLEDs.forEach(led => {
+                led.style.background = '#222';
+                led.style.transform = 'scale(1)';
+            });
+        }
+
+        // ===== INITIALIZATION =====
+        window.addEventListener('load', init);
+
+        // Cleanup
+        window.addEventListener('beforeunload', () => {
+            if (state.animationId) cancelAnimationFrame(state.animationId);
+            if (el.audio) {
+                el.audio.pause();
+                el.audio.src = '';
+            }
         });
 
-        window.addEventListener('resize', handleResize);
-
-        // Cleanup khi trang đóng
-        window.addEventListener('beforeunload', () => {
-            if (animationId) {
-                cancelAnimationFrame(animationId);
-            }
-            if (elements.audio) {
-                elements.audio.pause();
-                elements.audio.src = '';
+        // Touch support for mobile
+        document.addEventListener('touchstart', function() {
+            if (state.audioContext && state.audioContext.state === 'suspended') {
+                state.audioContext.resume();
             }
         });
     </script>
