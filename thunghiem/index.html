@@ -32,6 +32,592 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
+/* CSS cho thông báo sự kiện - Responsive hoàn toàn */
+.esn-container {
+    position: fixed;
+    z-index: 10000;
+    max-width: 400px;
+    width: calc(100vw - 40px);
+    pointer-events: none;
+}
+
+/* Vị trí cho desktop */
+.esn-top-right {
+    top: 20px;
+    right: 20px;
+}
+
+.esn-top-left {
+    top: 20px;
+    left: 20px;
+}
+
+.esn-bottom-right {
+    bottom: 20px;
+    right: 20px;
+}
+
+.esn-bottom-left {
+    bottom: 20px;
+    left: 20px;
+}
+
+.esn-top-center {
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.esn-bottom-center {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.esn-notification {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-bottom: 15px;
+    border-left: 4px solid #4299e1;
+    pointer-events: all;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.esn-notification:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.esn-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    color: white;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.esn-image {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.esn-notification:hover .esn-image {
+    transform: scale(1.05);
+}
+
+.esn-content {
+    padding: 16px;
+}
+
+.esn-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 8px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.esn-date {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    color: #718096;
+    font-size: 13px;
+}
+
+.esn-date-icon {
+    margin-right: 6px;
+    color: #4299e1;
+    flex-shrink: 0;
+}
+
+.esn-description {
+    color: #4a5568;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    font-size: 13px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.esn-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    background: #f7fafc;
+    padding: 10px;
+    border-radius: 8px;
+    gap: 8px;
+}
+
+.esn-detail-item {
+    text-align: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.esn-detail-label {
+    font-size: 11px;
+    color: #718096;
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.esn-detail-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2d3748;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.esn-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.esn-btn {
+    flex: 1;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    font-size: 13px;
+    min-height: 40px;
+    touch-action: manipulation;
+}
+
+.esn-btn-primary {
+    background: linear-gradient(135deg, #4299e1, #3182ce);
+    color: white;
+}
+
+.esn-btn-primary:hover,
+.esn-btn-primary:active {
+    background: linear-gradient(135deg, #3182ce, #2b6cb0);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+}
+
+.esn-btn-secondary {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.esn-btn-secondary:hover,
+.esn-btn-secondary:active {
+    background: #e2e8f0;
+    transform: translateY(-1px);
+}
+
+.esn-countdown {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.esn-countdown-text {
+    font-size: 12px;
+    margin-bottom: 3px;
+}
+
+.esn-countdown-timer {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    font-family: 'Courier New', monospace;
+}
+
+/* Animation */
+@keyframes esnSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes esnSlideInTop {
+    from {
+        opacity: 0;
+        transform: translateY(-100%) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes esnSlideInBottom {
+    from {
+        opacity: 0;
+        transform: translateY(100%) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes esnSlideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%) scale(0.8);
+    }
+}
+
+.esn-notification.show {
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.esn-top-right .esn-notification.show,
+.esn-bottom-right .esn-notification.show {
+    animation-name: esnSlideIn;
+}
+
+.esn-top-left .esn-notification.show,
+.esn-bottom-left .esn-notification.show {
+    animation-name: esnSlideIn;
+    animation-direction: reverse;
+}
+
+.esn-top-center .esn-notification.show {
+    animation-name: esnSlideInTop;
+}
+
+.esn-bottom-center .esn-notification.show {
+    animation-name: esnSlideInBottom;
+}
+
+.esn-notification.hide {
+    animation: esnSlideOut 0.4s ease-in forwards;
+}
+
+.esn-close-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    z-index: 1;
+    touch-action: manipulation;
+}
+
+.esn-close-btn:hover,
+.esn-close-btn:active {
+    background: rgba(0, 0, 0, 0.7);
+    transform: scale(1.1);
+}
+
+/* Touch improvements for mobile */
+@media (hover: none) and (pointer: coarse) {
+    .esn-notification:hover {
+        transform: none;
+    }
+    
+    .esn-btn:hover {
+        transform: none;
+    }
+    
+    .esn-close-btn:hover {
+        transform: none;
+    }
+    
+    .esn-notification {
+        border: 1px solid #e2e8f0;
+    }
+}
+
+/* Theme variants */
+.esn-notification.esn-theme-tech {
+    border-left-color: #4299e1;
+}
+
+.esn-notification.esn-theme-business {
+    border-left-color: #48bb78;
+}
+
+.esn-notification.esn-theme-education {
+    border-left-color: #ed8936;
+}
+
+.esn-notification.esn-theme-music {
+    border-left-color: #9f7aea;
+}
+
+.esn-notification.esn-theme-sports {
+    border-left-color: #f56565;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+    .esn-container {
+        max-width: 350px;
+        width: calc(100vw - 30px);
+    }
+    
+    .esn-top-right,
+    .esn-top-left,
+    .esn-bottom-right,
+    .esn-bottom-left {
+        right: 15px;
+        left: 15px;
+        transform: none;
+    }
+    
+    .esn-top-center,
+    .esn-bottom-center {
+        left: 15px;
+        right: 15px;
+        transform: none;
+    }
+    
+    .esn-image {
+        height: 140px;
+    }
+    
+    .esn-content {
+        padding: 14px;
+    }
+    
+    .esn-title {
+        font-size: 15px;
+    }
+    
+    .esn-details {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .esn-detail-item {
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .esn-detail-label {
+        margin-bottom: 0;
+        font-size: 12px;
+    }
+    
+    .esn-detail-value {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .esn-container {
+        max-width: none;
+        width: calc(100vw - 20px);
+        margin: 0 10px;
+    }
+    
+    .esn-top-right,
+    .esn-top-left,
+    .esn-top-center {
+        top: 10px;
+    }
+    
+    .esn-bottom-right,
+    .esn-bottom-left,
+    .esn-bottom-center {
+        bottom: 10px;
+    }
+    
+    .esn-notification {
+        margin-bottom: 10px;
+        border-radius: 12px;
+    }
+    
+    .esn-image {
+        height: 120px;
+    }
+    
+    .esn-content {
+        padding: 12px;
+    }
+    
+    .esn-title {
+        font-size: 14px;
+        -webkit-line-clamp: 2;
+    }
+    
+    .esn-description {
+        font-size: 12px;
+        -webkit-line-clamp: 2;
+    }
+    
+    .esn-actions {
+        flex-direction: column;
+    }
+    
+    .esn-btn {
+        min-height: 44px; /* Better touch target */
+        font-size: 14px;
+    }
+    
+    .esn-close-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 320px) {
+    .esn-container {
+        width: calc(100vw - 16px);
+        margin: 0 8px;
+    }
+    
+    .esn-content {
+        padding: 10px;
+    }
+    
+    .esn-title {
+        font-size: 13px;
+    }
+    
+    .esn-description {
+        font-size: 11px;
+    }
+    
+    .esn-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}
+
+/* Orientation specific */
+@media (max-width: 768px) and (orientation: landscape) {
+    .esn-container {
+        max-width: 300px;
+    }
+    
+    .esn-image {
+        height: 100px;
+    }
+    
+    .esn-content {
+        padding: 10px;
+    }
+}
+
+/* High DPI screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .esn-notification {
+        border-width: 2px;
+    }
+}
+
+/* Print styles */
+@media print {
+    .esn-container {
+        display: none !important;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .esn-notification,
+    .esn-btn,
+    .esn-close-btn,
+    .esn-image {
+        transition: none;
+        animation: none;
+    }
+    
+    .esn-notification:hover {
+        transform: none;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .esn-notification {
+        background: #2d3748;
+        color: #e2e8f0;
+    }
+    
+    .esn-title {
+        color: #f7fafc;
+    }
+    
+    .esn-description {
+        color: #cbd5e0;
+    }
+    
+    .esn-details {
+        background: #4a5568;
+    }
+    
+    .esn-detail-label {
+        color: #cbd5e0;
+    }
+    
+    .esn-detail-value {
+        color: #f7fafc;
+    }
+    
+    .esn-btn-secondary {
+        background: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .esn-btn-secondary:hover,
+    .esn-btn-secondary:active {
+        background: #718096;
+    }
+}
+
+
 /* Target theo cấu trúc HTML */
 body > div:last-child,
 div[style*="position: fixed"],
@@ -1966,7 +2552,512 @@ document.addEventListener('click', function(e) {
 });
 
 
-
+// Event Notification Module - Responsive cho mọi thiết bị
+(function(global) {
+    'use strict';
+    
+    const ESN = {
+        // Cấu hình mặc định
+        config: {
+            position: 'top-right',
+            autoClose: 8000,
+            maxNotifications: 3,
+            animationDuration: 500,
+            mobileBreakpoint: 768,
+            touchSupport: true,
+            themes: {
+                tech: { color: '#4299e1', badge: 'Công nghệ' },
+                business: { color: '#48bb78', badge: 'Kinh doanh' },
+                education: { color: '#ed8936', badge: 'Giáo dục' },
+                music: { color: '#9f7aea', badge: 'Âm nhạc' },
+                sports: { color: '#f56565', badge: 'Thể thao' },
+                default: { color: '#4299e1', badge: 'Sự kiện' }
+            }
+        },
+        
+        // State management
+        state: {
+            notifications: [],
+            containers: {},
+            isInitialized: false,
+            isMobile: false,
+            touchStartX: 0,
+            touchStartY: 0
+        },
+        
+        // Khởi tạo hệ thống
+        init: function(userConfig = {}) {
+            if (this.state.isInitialized) {
+                console.warn('ESN đã được khởi tạo trước đó');
+                return;
+            }
+            
+            // Merge config
+            this.config = { ...this.config, ...userConfig };
+            
+            // Detect device type
+            this._detectDevice();
+            
+            // Tạo container
+            this._createContainers();
+            
+            // Setup event listeners
+            this._setupEventListeners();
+            
+            this.state.isInitialized = true;
+            console.log('ESN initialized successfully - Mobile:', this.state.isMobile);
+        },
+        
+        // Phát hiện loại thiết bị
+        _detectDevice: function() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+            const isTablet = /ipad|android(?=.*mobile)/i.test(userAgent);
+            const viewportWidth = window.innerWidth;
+            
+            this.state.isMobile = isMobile || viewportWidth <= this.config.mobileBreakpoint;
+            this.state.isTablet = isTablet;
+            this.state.viewportWidth = viewportWidth;
+        },
+        
+        // Tạo container cho thông báo
+        _createContainers: function() {
+            const positions = ['top-right', 'top-left', 'bottom-right', 'bottom-left', 'top-center', 'bottom-center'];
+            
+            positions.forEach(position => {
+                const containerId = `esn-container-${position.replace('-', '')}`;
+                let container = document.getElementById(containerId);
+                
+                if (!container) {
+                    container = document.createElement('div');
+                    container.id = containerId;
+                    container.className = `esn-container esn-${position}`;
+                    document.body.appendChild(container);
+                }
+                
+                this.state.containers[position] = container;
+            });
+        },
+        
+        // Thiết lập event listeners
+        _setupEventListeners: function() {
+            // Xử lý resize
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    this._detectDevice();
+                    this._adjustForMobile();
+                }, 250);
+            });
+            
+            // Touch events cho mobile
+            if (this.config.touchSupport && this.state.isMobile) {
+                document.addEventListener('touchstart', this._handleTouchStart.bind(this), { passive: true });
+                document.addEventListener('touchend', this._handleTouchEnd.bind(this), { passive: false });
+            }
+            
+            // Page visibility (dừng countdown khi tab không active)
+            document.addEventListener('visibilitychange', this._handleVisibilityChange.bind(this));
+        },
+        
+        // Xử lý touch start
+        _handleTouchStart: function(e) {
+            this.state.touchStartX = e.touches[0].clientX;
+            this.state.touchStartY = e.touches[0].clientY;
+        },
+        
+        // Xử lý touch end (swipe to close)
+        _handleTouchEnd: function(e) {
+            if (!this.state.touchStartX) return;
+            
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            const diffX = touchEndX - this.state.touchStartX;
+            const diffY = touchEndY - this.state.touchStartY;
+            
+            // Swipe right to close (chỉ trên mobile)
+            if (diffX > 100 && Math.abs(diffY) < 50) {
+                const touchedElement = document.elementFromPoint(touchEndX, touchEndY);
+                const notification = touchedElement?.closest('.esn-notification');
+                
+                if (notification) {
+                    e.preventDefault();
+                    this.close(notification.id);
+                }
+            }
+            
+            this.state.touchStartX = 0;
+            this.state.touchStartY = 0;
+        },
+        
+        // Xử lý visibility change
+        _handleVisibilityChange: function() {
+            if (document.hidden) {
+                // Tab không active - có thể dừng các timer
+                this.state.notifications.forEach(notification => {
+                    if (notification.autoCloseTimer) {
+                        clearTimeout(notification.autoCloseTimer);
+                    }
+                });
+            } else {
+                // Tab active lại - restart auto close
+                this.state.notifications.forEach(notification => {
+                    if (notification.data.autoClose > 0 && !notification.autoCloseTimer) {
+                        notification.autoCloseTimer = setTimeout(() => {
+                            this.close(notification.id);
+                        }, notification.data.autoClose);
+                    }
+                });
+            }
+        },
+        
+        // Điều chỉnh cho mobile
+        _adjustForMobile: function() {
+            if (this.state.isMobile) {
+                // Trên mobile, ưu tiên vị trí bottom
+                Object.values(this.state.containers).forEach(container => {
+                    if (container.classList.contains('esn-top-right') || 
+                        container.classList.contains('esn-top-left') ||
+                        container.classList.contains('esn-top-center')) {
+                        container.style.zIndex = '9999';
+                    }
+                });
+            }
+        },
+        
+        // Hiển thị thông báo
+        show: function(options = {}) {
+            if (!this.state.isInitialized) {
+                this.init();
+            }
+            
+            const notificationId = 'esn-' + Date.now();
+            const theme = this.config.themes[options.theme] || this.config.themes.default;
+            
+            // Tự động chọn vị trí tốt nhất cho thiết bị
+            const position = this._getBestPosition(options.position);
+            
+            const notificationData = {
+                id: notificationId,
+                badge: options.badge || theme.badge,
+                title: options.title || 'Sự kiện mới',
+                date: options.date || this._formatDate(new Date()),
+                description: options.description || 'Mô tả sự kiện',
+                image: options.image || this._getDefaultImage(),
+                location: options.location || 'Online',
+                seats: options.seats || '50',
+                registerUrl: options.registerUrl || '#',
+                detailsUrl: options.detailsUrl || '#',
+                theme: options.theme || 'default',
+                position: position,
+                autoClose: options.autoClose !== undefined ? options.autoClose : this.config.autoClose,
+                onRegister: options.onRegister,
+                onDetails: options.onDetails,
+                onClose: options.onClose
+            };
+            
+            const notificationElement = this._createNotificationElement(notificationData);
+            this._addToContainer(notificationElement, position);
+            
+            // Quản lý state
+            const notificationObj = {
+                id: notificationId,
+                element: notificationElement,
+                data: notificationData,
+                autoCloseTimer: null
+            };
+            
+            this.state.notifications.push(notificationObj);
+            
+            // Auto close
+            if (notificationData.autoClose > 0) {
+                notificationObj.autoCloseTimer = setTimeout(() => {
+                    this.close(notificationId);
+                }, notificationData.autoClose);
+            }
+            
+            // Giới hạn số lượng thông báo
+            this._limitNotifications(position);
+            
+            return notificationId;
+        },
+        
+        // Chọn vị trí tốt nhất cho thiết bị
+        _getBestPosition: function(requestedPosition) {
+            if (requestedPosition) return requestedPosition;
+            
+            if (this.state.isMobile) {
+                // Trên mobile, ưu tiên bottom để không che nội dung
+                return Math.random() > 0.5 ? 'bottom-right' : 'bottom-left';
+            } else if (this.state.isTablet) {
+                return 'top-right';
+            } else {
+                return 'top-right';
+            }
+        },
+        
+        // Lấy ảnh mặc định
+        _getDefaultImage: function() {
+            const images = [
+                'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+                'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+                'https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60'
+            ];
+            return images[Math.floor(Math.random() * images.length)];
+        },
+        
+        // Tạo HTML cho thông báo
+        _createNotificationElement: function(data) {
+            const element = document.createElement('div');
+            element.id = data.id;
+            element.className = `esn-notification esn-theme-${data.theme}`;
+            element.setAttribute('role', 'alert');
+            element.setAttribute('aria-live', 'polite');
+            
+            element.innerHTML = `
+                <button class="esn-close-btn" aria-label="Đóng thông báo">×</button>
+                <div class="esn-badge">${data.badge}</div>
+                <img src="${data.image}" alt="${data.title}" class="esn-image" loading="lazy">
+                
+                <div class="esn-content">
+                    <h3 class="esn-title">${data.title}</h3>
+                    
+                    <div class="esn-date">
+                        <span class="esn-date-icon" aria-hidden="true">📅</span>
+                        <span>${data.date}</span>
+                    </div>
+                    
+                    <p class="esn-description">${data.description}</p>
+                    
+                    <div class="esn-details">
+                        <div class="esn-detail-item">
+                            <div class="esn-detail-label">Địa điểm</div>
+                            <div class="esn-detail-value">${data.location}</div>
+                        </div>
+                        <div class="esn-detail-item">
+                            <div class="esn-detail-label">Số chỗ</div>
+                            <div class="esn-detail-value">Còn ${data.seats} chỗ</div>
+                        </div>
+                    </div>
+                    
+                    <div class="esn-actions">
+                        <button class="esn-btn esn-btn-primary" aria-label="Đăng ký sự kiện ${data.title}">
+                            Đăng ký ngay
+                        </button>
+                        <button class="esn-btn esn-btn-secondary" aria-label="Xem chi tiết sự kiện ${data.title}">
+                            Chi tiết
+                        </button>
+                    </div>
+                </div>
+                
+                ${data.countdown ? `
+                <div class="esn-countdown">
+                    <div class="esn-countdown-text">Đăng ký trước để nhận ưu đãi</div>
+                    <div class="esn-countdown-timer" id="${data.id}-countdown">${data.countdown}</div>
+                </div>
+                ` : ''}
+            `;
+            
+            // Thêm event listeners
+            const closeBtn = element.querySelector('.esn-close-btn');
+            const registerBtn = element.querySelector('.esn-btn-primary');
+            const detailsBtn = element.querySelector('.esn-btn-secondary');
+            
+            closeBtn.addEventListener('click', () => this.close(data.id));
+            registerBtn.addEventListener('click', () => this._handleRegister(data.id));
+            detailsBtn.addEventListener('click', () => this._handleDetails(data.id));
+            
+            // Keyboard support
+            element.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.close(data.id);
+                }
+            });
+            
+            return element;
+        },
+        
+        // Thêm thông báo vào container
+        _addToContainer: function(element, position) {
+            const container = this.state.containers[position];
+            if (container) {
+                container.appendChild(element);
+                
+                // Trigger animation
+                requestAnimationFrame(() => {
+                    element.classList.add('show');
+                    element.focus();
+                });
+            }
+        },
+        
+        // Đóng thông báo
+        close: function(notificationId) {
+            const notificationIndex = this.state.notifications.findIndex(n => n.id === notificationId);
+            
+            if (notificationIndex === -1) return;
+            
+            const notification = this.state.notifications[notificationIndex];
+            
+            // Clear timer
+            if (notification.autoCloseTimer) {
+                clearTimeout(notification.autoCloseTimer);
+            }
+            
+            // Animation out
+            notification.element.classList.remove('show');
+            notification.element.classList.add('hide');
+            
+            // Gọi callback
+            if (notification.data.onClose) {
+                notification.data.onClose(notificationId);
+            }
+            
+            // Xóa khỏi DOM sau animation
+            setTimeout(() => {
+                if (notification.element.parentNode) {
+                    notification.element.parentNode.removeChild(notification.element);
+                }
+                
+                this.state.notifications.splice(notificationIndex, 1);
+            }, 400);
+        },
+        
+        // Đóng tất cả thông báo
+        closeAll: function() {
+            this.state.notifications.forEach(notification => {
+                this.close(notification.id);
+            });
+        },
+        
+        // Xử lý sự kiện đăng ký
+        _handleRegister: function(notificationId) {
+            const notification = this.state.notifications.find(n => n.id === notificationId);
+            if (notification) {
+                if (notification.data.onRegister) {
+                    notification.data.onRegister(notification.data);
+                } else if (notification.data.registerUrl && notification.data.registerUrl !== '#') {
+                    window.location.href = notification.data.registerUrl;
+                }
+            }
+        },
+        
+        // Xử lý sự kiện chi tiết
+        _handleDetails: function(notificationId) {
+            const notification = this.state.notifications.find(n => n.id === notificationId);
+            if (notification) {
+                if (notification.data.onDetails) {
+                    notification.data.onDetails(notification.data);
+                } else if (notification.data.detailsUrl && notification.data.detailsUrl !== '#') {
+                    window.location.href = notification.data.detailsUrl;
+                }
+            }
+        },
+        
+        // Giới hạn số lượng thông báo
+        _limitNotifications: function(position) {
+            const container = this.state.containers[position];
+            const notifications = container.querySelectorAll('.esn-notification');
+            
+            if (notifications.length > this.config.maxNotifications) {
+                const oldestNotification = notifications[0];
+                this.close(oldestNotification.id);
+            }
+        },
+        
+        // Định dạng ngày
+        _formatDate: function(date) {
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'numeric', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            return date.toLocaleDateString('vi-VN', options);
+        },
+        
+        // API đơn giản để tạo nhanh các loại sự kiện
+        tech: function(title, options = {}) {
+            return this.show({
+                theme: 'tech',
+                badge: 'Công nghệ',
+                title: title,
+                ...options
+            });
+        },
+        
+        business: function(title, options = {}) {
+            return this.show({
+                theme: 'business',
+                badge: 'Kinh doanh',
+                title: title,
+                ...options
+            });
+        },
+        
+        education: function(title, options = {}) {
+            return this.show({
+                theme: 'education',
+                badge: 'Giáo dục',
+                title: title,
+                ...options
+            });
+        },
+        
+        // Cập nhật cấu hình
+        updateConfig: function(newConfig) {
+            this.config = { ...this.config, ...newConfig };
+            this._detectDevice();
+            this._adjustForMobile();
+        },
+        
+        // Lấy thông tin hệ thống
+        getInfo: function() {
+            return {
+                version: '3.0.0',
+                notificationsCount: this.state.notifications.length,
+                isMobile: this.state.isMobile,
+                isTablet: this.state.isTablet,
+                viewportWidth: this.state.viewportWidth,
+                config: this.config,
+                isInitialized: this.state.isInitialized
+            };
+        },
+        
+        // Test responsive
+        testResponsive: function() {
+            console.log('Testing responsive notifications...');
+            
+            this.tech('Hội nghị AI 2023', {
+                description: 'Khám phá tương lai của Trí tuệ Nhân tạo',
+                position: 'top-right'
+            });
+            
+            setTimeout(() => {
+                this.business('Workshop Digital Marketing', {
+                    description: 'Học các chiến lược marketing hiệu quả',
+                    position: 'bottom-left'
+                });
+            }, 1000);
+            
+            setTimeout(() => {
+                this.education('Hội thảo Giáo dục 4.0', {
+                    description: 'Công nghệ trong giáo dục tương lai',
+                    position: 'top-center'
+                });
+            }, 2000);
+        }
+    };
+    
+    // Expose to global scope
+    global.ESN = ESN;
+    
+    // Auto-init khi DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => ESN.init(
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
