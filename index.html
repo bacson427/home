@@ -935,7 +935,774 @@ body {
 .color-15 { background-color: #67A5E8; }
 
     </style>
- 
+     /* Links Container */
+    .links-container {
+        background: white;
+        border-radius: 20px;
+        padding: 30px 25px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+
+    .link-button {
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+        width: 100%;
+        margin: 12px auto; 
+        padding: 16px 20px; 
+        color: white; 
+        text-decoration: none;
+        border-radius: 15px; 
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15); 
+        position: relative; 
+        border: none;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .link-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .link-button:hover::before {
+        left: 100%;
+    }
+
+    .link-button:hover { 
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .link-icon {
+        width: 35px; 
+        height: 35px;
+        object-fit: contain; 
+        border-radius: 50%; 
+        padding: 3px; 
+        background: white;
+        flex-shrink: 0; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .link-button:hover .link-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .link-text {
+        flex: 1;
+        text-align: center;
+        padding: 0 20px;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+    }
+
+    /* BUTTON COLORS */
+.color-1 { background-color: #FF6B6B; } 
+.color-2 { background-color: #FFC300; } 
+.color-3 { background-color: #0A6FA7; color: white; } 
+.color-4 { background-color: #4ECDC4; } 
+.color-5 { background-color: #AF33FF; } 
+.color-6 { background-color: #FF33A1; } 
+.color-7 { background-color: #33FFF6; color: white; } 
+.color-8 { background-color: #7A33FF; } 
+.color-9 { background-color: #FF7A33; } 
+.color-10 { background-color: #33A1FF; } 
+.color-11 { background-color: #00CC66; } 
+.color-12 { background-color: #FF3333; } 
+.color-13 { background-color: #2C3E50; color: white; } 
+.color-14 { background-color: #95A5A6; }
+.color-15 { background-color: #67A5E8; }
+
+    </style>
+    <!-- AI ASSISTANT WIDGET -->
+<div id="ai-assistant-widget">
+    <button onclick="toggleAIChat()" class="ai-button">
+        💬
+    </button>
+
+    <div id="ai-chat-container">
+        <!-- Verification Overlay -->
+        <div id="verification-overlay" class="verification-overlay">
+            <div class="verification-box">
+                <div class="verification-title">🤖 User Verification</div>
+                <div class="verification-question" id="verification-question"></div>
+                <input type="text" id="verification-answer" class="verification-input" placeholder="Enter result" maxlength="3">
+                <button onclick="verifyHuman()" class="verify-btn">VERIFY</button>
+                <div id="error-message" class="error-message">❌ Incorrect answer. Please try again!</div>
+                <div class="rate-limit-info">Anti-bot & spam protection system</div>
+            </div>
+        </div>
+
+        <div class="ai-chat-header">
+            <strong>🤖 AI Assistant</strong>
+            <div>Virtual Assistant of Nguyen Bac Son</div>
+   <button class="close-btn" onclick="toggleAIChat()">×</button>
+        </div>
+
+        <div class="ai-chat-body" id="ai-chat-messages">
+            <div class="chat-message ai-message">
+                <div class="message-bubble">
+                    <strong>Hello! I'm 🤖 AI Assistant - Virtual Assistant of Nguyen Bac Son</strong><br><br>
+                    I can help you learn about:<br>
+                    • Personal information<br>
+                    • Education & major<br>
+                    • Skills & experience<br>
+                    • Contact & social media<br>
+                    • Hobbies & projects<br><br>
+                    <em>Choose from the pre-made questions below!</em>
+                    <div class="message-time">System: 🤖 AI Assistant - Virtual Assistant of Nguyen Bac Son uses AI-Powered Security System + Cloudflare + Tenten🛡️ to enhance security for both website and users 🧑‍💻.</div>
+                </div>
+            </div>
+
+            <!-- Quick Questions -->
+            <div style="margin-top: 20px;">
+                <div class="quick-question" onclick="askQuickQuestion('Introduce Nguyen Bac Son')">
+                    🤵 Introduce Nguyen Bac Son
+                </div>
+                <div class="quick-question" onclick="askQuickQuestion('Education and Industrial Electrical major')">
+                    🎓 Education and Industrial Electrical major
+                </div>
+                <div class="quick-question" onclick="askQuickQuestion('Contact information')">
+                    📞 Contact information
+                </div>
+                <div class="quick-question" onclick="askQuickQuestion('Skills and hobbies')">
+                    💼 Skills and hobbies
+                </div>
+                <div class="quick-question" onclick="askQuickQuestion('Social media and projects')">
+                    🌐 Social media and projects
+                </div>
+            </div>
+
+            <!-- Spam Warning -->
+            <div id="spam-warning" class="spam-warning">
+                ⚠️ <strong>SPAM DETECTED:</strong> Please wait <span id="countdown">30</span> seconds before sending next message.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* AI Widget */
+    #ai-assistant-widget {
+        position: fixed; 
+        bottom: 25px; 
+        right: 25px; 
+        z-index: 10000;
+    }
+
+    #ai-chat-container {
+        position: absolute; 
+        bottom: 80px; 
+        right: 0; 
+        width: 400px;
+        height: 650px;
+        background: white; 
+        border-radius: 20px; 
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
+        display: none;
+        overflow: hidden;
+        border: 3px solid transparent;
+        background-clip: padding-box;
+        position: relative;
+    }
+
+    #ai-chat-container::before {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
+        background-size: 400% 400%;
+        border-radius: 23px;
+        z-index: -1;
+        animation: borderGlow 4s ease infinite;
+    }
+
+    #ai-chat-container.active {
+        display: block;
+    }
+
+    .ai-button {
+        background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
+        background-size: 400% 400%;
+        color: white;
+        border: none;
+        padding: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 28px;
+        width: 75px;
+        height: 75px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+        animation: buttonGlow 4s ease infinite;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ai-button::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: inherit;
+        border-radius: 50%;
+        z-index: -1;
+        filter: blur(10px);
+        opacity: 0.7;
+        animation: buttonGlow 4s ease infinite;
+    }
+
+    @keyframes buttonGlow {
+        0% {
+            background-position: 0% 50%;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        50% {
+            background-position: 100% 50%;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+        }
+        100% {
+            background-position: 0% 50%;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+    }
+
+    .ai-button:hover {
+        transform: scale(1.15) rotate(5deg);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+    }
+
+    /* AI Chat Interface */
+    .ai-chat-header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 25px;
+        text-align: center;
+        border-radius: 17px 17px 0 0;
+        position: relative;
+    }
+
+    .ai-chat-header strong {
+        font-size: 20px;
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 700;
+    }
+
+    .ai-chat-header div {
+        font-size: 13px;
+        opacity: 0.9;
+        font-weight: 500;
+    }
+
+    .ai-chat-body {
+        height: calc(100% - 150px);
+        padding: 25px;
+        overflow-y: auto;
+        background: #f8fafc;
+    }
+
+    .chat-message {
+        margin-bottom: 18px;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .chat-message.user {
+        justify-content: flex-end;
+    }
+   .message-bubble {
+        max-width: 80%;
+        padding: 14px 18px;
+        border-radius: 20px;
+        font-size: 14px;
+        line-height: 1.6;
+        position: relative;
+    }
+
+    .ai-message .message-bubble {
+        background: white;
+        border: 1px solid #e5e7eb;
+        color: #374151;
+        border-bottom-left-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .user-message .message-bubble {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-bottom-right-radius: 8px;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .message-time {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 6px;
+        opacity: 0.7;
+    }
+
+    .quick-question {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin: 10px 0;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 14px;
+        text-align: center;
+        font-weight: 600;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .quick-question:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        background: linear-gradient(135deg, #764ba2, #667eea);
+    }
+
+    /* Verification */
+    .verification-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255,255,255,0.98);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 20;
+        padding: 30px;
+    }
+
+    .verification-box {
+        background: white;
+        padding: 35px;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        text-align: center;
+        max-width: 340px;
+        border: 3px solid transparent;
+        background-clip: padding-box;
+        position: relative;
+    }
+
+    .verification-box::before {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 23px;
+        z-index: -1;
+    }
+
+    .verification-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .verification-question {
+        font-size: 20px;
+        margin: 25px 0;
+        color: #2c3e50;
+        font-weight: 700;
+    }
+
+    .verification-input {
+        width: 130px;
+        padding: 14px;
+        font-size: 20px;
+        text-align: center;
+        border: 3px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    }
+
+    .verification-input:focus {
+        border-color: #667eea;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: scale(1.05);
+    }
+
+    .verify-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 14px 35px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        transition: all 0.3s;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .verify-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .error-message {
+        color: #e74c3c;
+        font-size: 14px;
+        margin-top: 15px;
+        display: none;
+        font-weight: 600;
+    }
+
+    .close-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        font-size: 22px;
+        cursor: pointer;
+        padding: 10px;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+
+    .close-btn:hover {
+        background: rgba(255,255,255,0.3);
+        transform: scale(1.1);
+    }
+
+    .spam-warning {
+        background: #ffeaa7;
+        color: #d63031;
+        padding: 12px;
+        border-radius: 10px;
+        margin: 12px 0;
+        font-size: 13px;
+        border: 2px solid #fab1a0;
+        display: none;
+        font-weight: 600;
+    }
+
+    .rate-limit-info {
+        font-size: 12px;
+        color: #666;
+        margin-top: 15px;
+        text-align: center;
+        font-weight: 500;
+    }
+</style>
+<script>
+    // Security system
+    const security = {
+        isVerified: false,
+        currentQuestion: {},
+        spam: {
+            lastMessage: 0,
+            messageCount: 0,
+            isBlocked: false,
+            blockUntil: 0
+        }
+    };
+
+    // Create verification question
+    function createVerification() {
+        const num1 = Math.floor(Math.random() * 8) + 2;
+        const num2 = Math.floor(Math.random() * 8) + 2;
+        const operators = ['+', '-', '*'];
+        const operator = operators[Math.floor(Math.random() * operators.length)];
+
+        let question = '';
+        let answer = '';
+
+        switch(operator) {
+            case '+':
+                question = `${num1} + ${num2} = ?`;
+                answer = (num1 + num2).toString();
+                break;
+            case '-':
+                const larger = Math.max(num1, num2);
+                const smaller = Math.min(num1, num2);
+                question = `${larger} - ${smaller} = ?`;
+                answer = (larger - smaller).toString();
+                break;
+            case '*':
+                question = `${num1} × ${num2} = ?`;
+                answer = (num1 * num2).toString();
+                break;
+        }
+
+        return { question, answer };
+    }
+
+    // Show verification
+    function showVerification() {
+        security.currentQuestion = createVerification();
+        document.getElementById('verification-question').textContent = security.currentQuestion.question;
+        document.getElementById('verification-answer').value = '';
+        document.getElementById('error-message').style.display = 'none';
+        document.getElementById('verification-overlay').style.display = 'flex';
+
+        setTimeout(() => {
+            document.getElementById('verification-answer').focus();
+        }, 100);
+    }
+
+    function hideVerification() {
+        document.getElementById('verification-overlay').style.display = 'none';
+    }
+
+    // Verify user
+    function verifyHuman() {
+        const userAnswer = document.getElementById('verification-answer').value.trim();
+        const correctAnswer = security.currentQuestion.answer;
+
+        if (userAnswer === correctAnswer) {
+            security.isVerified = true;
+            hideVerification();
+            addMessage("✅ 🤖 AI Assistant - Virtual Assistant of Nguyen Bac Son is ready.", 'ai');
+        } else {
+            document.getElementById('error-message').style.display = 'block';
+            document.getElementById('verification-answer').value = '';
+            document.getElementById('verification-answer').focus();
+        }
+    }
+// Check spam
+    function checkSpam() {
+        const now = Date.now();
+
+        if (security.spam.isBlocked) {
+            if (now < security.spam.blockUntil) {
+                const timeLeft = Math.ceil((security.spam.blockUntil - now) / 1000);
+                showSpamWarning(timeLeft);
+                return true;
+            } else {
+                security.spam.isBlocked = false;
+                security.spam.messageCount = 0;
+                hideSpamWarning();
+            }
+        }
+
+        const timeSinceLast = now - security.spam.lastMessage;
+
+        if (timeSinceLast < 2000) {
+            security.spam.messageCount++;
+
+            if (security.spam.messageCount >= 3) {
+                security.spam.isBlocked = true;
+                security.spam.blockUntil = now + 30000;
+                showSpamWarning(30);
+                return true;
+            }
+        } else {
+            security.spam.messageCount = 0;
+        }
+
+        security.spam.lastMessage = now;
+        return false;
+    }
+
+    // Show spam warning
+    function showSpamWarning(seconds) {
+        const warning = document.getElementById('spam-warning');
+        const countdown = document.getElementById('countdown');
+        countdown.textContent = seconds;
+        warning.style.display = 'block';
+
+        const interval = setInterval(() => {
+            seconds--;
+            countdown.textContent = seconds;
+
+            if (seconds <= 0) {
+                clearInterval(interval);
+                if (!security.spam.isBlocked) {
+                    hideSpamWarning();
+                }
+            }
+        }, 1000);
+    }
+
+    function hideSpamWarning() {
+        document.getElementById('spam-warning').style.display = 'none';
+    }
+
+    // AI Assistant functions
+    function toggleAIChat() {
+        const chatContainer = document.getElementById('ai-chat-container');
+        const isActive = chatContainer.classList.contains('active');
+
+        if (!isActive) {
+            chatContainer.classList.add('active');
+            if (!security.isVerified) {
+                showVerification();
+            }
+        } else {
+            chatContainer.classList.remove('active');
+        }
+    }
+
+    function askQuickQuestion(question) {
+        if (!security.isVerified) {
+            showVerification();
+            return;
+        }
+
+        if (checkSpam()) {
+            return;
+        }
+
+        addMessage(question, 'user');
+        showTypingIndicator();
+
+        setTimeout(() => {
+            removeTypingIndicator();
+            const response = getAIResponse(question);
+            addMessage(response, 'ai');
+        }, 1000 + Math.random() * 1000);
+    }
+
+    function addMessage(text, sender) {
+        const chatMessages = document.getElementById('ai-chat-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${sender}-message`;
+
+        const time = new Date().toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+
+        messageDiv.innerHTML = `
+            <div class="message-bubble">
+                ${text.replace(/\n/g, '<br>')}
+                <div class="message-time">${time}</div>
+            </div>
+        `;
+
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+        const chatMessages = document.getElementById('ai-chat-messages');
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typing-indicator';
+        typingDiv.className = 'chat-message ai-message';
+        typingDiv.innerHTML = `
+            <div class="message-bubble">
+                <div class="ai-typing">
+                    Typing
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+        const typingIndicator = document.getElementById('typing-indicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
+    }
+
+    function getAIResponse(userMessage) {
+        const lowerMessage = userMessage.toLowerCase();
+
+        if (lowerMessage.includes('introduce') || lowerMessage.includes('bac son') || lowerMessage.includes('name')) {
+            return `🤵 <strong>PERSONAL INFORMATION</strong>\n\n• <strong>Full name:</strong> Nguyen Bac Son\n• <strong>Year of birth:</strong> 2007\n• <strong>Hometown:</strong> Hai Duong (now Hai Phong)\n• <strong>Current location:</strong> Hanoi\n• <strong>Education level:</strong> College student\n\nCurrently a student majoring in Industrial Electrical Engineering.`;
+        }
+        else if (lowerMessage.includes('education') || lowerMessage.includes('industrial electrical') || lowerMessage.includes('school') || lowerMessage.includes('hactech')) {
+            return `🎓 <strong>EDUCATION & MAJOR</strong>\n\n• <strong>School:</strong> Hanoi College of Technology - HACTECH\n• <strong>Affiliated with:</strong> Hanoi University of Science and Technology\n• <strong>Major:</strong> Industrial Electrical Engineering\n• <strong>Study areas:</strong>\n  - Industrial electrical systems\n  - Power electronics\n  - Electrical safety\n\nCurrently studying Industrial Electrical Engineering.`;
+        }
+        else if (lowerMessage.includes('contact') || lowerMessage.includes('phone') || lowerMessage.includes('number')) {
+            return `📞 <strong>CONTACT INFORMATION</strong>\n\n• <strong>Phone number:</strong> https://bit.ly/sodienthoai-nguyenbacson\n• <strong>Email:</strong> bacson20062007@gmail.com\n• <strong>Address:</strong> Hanoi, Vietnam\n\nContact via phone number or email.`;
+        }
+        else if (lowerMessage.includes('skill') || lowerMessage.includes('hobby') || lowerMessage.includes('experience')) {
+            return `💼 <strong>SKILLS & HOBBIES</strong>\n\n<strong>Professional skills:</strong>\n• Industrial electricity\n• Basic programming\n• Technical software usage\n• Occupational safety\n\n<strong>Hobbies:</strong>\n• Technology\n• Music\n• Video games`;
+        }
+        else if (lowerMessage.includes('social media') || lowerMessage.includes('facebook') || lowerMessage.includes('tiktok') || lowerMessage.includes('project') || lowerMessage.includes('link')) {
+            return `🌐 <strong>SOCIAL MEDIA & PROJECTS</strong>\n\n<strong>Connect with me through:</strong>\n• Facebook: facebook.com/bacson.427\n• TikTok: @bacson_427\n• Gmail: bacson20062007@gmail.com\n• Telegram: t.me/bacson_427\n• WhatsApp: https://bit.ly/whatsappnguyenbacson\n\n<strong>All links:</strong>\nhttps://nguyenbacson.io.vn/\n\nAll information and social media links are available in the link above.`;
+        }
+        else if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
+            return "Hello! I'm AI Assistant of Nguyen Bac Son. I can help you learn about:\n\n• Personal information\n• Education & Industrial Electrical major\n• Skills & hobbies\n• Contact information\n• Social media\n\nPlease choose from the pre-made questions.";
+        }
+        else if (lowerMessage.includes('thank')) {
+            return "You're welcome!";
+        }
+        else if (lowerMessage.includes('bye') || lowerMessage.includes('goodbye')) {
+            return "Goodbye!";
+        }
+        else {
+            return "I can help you learn about Nguyen Bac Son:\n\n• Personal information & education\n• Industrial Electrical Engineering major\n• Skills & experience\n• Contact information\n• Social media & projects\n\nPlease choose from the pre-made questions.";
+        }
+    }
+
+    // Event handling
+    document.addEventListener('click', function(event) {
+        const chatContainer = document.getElementById('ai-chat-container');
+        const aiButton = document.querySelector('#ai-assistant-widget button');
+        const verificationOverlay = document.getElementById('verification-overlay');
+
+        if (chatContainer.classList.contains('active') && 
+            !chatContainer.contains(event.target) && 
+            !aiButton.contains(event.target) &&
+            !verificationOverlay.contains(event.target)) {
+            chatContainer.classList.remove('active');
+        }
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            document.getElementById('ai-chat-container').classList.remove('active');
+        }
+    });
+
+    document.getElementById('verification-answer').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            verifyHuman();
+        }
+    });
         // Khởi tạo
         document.getElementById('verification-overlay').style.display = 'none';
         document.getElementById('spam-warning').style.display = 'none';
