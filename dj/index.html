@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VŨ TRỤ BIẾN ẢO - TIA ĐIỆN & LASER</title>
+    <title>VŨ TRỤ BIẾN ẢO - TẤT CẢ HIỆU ỨNG</title>
     <style>
         * {
             margin: 0;
@@ -115,38 +115,46 @@
             height: 100%;
             z-index: 5;
             pointer-events: none;
-            opacity: 0;
             mix-blend-mode: screen;
         }
         
-        /* LED strips */
+        /* LED strips - TẤT CẢ CÁC HƯỚNG */
         .led-container {
             position: absolute;
-            left: 0;
-            width: 100%;
             z-index: 15;
             display: flex;
+        }
+        
+        .led-top { 
+            top: 80px; 
+            left: 0;
+            width: 100%;
             justify-content: space-around;
             padding: 0 15px;
         }
         
-        .led-top { top: 90px; }
-        .led-bottom { bottom: 70px; }
-        .led-left { 
-            top: 50%; 
-            left: 20px;
-            transform: translateY(-50%);
-            flex-direction: column;
-            width: auto;
-            height: 200px;
+        .led-bottom { 
+            bottom: 60px; 
+            left: 0;
+            width: 100%;
+            justify-content: space-around;
+            padding: 0 15px;
         }
-        .led-right { 
-            top: 50%; 
-            right: 20px;
-            transform: translateY(-50%);
+        
+        .led-left { 
+            top: 0;
+            left: 20px;
+            height: 100%;
             flex-direction: column;
-            width: auto;
-            height: 200px;
+            justify-content: space-around;
+        }
+        
+        .led-right { 
+            top: 0;
+            right: 20px;
+            height: 100%;
+            flex-direction: column;
+            justify-content: space-around;
         }
         
         .led {
@@ -156,7 +164,7 @@
             background: #111;
             transition: all 0.15s;
             will-change: transform, background-color;
-            margin: 3px;
+            margin: 2px;
         }
         
         /* Disco ball */
@@ -181,23 +189,14 @@
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
         
-        /* Tia điện */
-        .lightning {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 8;
-            pointer-events: none;
-            opacity: 0;
-        }
-        
+        /* Tia điện - CHẠY LIÊN TỤC */
         .lightning-bolt {
             position: absolute;
-            background: linear-gradient(90deg, transparent, #00ffff, transparent);
+            background: linear-gradient(90deg, transparent, cyan, transparent);
             transform-origin: top;
-            animation: lightningStrike 0.3s ease-out;
+            animation: lightningStrike 0.8s ease-out infinite;
+            z-index: 8;
+            opacity: 0.7;
         }
         
         @keyframes lightningStrike {
@@ -205,7 +204,10 @@
                 height: 0; 
                 opacity: 0; 
             }
-            50% { 
+            20% { 
+                opacity: 1; 
+            }
+            80% { 
                 opacity: 1; 
             }
             100% { 
@@ -214,15 +216,15 @@
             }
         }
         
-        /* Tia laser */
+        /* Tia laser - CHẠY LIÊN TỤC */
         .laser-beam {
             position: absolute;
             height: 2px;
-            background: linear-gradient(90deg, transparent, currentColor, transparent);
-            box-shadow: 0 0 15px currentColor;
-            transform-origin: left;
+            background: linear-gradient(90deg, transparent, red, transparent);
+            box-shadow: 0 0 20px currentColor;
+            transform-origin: center;
             z-index: 6;
-            animation: laserScan 2s linear infinite;
+            animation: laserScan 3s linear infinite;
         }
         
         @keyframes laserScan {
@@ -242,7 +244,7 @@
             }
         }
         
-        /* Hiệu ứng hạt */
+        /* Hiệu ứng hạt - CHẠY LIÊN TỤC */
         .particle {
             position: absolute;
             width: 4px;
@@ -250,29 +252,28 @@
             border-radius: 50%;
             background: currentColor;
             pointer-events: none;
-            opacity: 0;
-            animation: particleFloat 1.5s ease-out forwards;
+            animation: particleFloat 2s ease-out infinite;
         }
         
         @keyframes particleFloat {
             0% {
-                transform: translateY(0) scale(1);
+                transform: translateY(100vh) scale(1);
                 opacity: 1;
             }
             100% {
-                transform: translateY(-150px) scale(0);
+                transform: translateY(-100px) scale(0);
                 opacity: 0;
             }
         }
         
-        /* Hạt laser */
+        /* Hạt laser - CHẠY LIÊN TỤC */
         .laser-particle {
             position: absolute;
             width: 3px;
             height: 3px;
             border-radius: 50%;
             pointer-events: none;
-            animation: laserParticle 1s ease-out forwards;
+            animation: laserParticle 1.5s ease-out infinite;
         }
         
         @keyframes laserParticle {
@@ -282,6 +283,48 @@
             }
             100% {
                 transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        /* Hiệu ứng vòng tròn xung quanh - CHẠY LIÊN TỤC */
+        .pulse-ring {
+            position: absolute;
+            border: 2px solid;
+            border-radius: 50%;
+            animation: pulseRing 2s ease-out infinite;
+            z-index: 3;
+        }
+        
+        @keyframes pulseRing {
+            0% {
+                transform: scale(0.1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+        
+        /* Sao băng - CHẠY LIÊN TỤC */
+        .shooting-star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            animation: shootStar 3s linear infinite;
+            box-shadow: 0 0 10px white;
+        }
+        
+        @keyframes shootStar {
+            0% {
+                transform: translateX(-100px) translateY(-100px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(100vw) translateY(100vh);
                 opacity: 0;
             }
         }
@@ -309,22 +352,23 @@
                 <button id="playBtn">⚡ BẬT NHẠC</button>
                 <button id="stopBtn">⏹️ DỪNG</button>
             </div>
-            <div class="status" id="status">Sẵn sàng phóng điện & laser</div>
+            <div class="status" id="status">TẤT CẢ HIỆU ỨNG SẴN SÀNG</div>
         </div>
-        
-        <div class="loading" id="loading">Đang tải vũ trụ biến ảo...</div>
+            <div class="loading" id="loading">Đang khởi tạo vũ trụ biến ảo...</div>
         
         <canvas id="visualizer"></canvas>
         <canvas id="flashOverlay"></canvas>
         
+        <!-- TẤT CẢ LED ĐÃ ĐƯỢC TẠO BẰNG JS -->
         <div class="led-container led-top" id="ledTop"></div>
         <div class="led-container led-bottom" id="ledBottom"></div>
         <div class="led-container led-left" id="ledLeft"></div>
         <div class="led-container led-right" id="ledRight"></div>
         
         <div class="disco-ball"></div>
-        <div class="lightning" id="lightningContainer"></div>
-        <div id="laserContainer"></div>
+        
+        <!-- TẤT CẢ HIỆU ỨNG SẼ ĐƯỢC TẠO BẰNG JS -->
+        <div id="effectsContainer"></div>
     </div>
 
     <audio id="audio" preload="metadata">
@@ -332,16 +376,19 @@
     </audio>
 
     <script>
-        // ===== CẤU HÌNH TỐI ƯU =====
+        // ===== CẤU HÌNH =====
         const config = {
-            fftSize: 64,
-            smoothing: 0.8,
-            ledCount: 12,
-            maxFPS: 24,
-            flashThreshold: 0.6,
-            lightningThreshold: 0.8,
-            particleLimit: 25,
-            laserLimit: 15
+            fftSize: 128,
+            smoothing: 0.7,
+            ledCount: 20,
+            maxFPS: 30,
+            effects: {
+                lightning: { count: 4, speed: 2 },
+                lasers: { count: 8, speed: 3 },
+                particles: { count: 30, speed: 2 },
+                rings: { count: 5, speed: 1.5 },
+                stars: { count: 10, speed: 2 }
+            }
         };
 
         // Cache DOM elements
@@ -357,14 +404,12 @@
             ledBottom: document.getElementById('ledBottom'),
             ledLeft: document.getElementById('ledLeft'),
             ledRight: document.getElementById('ledRight'),
-            lightningContainer: document.getElementById('lightningContainer'),
-            laserContainer: document.getElementById('laserContainer')
+            effectsContainer: document.getElementById('effectsContainer')
         };
 
         const ctx = el.visualizer.getContext('2d', { 
             alpha: false,
-            desynchronized: true,
-            powerPreference: 'low-power'
+            desynchronized: true
         });
 
         const flashCtx = el.flashOverlay.getContext('2d', {
@@ -380,18 +425,16 @@
             animationId: null,
             isPlaying: false,
             lastFrameTime: 0,
-            particles: [],
-            lasers: [],
-            lastLightningTime: 0,
-            lastLaserTime: 0,
             currentHue: 0,
-            bassHistory: []
+            bassIntensity: 0,
+            activeEffects: new Set()
         };
 
-        // ===== KHỞI TẠO =====
+        // ===== KHỞI TẠO TẤT CẢ HIỆU ỨNG =====
         function init() {
             setupCanvases();
-            createLEDs();
+            createAllLEDs();
+            createAllEffects();
             preloadAudio();
             setupEventListeners();
         }
@@ -406,17 +449,16 @@
             ctx.fillRect(0, 0, el.visualizer.width, el.visualizer.height);
         }
 
-        function createLEDs() {
-            createLEDStrip(el.ledTop);
-            createLEDStrip(el.ledBottom);
-            createLEDStrip(el.ledLeft);
-            createLEDStrip(el.ledRight);
+        function createAllLEDs() {
+            createLEDStrip(el.ledTop, 25);
+            createLEDStrip(el.ledBottom, 25);
+            createLEDStrip(el.ledLeft, 15);
+            createLEDStrip(el.ledRight, 15);
         }
 
-        function createLEDStrip(container) {
+        function createLEDStrip(container, count) {
             container.innerHTML = '';
             const isVertical = container.classList.contains('led-left') || container.classList.contains('led-right');
-            const count = isVertical ? 8 : config.ledCount;
             
             for (let i = 0; i < count; i++) {
                 const led = document.createElement('div');
@@ -425,11 +467,184 @@
             }
         }
 
+        function createAllEffects() {
+            createLightningBolts();
+            createLaserBeams();
+            createParticles();
+            createPulseRings();
+            createShootingStars();
+        }
+
+        function createLightningBolts() {
+            for (let i = 0; i < config.effects.lightning.count; i++) {
+                setTimeout(() => {
+                    createLightningBolt(i);
+                }, i * 500);
+            }
+        }
+
+        function createLightningBolt(index) {
+            const bolt = document.createElement('div');
+            bolt.className = 'lightning-bolt';
+            
+            const x = (index / config.effects.lightning.count) * window.innerWidth;
+            const width = Math.random() * 6 + 3;
+            const hue = (index * 90) % 360;
+            const delay = Math.random() * 2;
+            
+            bolt.style.left = x + 'px';
+            bolt.style.width = width + 'px';
+            bolt.style.background = `linear-gradient(90deg, transparent, hsl(${hue}, 100%, 70%), transparent)`;
+            bolt.style.boxShadow = `0 0 ${width * 8}px hsl(${hue}, 100%, 50%)`;
+            bolt.style.animationDelay = delay + 's';
+            bolt.style.animationDuration = (0.5 + Math.random() * 0.5) + 's';
+            
+            el.effectsContainer.appendChild(bolt);
+            state.activeEffects.add(bolt);
+        }
+
+        function createLaserBeams() {
+            for (let i = 0; i < config.effects.lasers.count; i++) {
+                setTimeout(() => {
+                    createLaserBeam(i);
+                }, i * 300);
+            }
+        }
+
+        function createLaserBeam(index) {
+            const laser = document.createElement('div');
+            laser.className = 'laser-beam';
+            
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const length = 400 + Math.random() * 200;
+            const hue = (index * 45) % 360;
+            const delay = Math.random() * 1;
+            const duration = 2 + Math.random() * 2;
+            
+            laser.style.width = length + 'px';
+            laser.style.top = centerY + 'px';
+            laser.style.left = centerX + 'px';
+            laser.style.color = `hsl(${hue}, 100%, 50%)`;
+            laser.style.animationDelay = delay + 's';
+            laser.style.animationDuration = duration + 's';
+            
+            el.effectsContainer.appendChild(laser);
+            state.activeEffects.add(laser);
+            
+            // Tạo hạt laser liên tục
+            setInterval(() => {
+                if (state.isPlaying) {
+                    createLaserParticles(centerX, centerY, hue, 3);
+                }
+            }, 500);
+        }
+
+        function createLaserParticles(x, y, hue, count) {
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'laser-particle';
+                particle.style.background = `hsl(${hue}, 100%, 50%)`;
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.boxShadow = `0 0 8px hsl(${hue}, 100%, 50%)`;
+                particle.style.setProperty('--tx', (Math.random() - 0.5) * 150 + 'px');
+                particle.style.setProperty('--ty', (Math.random() - 0.5) * 150 + 'px');
+                particle.style.animationDelay = Math.random() * 1 + 's';
+                
+                document.body.appendChild(particle);
+                state.activeEffects.add(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                    state.activeEffects.delete(particle);
+                }, 1500);
+            }
+        }
+
+        function createParticles() {
+            for (let i = 0; i < config.effects.particles.count; i++) {
+                setTimeout(() => {
+                    createParticle(i);
+                }, i * 100);
+            }
+        }
+
+        function createParticle(index) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const hue = (index * 12) % 360;
+            const left = Math.random() * window.innerWidth;
+            const delay = Math.random() * 2;
+            const duration = 1 + Math.random() * 1;
+            
+            particle.style.color = `hsl(${hue}, 100%, 50%)`;
+            particle.style.left = left + 'px';
+            particle.style.animationDelay = delay + 's';
+            particle.style.animationDuration = duration + 's';
+            
+            document.body.appendChild(particle);
+            state.activeEffects.add(particle);
+        }
+
+        function createPulseRings() {
+            for (let i = 0; i < config.effects.rings.count; i++) {
+                setTimeout(() => {
+                    createPulseRing(i);
+                }, i * 800);
+            }
+        }
+
+        function createPulseRing(index) {
+            const ring = document.createElement('div');
+            ring.className = 'pulse-ring';
+            
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const size = 50 + Math.random() * 100;
+            const hue = (index * 72) % 360;
+            const delay = Math.random() * 1;
+            
+            ring.style.width = size + 'px';
+            ring.style.height = size + 'px';
+            ring.style.top = (centerY - size/2) + 'px';
+            ring.style.left = (centerX - size/2) + 'px';
+            ring.style.borderColor = `hsl(${hue}, 100%, 50%)`;
+            ring.style.animationDelay = delay + 's';
+            ring.style.boxShadow = `0 0 20px hsl(${hue}, 100%, 50%)`;
+            
+            el.effectsContainer.appendChild(ring);
+            state.activeEffects.add(ring);
+        }
+
+        function createShootingStars() {
+            for (let i = 0; i < config.effects.stars.count; i++) {
+                setTimeout(() => {
+                    createShootingStar(i);
+                }, i * 500);
+            }
+        }
+
+        function createShootingStar(index) {
+            const star = document.createElement('div');
+            star.className = 'shooting-star';
+            
+            const delay = Math.random() * 2;
+            const duration = 2 + Math.random() * 2;
+            
+            star.style.animationDelay = delay + 's';
+            star.style.animationDuration = duration + 's';
+            
+            document.body.appendChild(star);
+            state.activeEffects.add(star);
+        }
+
         function preloadAudio() {
             el.audio.load();
             setTimeout(() => {
                 el.loading.style.display = 'none';
-            }, 1500);
+            }, 2000);
         }
 
         function setupEventListeners() {
@@ -461,7 +676,7 @@
             }
         }
 
-        // ===== RENDER =====
+        // ===== RENDER TẤT CẢ CÙNG LÚC =====
         function render(currentTime) {
             if (!state.isPlaying) return;
             
@@ -474,252 +689,82 @@
             if (!state.analyser) return;
             
             state.analyser.getByteFrequencyData(state.dataArray);
-            state.currentHue = (state.currentHue + 0.8) % 360;
+            state.currentHue = (state.currentHue + 1) % 360;
             
-            updateBassHistory();
-            drawVisualizer();
-            handleFlashEffects();
-            handleLightning();
-            handleLasers();
-            updateLEDs();
-            updateParticles();
-            
-            state.animationId = requestAnimationFrame(render);
-        }
-
-        function updateBassHistory() {
+            // Tính bass intensity
             let bassSum = 0;
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 10; i++) {
                 bassSum += state.dataArray[i];
             }
-            const bassIntensity = bassSum / 8 / 255;
+            state.bassIntensity = bassSum / 10 / 255;
             
-            state.bassHistory.push(bassIntensity);
-            if (state.bassHistory.length > 10) {
-                state.bassHistory.shift();
-            }
-        }
-
-        function getAverageBass() {
-            if (state.bassHistory.length === 0) return 0;
-            return state.bassHistory.reduce((a, b) => a + b) / state.bassHistory.length;
+            drawVisualizer();
+            handleFlashEffects();
+            updateAllLEDs();
+            updateEffectsIntensity();
+            
+            state.animationId = requestAnimationFrame(render);
         }
 
         function drawVisualizer() {
             const width = el.visualizer.width;
             const height = el.visualizer.height;
             
-            // Xóa canvas
-            ctx.fillStyle = 'rgba(0,0,0,0.2)';
+            // Xóa canvas với hiệu ứng mờ
+            ctx.fillStyle = 'rgba(0,0,0,0.1)';
             ctx.fillRect(0, 0, width, height);
             
-            const avgBass = getAverageBass();
-            
-            // Vẽ tia điện nền
-            if (avgBass > 0.3) {
-                for (let i = 0; i < 3; i++) {
-                    drawLightningBackground(i);
-                }
-            }
-            
-            // Vẽ sóng chính
-            ctx.beginPath();
-            const centerY = height / 2;
-            
-            for (let i = 0; i < state.dataArray.length; i += 2) {
-                const value = state.dataArray[i];
-                const x = (i / state.dataArray.length) * width;
-                const wave1 = Math.sin(i * 0.1 + Date.now() * 0.003) * 80;
-                const wave2 = (value / 255 - 0.5) * 150;
-                const y = centerY + wave1 + wave2;
+            // Vẽ nhiều lớp sóng
+            for (let layer = 0; layer < 3; layer++) {
+                ctx.beginPath();
+                const centerY = height / 2;
+                const amplitude = 80 + layer * 40;
+                const frequency = 0.1 + layer * 0.05;
                 
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
+                for (let i = 0; i < state.dataArray.length; i += 2) {
+                    const value = state.dataArray[i];
+                    const x = (i / state.dataArray.length) * width;
+                    const wave = Math.sin(i * frequency + Date.now() * 0.001 + layer) * amplitude;
+                    const bassEffect = (value / 255) * 100 * state.bassIntensity;
+                    const y = centerY + wave + bassEffect;
+                    
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                
+                const gradient = ctx.createLinearGradient(0, 0, width, 0);
+                gradient.addColorStop(0, `hsla(${(state.currentHue + layer * 60) % 360}, 100%, 50%, 0.6)`);
+                gradient.addColorStop(1, `hsla(${(state.currentHue + layer * 60 + 120) % 360}, 100%, 50%, 0.6)`);
+                
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 2 + layer;
+                ctx.stroke();
             }
-            
-            const gradient = ctx.createLinearGradient(0, 0, width, 0);
-            gradient.addColorStop(0, `hsl(${state.currentHue}, 100%, 50%)`);
-            gradient.addColorStop(0.5, `hsl(${state.currentHue + 90}, 100%, 50%)`);
-            gradient.addColorStop(1, `hsl(${state.currentHue + 180}, 100%, 50%)`);
-            
-            ctx.strokeStyle = gradient;
-            ctx.lineWidth = 3;
-            ctx.shadowColor = `hsl(${state.currentHue}, 100%, 50%)`;
-            ctx.shadowBlur = 25;
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-        }
-
-        function drawLightningBackground(index) {
-            const width = el.visualizer.width;
-            const height = el.visualizer.height;
-            const offset = index * 150;
-            const time = Date.now() * 0.005;
-            
-            ctx.beginPath();
-            ctx.moveTo(0, height * 0.3);
-            
-            for (let x = 0; x <= width; x += 20) {
-                const y = height * 0.3 + Math.sin(x * 0.02 + time + offset) * 50 + 
-                          Math.cos(x * 0.01 + time * 2) * 30;
-                ctx.lineTo(x, y);
-            }
-            
-            ctx.strokeStyle = `hsla(${(state.currentHue + index * 60) % 360}, 70%, 60%, 0.3)`;
-            ctx.lineWidth = 2;
-            ctx.stroke();
         }
 
         function handleFlashEffects() {
             const width = el.flashOverlay.width;
             const height = el.flashOverlay.height;
-            const avgBass = getAverageBass();
             
             // Xóa overlay
-            flashCtx.fillStyle = 'rgba(0,0,0,0.4)';
+            flashCtx.fillStyle = 'rgba(0,0,0,0.3)';
             flashCtx.fillRect(0, 0, width, height);
             
-                      // Flash màn hình
-            if (avgBass > config.flashThreshold) {
-                const flashColor = `hsla(${Math.random() * 360}, 100%, 70%, ${avgBass * 0.2})`;
+            // Flash theo bass
+            if (state.bassIntensity > 0.3) {
+                const flashColor = `hsla(${state.currentHue}, 100%, 60%, ${state.bassIntensity * 0.2})`;
                 flashCtx.fillStyle = flashColor;
                 flashCtx.fillRect(0, 0, width, height);
-                createParticles(8);
-            }
-        }
-
-        function handleLightning() {
-            const currentTime = Date.now();
-            const avgBass = getAverageBass();
-            
-            if (avgBass > config.lightningThreshold && currentTime - state.lastLightningTime > 1000) {
-                state.lastLightningTime = currentTime;
-                createLightningBolt();
-                createParticles(12);
-            }
-        }
-
-        function createLightningBolt() {
-            const container = el.lightningContainer;
-            const bolt = document.createElement('div');
-            bolt.className = 'lightning-bolt';
-            
-            const x = Math.random() * (window.innerWidth - 100) + 50;
-            const width = Math.random() * 8 + 4;
-            const hue = Math.random() * 360;
-            
-            bolt.style.left = x + 'px';
-            bolt.style.width = width + 'px';
-            bolt.style.background = `linear-gradient(90deg, transparent, hsl(${hue}, 100%, 70%), transparent)`;
-            bolt.style.boxShadow = `0 0 ${width * 5}px hsl(${hue}, 100%, 50%)`;
-            
-            container.appendChild(bolt);
-            
-            setTimeout(() => {
-                bolt.remove();
-            }, 300);
-        }
-
-        function handleLasers() {
-            const currentTime = Date.now();
-            const avgBass = getAverageBass();
-            
-            if (avgBass > 0.4 && currentTime - state.lastLaserTime > 500 && state.lasers.length < config.laserLimit) {
-                state.lastLaserTime = currentTime;
-                createLaserBeam();
             }
             
-            updateLasers();
-        }
-
-        function createLaserBeam() {
-            const container = el.laserContainer;
-            const laser = document.createElement('div');
-            laser.className = 'laser-beam';
-            
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-            const length = Math.random() * 300 + 200;
-            const hue = (state.currentHue + Math.random() * 120) % 360;
-            
-            laser.style.width = length + 'px';
-            laser.style.top = centerY + 'px';
-            laser.style.left = centerX + 'px';
-            laser.style.color = `hsl(${hue}, 100%, 50%)`;
-            laser.style.animationDelay = Math.random() * 1 + 's';
-            
-            container.appendChild(laser);
-            
-            // Tạo hạt laser
-            createLaserParticles(centerX, centerY, hue, 10);
-            
-            state.lasers.push({
-                element: laser,
-                created: currentTime
-            });
-        }
-
-        function createLaserParticles(x, y, hue, count) {
-            for (let i = 0; i < count; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'laser-particle';
-                particle.style.background = `hsl(${hue}, 100%, 50%)`;
-                particle.style.left = x + 'px';
-                particle.style.top = y + 'px';
-                particle.style.boxShadow = `0 0 10px hsl(${hue}, 100%, 50%)`;
-                particle.style.setProperty('--tx', (Math.random() - 0.5) * 200 + 'px');
-                particle.style.setProperty('--ty', (Math.random() - 0.5) * 200 + 'px');
-                
-                document.body.appendChild(particle);
-                
-                setTimeout(() => {
-                    particle.remove();
-                }, 1000);
+            // Strobe ngẫu nhiên
+            if (Math.random() < state.bassIntensity * 0.2) {
+                const strobeColor = `hsla(${Math.random() * 360}, 100%, 70%, 0.3)`;
+                flashCtx.fillStyle = strobeColor;
+                flashCtx.fillRect(0, 0, width, height);
             }
         }
-
-        function updateLasers() {
-            const currentTime = Date.now();
-            state.lasers = state.lasers.filter(laser => {
-                if (currentTime - laser.created > 2000) {
-                    laser.element.remove();
-                    return false;
-                }
-                return true;
-            });
-        }
-
-        function createParticles(count) {
-            const width = el.visualizer.width;
-            const height = el.visualizer.height;
-            
-            for (let i = 0; i < count && state.particles.length < config.particleLimit; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                particle.style.left = Math.random() * width + 'px';
-                particle.style.top = height + 'px';
-                document.body.appendChild(particle);
-                
-                state.particles.push({
-                    element: particle,
-                    startTime: Date.now()
-                });
-            }
-        }
-
-        function updateParticles() {
-            const currentTime = Date.now();
-            state.particles = state.particles.filter(particle => {
-                if (currentTime - particle.startTime > 1500) {
-                    particle.element.remove();
-                    return false;
-                }
-                return true;
-            });
-        }
-
-        function updateLEDs() {
+function updateAllLEDs() {
             updateLEDStrip(el.ledTop);
             updateLEDStrip(el.ledBottom);
             updateLEDStrip(el.ledLeft);
@@ -734,21 +779,30 @@
                 const led = leds[i];
                 const dataIndex = Math.floor((i / leds.length) * state.dataArray.length);
                 const intensity = state.dataArray[dataIndex] / 255;
-                const avgBass = getAverageBass();
+                const effectiveIntensity = Math.max(intensity, state.bassIntensity);
                 
-                if (intensity > 0.15 || avgBass > 0.3) {
-                    const effectiveIntensity = Math.max(intensity, avgBass);
-                    const hue = (i * 30 + Date.now() * 0.04) % 360;
+                if (effectiveIntensity > 0.1) {
+                    const hue = (i * 15 + Date.now() * 0.02) % 360;
+                    const brightness = 40 + effectiveIntensity * 50;
                     
-                    led.style.background = `hsl(${hue}, 100%, ${40 + effectiveIntensity * 50}%)`;
-                    led.style.transform = `scale(${1 + effectiveIntensity * 0.7})`;
-                    led.style.boxShadow = `0 0 ${8 + effectiveIntensity * 20}px hsl(${hue}, 100%, 50%)`;
+                    led.style.background = `hsl(${hue}, 100%, ${brightness}%)`;
+                    led.style.transform = `scale(${1 + effectiveIntensity * 0.8})`;
+                    led.style.boxShadow = `0 0 ${10 + effectiveIntensity * 25}px hsl(${hue}, 100%, 50%)`;
                 } else {
                     led.style.background = '#111';
                     led.style.transform = 'scale(1)';
                     led.style.boxShadow = 'none';
                 }
             }
+        }
+
+        function updateEffectsIntensity() {
+            // Cập nhật cường độ cho tất cả hiệu ứng dựa trên âm nhạc
+            const effects = document.querySelectorAll('.lightning-bolt, .laser-beam, .pulse-ring');
+            effects.forEach(effect => {
+                effect.style.opacity = 0.3 + state.bassIntensity * 0.7;
+                effect.style.animationDuration = (1.5 - state.bassIntensity * 0.5) + 's';
+            });
         }
 
         // ===== XỬ LÝ SỰ KIỆN =====
@@ -764,7 +818,7 @@
                 
                 await el.audio.play();
                 state.isPlaying = true;
-                updateStatus('⚡ ĐANG PHÁT - TIA ĐIỆN & LASER KÍCH HOẠT', '#00ffcc');
+                updateStatus('⚡ TẤT CẢ HIỆU ỨNG ĐANG CHẠY CÙNG LÚC!', '#00ffcc');
                 
                 state.lastFrameTime = performance.now();
                 state.animationId = requestAnimationFrame(render);
@@ -786,42 +840,17 @@
                 state.animationId = null;
             }
             
-            updateStatus('⏹️ ĐÃ DỪNG - SẴN SÀNG BIẾN ẢO', '#ff0080');
-            resetVisuals();
+            updateStatus('⏹️ ĐÃ DỪNG - TẤT CẢ HIỆU ỨNG VẪN CHẠY', '#ff0080');
         }
 
         function handleResize() {
             setupCanvases();
-            createLEDs();
+            // Giữ nguyên các hiệu ứng, không cần tạo lại
         }
 
         function updateStatus(text, color) {
             el.status.textContent = text;
             el.status.style.color = color;
-        }
-
-        function resetVisuals() {
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, el.visualizer.width, el.visualizer.height);
-            
-            flashCtx.fillStyle = 'rgba(0,0,0,1)';
-            flashCtx.fillRect(0, 0, el.flashOverlay.width, el.flashOverlay.height);
-            
-            // Reset LEDs
-            const allLEDs = document.querySelectorAll('.led');
-            allLEDs.forEach(led => {
-                led.style.background = '#111';
-                led.style.transform = 'scale(1)';
-                led.style.boxShadow = 'none';
-            });
-            
-            // Xóa hiệu ứng
-            el.lightningContainer.innerHTML = '';
-            el.laserContainer.innerHTML = '';
-            state.particles.forEach(p => p.element.remove());
-            state.particles = [];
-            state.lasers.forEach(l => l.element.remove());
-            state.lasers = [];
         }
 
         // ===== KHỞI CHẠY =====
@@ -831,7 +860,6 @@
             if (state.animationId) cancelAnimationFrame(state.animationId);
             if (el.audio) {
                 el.audio.pause();
-                el.audio.src = '';
             }
         });
 
