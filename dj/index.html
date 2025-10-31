@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BIẾN ẢO VŨ TRƯỜNG - LED NHẤP NHÁY</title>
+    <title>VŨ TRỤ BIẾN ẢO - TIA ĐIỆN & LASER</title>
     <style>
         * {
             margin: 0;
@@ -34,24 +34,26 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 1000;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             padding: 15px 25px;
-            border-radius: 15px;
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(25px);
+            border: 2px solid rgba(255,255,255,0.4);
             text-align: center;
-            box-shadow: 0 0 40px rgba(255,0,128,0.4);
+            box-shadow: 0 0 50px rgba(255,0,128,0.6);
         }
         
         .title {
-            font-size: 24px;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #ff0080, #00ffcc, #ffff00, #ff0080);
-            background-size: 300% 300%;
+            font-size: 26px;
+            margin-bottom: 12px;
+            background: linear-gradient(45deg, #ff0080, #00ffcc, #ff00ff, #00ff00);
+            background-size: 400% 400%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: titleGlow 3s ease infinite;
+            animation: titleGlow 4s ease infinite;
             font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         
         @keyframes titleGlow {
@@ -61,27 +63,29 @@
         
         .button-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: center;
+            margin-bottom: 8px;
         }
         
         button {
             background: linear-gradient(45deg, #ff0080, #00ffcc);
             border: none;
             color: white;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 14px 24px;
+            border-radius: 30px;
             cursor: pointer;
             font-size: 14px;
             font-weight: bold;
             transition: all 0.3s;
-            min-width: 120px;
-            box-shadow: 0 0 20px rgba(255,0,128,0.4);
+            min-width: 130px;
+            box-shadow: 0 0 25px rgba(255,0,128,0.5);
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
         
         button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255,0,128,0.7);
+            transform: scale(1.08);
+            box-shadow: 0 0 35px rgba(255,0,128,0.8);
         }
         
         .status {
@@ -89,6 +93,7 @@
             font-size: 12px;
             color: #00ffcc;
             font-weight: bold;
+            text-shadow: 0 0 10px #00ffcc;
         }
         
         /* Canvas chính */
@@ -111,7 +116,6 @@
             z-index: 5;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.1s;
             mix-blend-mode: screen;
         }
         
@@ -120,14 +124,30 @@
             position: absolute;
             left: 0;
             width: 100%;
-            z-index: 10;
+            z-index: 15;
             display: flex;
             justify-content: space-around;
-            padding: 0 10px;
+            padding: 0 15px;
         }
         
-        .led-top { top: 80px; }
-        .led-bottom { bottom: 60px; }
+        .led-top { top: 90px; }
+        .led-bottom { bottom: 70px; }
+        .led-left { 
+            top: 50%; 
+            left: 20px;
+            transform: translateY(-50%);
+            flex-direction: column;
+            width: auto;
+            height: 200px;
+        }
+        .led-right { 
+            top: 50%; 
+            right: 20px;
+            transform: translateY(-50%);
+            flex-direction: column;
+            width: auto;
+            height: 200px;
+        }
         
         .led {
             width: 8px;
@@ -136,6 +156,7 @@
             background: #111;
             transition: all 0.15s;
             will-change: transform, background-color;
+            margin: 3px;
         }
         
         /* Disco ball */
@@ -144,18 +165,81 @@
             top: 45%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #fff, #666 60%);
-            z-index: 8;
-            animation: rotate 4s linear infinite;
-            box-shadow: 0 0 30px rgba(255,255,255,0.5);
+            background: radial-gradient(circle at 35% 35%, #fff, #888 60%, #444 90%);
+            z-index: 12;
+            animation: rotate 6s linear infinite;
+            box-shadow: 
+                0 0 40px rgba(255,255,255,0.6),
+                inset -5px -5px 15px rgba(0,0,0,0.8);
         }
         
         @keyframes rotate {
             from { transform: translate(-50%, -50%) rotate(0deg); }
             to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        /* Tia điện */
+        .lightning {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 8;
+            pointer-events: none;
+            opacity: 0;
+        }
+        
+        .lightning-bolt {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, #00ffff, transparent);
+            transform-origin: top;
+            animation: lightningStrike 0.3s ease-out;
+        }
+        
+        @keyframes lightningStrike {
+            0% { 
+                height: 0; 
+                opacity: 0; 
+            }
+            50% { 
+                opacity: 1; 
+            }
+            100% { 
+                height: 100vh; 
+                opacity: 0; 
+            }
+        }
+        
+        /* Tia laser */
+        .laser-beam {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, currentColor, transparent);
+            box-shadow: 0 0 15px currentColor;
+            transform-origin: left;
+            z-index: 6;
+            animation: laserScan 2s linear infinite;
+        }
+        
+        @keyframes laserScan {
+            0% { 
+                transform: rotate(0deg) scaleX(0); 
+                opacity: 0; 
+            }
+            10% { 
+                opacity: 1; 
+            }
+            90% { 
+                opacity: 1; 
+            }
+            100% { 
+                transform: rotate(360deg) scaleX(1); 
+                opacity: 0; 
+            }
         }
         
         /* Hiệu ứng hạt */
@@ -167,7 +251,7 @@
             background: currentColor;
             pointer-events: none;
             opacity: 0;
-            animation: particleFloat 2s ease-out forwards;
+            animation: particleFloat 1.5s ease-out forwards;
         }
         
         @keyframes particleFloat {
@@ -176,7 +260,28 @@
                 opacity: 1;
             }
             100% {
-                transform: translateY(-100px) scale(0);
+                transform: translateY(-150px) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        /* Hạt laser */
+        .laser-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: laserParticle 1s ease-out forwards;
+        }
+        
+        @keyframes laserParticle {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
                 opacity: 0;
             }
         }
@@ -187,34 +292,39 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: #00ffcc;
-            font-size: 16px;
+            font-size: 18px;
             z-index: 1000;
-            background: rgba(0,0,0,0.8);
-            padding: 15px 30px;
-            border-radius: 10px;
+            background: rgba(0,0,0,0.9);
+            padding: 20px 35px;
+            border-radius: 15px;
+            backdrop-filter: blur(15px);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="controls">
-            <div class="title">BIẾN ẢO VŨ TRƯỜNG</div>
+            <div class="title">VŨ TRỤ BIẾN ẢO</div>
             <div class="button-group">
-                <button id="playBtn">🎵 BẬT NHẠC</button>
+                <button id="playBtn">⚡ BẬT NHẠC</button>
                 <button id="stopBtn">⏹️ DỪNG</button>
             </div>
-            <div class="status" id="status">Sẵn sàng biến ảo</div>
+            <div class="status" id="status">Sẵn sàng phóng điện & laser</div>
         </div>
         
-        <div class="loading" id="loading">Đang tải nhạc...</div>
+        <div class="loading" id="loading">Đang tải vũ trụ biến ảo...</div>
         
         <canvas id="visualizer"></canvas>
         <canvas id="flashOverlay"></canvas>
         
         <div class="led-container led-top" id="ledTop"></div>
         <div class="led-container led-bottom" id="ledBottom"></div>
+        <div class="led-container led-left" id="ledLeft"></div>
+        <div class="led-container led-right" id="ledRight"></div>
         
         <div class="disco-ball"></div>
+        <div class="lightning" id="lightningContainer"></div>
+        <div id="laserContainer"></div>
     </div>
 
     <audio id="audio" preload="metadata">
@@ -222,14 +332,16 @@
     </audio>
 
     <script>
-        // ===== CẤU HÌNH TỐI ƯU CHỐNG LAG =====
+        // ===== CẤU HÌNH TỐI ƯU =====
         const config = {
             fftSize: 64,
-            smoothing: 0.85,
-            ledCount: 16,
-            maxFPS: 24,            // Giảm FPS để chống lag
-            flashThreshold: 0.7,   // Ngưỡng nhấp nháy
-            particleLimit: 20      // Giới hạn hạt hiệu ứng
+            smoothing: 0.8,
+            ledCount: 12,
+            maxFPS: 24,
+            flashThreshold: 0.6,
+            lightningThreshold: 0.8,
+            particleLimit: 25,
+            laserLimit: 15
         };
 
         // Cache DOM elements
@@ -242,7 +354,11 @@
             visualizer: document.getElementById('visualizer'),
             flashOverlay: document.getElementById('flashOverlay'),
             ledTop: document.getElementById('ledTop'),
-            ledBottom: document.getElementById('ledBottom')
+            ledBottom: document.getElementById('ledBottom'),
+            ledLeft: document.getElementById('ledLeft'),
+            ledRight: document.getElementById('ledRight'),
+            lightningContainer: document.getElementById('lightningContainer'),
+            laserContainer: document.getElementById('laserContainer')
         };
 
         const ctx = el.visualizer.getContext('2d', { 
@@ -256,7 +372,7 @@
             desynchronized: true
         });
 
-        // State tối ưu
+        // State
         let state = {
             audioContext: null,
             analyser: null,
@@ -265,8 +381,11 @@
             isPlaying: false,
             lastFrameTime: 0,
             particles: [],
-            lastFlashTime: 0,
-            currentHue: 0
+            lasers: [],
+            lastLightningTime: 0,
+            lastLaserTime: 0,
+            currentHue: 0,
+            bassHistory: []
         };
 
         // ===== KHỞI TẠO =====
@@ -283,7 +402,6 @@
             el.flashOverlay.width = window.innerWidth;
             el.flashOverlay.height = window.innerHeight;
             
-            // Nền tối ưu
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, el.visualizer.width, el.visualizer.height);
         }
@@ -291,11 +409,16 @@
         function createLEDs() {
             createLEDStrip(el.ledTop);
             createLEDStrip(el.ledBottom);
+            createLEDStrip(el.ledLeft);
+            createLEDStrip(el.ledRight);
         }
 
         function createLEDStrip(container) {
             container.innerHTML = '';
-            for (let i = 0; i < config.ledCount; i++) {
+            const isVertical = container.classList.contains('led-left') || container.classList.contains('led-right');
+            const count = isVertical ? 8 : config.ledCount;
+            
+            for (let i = 0; i < count; i++) {
                 const led = document.createElement('div');
                 led.className = 'led';
                 container.appendChild(led);
@@ -306,7 +429,7 @@
             el.audio.load();
             setTimeout(() => {
                 el.loading.style.display = 'none';
-            }, 1000);
+            }, 1500);
         }
 
         function setupEventListeners() {
@@ -338,11 +461,10 @@
             }
         }
 
-        // ===== RENDER TỐI ƯU =====
+        // ===== RENDER =====
         function render(currentTime) {
             if (!state.isPlaying) return;
             
-            // Giới hạn FPS nghiêm ngặt
             if (currentTime - state.lastFrameTime < 1000 / config.maxFPS) {
                 state.animationId = requestAnimationFrame(render);
                 return;
@@ -352,107 +474,219 @@
             if (!state.analyser) return;
             
             state.analyser.getByteFrequencyData(state.dataArray);
+            state.currentHue = (state.currentHue + 0.8) % 360;
             
-            // Cập nhật màu chủ đạo
-            state.currentHue = (state.currentHue + 0.5) % 360;
-            
+            updateBassHistory();
             drawVisualizer();
             handleFlashEffects();
+            handleLightning();
+            handleLasers();
             updateLEDs();
             updateParticles();
             
             state.animationId = requestAnimationFrame(render);
         }
 
+        function updateBassHistory() {
+            let bassSum = 0;
+            for (let i = 0; i < 8; i++) {
+                bassSum += state.dataArray[i];
+            }
+            const bassIntensity = bassSum / 8 / 255;
+            
+            state.bassHistory.push(bassIntensity);
+            if (state.bassHistory.length > 10) {
+                state.bassHistory.shift();
+            }
+        }
+
+        function getAverageBass() {
+            if (state.bassHistory.length === 0) return 0;
+            return state.bassHistory.reduce((a, b) => a + b) / state.bassHistory.length;
+        }
+
         function drawVisualizer() {
             const width = el.visualizer.width;
             const height = el.visualizer.height;
-            const centerY = height / 2;
             
-            // Xóa canvas với hiệu ứng mờ
-            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            // Xóa canvas
+            ctx.fillStyle = 'rgba(0,0,0,0.2)';
             ctx.fillRect(0, 0, width, height);
             
-            // Tính cường độ trung bình
-            let sum = 0;
-            for (let i = 0; i < state.dataArray.length; i++) {
-                sum += state.dataArray[i];
+            const avgBass = getAverageBass();
+            
+            // Vẽ tia điện nền
+            if (avgBass > 0.3) {
+                for (let i = 0; i < 3; i++) {
+                    drawLightningBackground(i);
+                }
             }
-            const avgIntensity = sum / state.dataArray.length / 255;
             
             // Vẽ sóng chính
             ctx.beginPath();
-            ctx.moveTo(0, centerY);
+            const centerY = height / 2;
             
             for (let i = 0; i < state.dataArray.length; i += 2) {
                 const value = state.dataArray[i];
                 const x = (i / state.dataArray.length) * width;
-                const y = centerY + (Math.sin(i * 0.2 + Date.now() * 0.002) * 50 + (value / 255 - 0.5) * 200);
+                const wave1 = Math.sin(i * 0.1 + Date.now() * 0.003) * 80;
+                const wave2 = (value / 255 - 0.5) * 150;
+                const y = centerY + wave1 + wave2;
                 
                 if (i === 0) ctx.moveTo(x, y);
                 else ctx.lineTo(x, y);
             }
             
-            // Gradient động
             const gradient = ctx.createLinearGradient(0, 0, width, 0);
             gradient.addColorStop(0, `hsl(${state.currentHue}, 100%, 50%)`);
-            gradient.addColorStop(0.5, `hsl(${state.currentHue + 120}, 100%, 50%)`);
-            gradient.addColorStop(1, `hsl(${state.currentHue + 240}, 100%, 50%)`);
+            gradient.addColorStop(0.5, `hsl(${state.currentHue + 90}, 100%, 50%)`);
+            gradient.addColorStop(1, `hsl(${state.currentHue + 180}, 100%, 50%)`);
             
             ctx.strokeStyle = gradient;
-            ctx.lineWidth = 4;
-            ctx.stroke();
-            
-            // Hiệu ứng phát sáng
+            ctx.lineWidth = 3;
             ctx.shadowColor = `hsl(${state.currentHue}, 100%, 50%)`;
-            ctx.shadowBlur = 30;
+            ctx.shadowBlur = 25;
             ctx.stroke();
             ctx.shadowBlur = 0;
+        }
+
+        function drawLightningBackground(index) {
+            const width = el.visualizer.width;
+            const height = el.visualizer.height;
+            const offset = index * 150;
+            const time = Date.now() * 0.005;
             
-            // Vòng tròn trung tâm
-            if (avgIntensity > 0.3) {
-                ctx.beginPath();
-                ctx.arc(width / 2, centerY, 20 + avgIntensity * 50, 0, Math.PI * 2);
-                ctx.fillStyle = `hsla(${state.currentHue + 180}, 100%, 50%, ${avgIntensity * 0.5})`;
-                ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(0, height * 0.3);
+            
+            for (let x = 0; x <= width; x += 20) {
+                const y = height * 0.3 + Math.sin(x * 0.02 + time + offset) * 50 + 
+                          Math.cos(x * 0.01 + time * 2) * 30;
+                ctx.lineTo(x, y);
             }
+            
+            ctx.strokeStyle = `hsla(${(state.currentHue + index * 60) % 360}, 70%, 60%, 0.3)`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
         }
 
         function handleFlashEffects() {
-            const currentTime = Date.now();
             const width = el.flashOverlay.width;
             const height = el.flashOverlay.height;
+            const avgBass = getAverageBass();
             
-            // Tính cường độ cho nhấp nháy
-            let bassSum = 0;
-            for (let i = 0; i < 5; i++) {
-                bassSum += state.dataArray[i];
-            }
-            const bassIntensity = bassSum / 5 / 255;
-            
-            // Xóa overlay với fade
-            flashCtx.fillStyle = 'rgba(0,0,0,0.3)';
+            // Xóa overlay
+            flashCtx.fillStyle = 'rgba(0,0,0,0.4)';
             flashCtx.fillRect(0, 0, width, height);
             
-            // Nhấp nháy màn hình
-            if (bassIntensity > config.flashThreshold && currentTime - state.lastFlashTime > 200) {
-                state.lastFlashTime = currentTime;
-                
-                // Flash toàn màn hình
-                const flashColor = `hsla(${Math.random() * 360}, 100%, 50%, ${bassIntensity * 0.3})`;
+                      // Flash màn hình
+            if (avgBass > config.flashThreshold) {
+                const flashColor = `hsla(${Math.random() * 360}, 100%, 70%, ${avgBass * 0.2})`;
                 flashCtx.fillStyle = flashColor;
                 flashCtx.fillRect(0, 0, width, height);
-                
-                // Tạo hạt hiệu ứng
-                createParticles(10);
+                createParticles(8);
+            }
+        }
+
+        function handleLightning() {
+            const currentTime = Date.now();
+            const avgBass = getAverageBass();
+            
+            if (avgBass > config.lightningThreshold && currentTime - state.lastLightningTime > 1000) {
+                state.lastLightningTime = currentTime;
+                createLightningBolt();
+                createParticles(12);
+            }
+        }
+
+        function createLightningBolt() {
+            const container = el.lightningContainer;
+            const bolt = document.createElement('div');
+            bolt.className = 'lightning-bolt';
+            
+            const x = Math.random() * (window.innerWidth - 100) + 50;
+            const width = Math.random() * 8 + 4;
+            const hue = Math.random() * 360;
+            
+            bolt.style.left = x + 'px';
+            bolt.style.width = width + 'px';
+            bolt.style.background = `linear-gradient(90deg, transparent, hsl(${hue}, 100%, 70%), transparent)`;
+            bolt.style.boxShadow = `0 0 ${width * 5}px hsl(${hue}, 100%, 50%)`;
+            
+            container.appendChild(bolt);
+            
+            setTimeout(() => {
+                bolt.remove();
+            }, 300);
+        }
+
+        function handleLasers() {
+            const currentTime = Date.now();
+            const avgBass = getAverageBass();
+            
+            if (avgBass > 0.4 && currentTime - state.lastLaserTime > 500 && state.lasers.length < config.laserLimit) {
+                state.lastLaserTime = currentTime;
+                createLaserBeam();
             }
             
-            // Hiệu ứng strobe nhẹ
-            if (Math.random() < bassIntensity * 0.1) {
-                const strobeColor = `hsla(${state.currentHue + 90}, 100%, 60%, 0.1)`;
-                flashCtx.fillStyle = strobeColor;
-                flashCtx.fillRect(0, 0, width, height);
+            updateLasers();
+        }
+
+        function createLaserBeam() {
+            const container = el.laserContainer;
+            const laser = document.createElement('div');
+            laser.className = 'laser-beam';
+            
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const length = Math.random() * 300 + 200;
+            const hue = (state.currentHue + Math.random() * 120) % 360;
+            
+            laser.style.width = length + 'px';
+            laser.style.top = centerY + 'px';
+            laser.style.left = centerX + 'px';
+            laser.style.color = `hsl(${hue}, 100%, 50%)`;
+            laser.style.animationDelay = Math.random() * 1 + 's';
+            
+            container.appendChild(laser);
+            
+            // Tạo hạt laser
+            createLaserParticles(centerX, centerY, hue, 10);
+            
+            state.lasers.push({
+                element: laser,
+                created: currentTime
+            });
+        }
+
+        function createLaserParticles(x, y, hue, count) {
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'laser-particle';
+                particle.style.background = `hsl(${hue}, 100%, 50%)`;
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.boxShadow = `0 0 10px hsl(${hue}, 100%, 50%)`;
+                particle.style.setProperty('--tx', (Math.random() - 0.5) * 200 + 'px');
+                particle.style.setProperty('--ty', (Math.random() - 0.5) * 200 + 'px');
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
             }
+        }
+
+        function updateLasers() {
+            const currentTime = Date.now();
+            state.lasers = state.lasers.filter(laser => {
+                if (currentTime - laser.created > 2000) {
+                    laser.element.remove();
+                    return false;
+                }
+                return true;
+            });
         }
 
         function createParticles(count) {
@@ -477,7 +711,7 @@
         function updateParticles() {
             const currentTime = Date.now();
             state.particles = state.particles.filter(particle => {
-                if (currentTime - particle.startTime > 2000) {
+                if (currentTime - particle.startTime > 1500) {
                     particle.element.remove();
                     return false;
                 }
@@ -488,22 +722,27 @@
         function updateLEDs() {
             updateLEDStrip(el.ledTop);
             updateLEDStrip(el.ledBottom);
+            updateLEDStrip(el.ledLeft);
+            updateLEDStrip(el.ledRight);
         }
 
         function updateLEDStrip(container) {
             const leds = container.children;
-            const now = Date.now();
+            const isVertical = container.classList.contains('led-left') || container.classList.contains('led-right');
             
             for (let i = 0; i < leds.length; i++) {
                 const led = leds[i];
                 const dataIndex = Math.floor((i / leds.length) * state.dataArray.length);
                 const intensity = state.dataArray[dataIndex] / 255;
+                const avgBass = getAverageBass();
                 
-                if (intensity > 0.2) {
-                    const hue = (i * 25 + now * 0.05) % 360;
-                    led.style.background = `hsl(${hue}, 100%, ${40 + intensity * 40}%)`;
-                    led.style.transform = `scale(${1 + intensity * 0.5})`;
-                    led.style.boxShadow = `0 0 ${5 + intensity * 15}px hsl(${hue}, 100%, 50%)`;
+                if (intensity > 0.15 || avgBass > 0.3) {
+                    const effectiveIntensity = Math.max(intensity, avgBass);
+                    const hue = (i * 30 + Date.now() * 0.04) % 360;
+                    
+                    led.style.background = `hsl(${hue}, 100%, ${40 + effectiveIntensity * 50}%)`;
+                    led.style.transform = `scale(${1 + effectiveIntensity * 0.7})`;
+                    led.style.boxShadow = `0 0 ${8 + effectiveIntensity * 20}px hsl(${hue}, 100%, 50%)`;
                 } else {
                     led.style.background = '#111';
                     led.style.transform = 'scale(1)';
@@ -525,7 +764,7 @@
                 
                 await el.audio.play();
                 state.isPlaying = true;
-                updateStatus('🎵 BIẾN ẢO ĐANG PHÁT - NHẤP NHÁY CỰC MẠNH', '#00ffcc');
+                updateStatus('⚡ ĐANG PHÁT - TIA ĐIỆN & LASER KÍCH HOẠT', '#00ffcc');
                 
                 state.lastFrameTime = performance.now();
                 state.animationId = requestAnimationFrame(render);
@@ -568,6 +807,7 @@
             flashCtx.fillStyle = 'rgba(0,0,0,1)';
             flashCtx.fillRect(0, 0, el.flashOverlay.width, el.flashOverlay.height);
             
+            // Reset LEDs
             const allLEDs = document.querySelectorAll('.led');
             allLEDs.forEach(led => {
                 led.style.background = '#111';
@@ -575,9 +815,13 @@
                 led.style.boxShadow = 'none';
             });
             
-            // Xóa hạt
-            state.particles.forEach(particle => particle.element.remove());
+            // Xóa hiệu ứng
+            el.lightningContainer.innerHTML = '';
+            el.laserContainer.innerHTML = '';
+            state.particles.forEach(p => p.element.remove());
             state.particles = [];
+            state.lasers.forEach(l => l.element.remove());
+            state.lasers = [];
         }
 
         // ===== KHỞI CHẠY =====
