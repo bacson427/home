@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nguyen Bac Son - LED DISCOVERY</title>
+    <title>BIẾN ẢO VŨ TRƯỜNG - LED NHẤP NHÁY</title>
     <style>
         * {
             margin: 0;
@@ -14,12 +14,11 @@
         body {
             background: #000;
             color: white;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             overflow: hidden;
             position: fixed;
             width: 100%;
             height: 100%;
-            user-select: none;
         }
         
         .container {
@@ -31,68 +30,68 @@
         
         .controls {
             position: absolute;
-            top: 20px;
+            top: 15px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 100;
-            background: rgba(0,0,0,0.85);
-            padding: 20px 30px;
-            border-radius: 20px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.2);
+            z-index: 1000;
+            background: rgba(0,0,0,0.9);
+            padding: 15px 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255,255,255,0.3);
             text-align: center;
-            box-shadow: 0 0 30px rgba(255,0,128,0.3);
+            box-shadow: 0 0 40px rgba(255,0,128,0.4);
         }
         
         .title {
-            font-size: 28px;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, #ff0080, #00ffcc, #ff0080);
+            font-size: 24px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff0080, #00ffcc, #ffff00, #ff0080);
+            background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: titleGlow 3s ease infinite;
             font-weight: bold;
-            text-shadow: 0 0 20px rgba(255,0,128,0.5);
+        }
+        
+        @keyframes titleGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         
         .button-group {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: center;
-            margin-bottom: 10px;
         }
         
         button {
             background: linear-gradient(45deg, #ff0080, #00ffcc);
             border: none;
             color: white;
-            padding: 15px 30px;
-            border-radius: 30px;
+            padding: 12px 20px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
-            transition: all 0.3s ease;
-            min-width: 140px;
-            box-shadow: 0 0 20px rgba(255,0,128,0.3);
+            transition: all 0.3s;
+            min-width: 120px;
+            box-shadow: 0 0 20px rgba(255,0,128,0.4);
         }
         
         button:hover {
-            transform: scale(1.08);
-            box-shadow: 0 0 30px rgba(255,0,128,0.6);
-        }
-        
-        button:active {
-            transform: scale(0.95);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255,0,128,0.7);
         }
         
         .status {
-            margin-top: 12px;
-            font-size: 14px;
+            margin-top: 8px;
+            font-size: 12px;
             color: #00ffcc;
-            opacity: 0.9;
-            font-weight: 500;
+            font-weight: bold;
         }
         
-        /* Canvas tối ưu */
+        /* Canvas chính */
         #visualizer {
             position: absolute;
             top: 0;
@@ -102,50 +101,56 @@
             z-index: 1;
         }
         
+        /* Overlay nhấp nháy */
+        #flashOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.1s;
+            mix-blend-mode: screen;
+        }
+        
         /* LED strips */
         .led-container {
             position: absolute;
             left: 0;
             width: 100%;
-            z-index: 2;
+            z-index: 10;
             display: flex;
             justify-content: space-around;
-            padding: 0 20px;
+            padding: 0 10px;
         }
         
-        .led-top {
-            top: 120px;
-        }
-        
-        .led-bottom {
-            bottom: 80px;
-        }
+        .led-top { top: 80px; }
+        .led-bottom { bottom: 60px; }
         
         .led {
-            width: 12px;
-            height: 12px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            background: #1a1a1a;
-            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background: #111;
+            transition: all 0.15s;
             will-change: transform, background-color;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
         
         /* Disco ball */
         .disco-ball {
             position: absolute;
-            top: 50%;
+            top: 45%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #fff, #666 60%, #333 90%);
-            z-index: 2;
-            animation: rotate 8s linear infinite;
-            box-shadow: 
-                0 0 30px rgba(255,255,255,0.4),
-                inset -5px -5px 10px rgba(0,0,0,0.6);
+            background: radial-gradient(circle at 30% 30%, #fff, #666 60%);
+            z-index: 8;
+            animation: rotate 4s linear infinite;
+            box-shadow: 0 0 30px rgba(255,255,255,0.5);
         }
         
         @keyframes rotate {
@@ -153,73 +158,63 @@
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
         
-        /* Hiệu ứng nền */
-        .bg-effect {
+        /* Hiệu ứng hạt */
+        .particle {
             position: absolute;
+            width: 4px;
+            height: 4px;
             border-radius: 50%;
-            background: radial-gradient(circle, transparent 10%, rgba(255,0,128,0.1) 40%);
-            animation: bgPulse 4s ease-in-out infinite alternate;
-            z-index: 0;
+            background: currentColor;
+            pointer-events: none;
+            opacity: 0;
+            animation: particleFloat 2s ease-out forwards;
         }
         
-        @keyframes bgPulse {
-            0% { transform: scale(1); opacity: 0.3; }
-            100% { transform: scale(1.5); opacity: 0.1; }
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(0);
+                opacity: 0;
+            }
         }
         
-        /* Loading */
         .loading {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             color: #00ffcc;
-            font-size: 20px;
+            font-size: 16px;
             z-index: 1000;
             background: rgba(0,0,0,0.8);
-            padding: 20px 40px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-        
-        /* Equalizer bars */
-        .eq-bar {
-            position: absolute;
-            bottom: 0;
-            width: 8px;
-            background: linear-gradient(to top, #ff0080, #00ffcc);
-            border-radius: 4px 4px 0 0;
-            transition: height 0.15s ease-out;
-            will-change: height;
+            padding: 15px 30px;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="controls">
-            <div class="title">QUẺ BÓI - LED VŨ TRƯỜNG</div>
+            <div class="title">BIẾN ẢO VŨ TRƯỜNG</div>
             <div class="button-group">
                 <button id="playBtn">🎵 BẬT NHẠC</button>
-                <button id="stopBtn">Stop</button>
+                <button id="stopBtn">⏹️ DỪNG</button>
             </div>
-            <div class="status" id="status">Start</div>
+            <div class="status" id="status">Sẵn sàng biến ảo</div>
         </div>
         
-        <div class="loading" id="loading">🎵 Loadings...</div>
+        <div class="loading" id="loading">Đang tải nhạc...</div>
         
         <canvas id="visualizer"></canvas>
+        <canvas id="flashOverlay"></canvas>
         
         <div class="led-container led-top" id="ledTop"></div>
         <div class="led-container led-bottom" id="ledBottom"></div>
         
         <div class="disco-ball"></div>
-        
-        <!-- Hiệu ứng nền -->
-        <div class="bg-effect" style="top:20%;left:10%;width:300px;height:300px;animation-delay:0s;"></div>
-        <div class="bg-effect" style="top:60%;left:70%;width:400px;height:400px;animation-delay:2s;"></div>
-        
-        <!-- Equalizer bars container -->
-        <div id="eqContainer"></div>
     </div>
 
     <audio id="audio" preload="metadata">
@@ -227,14 +222,14 @@
     </audio>
 
     <script>
-        // ===== CẤU HÌNH TỐI ƯU =====
+        // ===== CẤU HÌNH TỐI ƯU CHỐNG LAG =====
         const config = {
-            fftSize: 128,
-            smoothing: 0.8,        // Tăng smoothing để mượt hơn
-            ledCount: 24,
-            barCount: 40,          // Số thanh cố định
-            maxFPS: 30,
-            historySize: 5         // Làm mượt bằng history
+            fftSize: 64,
+            smoothing: 0.85,
+            ledCount: 16,
+            maxFPS: 24,            // Giảm FPS để chống lag
+            flashThreshold: 0.7,   // Ngưỡng nhấp nháy
+            particleLimit: 20      // Giới hạn hạt hiệu ứng
         };
 
         // Cache DOM elements
@@ -244,18 +239,24 @@
             stopBtn: document.getElementById('stopBtn'),
             status: document.getElementById('status'),
             loading: document.getElementById('loading'),
-            canvas: document.getElementById('visualizer'),
+            visualizer: document.getElementById('visualizer'),
+            flashOverlay: document.getElementById('flashOverlay'),
             ledTop: document.getElementById('ledTop'),
-            ledBottom: document.getElementById('ledBottom'),
-            eqContainer: document.getElementById('eqContainer')
+            ledBottom: document.getElementById('ledBottom')
         };
 
-        const ctx = el.canvas.getContext('2d', { 
+        const ctx = el.visualizer.getContext('2d', { 
             alpha: false,
-            desynchronized: true 
+            desynchronized: true,
+            powerPreference: 'low-power'
         });
 
-        // State với history để làm mượt
+        const flashCtx = el.flashOverlay.getContext('2d', {
+            alpha: true,
+            desynchronized: true
+        });
+
+        // State tối ưu
         let state = {
             audioContext: null,
             analyser: null,
@@ -263,30 +264,28 @@
             animationId: null,
             isPlaying: false,
             lastFrameTime: 0,
-            volumeHistory: new Array(config.historySize).fill(0),
-            historyIndex: 0,
-            eqBars: []
+            particles: [],
+            lastFlashTime: 0,
+            currentHue: 0
         };
 
         // ===== KHỞI TẠO =====
         function init() {
-            setupCanvas();
+            setupCanvases();
             createLEDs();
-            createEqualizerBars();
             preloadAudio();
             setupEventListeners();
         }
 
-        function setupCanvas() {
-            el.canvas.width = window.innerWidth;
-            el.canvas.height = window.innerHeight;
-            // Nền gradient tĩnh
-            const gradient = ctx.createLinearGradient(0, 0, el.canvas.width, el.canvas.height);
-            gradient.addColorStop(0, '#0f0c29');
-            gradient.addColorStop(0.5, '#302b63');
-            gradient.addColorStop(1, '#24243e');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, el.canvas.width, el.canvas.height);
+        function setupCanvases() {
+            el.visualizer.width = window.innerWidth;
+            el.visualizer.height = window.innerHeight;
+            el.flashOverlay.width = window.innerWidth;
+            el.flashOverlay.height = window.innerHeight;
+            
+            // Nền tối ưu
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, el.visualizer.width, el.visualizer.height);
         }
 
         function createLEDs() {
@@ -296,30 +295,10 @@
 
         function createLEDStrip(container) {
             container.innerHTML = '';
-            const count = config.ledCount;
-            
-            for (let i = 0; i < count; i++) {
+            for (let i = 0; i < config.ledCount; i++) {
                 const led = document.createElement('div');
                 led.className = 'led';
                 container.appendChild(led);
-            }
-        }
-
-        function createEqualizerBars() {
-            el.eqContainer.innerHTML = '';
-            state.eqBars = [];
-            const barWidth = 8;
-            const spacing = 4;
-            const totalWidth = (barWidth + spacing) * config.barCount - spacing;
-            const startX = (window.innerWidth - totalWidth) / 2;
-            
-            for (let i = 0; i < config.barCount; i++) {
-                const bar = document.createElement('div');
-                bar.className = 'eq-bar';
-                bar.style.left = (startX + i * (barWidth + spacing)) + 'px';
-                bar.style.height = '10px';
-                el.eqContainer.appendChild(bar);
-                state.eqBars.push(bar);
             }
         }
 
@@ -327,7 +306,7 @@
             el.audio.load();
             setTimeout(() => {
                 el.loading.style.display = 'none';
-            }, 1500);
+            }, 1000);
         }
 
         function setupEventListeners() {
@@ -336,7 +315,7 @@
             window.addEventListener('resize', handleResize);
         }
 
-        // ===== XỬ LÝ AUDIO =====
+        // ===== AUDIO =====
         function initAudio() {
             try {
                 state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -354,91 +333,156 @@
                 
                 return true;
             } catch (error) {
-                console.error('Lỗi audio:', error);
-                updateStatus('❌ Lỗi khởi tạo audio', '#ff0080');
+                updateStatus('❌ Lỗi audio', '#ff0000');
                 return false;
             }
         }
 
-        // ===== RENDER MƯỢT MÀ =====
+        // ===== RENDER TỐI ƯU =====
         function render(currentTime) {
             if (!state.isPlaying) return;
             
-            // Giới hạn FPS
+            // Giới hạn FPS nghiêm ngặt
             if (currentTime - state.lastFrameTime < 1000 / config.maxFPS) {
                 state.animationId = requestAnimationFrame(render);
                 return;
             }
             state.lastFrameTime = currentTime;
 
-            if (!state.analyser || !state.dataArray) return;
+            if (!state.analyser) return;
             
             state.analyser.getByteFrequencyData(state.dataArray);
-            drawSmoothVisualizer();
+            
+            // Cập nhật màu chủ đạo
+            state.currentHue = (state.currentHue + 0.5) % 360;
+            
+            drawVisualizer();
+            handleFlashEffects();
             updateLEDs();
-            updateEqualizer();
+            updateParticles();
             
             state.animationId = requestAnimationFrame(render);
         }
 
-        function drawSmoothVisualizer() {
-            // Nền gradient
-            const gradient = ctx.createLinearGradient(0, 0, el.canvas.width, el.canvas.height);
-            gradient.addColorStop(0, 'rgba(15, 12, 41, 0.3)');
-            gradient.addColorStop(1, 'rgba(36, 36, 62, 0.3)');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, el.canvas.width, el.canvas.height);
+        function drawVisualizer() {
+            const width = el.visualizer.width;
+            const height = el.visualizer.height;
+            const centerY = height / 2;
             
-            const centerY = el.canvas.height / 2;
-            const maxAmplitude = el.canvas.height * 0.4;
+            // Xóa canvas với hiệu ứng mờ
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.fillRect(0, 0, width, height);
             
-            // Vẽ sóng âm thanh mượt mà
+            // Tính cường độ trung bình
+            let sum = 0;
+            for (let i = 0; i < state.dataArray.length; i++) {
+                sum += state.dataArray[i];
+            }
+            const avgIntensity = sum / state.dataArray.length / 255;
+            
+            // Vẽ sóng chính
             ctx.beginPath();
             ctx.moveTo(0, centerY);
             
-            for (let i = 0; i < state.dataArray.length; i++) {
+            for (let i = 0; i < state.dataArray.length; i += 2) {
                 const value = state.dataArray[i];
+                const x = (i / state.dataArray.length) * width;
+                const y = centerY + (Math.sin(i * 0.2 + Date.now() * 0.002) * 50 + (value / 255 - 0.5) * 200);
                 
-                // Làm mượt bằng cách lấy trung bình
-                const smoothValue = getSmoothedValue(value);
-                const x = (i / state.dataArray.length) * el.canvas.width;
-                const y = centerY + (smoothValue / 255 - 0.5) * maxAmplitude;
-                
-                if (i === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
             }
             
-            // Tạo gradient cho sóng
-            const waveGradient = ctx.createLinearGradient(0, 0, el.canvas.width, 0);
-            waveGradient.addColorStop(0, '#ff0080');
-            waveGradient.addColorStop(0.5, '#00ffcc');
-            waveGradient.addColorStop(1, '#ff0080');
+            // Gradient động
+            const gradient = ctx.createLinearGradient(0, 0, width, 0);
+            gradient.addColorStop(0, `hsl(${state.currentHue}, 100%, 50%)`);
+            gradient.addColorStop(0.5, `hsl(${state.currentHue + 120}, 100%, 50%)`);
+            gradient.addColorStop(1, `hsl(${state.currentHue + 240}, 100%, 50%)`);
             
-            ctx.strokeStyle = waveGradient;
-            ctx.lineWidth = 3;
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = 4;
             ctx.stroke();
             
-            // Đổ bóng cho sóng
-            ctx.shadowColor = '#00ffcc';
-            ctx.shadowBlur = 20;
+            // Hiệu ứng phát sáng
+            ctx.shadowColor = `hsl(${state.currentHue}, 100%, 50%)`;
+            ctx.shadowBlur = 30;
             ctx.stroke();
             ctx.shadowBlur = 0;
+            
+            // Vòng tròn trung tâm
+            if (avgIntensity > 0.3) {
+                ctx.beginPath();
+                ctx.arc(width / 2, centerY, 20 + avgIntensity * 50, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${state.currentHue + 180}, 100%, 50%, ${avgIntensity * 0.5})`;
+                ctx.fill();
+            }
         }
 
-        function getSmoothedValue(currentValue) {
-            // Cập nhật history
-            state.volumeHistory[state.historyIndex] = currentValue;
-            state.historyIndex = (state.historyIndex + 1) % config.historySize;
+        function handleFlashEffects() {
+            const currentTime = Date.now();
+            const width = el.flashOverlay.width;
+            const height = el.flashOverlay.height;
             
-            // Tính trung bình
-            let sum = 0;
-            for (let i = 0; i < config.historySize; i++) {
-                sum += state.volumeHistory[i];
+            // Tính cường độ cho nhấp nháy
+            let bassSum = 0;
+            for (let i = 0; i < 5; i++) {
+                bassSum += state.dataArray[i];
             }
-            return sum / config.historySize;
+            const bassIntensity = bassSum / 5 / 255;
+            
+            // Xóa overlay với fade
+            flashCtx.fillStyle = 'rgba(0,0,0,0.3)';
+            flashCtx.fillRect(0, 0, width, height);
+            
+            // Nhấp nháy màn hình
+            if (bassIntensity > config.flashThreshold && currentTime - state.lastFlashTime > 200) {
+                state.lastFlashTime = currentTime;
+                
+                // Flash toàn màn hình
+                const flashColor = `hsla(${Math.random() * 360}, 100%, 50%, ${bassIntensity * 0.3})`;
+                flashCtx.fillStyle = flashColor;
+                flashCtx.fillRect(0, 0, width, height);
+                
+                // Tạo hạt hiệu ứng
+                createParticles(10);
+            }
+            
+            // Hiệu ứng strobe nhẹ
+            if (Math.random() < bassIntensity * 0.1) {
+                const strobeColor = `hsla(${state.currentHue + 90}, 100%, 60%, 0.1)`;
+                flashCtx.fillStyle = strobeColor;
+                flashCtx.fillRect(0, 0, width, height);
+            }
+        }
+
+        function createParticles(count) {
+            const width = el.visualizer.width;
+            const height = el.visualizer.height;
+            
+            for (let i = 0; i < count && state.particles.length < config.particleLimit; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                particle.style.left = Math.random() * width + 'px';
+                particle.style.top = height + 'px';
+                document.body.appendChild(particle);
+                
+                state.particles.push({
+                    element: particle,
+                    startTime: Date.now()
+                });
+            }
+        }
+
+        function updateParticles() {
+            const currentTime = Date.now();
+            state.particles = state.particles.filter(particle => {
+                if (currentTime - particle.startTime > 2000) {
+                    particle.element.remove();
+                    return false;
+                }
+                return true;
+            });
         }
 
         function updateLEDs() {
@@ -448,46 +492,23 @@
 
         function updateLEDStrip(container) {
             const leds = container.children;
-            const ledCount = leds.length;
+            const now = Date.now();
             
-            for (let i = 0; i < ledCount; i++) {
+            for (let i = 0; i < leds.length; i++) {
                 const led = leds[i];
-                const dataIndex = Math.floor((i / ledCount) * state.dataArray.length);
-                const intensity = getSmoothedValue(state.dataArray[dataIndex]) / 255;
+                const dataIndex = Math.floor((i / leds.length) * state.dataArray.length);
+                const intensity = state.dataArray[dataIndex] / 255;
                 
-                if (intensity > 0.15) {
-                    const hue = (i * 15 + Date.now() * 0.03) % 360;
-                    const saturation = 80 + intensity * 20;
-                    const lightness = 40 + intensity * 30;
-                    
-                    led.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-                    led.style.transform = `scale(${1 + intensity * 0.4})`;
-                    led.style.boxShadow = `0 0 ${10 + intensity * 20}px hsl(${hue}, 100%, 50%)`;
+                if (intensity > 0.2) {
+                    const hue = (i * 25 + now * 0.05) % 360;
+                    led.style.background = `hsl(${hue}, 100%, ${40 + intensity * 40}%)`;
+                    led.style.transform = `scale(${1 + intensity * 0.5})`;
+                    led.style.boxShadow = `0 0 ${5 + intensity * 15}px hsl(${hue}, 100%, 50%)`;
                 } else {
-                    led.style.background = '#1a1a1a';
+                    led.style.background = '#111';
                     led.style.transform = 'scale(1)';
-                    led.style.boxShadow = '0 0 10px rgba(0,0,0,0.5)';
+                    led.style.boxShadow = 'none';
                 }
-            }
-        }
-
-        function updateEqualizer() {
-            const bars = state.eqBars;
-            const barCount = bars.length;
-            
-            for (let i = 0; i < barCount; i++) {
-                const bar = bars[i];
-                const dataIndex = Math.floor((i / barCount) * state.dataArray.length);
-                const intensity = getSmoothedValue(state.dataArray[dataIndex]) / 255;
-                const height = 10 + intensity * 150;
-                
-                bar.style.height = `${height}px`;
-                
-                // Gradient màu theo cường độ
-                const hue = (i * 18 + Date.now() * 0.02) % 360;
-                bar.style.background = `linear-gradient(to top, 
-                    hsl(${hue}, 100%, 50%), 
-                    hsl(${hue + 60}, 100%, 50%))`;
             }
         }
 
@@ -504,14 +525,13 @@
                 
                 await el.audio.play();
                 state.isPlaying = true;
-                updateStatus('🎶 Nguyen Bac Son - LED NHẤP NHÁY', '#00ffcc');
+                updateStatus('🎵 BIẾN ẢO ĐANG PHÁT - NHẤP NHÁY CỰC MẠNH', '#00ffcc');
                 
                 state.lastFrameTime = performance.now();
                 state.animationId = requestAnimationFrame(render);
                 
             } catch (error) {
-                console.error('Lỗi phát nhạc:', error);
-                updateStatus('❌ Lỗi phát nhạc', '#ff0080');
+                updateStatus('❌ Lỗi phát nhạc', '#ff0000');
             }
         }
 
@@ -527,49 +547,42 @@
                 state.animationId = null;
             }
             
-            updateStatus('Continue ', '#ff0080');
+            updateStatus('⏹️ ĐÃ DỪNG - SẴN SÀNG BIẾN ẢO', '#ff0080');
             resetVisuals();
         }
 
         function handleResize() {
-            setupCanvas();
+            setupCanvases();
             createLEDs();
-            createEqualizerBars();
         }
 
-        // ===== TIỆN ÍCH =====
         function updateStatus(text, color) {
             el.status.textContent = text;
             el.status.style.color = color;
         }
 
         function resetVisuals() {
-            // Reset canvas
-            const gradient = ctx.createLinearGradient(0, 0, el.canvas.width, el.canvas.height);
-            gradient.addColorStop(0, '#0f0c29');
-            gradient.addColorStop(0.5, '#302b63');
-            gradient.addColorStop(1, '#24243e');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, el.canvas.width, el.canvas.height);
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, el.visualizer.width, el.visualizer.height);
             
-            // Reset LEDs
+            flashCtx.fillStyle = 'rgba(0,0,0,1)';
+            flashCtx.fillRect(0, 0, el.flashOverlay.width, el.flashOverlay.height);
+            
             const allLEDs = document.querySelectorAll('.led');
             allLEDs.forEach(led => {
-                led.style.background = '#1a1a1a';
+                led.style.background = '#111';
                 led.style.transform = 'scale(1)';
-                led.style.boxShadow = '0 0 10px rgba(0,0,0,0.5)';
+                led.style.boxShadow = 'none';
             });
             
-            // Reset equalizer
-            state.eqBars.forEach(bar => {
-                bar.style.height = '10px';
-            });
+            // Xóa hạt
+            state.particles.forEach(particle => particle.element.remove());
+            state.particles = [];
         }
 
         // ===== KHỞI CHẠY =====
         window.addEventListener('load', init);
-
-        // Dọn dẹp
+        
         window.addEventListener('beforeunload', () => {
             if (state.animationId) cancelAnimationFrame(state.animationId);
             if (el.audio) {
@@ -578,7 +591,6 @@
             }
         });
 
-        // Hỗ trợ mobile
         document.addEventListener('touchstart', function() {
             if (state.audioContext && state.audioContext.state === 'suspended') {
                 state.audioContext.resume();
