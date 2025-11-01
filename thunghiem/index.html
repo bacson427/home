@@ -3058,6 +3058,196 @@ document.addEventListener('click', function(e) {
     // Auto-init khi DOM ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => ESN.init(
+
+
+
+
+
+// --- BẮT ĐẦU MÃ JAVASCRIPT ĐỘC LẬP VÀ CÔ LẬP ---
+
+(function() {
+    // 1. TÌM VÀ SỬ DỤNG PHẦN TỬ AUDIO ĐÃ CÓ SẴN
+    const audio = document.querySelector('audio');
+    if (!audio) {
+        console.error("LỖI: Không tìm thấy thẻ <audio> trên website của bạn. Vui lòng đảm bảo đã có phần tử <audio> để hiệu ứng hoạt động.");
+        return;
+    }
+
+    // 2. KHỞI TẠO CÁC PHẦN TỬ CẦN THIẾT
+    const numParticles = 120; // Số lượng hạt tối ưu
+    const particles = [];
+    const MAX_AMPLITUDE = 255;
+    let audioContext, analyser, source;
+    let animationFrameId;
+    
+    // Tạo Canvas (Phần tử mới duy nhất được thêm vào DOM)
+    const canvas = document.createElement('canvas');
+    canvas.id = 'particleCanvas';
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+    
+    // Thiết lập kích thước Canvas và vị trí (FIXED)
+    const resizeCanvas = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        // CSS TỐI THIỂU: Đảm bảo Canvas nằm dưới cùng và đầy màn hình
+        canvas.style.cssText = 'position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none;';
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // 3. THIẾT LẬP WEB AUDIO API
+    function setupAudio() {
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 256; 
+
+            // Kết nối vào phần tử audio đã tìm thấy
+            source = audioContext.createMediaElementSource(audio); 
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+
+            // Đảm bảo AudioContext được khởi động (cần thiết cho tương tác người dùng)
+            audio.addEventListener('play', () => {
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+            });
+            
+        } catch (e) {
+            console.error("LỖI KHỞI TẠO AUDIO API:", e);
+            analyser = null; 
+        }
+    }
+
+    // 4. LỚP PARTICLE (Hạt sáng)
+    class Particle {
+        constructor(maxSize) {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.baseRadius = Math.random() * 2 + 1; 
+            this.maxRadius = Math.random() * maxSize + 4; 
+            this.color = `hsl(${Math.random() * 360}, 100%, 70%)`; 
+            
+            this.baseVelocity = {
+                x: (Math.random() - 0.5) * 0.5,
+                y: (Math.random() - 0.5) * 0.5
+            };
+            this.radius = this.baseRadius;
+            this.opacity = 0;
+            this.life = 0;
+            this.maxLife = Math.random() * 300 + 100;
+        }
+
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.shadowColor = this.color; 
+            ctx.shadowBlur = this.radius * 3; 
+            ctx.globalAlpha = this.opacity;
+            ctx.fill();
+        }
+
+        update(averageAmplitude) {
+            const volumeRatio = averageAmplitude / MAX_AMPLITUDE; 
+            
+            // Tốc độ di chuyển theo nhạc (nhạc mạnh di chuyển nhanh hơn)
+            const speedMultiplier = 1 + (volumeRatio * 8); 
+            
+            this.x += this.baseVelocity.x * speedMultiplier;
+            this.y += this.baseVelocity.y * speedMultiplier;
+
+            // Giữ hạt trong màn hình 
+            if (this.x < 0) this.x = canvas.width;
+            if (this.x > canvas.width) this.x = 0;
+            if (this.y < 0) this.y = canvas.height;
+            if (this.y > canvas.height) this.y = 0;
+            
+            // Phóng to kích thước theo nhạc
+            const sizeFactor = 1 + (volumeRatio * 2); 
+            this.radius = Math.min(this.maxRadius, this.baseRadius * sizeFactor);
+
+            this.life++;
+
+            // Nháy sáng
+            if (this.life < this.maxLife * 0.2) {
+                this.opacity += 0.03; 
+            } else if (this.life > this.maxLife * 0.8) {
+                this.opacity -= 0.02;
+            } else {
+                this.opacity = 0.5 + (Math.sin(this.life * 0.2) * 0.5) + (volumeRatio * 0.6); 
+            }
+            
+            this.opacity = Math.max(0, Math.min(1, this.opacity)); 
+
+            if (this.life >= this.maxLife) {
+                this.reset();
+            }
+        }
+
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.life = 0;
+            this.opacity = 0;
+            this.maxLife = Math.random() * 300 + 100;
+            this.maxRadius = Math.random() * 4 + 2;
+            this.baseRadius = Math.random() * 2 + 1;
+            this.color = `hsl(${Math.random() * 360}, 100%, 70%)`; 
+            this.baseVelocity = {
+                x: (Math.random() - 0.5) * 0.5,
+                y: (Math.random() - 0.5) * 0.5
+            };
+        }
+    }
+
+    // Tạo các hạt
+    for (let i = 0; i < numParticles; i++) {
+        particles.push(new Particle(6)); 
+    }
+
+    // 5. VÒNG LẶP ANIMATION CHÍNH
+    function animate() {
+        animationFrameId = requestAnimationFrame(animate);
+
+        // Xóa Canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height); 
+
+        // Trạng thái isPlaying dựa trên trạng thái của phần tử audio
+        const isPlaying = audio && !audio.paused;
+
+        if (isPlaying && analyser) { 
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(dataArray);
+            
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+                sum += dataArray[i];
+            }
+            const averageAmplitude = sum / dataArray.length; 
+
+            particles.forEach(p => {
+                p.update(averageAmplitude);
+                p.draw();
+            });
+        } else {
+             // Khi nhạc dừng, hạt di chuyển chậm (tốc độ cơ bản)
+             particles.forEach(p => {
+                p.update(0); 
+                p.draw();
+             });
+        }
+    }
+
+    // Khởi tạo Audio và Animation khi DOM đã sẵn sàng
+    setupAudio();
+    animate(); 
+
+})();
+// --- KẾT THÚC MÃ JAVASCRIPT ĐỘC LẬP VÀ CÔ LẬP ---
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
