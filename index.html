@@ -41,6 +41,12 @@
     background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
     z-index: 9999;
     pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+#auto-visualizer.active {
+    opacity: 1;
 }
 
 .visualizer-bars {
@@ -59,6 +65,7 @@
     border-radius: 4px 4px 0 0;
     transition: height 0.1s ease;
     box-shadow: 0 0 8px currentColor;
+    transform-origin: bottom;
 }
 
 
@@ -2095,7 +2102,8 @@ document.addEventListener('click', function(e) {
 
 
 
-// Visualizer tự động phát hiện nhạc
+
+// Visualizer chỉ hiển thị khi có nhạc phát
 class AutoMusicVisualizer {
     constructor() {
         this.audioContext = null;
@@ -2106,14 +2114,14 @@ class AutoMusicVisualizer {
         this.bars = [];
         this.isPlaying = false;
         this.currentAudio = null;
+        this.visualizerElement = null;
         
         this.init();
     }
     
     init() {
         this.createVisualizer();
-        this.detectAndConnectAudio();
-        this.startMonitoring();
+        this.startAudioDetection();
     }
     
     createVisualizer() {
@@ -2125,7 +2133,7 @@ class AutoMusicVisualizer {
             document.body.appendChild(visualizer);
         }
         
-        // Tạo các thanh visualizer
+        this.visualizerElement = document.getElementById('auto-visualizer');
         this.createBars();
     }
     
@@ -2143,26 +2151,39 @@ class AutoMusicVisualizer {
         }
     }
     
-    detectAndConnectAudio() {
-        // Tìm tất cả audio elements trên trang
-        const audioElements = document.querySelectorAll('audio');
+    startAudioDetection() {
+        // Kiểm tra audio mỗi giây
+        setInterval(() => {
+            this.findAndConnectAudio();
+        }, 1000);
+    }
+    
+    findAndConnectAudio() {
+        // Nếu đã có audio đang phát thì không làm gì
+        if (this.isPlaying) return;
         
-        if (audioElements.length > 0) {
-            this.connectToAudio(audioElements[0]);
-        } else {
-            // Thử tìm audio trong iframe hoặc video elements
-            this.findAudioInMediaElements();
+        // Tìm tất cả audio và video elements
+        const mediaElements = [
+            ...document.querySelectorAll('audio'),
+            ...document.querySelectorAll('video')
+        ];
+        
+        for (let media of mediaElements) {
+            if (!media.paused && !media.muted && media.readyState > 0) {
+                this.connectToAudio(media);
+                break;
+            }
         }
     }
     
-    connectToAudio(audioElement) {
+    connectToAudio(mediaElement) {
         try {
-            if (this.currentAudio === audioElement) return;
+            if (this.currentAudio === mediaElement) return;
             
-            this.currentAudio = audioElement;
+            this.currentAudio = mediaElement;
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.analyser = this.audioContext.createAnalyser();
-            this.source = this.audioContext.createMediaElementSource(audioElement);
+            this.source = this.audioContext.createMediaElementSource(mediaElement);
             
             this.source.connect(this.analyser);
             this.analyser.connect(this.audioContext.destination);
@@ -2171,62 +2192,46 @@ class AutoMusicVisualizer {
             this.bufferLength = this.analyser.frequencyBinCount;
             this.dataArray = new Uint8Array(this.bufferLength);
             
-            console.log('✅ Đã kết nối visualizer với audio element');
+            console.log('✅ Đã kết nối visualizer với media element');
             
-            // Theo dõi sự kiện phát nhạc
-            audioElement.addEventListener('play', () => {
-                this.isPlaying = true;
-                this.startAnimation();
-            });
+            // Hiển thị visualizer
+            this.showVisualizer();
+            this.isPlaying = true;
+            this.startAnimation();
             
-            audioElement.addEventListener('pause', () => {
-                this.isPlaying = false;
-                this.resetBars();
-            });
-            
-            audioElement.addEventListener('ended', () => {
-                this.isPlaying = false;
-                this.resetBars();
+            // Theo dõi sự kiện
+            mediaElement.addEventListener('pause', () => this.handleMediaStop());
+            mediaElement.addEventListener('ended', () => this.handleMediaStop());
+            mediaElement.addEventListener('volumechange', () => {
+                if (mediaElement.muted || mediaElement.volume === 0) {
+                    this.handleMediaStop();
+                }
             });
             
         } catch (error) {
-            console.log('❌ Không thể kết nối với audio:', error);
+            console.log('❌ Không thể kết nối với media:', error);
         }
     }
     
-    findAudioInMediaElements() {
-        // Tìm video elements có âm thanh
-        const videoElements = document.querySelectorAll('video');
-        for (let video of videoElements) {
-            if (!video.muted) {
-                this.connectToAudio(video);
-                return;
-            }
-        }
-        
-        // Tìm trong iframe
-        const iframes = document.querySelectorAll('iframe');
-        for (let iframe of iframes) {
-            try {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                const iframeAudio = iframeDoc.querySelectorAll('audio, video');
-                if (iframeAudio.length > 0) {
-                    this.connectToAudio(iframeAudio[0]);
-                    return;
-                }
-            } catch (e) {
-                // Bỏ qua lỗi cross-origin
-            }
-        }
+    showVisualizer() {
+        this.visualizerElement.style.display = 'block';
+        setTimeout(() => {
+            this.visualizerElement.classList.add('active');
+        }, 10);
     }
     
-    startMonitoring() {
-        // Kiểm tra lại mỗi 3 giây nếu chưa tìm thấy audio
-        setInterval(() => {
-            if (!this.currentAudio || !this.isPlaying) {
-                this.detectAndConnectAudio();
-            }
-        }, 3000);
+    hideVisualizer() {
+        this.visualizerElement.classList.remove('active');
+        setTimeout(() => {
+            this.visualizerElement.style.display = 'none';
+            this.resetBars();
+        }, 500);
+    }
+    
+    handleMediaStop() {
+        this.isPlaying = false;
+        this.hideVisualizer();
+        this.currentAudio = null;
     }
     
     startAnimation() {
@@ -2243,13 +2248,16 @@ class AutoMusicVisualizer {
     updateBars() {
         for (let i = 0; i < this.bars.length; i++) {
             const value = this.dataArray[i % this.bufferLength];
-            const height = (value / 255) * 140 + 5; // 5-145px
+            const height = (value / 255) * 140 + 5;
             
             this.bars[i].style.height = `${height}px`;
             
-            // Đổi màu theo cường độ
+            // Hiệu ứng màu sắc
             const hue = (i / this.bars.length) * 360 + (value / 255) * 60;
             this.bars[i].style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(${hue + 60}, 100%, 50%))`;
+            
+            // Hiệu ứng scale nhẹ
+            this.bars[i].style.transform = `scaleY(${1 + (value / 255) * 0.3})`;
         }
     }
     
@@ -2257,23 +2265,21 @@ class AutoMusicVisualizer {
         this.bars.forEach(bar => {
             bar.style.height = '5px';
             bar.style.background = 'linear-gradient(to top, #00ffff, #ff00ff)';
+            bar.style.transform = 'scaleY(1)';
         });
     }
 }
 
-// Tự động khởi chạy khi trang tải xong
+// Khởi chạy visualizer
 document.addEventListener('DOMContentLoaded', function() {
     new AutoMusicVisualizer();
 });
 
-// Hoặc khởi chạy ngay nếu DOM đã sẵn sàng
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        new AutoMusicVisualizer();
-    });
-} else {
+// Fallback nếu DOM ready
+if (document.readyState !== 'loading') {
     new AutoMusicVisualizer();
 }
+          
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
@@ -2291,7 +2297,7 @@ if (document.readyState === 'loading') {
 </div>
 </div>
   <!-- Chèn vào cuối body website của bạn -->
-<div id="auto-visualizer">
+<div id="auto-visualizer" style="display: none;">
     <div class="visualizer-bars" id="visualizer"></div>
 </div>
 </body>
