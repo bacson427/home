@@ -32,14 +32,13 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-/* VISUALIZER SIÊU MƯỢT */
 #nb-son-visualizer {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
     height: 150px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
     z-index: 10000;
     pointer-events: none;
     opacity: 0;
@@ -61,7 +60,6 @@
     height: 100%;
     display: block;
 }
-
 
 
 
@@ -2099,8 +2097,11 @@ document.addEventListener('click', function(e) {
 
             
       
-    // VISUALIZER SIÊU MƯỢT & NHẠY BÉN
-class UltraSmoothVisualizer {
+    
+ 
+            
+   // VISUALIZER DEBUG - TÌM VÀ KẾT NỐI CHÍNH XÁC
+class DebugVisualizer {
     constructor() {
         this.canvas = null;
         this.ctx = null;
@@ -2112,18 +2113,16 @@ class UltraSmoothVisualizer {
         this.isPlaying = false;
         this.currentAudio = null;
         this.visualizerElement = null;
+        this.debugElement = null;
         
         this.animationId = null;
-        this.smoothing = 0.7; // Giảm smoothing để nhạy hơn
-        this.lastDataArray = null;
-        
         this.init();
     }
     
     init() {
         this.createVisualizer();
-        this.startIntensiveMonitoring();
-        console.log('🎵 Ultra Smooth Visualizer đã khởi tạo');
+        this.startAggressiveMonitoring();
+        this.log('🔍 Debug Visualizer khởi động - đang tìm audio...');
     }
     
     createVisualizer() {
@@ -2132,11 +2131,13 @@ class UltraSmoothVisualizer {
         visualizer.innerHTML = `
             <div class="visualizer-container">
                 <canvas id="nb-visualizer-canvas"></canvas>
+                <div id="visualizer-debug"></div>
             </div>
         `;
         document.body.appendChild(visualizer);
         
         this.visualizerElement = visualizer;
+        this.debugElement = document.getElementById('visualizer-debug');
         this.canvas = document.getElementById('nb-visualizer-canvas');
         this.ctx = this.canvas.getContext('2d');
         
@@ -2149,98 +2150,156 @@ class UltraSmoothVisualizer {
         this.canvas.height = this.canvas.offsetHeight;
     }
     
-    startIntensiveMonitoring() {
-        // Kiểm tra mật độ cao hơn
-        setInterval(() => {
-            this.findAndConnectAudio();
-        }, 200); // Kiểm tra mỗi 200ms
+    startAggressiveMonitoring() {
+        // Kiểm tra ngay lập tức
+        this.scanForAudio();
         
-        // Thêm event listener cho các nút play
-        this.addPlayButtonListeners();
+        // Kiểm tra nhiều phương pháp khác nhau
+        setInterval(() => {
+            this.scanForAudio();
+        }, 300);
+        
+        // Theo dõi mọi sự kiện có thể
+        this.addEventListeners();
     }
     
-    addPlayButtonListeners() {
-        // Theo dõi click trên toàn trang để bắt sự kiện play
-        document.addEventListener('click', (e) => {
-            setTimeout(() => {
-                this.findAndConnectAudio();
-            }, 100);
+    addEventListeners() {
+        // Theo dõi mọi click
+        document.addEventListener('click', () => {
+            setTimeout(() => this.scanForAudio(), 100);
+        });
+        
+        // Theo dõi sự kiện touch
+        document.addEventListener('touchstart', () => {
+            setTimeout(() => this.scanForAudio(), 100);
+        });
+        
+        // Theo dõi sự kiện keypress
+        document.addEventListener('keypress', () => {
+            setTimeout(() => this.scanForAudio(), 100);
         });
     }
     
-    findAndConnectAudio() {
-        if (this.isPlaying) return;
+    scanForAudio() {
+        this.log('🔍 Đang quét audio elements...');
         
-        const mediaElements = [
-            ...document.querySelectorAll('audio'),
-            ...document.querySelectorAll('video')
-        ];
+        // Phương pháp 1: Tìm audio elements thông thường
+        const audioElements = document.querySelectorAll('audio');
+        this.log(`Tìm thấy ${audioElements.length} audio elements`);
         
-        for (let media of mediaElements) {
-            if (!media.paused && !media.muted && media.readyState > 0) {
-                if (this.currentAudio !== media) {
-                    this.connectToAudio(media);
-                }
+        for (let i = 0; i < audioElements.length; i++) {
+            const audio = audioElements[i];
+            const status = this.getAudioStatus(audio);
+            this.log(`Audio ${i}: ${status}`);
+            
+            if (!audio.paused && !audio.muted && audio.duration > 0) {
+                this.log(`🎵 Phát hiện audio ${i} đang phát!`);
+                this.connectToAudio(audio);
                 return;
             }
         }
         
-        // Kiểm tra thêm các media elements ẩn
-        this.checkHiddenMediaElements();
+        // Phương pháp 2: Tìm Web Audio API
+        this.scanForWebAudio();
+        
+        // Phương pháp 3: Tìm HTML5 audio ẩn
+        this.scanForHiddenAudio();
+        
+        if (this.isPlaying) {
+            this.stopVisualizer();
+        }
     }
     
-    checkHiddenMediaElements() {
-        // Kiểm tra các audio element có thể bị ẩn
+    getAudioStatus(audio) {
+        return `paused: ${audio.paused}, muted: ${audio.muted}, currentTime: ${audio.currentTime}, duration: ${audio.duration}, readyState: ${audio.readyState}`;
+    }
+    
+    scanForWebAudio() {
+        // Kiểm tra các biến global có thể chứa Web Audio
+        const globalVars = ['audio', 'player', 'music', 'sound', 'track'];
+        for (let varName of globalVars) {
+            if (window[varName] && window[varName] instanceof HTMLAudioElement) {
+                this.log(`Tìm thấy audio trong window.${varName}`);
+                if (!window[varName].paused) {
+                    this.connectToAudio(window[varName]);
+                    return;
+                }
+            }
+        }
+    }
+    
+    scanForHiddenAudio() {
+        // Tìm audio trong shadow DOM
+        this.findAudioInShadowRoot(document);
+        
+        // Tìm audio bị ẩn bằng CSS
         const allAudio = document.querySelectorAll('audio');
         for (let audio of allAudio) {
-            if (audio.currentTime > 0 && !audio.paused && !audio.ended) {
+            if (audio.currentTime > 0 && !audio.ended) {
+                this.log(`Phát hiện audio đang phát (currentTime: ${audio.currentTime})`);
                 this.connectToAudio(audio);
                 return;
             }
         }
     }
     
-    connectToAudio(mediaElement) {
-        try {
-            console.log('🎵 Phát hiện media đang phát, kết nối...');
+    findAudioInShadowRoot(node) {
+        if (node.shadowRoot) {
+            const shadowAudio = node.shadowRoot.querySelectorAll('audio');
+            for (let audio of shadowAudio) {
+                if (!audio.paused) {
+                    this.log('Tìm thấy audio trong Shadow DOM!');
+                    this.connectToAudio(audio);
+                    return;
+                }
+            }
             
-            this.currentAudio = mediaElement;
+            // Đệ quy tìm trong shadow root
+            node.shadowRoot.querySelectorAll('*').forEach(child => {
+                this.findAudioInShadowRoot(child);
+            });
+        }
+        
+        node.querySelectorAll('*').forEach(child => {
+            this.findAudioInShadowRoot(child);
+        });
+    }
+    
+    connectToAudio(audioElement) {
+        if (this.currentAudio === audioElement) return;
+        
+        try {
+            this.log('🔄 Đang kết nối với audio...');
+            
+            this.currentAudio = audioElement;
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.analyser = this.audioContext.createAnalyser();
+            this.source = this.audioContext.createMediaElementSource(audioElement);
             
-            // Cấu hình analyser để nhạy hơn
-            this.analyser.fftSize = 512; // Tăng độ chi tiết
-            this.analyser.smoothingTimeConstant = this.smoothing; // Giảm smoothing
-            this.analyser.minDecibels = -90;
-            this.analyser.maxDecibels = -10;
-            
-            this.source = this.audioContext.createMediaElementSource(mediaElement);
             this.source.connect(this.analyser);
             this.analyser.connect(this.audioContext.destination);
             
+            this.analyser.fftSize = 256;
             this.bufferLength = this.analyser.frequencyBinCount;
             this.dataArray = new Uint8Array(this.bufferLength);
-            this.lastDataArray = new Uint8Array(this.bufferLength);
             
             this.startVisualizer();
             
-            // Event listeners chi tiết hơn
-            const stopEvents = ['pause', 'ended', 'seeking', 'waiting'];
-            stopEvents.forEach(event => {
-                mediaElement.addEventListener(event, () => this.stopVisualizer());
+            // Event listeners
+            audioElement.addEventListener('pause', () => {
+                this.log('⏸️ Audio paused');
+                this.stopVisualizer();
             });
             
-            mediaElement.addEventListener('volumechange', () => {
-                if (mediaElement.muted || mediaElement.volume === 0) {
-                    this.stopVisualizer();
-                }
+            audioElement.addEventListener('ended', () => {
+                this.log('⏹️ Audio ended');
+                this.stopVisualizer();
             });
             
-            // Theo dõi lỗi media
-            mediaElement.addEventListener('error', () => this.stopVisualizer());
+            this.log('✅ Kết nối audio thành công!');
             
         } catch (error) {
-            console.error('❌ Lỗi kết nối audio:', error);
+            this.log(`❌ Lỗi kết nối: ${error.message}`);
         }
     }
     
@@ -2252,7 +2311,7 @@ class UltraSmoothVisualizer {
             cancelAnimationFrame(this.animationId);
         }
         this.animate();
-        console.log('✨ Visualizer đã bắt đầu');
+        this.log('✨ Visualizer đang chạy');
     }
     
     stopVisualizer() {
@@ -2266,7 +2325,7 @@ class UltraSmoothVisualizer {
         
         this.clearCanvas();
         this.currentAudio = null;
-        console.log('⏹️ Visualizer đã dừng');
+        this.log('⏹️ Visualizer đã dừng');
     }
     
     animate() {
@@ -2281,84 +2340,43 @@ class UltraSmoothVisualizer {
         
         this.analyser.getByteFrequencyData(this.dataArray);
         this.drawVisualizer();
+        
+        // Update debug info
+        const avg = this.dataArray.reduce((a, b) => a + b) / this.bufferLength;
+        this.debugElement.textContent = `🎵 Visualizer đang chạy | Volume: ${Math.round(avg)}`;
     }
     
     drawVisualizer() {
         const width = this.canvas.width;
         const height = this.canvas.height;
-        const barCount = 128; // Tăng số lượng bar
+        const barCount = 64;
         const barWidth = width / barCount;
         
-        // Xóa canvas với hiệu ứng fade
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
         this.ctx.fillRect(0, 0, width, height);
         
-        // Vẽ các bar
         for (let i = 0; i < barCount; i++) {
             const barIndex = Math.floor((i / barCount) * this.bufferLength);
             const value = this.dataArray[barIndex];
+            const barHeight = (value / 255) * height;
             
-            // Tính toán chiều cao với độ nhạy cao
-            const barHeight = (value / 255) * height * 1.2;
-            
-            // Màu sắc động theo tần số
-            const hue = (i / barCount) * 360 + (value / 255) * 180;
-            const saturation = 80 + (value / 255) * 20;
-            const lightness = 40 + (value / 255) * 30;
-            
+            const hue = (i / barCount) * 360;
             const x = i * barWidth;
             const y = height - barHeight;
             
-            // Vẽ bar chính
-            this.ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            this.ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
             this.ctx.fillRect(x, y, barWidth - 1, barHeight);
-            
-            // Hiệu ứng glow
-            this.ctx.shadowColor = `hsl(${hue}, 100%, 60%)`;
-            this.ctx.shadowBlur = 10;
-            this.ctx.fillRect(x, y, barWidth - 1, barHeight);
-            this.ctx.shadowBlur = 0;
-            
-            // Vẽ điểm sáng trên đỉnh bar
-            if (value > 100) {
-                this.ctx.fillStyle = `hsl(${hue}, 100%, 80%)`;
-                this.ctx.fillRect(x, y, barWidth - 1, 2);
-            }
         }
-        
-        // Vẽ đường waveform phía trên
-        this.drawWaveform();
-    }
-    
-    drawWaveform() {
-        const width = this.canvas.width;
-        const height = this.canvas.height;
-        
-        this.ctx.beginPath();
-        this.ctx.lineWidth = 2;
-        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-        
-        const sliceWidth = width / this.bufferLength;
-        let x = 0;
-        
-        for (let i = 0; i < this.bufferLength; i++) {
-            const v = this.dataArray[i] / 128.0;
-            const y = (v * height) / 4;
-            
-            if (i === 0) {
-                this.ctx.moveTo(x, y);
-            } else {
-                this.ctx.lineTo(x, y);
-            }
-            
-            x += sliceWidth;
-        }
-        
-        this.ctx.stroke();
     }
     
     clearCanvas() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.debugElement.textContent = '⏸️ Đang chờ audio...';
+    }
+    
+    log(message) {
+        console.log(`[Visualizer] ${message}`);
+        this.debugElement.textContent = message;
     }
     
     destroy() {
@@ -2366,21 +2384,12 @@ class UltraSmoothVisualizer {
     }
 }
 
-// KHỞI CHẠY NGAY LẬP TỨC
-(function() {
-    // Chờ DOM ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                window.ultraVisualizer = new UltraSmoothVisualizer();
-            }, 1000);
-        });
-    } else {
-        setTimeout(() => {
-            window.ultraVisualizer = new UltraSmoothVisualizer();
-        }, 1000);
-    }
-})();
+// KHỞI CHẠY
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        window.debugVisualizer = new DebugVisualizer();
+    }, 2000);
+});
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
@@ -2402,6 +2411,8 @@ class UltraSmoothVisualizer {
     <div class="visualizer-container">
         <canvas id="nb-visualizer-canvas"></canvas>
     </div>
+    <div id="visualizer-debug" style="position: absolute; top: 10px; left: 10px; color: white; font-size: 12px; background: rgba(0,0,0,0.7); padding: 5px;"></div>
+</div>
     
 </body>
 </html>
