@@ -32,39 +32,45 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-#auto-visualizer {
+/* VISUALIZER STYLES */
+#nb-son-visualizer {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 150px;
-    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-    z-index: 9999;
+    height: 120px;
+    background: linear-gradient(to top, rgba(10, 10, 42, 0.9), transparent);
+    z-index: 10000;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.5s ease;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
 }
 
-#auto-visualizer.active {
+#nb-son-visualizer.active {
     opacity: 1;
 }
 
 .visualizer-bars {
     display: flex;
-    justify-content: center;
     align-items: flex-end;
-    height: 100%;
-    gap: 2px;
-    padding: 0 20px;
+    height: 100px;
+    gap: 3px;
+    padding: 0 20px 10px;
+    width: 100%;
+    max-width: 800px;
+    justify-content: center;
 }
 
-.v-bar {
-    width: 8px;
-    min-height: 5px;
-    background: linear-gradient(to top, #00ffff, #ff00ff);
-    border-radius: 4px 4px 0 0;
-    transition: height 0.1s ease;
-    box-shadow: 0 0 8px currentColor;
+.nb-bar {
+    width: 10px;
+    min-height: 3px;
+    background: linear-gradient(to top, #ff0080, #00ffff);
+    border-radius: 5px 5px 0 0;
+    transition: height 0.15s ease;
+    box-shadow: 0 0 10px rgba(255, 0, 128, 0.5);
     transform-origin: bottom;
 }
 
@@ -2103,8 +2109,8 @@ document.addEventListener('click', function(e) {
 
 
 
-// Visualizer chỉ hiển thị khi có nhạc phát
-class AutoMusicVisualizer {
+// VISUALIZER CHO NGUYEN BAC SON WEBSITE
+class NBSonVisualizer {
     constructor() {
         this.audioContext = null;
         this.analyser = null;
@@ -2116,169 +2122,172 @@ class AutoMusicVisualizer {
         this.currentAudio = null;
         this.visualizerElement = null;
         
+        this.checkInterval = null;
         this.init();
     }
     
     init() {
         this.createVisualizer();
-        this.startAudioDetection();
+        this.startAudioMonitoring();
+        console.log('🎵 Nguyen Bac Son Visualizer đã khởi tạo');
     }
     
     createVisualizer() {
-        // Tạo container nếu chưa có
-        if (!document.getElementById('auto-visualizer')) {
-            const visualizer = document.createElement('div');
-            visualizer.id = 'auto-visualizer';
-            visualizer.innerHTML = '<div class="visualizer-bars" id="visualizer"></div>';
-            document.body.appendChild(visualizer);
-        }
+        // Tạo visualizer container
+        const visualizer = document.createElement('div');
+        visualizer.id = 'nb-son-visualizer';
+        visualizer.innerHTML = '<div class="visualizer-bars" id="nb-visualizer"></div>';
+        document.body.appendChild(visualizer);
         
-        this.visualizerElement = document.getElementById('auto-visualizer');
+        this.visualizerElement = visualizer;
         this.createBars();
     }
     
     createBars() {
-        const visualizer = document.getElementById('visualizer');
-        visualizer.innerHTML = '';
-        const barCount = 80;
+        const container = document.getElementById('nb-visualizer');
+        container.innerHTML = '';
+        const barCount = 60;
         
         for (let i = 0; i < barCount; i++) {
             const bar = document.createElement('div');
-            bar.className = 'v-bar';
-            bar.style.height = '5px';
-            visualizer.appendChild(bar);
+            bar.className = 'nb-bar';
+            bar.style.height = '3px';
+            container.appendChild(bar);
             this.bars.push(bar);
         }
     }
     
-    startAudioDetection() {
-        // Kiểm tra audio mỗi giây
-        setInterval(() => {
-            this.findAndConnectAudio();
-        }, 1000);
+    startAudioMonitoring() {
+        // Kiểm tra audio mỗi 500ms
+        this.checkInterval = setInterval(() => {
+            this.findAudioElements();
+        }, 500);
     }
     
-    findAndConnectAudio() {
-        // Nếu đã có audio đang phát thì không làm gì
-        if (this.isPlaying) return;
+    findAudioElements() {
+        // Tìm tất cả audio elements
+        const audioElements = document.querySelectorAll('audio');
         
-        // Tìm tất cả audio và video elements
-        const mediaElements = [
-            ...document.querySelectorAll('audio'),
-            ...document.querySelectorAll('video')
-        ];
-        
-        for (let media of mediaElements) {
-            if (!media.paused && !media.muted && media.readyState > 0) {
-                this.connectToAudio(media);
-                break;
+        for (let audio of audioElements) {
+            // Kiểm tra nếu audio đang phát
+            if (!audio.paused && !audio.muted && audio.duration > 0) {
+                if (this.currentAudio !== audio) {
+                    this.connectToAudio(audio);
+                }
+                return;
             }
+        }
+        
+        // Nếu không tìm thấy audio đang phát
+        if (this.isPlaying) {
+            this.stopVisualizer();
         }
     }
     
-    connectToAudio(mediaElement) {
+    connectToAudio(audioElement) {
         try {
-            if (this.currentAudio === mediaElement) return;
+            console.log('🎵 Đã phát hiện nhạc đang phát, kết nối visualizer...');
             
-            this.currentAudio = mediaElement;
+            this.currentAudio = audioElement;
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.analyser = this.audioContext.createAnalyser();
-            this.source = this.audioContext.createMediaElementSource(mediaElement);
+            this.source = this.audioContext.createMediaElementSource(audioElement);
             
             this.source.connect(this.analyser);
             this.analyser.connect(this.audioContext.destination);
             
-            this.analyser.fftSize = 256;
+            this.analyser.fftSize = 128;
             this.bufferLength = this.analyser.frequencyBinCount;
             this.dataArray = new Uint8Array(this.bufferLength);
             
-            console.log('✅ Đã kết nối visualizer với media element');
-            
-            // Hiển thị visualizer
-            this.showVisualizer();
-            this.isPlaying = true;
-            this.startAnimation();
+            // Bắt đầu visualizer
+            this.startVisualizer();
             
             // Theo dõi sự kiện
-            mediaElement.addEventListener('pause', () => this.handleMediaStop());
-            mediaElement.addEventListener('ended', () => this.handleMediaStop());
-            mediaElement.addEventListener('volumechange', () => {
-                if (mediaElement.muted || mediaElement.volume === 0) {
-                    this.handleMediaStop();
-                }
+            audioElement.addEventListener('pause', () => this.stopVisualizer());
+            audioElement.addEventListener('ended', () => this.stopVisualizer());
+            audioElement.addEventListener('volumechange', () => {
+                if (audioElement.muted) this.stopVisualizer();
             });
             
         } catch (error) {
-            console.log('❌ Không thể kết nối với media:', error);
+            console.error('❌ Lỗi kết nối audio:', error);
         }
     }
     
-    showVisualizer() {
-        this.visualizerElement.style.display = 'block';
-        setTimeout(() => {
-            this.visualizerElement.classList.add('active');
-        }, 10);
+    startVisualizer() {
+        this.isPlaying = true;
+        this.visualizerElement.classList.add('active');
+        this.animate();
+        console.log('✨ Visualizer đã bắt đầu');
     }
     
-    hideVisualizer() {
-        this.visualizerElement.classList.remove('active');
-        setTimeout(() => {
-            this.visualizerElement.style.display = 'none';
-            this.resetBars();
-        }, 500);
-    }
-    
-    handleMediaStop() {
+    stopVisualizer() {
         this.isPlaying = false;
-        this.hideVisualizer();
+        this.visualizerElement.classList.remove('active');
+        this.resetBars();
         this.currentAudio = null;
+        console.log('⏹️ Visualizer đã dừng');
     }
     
-    startAnimation() {
+    animate() {
         if (!this.isPlaying) return;
         
-        requestAnimationFrame(() => this.startAnimation());
+        requestAnimationFrame(() => this.animate());
         
         if (this.analyser && this.dataArray) {
             this.analyser.getByteFrequencyData(this.dataArray);
-            this.updateBars();
+            this.updateVisualizer();
         }
     }
     
-    updateBars() {
+    updateVisualizer() {
         for (let i = 0; i < this.bars.length; i++) {
-            const value = this.dataArray[i % this.bufferLength];
-            const height = (value / 255) * 140 + 5;
+            const value = this.dataArray[Math.floor(i / this.bars.length * this.bufferLength)];
+            const height = (value / 255) * 100 + 3;
             
             this.bars[i].style.height = `${height}px`;
             
-            // Hiệu ứng màu sắc
-            const hue = (i / this.bars.length) * 360 + (value / 255) * 60;
-            this.bars[i].style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(${hue + 60}, 100%, 50%))`;
+            // Hiệu ứng màu sắc động
+            const hue = (i / this.bars.length) * 360 + (value / 255) * 120;
+            this.bars[i].style.background = `linear-gradient(to top, hsl(${hue}, 100%, 60%), hsl(${hue + 30}, 100%, 40%))`;
             
-            // Hiệu ứng scale nhẹ
-            this.bars[i].style.transform = `scaleY(${1 + (value / 255) * 0.3})`;
+            // Hiệu ứng glow
+            this.bars[i].style.boxShadow = `0 0 ${value/20}px hsl(${hue}, 100%, 50%)`;
         }
     }
     
     resetBars() {
         this.bars.forEach(bar => {
-            bar.style.height = '5px';
-            bar.style.background = 'linear-gradient(to top, #00ffff, #ff00ff)';
-            bar.style.transform = 'scaleY(1)';
+            bar.style.height = '3px';
+            bar.style.background = 'linear-gradient(to top, #ff0080, #00ffff)';
+            bar.style.boxShadow = '0 0 10px rgba(255, 0, 128, 0.5)';
         });
+    }
+    
+    destroy() {
+        if (this.checkInterval) {
+            clearInterval(this.checkInterval);
+        }
+        this.stopVisualizer();
     }
 }
 
-// Khởi chạy visualizer
-document.addEventListener('DOMContentLoaded', function() {
-    new AutoMusicVisualizer();
-});
-
-// Fallback nếu DOM ready
-if (document.readyState !== 'loading') {
-    new AutoMusicVisualizer();
+// TỰ ĐỘNG KHỞI CHẠY
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        window.nbSonVisualizer = new NBSonVisualizer();
+    });
+} else {
+    window.nbSonVisualizer = new NBSonVisualizer();
 }
+
+// Dọn dẹp khi trang đóng
+window.addEventListener('beforeunload', () => {
+    if (window.nbSonVisualizer) {
+        window.nbSonVisualizer.destroy();
+    }
+});
           
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
@@ -2296,9 +2305,9 @@ if (document.readyState !== 'loading') {
     <a href="#" id="addToHomeScreen">Download</a>
 </div>
 </div>
-  <!-- Chèn vào cuối body website của bạn -->
-<div id="auto-visualizer" style="display: none;">
-    <div class="visualizer-bars" id="visualizer"></div>
+ <!-- VISUALIZER CHO NGUYEN BAC SON -->
+<div id="nb-son-visualizer">
+    <div class="visualizer-bars" id="nb-visualizer"></div>
 </div>
 </body>
 </html>
