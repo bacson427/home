@@ -1,73 +1,176 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sóng Nhạc Cơ Bản của Nguyễn Bắc Sơn</title>
+    <title>Sóng Nhạc Phát Sáng</title>
     <script src="https://unpkg.com/wavesurfer.js"></script>
     <style>
-        /* Thiết lập cơ bản cho vùng chứa sóng nhạc */
-        #waveform {
-            width: 80%; /* Chiều rộng của sóng nhạc */
-            height: 128px; /* Chiều cao của sóng nhạc */
-            margin: 50px auto;
-            border: 1px solid #ccc;
+        body {
+            background-color: #000; /* Nền đen */
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Ngăn cuộn */
         }
 
-        /* Tùy chỉnh nút bấm */
+        /* Vùng chứa chính cho sóng nhạc và đĩa CD */
+        .visualizer-container {
+            position: relative;
+            width: 90%; /* Hoặc một kích thước cố định */
+            max-width: 800px; /* Chiều rộng tối đa */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        /* Vùng chứa sóng nhạc của Wavesurfer */
+        #waveform {
+            width: 100%;
+            height: 128px; /* Chiều cao sóng */
+            /* Hiệu ứng phát sáng cho sóng */
+            filter: drop-shadow(0 0 8px violet); 
+            z-index: 1; /* Đảm bảo sóng nằm trên */
+        }
+
+        /* Biểu tượng đĩa CD ở giữa */
+        .cd-icon {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px; /* Kích thước đĩa CD */
+            height: 80px;
+            background-color: #fff; /* Màu trắng cho đĩa CD */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Hiệu ứng phát sáng cho đĩa CD */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(255, 255, 255, 0.5);
+            z-index: 2; /* Đảm bảo đĩa CD nằm trên sóng */
+        }
+
+        .cd-icon::before {
+            content: '';
+            width: 30%;
+            height: 30%;
+            background-color: #eee; /* Lỗ nhỏ bên trong đĩa */
+            border-radius: 50%;
+            border: 2px solid #ccc;
+        }
+
+        /* Hiệu ứng xoay cho đĩa CD (khi nhạc đang phát) */
+        .cd-icon.playing {
+            animation: spin 3s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Nút Play/Pause */
         #playPauseBtn {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 10px 25px;
+            font-size: 18px;
+            background-color: #8a2be2; /* Tím */
+            color: white;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #playPauseBtn:hover {
+            background-color: #6a0dad;
+        }
+
+        /* Các hạt sáng nhỏ (tùy chọn) */
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 5s infinite ease-in-out;
+            pointer-events: none;
+        }
+        .particle:nth-child(1) { width: 2px; height: 2px; left: 10%; top: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { width: 3px; height: 3px; left: 80%; top: 15%; animation-delay: 1s; }
+        .particle:nth-child(3) { width: 2px; height: 2px; left: 30%; top: 80%; animation-delay: 2s; }
+        .particle:nth-child(4) { width: 4px; height: 4px; left: 60%; top: 70%; animation-delay: 3s; }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 0.8; transform: scale(1.2); }
         }
     </style>
 </head>
 <body>
 
-    <h2 style="text-align: center;">Sóng Nhạc (Audio Visualizer)</h2>
-    <div id="waveform"></div>
+    <h2 style="text-align: center;">Nghe Nhạc Của Nguyễn Bắc Sơn</h2>
+
+    <div class="visualizer-container">
+        <div id="waveform"></div>
+        <div class="cd-icon" id="cdIcon"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
 
     <button id="playPauseBtn">Play</button>
 
     <script>
-        // 2. Khởi tạo Wavesurfer.js
         var wavesurfer = WaveSurfer.create({
-            container: '#waveform', // ID của vùng chứa
-            waveColor: 'violet',    // Màu của sóng (như trong ảnh ví dụ ban đầu)
-            progressColor: 'purple', // Màu khi âm thanh đã chạy qua
+            container: '#waveform',
+            waveColor: 'rgba(170, 0, 255, 0.7)',  // Tím nhạt hơn
+            progressColor: 'rgba(138, 43, 226, 0.9)', // Tím đậm hơn khi đã phát
             backend: 'MediaElement',
             barWidth: 2,
             barGap: 1,
             barRadius: 1,
             responsive: true,
             height: 100,
-            // Tắt chức năng cuộn ngang
-            scrollParent: false 
+            cursorWidth: 0, // Tắt con trỏ
+            normalize: true, // Chuẩn hóa biên độ sóng
+            interact: true,  // Cho phép tương tác kéo thả trên sóng
         });
 
-        // 3. Tải file âm thanh bằng đường dẫn bạn cung cấp
         const musicUrl = 'https://nguyenbacson.io.vn/nguyenbacson.mp3';
         wavesurfer.load(musicUrl); 
         
-        // 4. Thêm chức năng Play/Pause
-        document.getElementById('playPauseBtn').addEventListener('click', function() {
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const cdIcon = document.getElementById('cdIcon');
+
+        playPauseBtn.addEventListener('click', function() {
             wavesurfer.playPause();
         });
         
-        // Cập nhật nút khi trạng thái thay đổi
         wavesurfer.on('play', function () {
-            document.getElementById('playPauseBtn').textContent = 'Pause';
+            playPauseBtn.textContent = 'Pause';
+            cdIcon.classList.add('playing'); // Thêm class để xoay đĩa CD
         });
 
         wavesurfer.on('pause', function () {
-            document.getElementById('playPauseBtn').textContent = 'Play';
+            playPauseBtn.textContent = 'Play';
+            cdIcon.classList.remove('playing'); // Dừng xoay đĩa CD
         });
 
-        // Cập nhật lại nút khi nhạc kết thúc
         wavesurfer.on('finish', function () {
-            document.getElementById('playPauseBtn').textContent = 'Play';
+            playPauseBtn.textContent = 'Play';
+            cdIcon.classList.remove('playing');
+            wavesurfer.seekTo(0); // Quay lại đầu bài
         });
 
+        // Tùy chỉnh nhỏ để sóng tập trung hơn ở giữa giống hình mẫu
+        // Điều này có thể cần điều chỉnh thêm trong Wavesurfer hoặc CSS nếu bạn muốn chính xác hơn nữa.
+        // Tuy nhiên, Wavesurfer mặc định sẽ vẽ từ trái sang phải.
+        // Để có sóng đối xứng từ giữa, cần một cách tiếp cận phức tạp hơn hoặc một thư viện khác.
+        // Với Wavesurfer, chúng ta sẽ làm cho nó trông "tập trung" bằng cách căn giữa và hiệu ứng.
     </script>
 </body>
 </html>
