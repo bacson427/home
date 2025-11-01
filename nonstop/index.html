@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hiệu Ứng Hạt Sáng Cực Nhạy Theo Nhạc</title>
+    <title>Hiệu Ứng Hạt Sáng Đa Sắc Theo Nhạc</title>
     <style>
         body {
             background-color: #000;
@@ -20,15 +20,14 @@
         /* Biểu tượng phát nhạc (Play/Pause) */
         .cd-icon {
             position: absolute;
-            width: 100px; /* Phóng to biểu tượng */
+            width: 100px;
             height: 100px;
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Tăng độ sáng của box-shadow */
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); 
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
             z-index: 2;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -49,7 +48,7 @@
 </head>
 <body>
 
-    <h2 style="text-align: center; z-index: 2;">Hiệu Ứng Hạt Sáng Theo Nhịp Điệu</h2>
+    <h2 style="text-align: center; z-index: 2;">Hiệu Ứng Hạt Sáng Đa Sắc Theo Nhịp Điệu</h2>
 
     <canvas id="particleCanvas"></canvas>
 
@@ -58,12 +57,10 @@
     </div>
 
     <script>
-        // --- Cấu hình ---
-        // Vấn đề CORS: Nếu file nhạc không cho phép truy cập từ tên miền khác (GitHub Pages),
-        // Web Audio API sẽ không lấy được dữ liệu. Bạn có thể cần dùng một file nhạc
-        // được lưu trên cùng tên miền hoặc CDN hỗ trợ CORS.
-        const musicUrl = 'https://nguyenbacson.io.vn/nguyenbacson.mp3'; 
-        const numParticles = 120; // Tăng số lượng hạt
+        // --- Cấu hình: Đã cập nhật đường dẫn mới ---
+        const musicUrl = 'https://bacson427.github.io/home/nguyenbacson.mp3'; 
+        
+        const numParticles = 150; 
         const particles = [];
         let audio;
         let audioContext;
@@ -88,9 +85,9 @@
             constructor(maxSize) {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.baseRadius = Math.random() * 2 + 1; // Kích thước cơ bản lớn hơn
-                this.maxRadius = Math.random() * maxSize + 4; // Kích thước tối đa lớn hơn
-                this.color = 'white'; // Chỉ dùng màu trắng theo yêu cầu
+                this.baseRadius = Math.random() * 2 + 1; 
+                this.maxRadius = Math.random() * maxSize + 4; 
+                this.color = `hsl(${Math.random() * 360}, 100%, 70%)`; // Đa sắc
                 
                 this.baseVelocity = {
                     x: (Math.random() - 0.5) * 0.5,
@@ -106,8 +103,8 @@
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
-                ctx.shadowColor = this.color;
-                ctx.shadowBlur = this.radius * 3; // Tăng hiệu ứng phát sáng
+                ctx.shadowColor = this.color; // Phát sáng theo màu hạt
+                ctx.shadowBlur = this.radius * 3; 
                 ctx.globalAlpha = this.opacity;
                 ctx.fill();
             }
@@ -116,30 +113,32 @@
                 const volumeRatio = averageAmplitude / MAX_AMPLITUDE; 
                 
                 // --- Điều chỉnh tốc độ di chuyển theo nhạc ---
-                // Hệ số tăng tốc: Độ nhạy cao hơn (tăng tốc tối đa gấp 7 lần)
-                const speedMultiplier = 1 + (volumeRatio * 6); 
+                // Hệ số tăng tốc cao: Nhạc mạnh chạy nhanh
+                const speedMultiplier = 1 + (volumeRatio * 8); 
                 
                 this.x += this.baseVelocity.x * speedMultiplier;
                 this.y += this.baseVelocity.y * speedMultiplier;
 
                 // Giữ hạt trong màn hình (tạo cảm giác chuyển động liên tục)
-                if (this.x < 0 || this.x > canvas.width) this.baseVelocity.x *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.baseVelocity.y *= -1;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
                 
                 // --- Phóng to kích thước theo nhạc (Lớn hơn) ---
-                const sizeFactor = 1 + (volumeRatio * 1.5); // Tăng kích thước tối đa 150%
+                const sizeFactor = 1 + (volumeRatio * 2); 
                 this.radius = Math.min(this.maxRadius, this.baseRadius * sizeFactor);
 
                 this.life++;
 
-                // --- Nháy sáng Trắng (Flashing Opacity) ---
+                // --- Nháy sáng (Flashing Opacity) ---
                 if (this.life < this.maxLife * 0.2) {
                     this.opacity += 0.03; 
                 } else if (this.life > this.maxLife * 0.8) {
                     this.opacity -= 0.02;
                 } else {
-                    // Nhấp nháy mạnh hơn và nhạy hơn với cường độ nhạc
-                    this.opacity = 0.5 + (Math.sin(this.life * 0.2) * 0.5) + (volumeRatio * 0.5); 
+                    // Nhấp nháy mạnh và nhạy với cường độ nhạc
+                    this.opacity = 0.5 + (Math.sin(this.life * 0.2) * 0.5) + (volumeRatio * 0.6); 
                 }
                 
                 this.opacity = Math.max(0, Math.min(1, this.opacity)); 
@@ -157,6 +156,7 @@
                 this.maxLife = Math.random() * 300 + 100;
                 this.maxRadius = Math.random() * 4 + 2;
                 this.baseRadius = Math.random() * 2 + 1;
+                this.color = `hsl(${Math.random() * 360}, 100%, 70%)`; // Đa sắc khi reset
                 this.baseVelocity = {
                     x: (Math.random() - 0.5) * 0.5,
                     y: (Math.random() - 0.5) * 0.5
@@ -166,15 +166,14 @@
 
         // Tạo các hạt
         for (let i = 0; i < numParticles; i++) {
-            particles.push(new Particle(6)); // Kích thước hạt tối đa là 6
+            particles.push(new Particle(6)); 
         }
 
         // --- Logic Xử lý Âm thanh & Animation ---
         function setupAudio() {
             audio = new Audio(musicUrl);
-            audio.crossOrigin = "anonymous"; // Cố gắng vượt qua CORS (quan trọng)
+            // Không cần crossOrigin="anonymous" nữa vì đã cùng tên miền!
             
-            // Xử lý lỗi nếu AudioContext không thể khởi tạo
             try {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
@@ -187,11 +186,13 @@
                 audio.onended = () => {
                     isPlaying = false;
                     playState.textContent = '▶';
-                    audio.currentTime = 0;
+                    audio.currentTime = 0; 
                 };
+                console.log("Web Audio API đã sẵn sàng phân tích âm thanh.");
             } catch (e) {
                 console.error("Lỗi khi khởi tạo Web Audio API:", e);
-                alert("Không thể phân tích âm thanh. Vui lòng kiểm tra lại đường dẫn nhạc hoặc vấn đề CORS.");
+                alert("Lỗi phần cứng hoặc trình duyệt không hỗ trợ Web Audio API.");
+                analyser = null; 
             }
         }
 
@@ -201,7 +202,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height); 
             ctx.globalAlpha = 1;
 
-            if (isPlaying && analyser) {
+            if (isPlaying && analyser) { 
                 const dataArray = new Uint8Array(analyser.frequencyBinCount);
                 analyser.getByteFrequencyData(dataArray);
                 
@@ -216,7 +217,6 @@
                     p.draw();
                 });
             } else {
-                 // Nếu tạm dừng hoặc lỗi phân tích: hạt vẫn hiển thị nhưng di chuyển chậm
                  particles.forEach(p => {
                     p.update(0); 
                     p.draw();
@@ -232,7 +232,10 @@
             if (!audioContext) {
                 setupAudio();
             }
-            if (!audioContext || !audio) return; // Thoát nếu không thể setup audio
+            if (!audioContext || !audio || !analyser) { 
+                console.warn("Không thể phát nhạc hoặc phân tích âm thanh.");
+                return;
+            }
 
             if (isPlaying) {
                 audio.pause();
@@ -243,9 +246,10 @@
                     audioContext.resume();
                 }
                 audio.play().catch(e => {
-                    // Xử lý lỗi khi trình duyệt chặn tự động phát
-                    console.error("Lỗi tự động phát:", e);
-                    alert("Trình duyệt có thể chặn tự động phát. Vui lòng thử lại.");
+                    console.error("Lỗi tự động phát (có thể do trình duyệt chặn):", e);
+                    alert("Trình duyệt chặn tự động phát. Vui lòng bấm Play lại.");
+                    isPlaying = false; 
+                    playState.textContent = '▶';
                 });
                 isPlaying = true;
                 playState.textContent = '⏸';
