@@ -1,49 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Sóng Nhạc Cơ Bản của Nguyễn Bắc Sơn</title>
+    <script src="https://unpkg.com/wavesurfer.js"></script>
     <style>
-        .visualizer {
-            display: flex;
-            align-items: end;
-            height: 200px;
-            gap: 2px;
-            margin: 20px;
+        /* Thiết lập cơ bản cho vùng chứa sóng nhạc */
+        #waveform {
+            width: 80%; /* Chiều rộng của sóng nhạc */
+            height: 128px; /* Chiều cao của sóng nhạc */
+            margin: 50px auto;
+            border: 1px solid #ccc;
         }
-        .bar {
-            width: 8px;
-            background: linear-gradient(to top, #ff6b6b, #ffa500, #ffff00);
-            border-radius: 4px 4px 0 0;
-            animation: randomWave 0.5s infinite alternate;
-        }
-        
-        /* Mỗi thanh có delay khác nhau để tạo hiệu ứng ngẫu nhiên */
-        .bar:nth-child(1) { animation-delay: 0s; }
-        .bar:nth-child(2) { animation-delay: 0.1s; }
-        .bar:nth-child(3) { animation-delay: 0.2s; }
-        .bar:nth-child(4) { animation-delay: 0.3s; }
-        .bar:nth-child(5) { animation-delay: 0.4s; }
-        .bar:nth-child(6) { animation-delay: 0.5s; }
-        
-        @keyframes randomWave {
-            0% { height: 20px; }
-            25% { height: 60px; }
-            50% { height: 30px; }
-            75% { height: 80px; }
-            100% { height: 40px; }
+
+        /* Tùy chỉnh nút bấm */
+        #playPauseBtn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <audio controls src="https://nguyenbacson.io.vn/nguyenbacson.mp3"></audio>
-    
-    <div class="visualizer">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <!-- Thêm nhiều bar... -->
-    </div>
+
+    <h2 style="text-align: center;">Sóng Nhạc (Audio Visualizer)</h2>
+    <div id="waveform"></div>
+
+    <button id="playPauseBtn">Play</button>
+
+    <script>
+        // 2. Khởi tạo Wavesurfer.js
+        var wavesurfer = WaveSurfer.create({
+            container: '#waveform', // ID của vùng chứa
+            waveColor: 'violet',    // Màu của sóng (như trong ảnh ví dụ ban đầu)
+            progressColor: 'purple', // Màu khi âm thanh đã chạy qua
+            backend: 'MediaElement',
+            barWidth: 2,
+            barGap: 1,
+            barRadius: 1,
+            responsive: true,
+            height: 100,
+            // Tắt chức năng cuộn ngang
+            scrollParent: false 
+        });
+
+        // 3. Tải file âm thanh bằng đường dẫn bạn cung cấp
+        const musicUrl = 'https://nguyenbacson.io.vn/nguyenbacson.mp3';
+        wavesurfer.load(musicUrl); 
+        
+        // 4. Thêm chức năng Play/Pause
+        document.getElementById('playPauseBtn').addEventListener('click', function() {
+            wavesurfer.playPause();
+        });
+        
+        // Cập nhật nút khi trạng thái thay đổi
+        wavesurfer.on('play', function () {
+            document.getElementById('playPauseBtn').textContent = 'Pause';
+        });
+
+        wavesurfer.on('pause', function () {
+            document.getElementById('playPauseBtn').textContent = 'Play';
+        });
+
+        // Cập nhật lại nút khi nhạc kết thúc
+        wavesurfer.on('finish', function () {
+            document.getElementById('playPauseBtn').textContent = 'Play';
+        });
+
+    </script>
 </body>
 </html>
