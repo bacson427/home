@@ -1,264 +1,327 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-    <title>Hiệu Ứng Hạt Sáng Đa Sắc Theo Nhạc</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đom đóm nhấp nháy theo nhạc</title>
     <style>
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        * {
             margin: 0;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Biểu tượng phát nhạc (Play/Pause) */
-        .cd-icon {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-            z-index: 2;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .cd-icon:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+            padding: 0;
+            box-sizing: border-box;
         }
         
-        /* Vùng chứa Canvas cho các hạt */
-        #particleCanvas {
+        body {
+            background: linear-gradient(to bottom, #0a0a2a, #1a1a3a);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            max-width: 90%;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px cyan;
+            color: #fff;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        button {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 65, 108, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .visualizer {
+            width: 100%;
+            height: 100px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 3px;
+        }
+        
+        .bar {
+            width: 8px;
+            background: linear-gradient(to top, #00ffff, #ff00ff);
+            border-radius: 5px 5px 0 0;
+            transition: height 0.1s ease;
+        }
+        
+        #firefly-container {
             position: fixed;
             top: 0;
             left: 0;
-            z-index: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .firefly {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            filter: blur(1px);
+            transition: opacity 0.5s ease;
+            box-shadow: 0 0 10px currentColor;
+        }
+        
+        .info {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .container {
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
-
-    <h2 style="text-align: center; z-index: 2;">Hiệu Ứng Hạt Sáng Đa Sắc Theo Nhịp Điệu</h2>
-
-    <canvas id="particleCanvas"></canvas>
-
-    <div class="cd-icon" id="cdIcon">
-        <span id="playState" style="font-size: 40px;">▶</span>
+    <div id="firefly-container"></div>
+    
+    <div class="container">
+        <h1>Đom Đóm Nhấp Nháy Theo Nhạc</h1>
+        
+        <div class="visualizer" id="visualizer">
+            <!-- Các thanh visualizer sẽ được tạo bằng JavaScript -->
+        </div>
+        
+        <div class="controls">
+            <button id="playBtn">Phát nhạc</button>
+            <button id="pauseBtn">Tạm dừng</button>
+        </div>
+        
+        <audio id="audio" preload="metadata">
+            <source src="https://nguyenbacson.io.vn/nguyenbacson.mp3" type="audio/mpeg">
+            Trình duyệt của bạn không hỗ trợ phát nhạc.
+        </audio>
+        
+        <p class="info">Hiệu ứng đom đóm sẽ nhấp nháy theo nhịp điệu bài hát</p>
     </div>
 
     <script>
-        // --- Cấu hình: Đã cập nhật đường dẫn mới ---
-        const musicUrl = 'https://bacson427.github.io/home/nguyenbacson.mp3'; 
+        // Khai báo các biến toàn cục
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const visualizer = document.getElementById('visualizer');
+        const fireflyContainer = document.getElementById('firefly-container');
         
-        const numParticles = 150; 
-        const particles = [];
-        let audio;
         let audioContext;
         let analyser;
         let source;
-        let animationFrameId;
+        let dataArray;
+        let bufferLength;
         let isPlaying = false;
-        const MAX_AMPLITUDE = 255;
-
-        // --- Thiết lập Canvas ---
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        // --- Thiết lập Hạt Sáng (Particle) ---
-        class Particle {
-            constructor(maxSize) {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.baseRadius = Math.random() * 2 + 1; 
-                this.maxRadius = Math.random() * maxSize + 4; 
-                this.color = `hsl(${Math.random() * 360}, 100%, 70%)`; // Đa sắc
-                
-                this.baseVelocity = {
-                    x: (Math.random() - 0.5) * 0.5,
-                    y: (Math.random() - 0.5) * 0.5
-                };
-                this.radius = this.baseRadius;
-                this.opacity = 0;
-                this.life = 0;
-                this.maxLife = Math.random() * 300 + 100;
-            }
-
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.shadowColor = this.color; // Phát sáng theo màu hạt
-                ctx.shadowBlur = this.radius * 3; 
-                ctx.globalAlpha = this.opacity;
-                ctx.fill();
-            }
-
-            update(averageAmplitude) {
-                const volumeRatio = averageAmplitude / MAX_AMPLITUDE; 
-                
-                // --- Điều chỉnh tốc độ di chuyển theo nhạc ---
-                // Hệ số tăng tốc cao: Nhạc mạnh chạy nhanh
-                const speedMultiplier = 1 + (volumeRatio * 8); 
-                
-                this.x += this.baseVelocity.x * speedMultiplier;
-                this.y += this.baseVelocity.y * speedMultiplier;
-
-                // Giữ hạt trong màn hình (tạo cảm giác chuyển động liên tục)
-                if (this.x < 0) this.x = canvas.width;
-                if (this.x > canvas.width) this.x = 0;
-                if (this.y < 0) this.y = canvas.height;
-                if (this.y > canvas.height) this.y = 0;
-                
-                // --- Phóng to kích thước theo nhạc (Lớn hơn) ---
-                const sizeFactor = 1 + (volumeRatio * 2); 
-                this.radius = Math.min(this.maxRadius, this.baseRadius * sizeFactor);
-
-                this.life++;
-
-                // --- Nháy sáng (Flashing Opacity) ---
-                if (this.life < this.maxLife * 0.2) {
-                    this.opacity += 0.03; 
-                } else if (this.life > this.maxLife * 0.8) {
-                    this.opacity -= 0.02;
-                } else {
-                    // Nhấp nháy mạnh và nhạy với cường độ nhạc
-                    this.opacity = 0.5 + (Math.sin(this.life * 0.2) * 0.5) + (volumeRatio * 0.6); 
-                }
-                
-                this.opacity = Math.max(0, Math.min(1, this.opacity)); 
-
-                if (this.life >= this.maxLife) {
-                    this.reset();
-                }
-            }
-
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.life = 0;
-                this.opacity = 0;
-                this.maxLife = Math.random() * 300 + 100;
-                this.maxRadius = Math.random() * 4 + 2;
-                this.baseRadius = Math.random() * 2 + 1;
-                this.color = `hsl(${Math.random() * 360}, 100%, 70%)`; // Đa sắc khi reset
-                this.baseVelocity = {
-                    x: (Math.random() - 0.5) * 0.5,
-                    y: (Math.random() - 0.5) * 0.5
-                };
-            }
-        }
-
-        // Tạo các hạt
-        for (let i = 0; i < numParticles; i++) {
-            particles.push(new Particle(6)); 
-        }
-
-        // --- Logic Xử lý Âm thanh & Animation ---
-        function setupAudio() {
-            audio = new Audio(musicUrl);
-            // Không cần crossOrigin="anonymous" nữa vì đã cùng tên miền!
+        
+        // Mảng lưu trữ các đom đóm
+        let fireflies = [];
+        
+        // Màu sắc cho đom đóm
+        const colors = [
+            '#FF5252', '#FF4081', '#E040FB', '#7C4DFF', 
+            '#536DFE', '#448AFF', '#40C4FF', '#18FFFF',
+            '#64FFDA', '#69F0AE', '#B2FF59', '#EEFF41',
+            '#FFFF00', '#FFD740', '#FFAB40', '#FF6E40'
+        ];
+        
+        // Tạo các thanh visualizer
+        function createVisualizerBars() {
+            visualizer.innerHTML = '';
+            const barCount = 64;
             
-            try {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioContext.createAnalyser();
-                analyser.fftSize = 256; 
-
-                source = audioContext.createMediaElementSource(audio);
-                source.connect(analyser);
-                analyser.connect(audioContext.destination);
-
-                audio.onended = () => {
-                    isPlaying = false;
-                    playState.textContent = '▶';
-                    audio.currentTime = 0; 
-                };
-                console.log("Web Audio API đã sẵn sàng phân tích âm thanh.");
-            } catch (e) {
-                console.error("Lỗi khi khởi tạo Web Audio API:", e);
-                alert("Lỗi phần cứng hoặc trình duyệt không hỗ trợ Web Audio API.");
-                analyser = null; 
+            for (let i = 0; i < barCount; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = '5px';
+                visualizer.appendChild(bar);
             }
         }
-
-        function animate() {
-            animationFrameId = requestAnimationFrame(animate);
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height); 
-            ctx.globalAlpha = 1;
-
-            if (isPlaying && analyser) { 
-                const dataArray = new Uint8Array(analyser.frequencyBinCount);
-                analyser.getByteFrequencyData(dataArray);
+        
+        // Khởi tạo Audio Context và Analyser
+        function initAudio() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            source = audioContext.createMediaElementSource(audio);
+            
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+            
+            analyser.fftSize = 256;
+            bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+            
+            createVisualizerBars();
+        }
+        
+        // Tạo đom đóm
+        function createFireflies(count) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const firefly = document.createElement('div');
+                    firefly.className = 'firefly';
+                    
+                    // Vị trí ngẫu nhiên
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    firefly.style.left = `${x}%`;
+                    firefly.style.top = `${y}%`;
+                    
+                    // Màu sắc ngẫu nhiên
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    firefly.style.backgroundColor = color;
+                    
+                    fireflyContainer.appendChild(firefly);
+                    fireflies.push(firefly);
+                    
+                    // Hiệu ứng nhấp nháy
+                    animateFirefly(firefly);
+                }, i * 100);
+            }
+        }
+        
+        // Hiệu ứng nhấp nháy cho đom đóm
+        function animateFirefly(firefly) {
+            const duration = 1000 + Math.random() * 2000;
+            const delay = Math.random() * 3000;
+            
+            setTimeout(() => {
+                // Hiệu ứng xuất hiện
+                firefly.style.opacity = '0.9';
+                firefly.style.transform = 'scale(1.5)';
                 
-                let sum = 0;
-                for (let i = 0; i < dataArray.length; i++) {
-                    sum += dataArray[i];
-                }
-                const averageAmplitude = sum / dataArray.length; 
-
-                particles.forEach(p => {
-                    p.update(averageAmplitude);
-                    p.draw();
-                });
-            } else {
-                 particles.forEach(p => {
-                    p.update(0); 
-                    p.draw();
-                 });
-            }
+                // Di chuyển ngẫu nhiên
+                const moveX = (Math.random() - 0.5) * 30;
+                const moveY = (Math.random() - 0.5) * 30;
+                firefly.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.5)`;
+                
+                // Hiệu ứng biến mất
+                setTimeout(() => {
+                    firefly.style.opacity = '0';
+                    firefly.style.transform = 'scale(1)';
+                    
+                    // Lặp lại hiệu ứng
+                    setTimeout(() => {
+                        animateFirefly(firefly);
+                    }, Math.random() * 2000);
+                }, duration);
+            }, delay);
         }
-
-        // --- Điều khiển Play/Pause ---
-        const cdIcon = document.getElementById('cdIcon');
-        const playState = document.getElementById('playState');
-
-        function togglePlayback() {
+        
+        // Cập nhật visualizer và đom đóm theo âm nhạc
+        function updateVisualizer() {
+            if (!isPlaying) return;
+            
+            requestAnimationFrame(updateVisualizer);
+            
+            analyser.getByteFrequencyData(dataArray);
+            
+            // Cập nhật các thanh visualizer
+            const bars = document.querySelectorAll('.bar');
+            for (let i = 0; i < bars.length; i++) {
+                const value = dataArray[i % bufferLength];
+                const height = (value / 255) * 100;
+                bars[i].style.height = `${height}px`;
+                
+                // Thay đổi màu sắc dựa trên cường độ âm thanh
+                const hue = (i / bars.length) * 360 + (value / 255) * 60;
+                bars[i].style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(${hue + 60}, 100%, 50%))`;
+            }
+            
+            // Cập nhật hiệu ứng đom đóm dựa trên cường độ âm thanh
+            const avgIntensity = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
+            
+            // Tăng số lượng đom đóm khi âm thanh mạnh
+            if (avgIntensity > 150 && fireflies.length < 100) {
+                createFireflies(5);
+            }
+            
+            // Điều chỉnh độ sáng của đom đóm dựa trên cường độ âm thanh
+            fireflies.forEach(firefly => {
+                const brightness = Math.min(0.9, avgIntensity / 255 * 0.9);
+                firefly.style.opacity = `${brightness}`;
+            });
+        }
+        
+        // Xử lý sự kiện nút phát nhạc
+        playBtn.addEventListener('click', () => {
             if (!audioContext) {
-                setupAudio();
+                initAudio();
             }
-            if (!audioContext || !audio || !analyser) { 
-                console.warn("Không thể phát nhạc hoặc phân tích âm thanh.");
-                return;
+            
+            audio.play();
+            isPlaying = true;
+            updateVisualizer();
+            
+            // Tạo đom đóm ban đầu
+            if (fireflies.length === 0) {
+                createFireflies(30);
             }
-
-            if (isPlaying) {
-                audio.pause();
-                isPlaying = false;
-                playState.textContent = '▶';
-            } else {
-                if (audioContext.state === 'suspended') {
-                    audioContext.resume();
-                }
-                audio.play().catch(e => {
-                    console.error("Lỗi tự động phát (có thể do trình duyệt chặn):", e);
-                    alert("Trình duyệt chặn tự động phát. Vui lòng bấm Play lại.");
-                    isPlaying = false; 
-                    playState.textContent = '▶';
-                });
-                isPlaying = true;
-                playState.textContent = '⏸';
-            }
-        }
-
-        cdIcon.addEventListener('click', togglePlayback);
-        animate(); 
-
+        });
+        
+        // Xử lý sự kiện nút tạm dừng
+        pauseBtn.addEventListener('click', () => {
+            audio.pause();
+            isPlaying = false;
+            
+            // Làm mờ đom đóm khi tạm dừng
+            fireflies.forEach(firefly => {
+                firefly.style.opacity = '0.2';
+            });
+        });
+        
+        // Tạo một vài đom đóm ban đầu
+        createFireflies(15);
     </script>
 </body>
 </html>
