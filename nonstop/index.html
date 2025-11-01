@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hiệu Ứng Hạt Sáng Theo Nhạc</title>
+    <title>Hiệu Ứng Hạt Sáng Theo Nhạc (Tốc độ Động)</title>
     <style>
         body {
             background-color: #000;
@@ -17,7 +17,7 @@
             position: relative;
         }
 
-        /* Biểu tượng phát nhạc (thay cho đĩa CD) */
+        /* Biểu tượng phát nhạc (Play/Pause) */
         .cd-icon {
             position: absolute;
             width: 80px;
@@ -37,33 +37,18 @@
             background-color: rgba(255, 255, 255, 0.2);
         }
         
-        /* Nút Play/Pause */
-        #playPauseBtn {
-            padding: 10px 25px;
-            font-size: 18px;
-            background-color: #8a2be2;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            z-index: 3;
-            margin-top: 100px; /* Đặt nút phía dưới trung tâm */
-        }
-        
         /* Vùng chứa Canvas cho các hạt */
         #particleCanvas {
-            position: fixed; /* Cố định trên toàn màn hình */
+            position: fixed;
             top: 0;
             left: 0;
             z-index: 0;
         }
-
     </style>
 </head>
 <body>
 
-    <h2 style="text-align: center; z-index: 2;">Hiệu Ứng Hạt Sáng</h2>
+    <h2 style="text-align: center; z-index: 2;">Hiệu Ứng Hạt Sáng Theo Nhạc</h2>
 
     <canvas id="particleCanvas"></canvas>
 
@@ -71,12 +56,10 @@
         <span id="playState" style="font-size: 30px;">▶</span>
     </div>
 
-    <button id="playPauseBtn" style="display: none;">Play/Pause</button> 
-
     <script>
         // --- Cấu hình ---
         const musicUrl = 'https://nguyenbacson.io.vn/nguyenbacson.mp3';
-        const numParticles = 100; // Số lượng hạt lớn hơn
+        const numParticles = 100;
         const particles = [];
         let audio;
         let audioContext;
@@ -84,6 +67,7 @@
         let source;
         let animationFrameId;
         let isPlaying = false;
+        const MAX_AMPLITUDE = 255; // Độ lớn tối đa của dữ liệu âm thanh
 
         // --- Thiết lập Canvas ---
         const canvas = document.getElementById('particleCanvas');
@@ -100,16 +84,19 @@
             constructor(maxSize) {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.radius = Math.random() * 1 + 0.5; // Kích thước cơ bản nhỏ
-                this.maxRadius = Math.random() * maxSize + 2; // Kích thước tối đa khi phóng to
-                this.color = `hsl(${Math.random() * 360}, 100%, 70%)`; // Màu ngẫu nhiên
-                this.velocity = {
+                this.baseRadius = Math.random() * 1 + 0.5; // Kích thước cơ bản
+                this.maxRadius = Math.random() * maxSize + 2; 
+                this.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                
+                // Vận tốc cơ bản, nhỏ
+                this.baseVelocity = {
                     x: (Math.random() - 0.5) * 0.5,
                     y: (Math.random() - 0.5) * 0.5
                 };
+                this.radius = this.baseRadius;
                 this.opacity = 0;
                 this.life = 0;
-                this.maxLife = Math.random() * 300 + 100; // Thời gian sống ngẫu nhiên
+                this.maxLife = Math.random() * 300 + 100;
             }
 
             draw() {
@@ -117,40 +104,44 @@
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
                 ctx.shadowColor = this.color;
-                ctx.shadowBlur = this.radius * 2; // Hiệu ứng phát sáng
+                ctx.shadowBlur = this.radius * 2; 
                 ctx.globalAlpha = this.opacity;
                 ctx.fill();
             }
 
             update(averageAmplitude) {
-                // Di chuyển
-                this.x += this.velocity.x;
-                this.y += this.velocity.y;
+                // Tỷ lệ cường độ âm thanh (từ 0 đến 1)
+                const volumeRatio = averageAmplitude / MAX_AMPLITUDE; 
                 
-                // Giữ hạt trong màn hình (tùy chọn)
-                if (this.x < 0 || this.x > canvas.width) this.velocity.x *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.velocity.y *= -1;
+                // --- Điều chỉnh tốc độ di chuyển theo nhạc ---
+                // Hệ số tăng tốc: Nhạc càng lớn (volumeRatio càng gần 1), hạt càng đi nhanh
+                const speedMultiplier = 1 + (volumeRatio * 3); // Tăng tốc tối đa gấp 4 lần (1 + 3)
+                
+                this.x += this.baseVelocity.x * speedMultiplier;
+                this.y += this.baseVelocity.y * speedMultiplier;
+
+                // Giữ hạt trong màn hình 
+                if (this.x < 0 || this.x > canvas.width) this.baseVelocity.x *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.baseVelocity.y *= -1;
+                
+                // --- Phóng to kích thước theo nhạc ---
+                // Tăng kích thước theo cường độ âm thanh
+                const sizeFactor = 1 + (volumeRatio * 0.5); // Tăng kích thước tối đa 50%
+                this.radius = Math.min(this.maxRadius, this.baseRadius * sizeFactor);
 
                 this.life++;
 
-                // --- Phóng to kích thước theo nhạc ---
-                // Tăng kích thước theo cường độ âm thanh, giới hạn ở maxRadius
-                const sizeFactor = 1 + (averageAmplitude / 300); // 300 là một hệ số điều chỉnh
-                this.radius = Math.min(this.maxRadius, this.maxRadius * sizeFactor);
-
-                // --- Nháy sáng (Thay đổi Opacity) theo thời gian sống ---
+                // --- Nháy sáng (Thay đổi Opacity) theo thời gian sống và nhạc ---
                 if (this.life < this.maxLife * 0.2) {
-                    // Xuất hiện
                     this.opacity += 0.02; 
                 } else if (this.life > this.maxLife * 0.8) {
-                    // Biến mất
                     this.opacity -= 0.01;
                 } else {
-                    // Giữ ổn định và nhấp nháy nhẹ (làm nó "nháy sáng")
-                    this.opacity = 0.5 + (Math.sin(this.life * 0.1) * 0.5); // Dao động nhẹ
+                    // Nhấp nháy nhẹ: Kết hợp dao động sin và cường độ âm thanh
+                    this.opacity = 0.5 + (Math.sin(this.life * 0.1) * 0.5) + (volumeRatio * 0.3); 
                 }
                 
-                this.opacity = Math.max(0, Math.min(1, this.opacity)); // Đảm bảo opacity trong khoảng 0-1
+                this.opacity = Math.max(0, Math.min(1, this.opacity)); 
 
                 // Tái tạo hạt nếu hết đời
                 if (this.life >= this.maxLife) {
@@ -165,19 +156,25 @@
                 this.opacity = 0;
                 this.maxLife = Math.random() * 300 + 100;
                 this.maxRadius = Math.random() * 4 + 2;
+                this.baseRadius = Math.random() * 1 + 0.5;
                 this.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                // Thiết lập lại vận tốc cơ bản
+                this.baseVelocity = {
+                    x: (Math.random() - 0.5) * 0.5,
+                    y: (Math.random() - 0.5) * 0.5
+                };
             }
         }
 
         // Tạo các hạt
         for (let i = 0; i < numParticles; i++) {
-            particles.push(new Particle(4)); // Kích thước hạt tối đa là 4
+            particles.push(new Particle(4));
         }
 
-        // --- Logic Xử lý Âm thanh ---
+        // --- Logic Xử lý Âm thanh & Animation ---
         function setupAudio() {
             audio = new Audio(musicUrl);
-            audio.crossOrigin = "anonymous"; // Rất quan trọng để Web Audio API hoạt động
+            audio.crossOrigin = "anonymous";
             
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             analyser = audioContext.createAnalyser();
@@ -186,15 +183,21 @@
             source = audioContext.createMediaElementSource(audio);
             source.connect(analyser);
             analyser.connect(audioContext.destination);
+
+            // Xử lý khi nhạc kết thúc
+            audio.onended = () => {
+                isPlaying = false;
+                playState.textContent = '▶';
+                cdIcon.classList.remove('playing');
+                audio.currentTime = 0; // Quay lại đầu bài
+            };
         }
 
-        // Vòng lặp chính để vẽ và cập nhật
         function animate() {
             animationFrameId = requestAnimationFrame(animate);
 
-            // Xóa Canvas cho khung hình mới
             ctx.clearRect(0, 0, canvas.width, canvas.height); 
-            ctx.globalAlpha = 1; // Đảm bảo độ trong suốt ban đầu là 1
+            ctx.globalAlpha = 1;
 
             if (isPlaying) {
                 const dataArray = new Uint8Array(analyser.frequencyBinCount);
@@ -204,15 +207,16 @@
                 for (let i = 0; i < dataArray.length; i++) {
                     sum += dataArray[i];
                 }
-                const averageAmplitude = sum / dataArray.length; // Độ lớn âm thanh trung bình
+                const averageAmplitude = sum / dataArray.length; 
 
                 particles.forEach(p => {
                     p.update(averageAmplitude);
                     p.draw();
                 });
             } else {
-                 // Khi tạm dừng, chỉ vẽ các hạt nhưng không cập nhật kích thước theo nhạc
+                 // Khi tạm dừng, các hạt di chuyển với tốc độ cơ bản (volumeRatio = 0)
                  particles.forEach(p => {
+                    p.update(0); // Dùng amplitude = 0 để di chuyển chậm
                     p.draw();
                  });
             }
@@ -224,30 +228,24 @@
 
         function togglePlayback() {
             if (!audioContext) {
-                setupAudio(); // Thiết lập Audio lần đầu
-                animate(); // Bắt đầu vòng lặp animation
+                setupAudio();
             }
 
             if (isPlaying) {
                 audio.pause();
                 isPlaying = false;
                 playState.textContent = '▶';
-                cdIcon.classList.remove('playing');
             } else {
-                // Phải bắt đầu AudioContext từ sự kiện tương tác của người dùng
                 if (audioContext.state === 'suspended') {
                     audioContext.resume();
                 }
                 audio.play();
                 isPlaying = true;
                 playState.textContent = '⏸';
-                cdIcon.classList.add('playing');
             }
         }
 
         cdIcon.addEventListener('click', togglePlayback);
-        // Bắt đầu vòng lặp animation ngay cả khi chưa play để thấy các hạt tĩnh
-        // Tuy nhiên, logic chỉ được cập nhật kích thước khi isPlaying = true
         animate(); 
 
     </script>
