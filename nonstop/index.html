@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sóng Nhạc Phát Sáng</title>
+    <title>Sóng Nhạc & Hạt Sáng Động</title>
     <script src="https://unpkg.com/wavesurfer.js"></script>
     <style>
         body {
-            background-color: #000; /* Nền đen */
+            background-color: #000;
             color: #fff;
             font-family: Arial, sans-serif;
             display: flex;
@@ -14,57 +14,53 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            overflow: hidden; /* Ngăn cuộn */
+            overflow: hidden;
+            position: relative; /* Quan trọng để các hạt có thể định vị tuyệt đối */
         }
 
         /* Vùng chứa chính cho sóng nhạc và đĩa CD */
         .visualizer-container {
             position: relative;
-            width: 90%; /* Hoặc một kích thước cố định */
-            max-width: 800px; /* Chiều rộng tối đa */
+            width: 90%;
+            max-width: 800px;
             display: flex;
             justify-content: center;
             align-items: center;
             margin: 20px 0;
         }
 
-        /* Vùng chứa sóng nhạc của Wavesurfer */
         #waveform {
             width: 100%;
-            height: 128px; /* Chiều cao sóng */
-            /* Hiệu ứng phát sáng cho sóng */
-            filter: drop-shadow(0 0 8px violet); 
-            z-index: 1; /* Đảm bảo sóng nằm trên */
+            height: 128px;
+            filter: drop-shadow(0 0 8px violet);
+            z-index: 1;
         }
 
-        /* Biểu tượng đĩa CD ở giữa */
         .cd-icon {
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 80px; /* Kích thước đĩa CD */
+            width: 80px;
             height: 80px;
-            background-color: #fff; /* Màu trắng cho đĩa CD */
+            background-color: #fff;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Hiệu ứng phát sáng cho đĩa CD */
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(255, 255, 255, 0.5);
-            z-index: 2; /* Đảm bảo đĩa CD nằm trên sóng */
+            z-index: 2;
         }
 
         .cd-icon::before {
             content: '';
             width: 30%;
             height: 30%;
-            background-color: #eee; /* Lỗ nhỏ bên trong đĩa */
+            background-color: #eee;
             border-radius: 50%;
             border: 2px solid #ccc;
         }
 
-        /* Hiệu ứng xoay cho đĩa CD (khi nhạc đang phát) */
         .cd-icon.playing {
             animation: spin 3s linear infinite;
         }
@@ -74,38 +70,46 @@
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-        /* Nút Play/Pause */
         #playPauseBtn {
             padding: 10px 25px;
             font-size: 18px;
-            background-color: #8a2be2; /* Tím */
+            background-color: #8a2be2;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            z-index: 3; /* Đảm bảo nút ở trên cùng */
         }
 
         #playPauseBtn:hover {
             background-color: #6a0dad;
         }
 
-        /* Các hạt sáng nhỏ (tùy chọn) */
+        /* Các hạt sáng động */
         .particle {
             position: absolute;
-            background: white;
+            background: radial-gradient(circle at center, var(--particle-color) 0%, transparent 70%); /* Hiệu ứng tỏa sáng */
             border-radius: 50%;
-            opacity: 0;
-            animation: twinkle 5s infinite ease-in-out;
-            pointer-events: none;
+            width: var(--particle-size);
+            height: var(--particle-size);
+            animation: moveParticle linear infinite;
+            opacity: 0; /* Bắt đầu với opacity 0 */
+            z-index: 0; /* Nằm dưới sóng nhạc */
+            will-change: transform, opacity, background-color; /* Tối ưu hóa hiệu suất */
         }
-        .particle:nth-child(1) { width: 2px; height: 2px; left: 10%; top: 20%; animation-delay: 0s; }
-        .particle:nth-child(2) { width: 3px; height: 3px; left: 80%; top: 15%; animation-delay: 1s; }
-        .particle:nth-child(3) { width: 2px; height: 2px; left: 30%; top: 80%; animation-delay: 2s; }
-        .particle:nth-child(4) { width: 4px; height: 4px; left: 60%; top: 70%; animation-delay: 3s; }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0; transform: scale(0.5); }
-            50% { opacity: 0.8; transform: scale(1.2); }
+
+        @keyframes moveParticle {
+            from {
+                transform: translate(var(--start-x), var(--start-y)) scale(1);
+                opacity: 0;
+            }
+            20% { opacity: 0.8; } /* Xuất hiện */
+            80% { opacity: 0.8; }
+            to {
+                transform: translate(var(--end-x), var(--end-y)) scale(0.5); /* Di chuyển và nhỏ dần */
+                opacity: 0; /* Biến mất */
+            }
         }
     </style>
 </head>
@@ -116,61 +120,172 @@
     <div class="visualizer-container">
         <div id="waveform"></div>
         <div class="cd-icon" id="cdIcon"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
     </div>
 
     <button id="playPauseBtn">Play</button>
 
     <script>
+        // --- Cấu hình Wavesurfer.js ---
         var wavesurfer = WaveSurfer.create({
             container: '#waveform',
-            waveColor: 'rgba(170, 0, 255, 0.7)',  // Tím nhạt hơn
-            progressColor: 'rgba(138, 43, 226, 0.9)', // Tím đậm hơn khi đã phát
+            waveColor: 'rgba(170, 0, 255, 0.7)',
+            progressColor: 'rgba(138, 43, 226, 0.9)',
             backend: 'MediaElement',
             barWidth: 2,
             barGap: 1,
             barRadius: 1,
             responsive: true,
             height: 100,
-            cursorWidth: 0, // Tắt con trỏ
-            normalize: true, // Chuẩn hóa biên độ sóng
-            interact: true,  // Cho phép tương tác kéo thả trên sóng
+            cursorWidth: 0,
+            normalize: true,
+            interact: true,
+            mediaType: 'audio', // Quan trọng cho việc lấy nguồn âm thanh
         });
 
         const musicUrl = 'https://nguyenbacson.io.vn/nguyenbacson.mp3';
-        wavesurfer.load(musicUrl); 
-        
         const playPauseBtn = document.getElementById('playPauseBtn');
         const cdIcon = document.getElementById('cdIcon');
 
+        // --- Tải nhạc và điều khiển cơ bản ---
+        wavesurfer.load(musicUrl); 
+        
         playPauseBtn.addEventListener('click', function() {
             wavesurfer.playPause();
         });
         
         wavesurfer.on('play', function () {
             playPauseBtn.textContent = 'Pause';
-            cdIcon.classList.add('playing'); // Thêm class để xoay đĩa CD
+            cdIcon.classList.add('playing');
+            startAudioAnalysis(); // Bắt đầu phân tích âm thanh khi nhạc play
         });
 
         wavesurfer.on('pause', function () {
             playPauseBtn.textContent = 'Play';
-            cdIcon.classList.remove('playing'); // Dừng xoay đĩa CD
+            cdIcon.classList.remove('playing');
+            stopAudioAnalysis(); // Dừng phân tích âm thanh khi nhạc pause
         });
 
         wavesurfer.on('finish', function () {
             playPauseBtn.textContent = 'Play';
             cdIcon.classList.remove('playing');
-            wavesurfer.seekTo(0); // Quay lại đầu bài
+            wavesurfer.seekTo(0);
+            stopAudioAnalysis(); // Dừng phân tích âm thanh khi nhạc kết thúc
         });
 
-        // Tùy chỉnh nhỏ để sóng tập trung hơn ở giữa giống hình mẫu
-        // Điều này có thể cần điều chỉnh thêm trong Wavesurfer hoặc CSS nếu bạn muốn chính xác hơn nữa.
-        // Tuy nhiên, Wavesurfer mặc định sẽ vẽ từ trái sang phải.
-        // Để có sóng đối xứng từ giữa, cần một cách tiếp cận phức tạp hơn hoặc một thư viện khác.
-        // Với Wavesurfer, chúng ta sẽ làm cho nó trông "tập trung" bằng cách căn giữa và hiệu ứng.
+
+        // --- Logic cho hiệu ứng hạt sáng động ---
+        let audioContext;
+        let analyser;
+        let source;
+        const particles = [];
+        const numParticles = 50; // Số lượng hạt
+        let animationFrameId;
+
+        // Tạo các hạt ban đầu
+        for (let i = 0; i < numParticles; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            document.body.appendChild(particle);
+            particles.push({
+                element: particle,
+                size: Math.random() * 5 + 3, // Kích thước ngẫu nhiên từ 3px đến 8px
+                color: `hsl(${Math.random() * 360}, 100%, 70%)`, // Màu HSL ngẫu nhiên
+                speedFactor: Math.random() * 0.5 + 0.5, // Tốc độ di chuyển tương đối
+                delay: Math.random() * 5, // Độ trễ animation ban đầu
+            });
+            // Áp dụng các biến CSS ban đầu
+            particle.style.setProperty('--particle-size', particles[i].size + 'px');
+            particle.style.setProperty('--particle-color', particles[i].color);
+            particle.style.animationDelay = particles[i].delay + 's';
+            setParticleMovementVariables(particle, particles[i].speedFactor);
+        }
+
+        function setParticleMovementVariables(particleElement, speedFactor) {
+            const startX = Math.random() * window.innerWidth - window.innerWidth / 2;
+            const startY = Math.random() * window.innerHeight - window.innerHeight / 2;
+            const endX = Math.random() * window.innerWidth - window.innerWidth / 2;
+            const endY = Math.random() * window.innerHeight - window.innerHeight / 2;
+            const duration = (Math.random() * 5 + 5) / speedFactor; // Thời gian di chuyển, phụ thuộc vào speedFactor
+
+            particleElement.style.setProperty('--start-x', startX + 'px');
+            particleElement.style.setProperty('--start-y', startY + 'px');
+            particleElement.style.setProperty('--end-x', endX + 'px');
+            particleElement.style.setProperty('--end-y', endY + 'px');
+            particleElement.style.animationDuration = duration + 's';
+        }
+
+        function startAudioAnalysis() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256; // Kích thước FFT, ảnh hưởng đến độ chi tiết phân tích
+
+                // Lấy nguồn từ phần tử media của Wavesurfer
+                source = audioContext.createMediaElementSource(wavesurfer.media);
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+            }
+
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+            function updateParticles() {
+                analyser.getByteFrequencyData(dataArray);
+                let sum = 0;
+                for (let i = 0; i < dataArray.length; i++) {
+                    sum += dataArray[i];
+                }
+                const average = sum / dataArray.length; // Độ lớn âm thanh trung bình
+
+                // Điều chỉnh tốc độ animation dựa trên độ lớn âm thanh
+                // Giá trị minSpeed (nhẹ) và maxSpeed (mạnh)
+                const minSpeed = 5; // Tốc độ cơ bản chậm
+                const maxSpeed = 0.5; // Tốc độ nhanh khi nhạc mạnh
+                
+                // Ánh xạ average (0-255) sang dải tốc độ (maxSpeed-minSpeed)
+                const mappedSpeed = minSpeed - (average / 255) * (minSpeed - maxSpeed);
+
+                particles.forEach(p => {
+                    const currentDuration = parseFloat(p.element.style.animationDuration);
+                    // Chỉ điều chỉnh nếu có sự thay đổi đáng kể để tránh giật lag
+                    if (Math.abs(currentDuration - mappedSpeed) > 0.1) {
+                         p.element.style.animationDuration = mappedSpeed + 's';
+                         // Cập nhật lại màu sắc liên tục
+                         p.element.style.setProperty('--particle-color', `hsl(${Math.random() * 360}, 100%, 70%)`);
+                    }
+                   
+                    // Tùy chọn: Thay đổi kích thước hạt một chút theo nhạc
+                    // const currentSize = parseFloat(p.element.style.getPropertyValue('--particle-size'));
+                    // const newSize = p.size * (1 + (average / 512)); // Tăng kích thước khi nhạc mạnh
+                    // p.element.style.setProperty('--particle-size', newSize + 'px');
+                });
+
+                animationFrameId = requestAnimationFrame(updateParticles);
+            }
+            // Đảm bảo AudioContext được resume nếu nó đang ở trạng thái suspended
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            updateParticles();
+        }
+
+        function stopAudioAnalysis() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            if (audioContext && audioContext.state === 'running') {
+                // Tạm dừng AudioContext để tiết kiệm tài nguyên
+                // audioContext.suspend(); 
+                // Hoặc bạn có thể chọn không suspend để khởi động nhanh hơn nếu nhạc play lại
+            }
+        }
+
+        // Đảm bảo Wavesurfer.js đã sẵn sàng trước khi kết nối AudioContext
+        wavesurfer.on('ready', function() {
+            // Do Wavesurfer đã tạo ra phần tử <audio> riêng, ta cần lấy nó
+            // và kết nối vào AudioContext khi nhạc bắt đầu phát.
+            // Việc này được xử lý trong `startAudioAnalysis` khi `wavesurfer.media` đã có sẵn.
+        });
     </script>
 </body>
 </html>
