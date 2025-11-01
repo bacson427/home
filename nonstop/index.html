@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hiệu Ứng Hạt Sáng Theo Nhạc (Tốc độ Động)</title>
+    <title>Hiệu Ứng Hạt Sáng Cực Nhạy Theo Nhạc</title>
     <style>
         body {
             background-color: #000;
@@ -20,21 +20,22 @@
         /* Biểu tượng phát nhạc (Play/Pause) */
         .cd-icon {
             position: absolute;
-            width: 80px;
-            height: 80px;
+            width: 100px; /* Phóng to biểu tượng */
+            height: 100px;
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            /* Tăng độ sáng của box-shadow */
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); 
             z-index: 2;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .cd-icon:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.3);
         }
         
         /* Vùng chứa Canvas cho các hạt */
@@ -48,18 +49,21 @@
 </head>
 <body>
 
-    <h2 style="text-align: center; z-index: 2;">Hiệu Ứng Hạt Sáng Theo Nhạc</h2>
+    <h2 style="text-align: center; z-index: 2;">Hiệu Ứng Hạt Sáng Theo Nhịp Điệu</h2>
 
     <canvas id="particleCanvas"></canvas>
 
     <div class="cd-icon" id="cdIcon">
-        <span id="playState" style="font-size: 30px;">▶</span>
+        <span id="playState" style="font-size: 40px;">▶</span>
     </div>
 
     <script>
         // --- Cấu hình ---
-        const musicUrl = 'https://nguyenbacson.io.vn/nguyenbacson.mp3';
-        const numParticles = 100;
+        // Vấn đề CORS: Nếu file nhạc không cho phép truy cập từ tên miền khác (GitHub Pages),
+        // Web Audio API sẽ không lấy được dữ liệu. Bạn có thể cần dùng một file nhạc
+        // được lưu trên cùng tên miền hoặc CDN hỗ trợ CORS.
+        const musicUrl = 'https://nguyenbacson.io.vn/nguyenbacson.mp3'; 
+        const numParticles = 120; // Tăng số lượng hạt
         const particles = [];
         let audio;
         let audioContext;
@@ -67,7 +71,7 @@
         let source;
         let animationFrameId;
         let isPlaying = false;
-        const MAX_AMPLITUDE = 255; // Độ lớn tối đa của dữ liệu âm thanh
+        const MAX_AMPLITUDE = 255;
 
         // --- Thiết lập Canvas ---
         const canvas = document.getElementById('particleCanvas');
@@ -84,11 +88,10 @@
             constructor(maxSize) {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.baseRadius = Math.random() * 1 + 0.5; // Kích thước cơ bản
-                this.maxRadius = Math.random() * maxSize + 2; 
-                this.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                this.baseRadius = Math.random() * 2 + 1; // Kích thước cơ bản lớn hơn
+                this.maxRadius = Math.random() * maxSize + 4; // Kích thước tối đa lớn hơn
+                this.color = 'white'; // Chỉ dùng màu trắng theo yêu cầu
                 
-                // Vận tốc cơ bản, nhỏ
                 this.baseVelocity = {
                     x: (Math.random() - 0.5) * 0.5,
                     y: (Math.random() - 0.5) * 0.5
@@ -104,46 +107,43 @@
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
                 ctx.shadowColor = this.color;
-                ctx.shadowBlur = this.radius * 2; 
+                ctx.shadowBlur = this.radius * 3; // Tăng hiệu ứng phát sáng
                 ctx.globalAlpha = this.opacity;
                 ctx.fill();
             }
 
             update(averageAmplitude) {
-                // Tỷ lệ cường độ âm thanh (từ 0 đến 1)
                 const volumeRatio = averageAmplitude / MAX_AMPLITUDE; 
                 
                 // --- Điều chỉnh tốc độ di chuyển theo nhạc ---
-                // Hệ số tăng tốc: Nhạc càng lớn (volumeRatio càng gần 1), hạt càng đi nhanh
-                const speedMultiplier = 1 + (volumeRatio * 3); // Tăng tốc tối đa gấp 4 lần (1 + 3)
+                // Hệ số tăng tốc: Độ nhạy cao hơn (tăng tốc tối đa gấp 7 lần)
+                const speedMultiplier = 1 + (volumeRatio * 6); 
                 
                 this.x += this.baseVelocity.x * speedMultiplier;
                 this.y += this.baseVelocity.y * speedMultiplier;
 
-                // Giữ hạt trong màn hình 
+                // Giữ hạt trong màn hình (tạo cảm giác chuyển động liên tục)
                 if (this.x < 0 || this.x > canvas.width) this.baseVelocity.x *= -1;
                 if (this.y < 0 || this.y > canvas.height) this.baseVelocity.y *= -1;
                 
-                // --- Phóng to kích thước theo nhạc ---
-                // Tăng kích thước theo cường độ âm thanh
-                const sizeFactor = 1 + (volumeRatio * 0.5); // Tăng kích thước tối đa 50%
+                // --- Phóng to kích thước theo nhạc (Lớn hơn) ---
+                const sizeFactor = 1 + (volumeRatio * 1.5); // Tăng kích thước tối đa 150%
                 this.radius = Math.min(this.maxRadius, this.baseRadius * sizeFactor);
 
                 this.life++;
 
-                // --- Nháy sáng (Thay đổi Opacity) theo thời gian sống và nhạc ---
+                // --- Nháy sáng Trắng (Flashing Opacity) ---
                 if (this.life < this.maxLife * 0.2) {
-                    this.opacity += 0.02; 
+                    this.opacity += 0.03; 
                 } else if (this.life > this.maxLife * 0.8) {
-                    this.opacity -= 0.01;
+                    this.opacity -= 0.02;
                 } else {
-                    // Nhấp nháy nhẹ: Kết hợp dao động sin và cường độ âm thanh
-                    this.opacity = 0.5 + (Math.sin(this.life * 0.1) * 0.5) + (volumeRatio * 0.3); 
+                    // Nhấp nháy mạnh hơn và nhạy hơn với cường độ nhạc
+                    this.opacity = 0.5 + (Math.sin(this.life * 0.2) * 0.5) + (volumeRatio * 0.5); 
                 }
                 
                 this.opacity = Math.max(0, Math.min(1, this.opacity)); 
 
-                // Tái tạo hạt nếu hết đời
                 if (this.life >= this.maxLife) {
                     this.reset();
                 }
@@ -156,9 +156,7 @@
                 this.opacity = 0;
                 this.maxLife = Math.random() * 300 + 100;
                 this.maxRadius = Math.random() * 4 + 2;
-                this.baseRadius = Math.random() * 1 + 0.5;
-                this.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
-                // Thiết lập lại vận tốc cơ bản
+                this.baseRadius = Math.random() * 2 + 1;
                 this.baseVelocity = {
                     x: (Math.random() - 0.5) * 0.5,
                     y: (Math.random() - 0.5) * 0.5
@@ -168,29 +166,33 @@
 
         // Tạo các hạt
         for (let i = 0; i < numParticles; i++) {
-            particles.push(new Particle(4));
+            particles.push(new Particle(6)); // Kích thước hạt tối đa là 6
         }
 
         // --- Logic Xử lý Âm thanh & Animation ---
         function setupAudio() {
             audio = new Audio(musicUrl);
-            audio.crossOrigin = "anonymous";
+            audio.crossOrigin = "anonymous"; // Cố gắng vượt qua CORS (quan trọng)
             
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioContext.createAnalyser();
-            analyser.fftSize = 256; 
+            // Xử lý lỗi nếu AudioContext không thể khởi tạo
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256; 
 
-            source = audioContext.createMediaElementSource(audio);
-            source.connect(analyser);
-            analyser.connect(audioContext.destination);
+                source = audioContext.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
 
-            // Xử lý khi nhạc kết thúc
-            audio.onended = () => {
-                isPlaying = false;
-                playState.textContent = '▶';
-                cdIcon.classList.remove('playing');
-                audio.currentTime = 0; // Quay lại đầu bài
-            };
+                audio.onended = () => {
+                    isPlaying = false;
+                    playState.textContent = '▶';
+                    audio.currentTime = 0;
+                };
+            } catch (e) {
+                console.error("Lỗi khi khởi tạo Web Audio API:", e);
+                alert("Không thể phân tích âm thanh. Vui lòng kiểm tra lại đường dẫn nhạc hoặc vấn đề CORS.");
+            }
         }
 
         function animate() {
@@ -199,7 +201,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height); 
             ctx.globalAlpha = 1;
 
-            if (isPlaying) {
+            if (isPlaying && analyser) {
                 const dataArray = new Uint8Array(analyser.frequencyBinCount);
                 analyser.getByteFrequencyData(dataArray);
                 
@@ -214,9 +216,9 @@
                     p.draw();
                 });
             } else {
-                 // Khi tạm dừng, các hạt di chuyển với tốc độ cơ bản (volumeRatio = 0)
+                 // Nếu tạm dừng hoặc lỗi phân tích: hạt vẫn hiển thị nhưng di chuyển chậm
                  particles.forEach(p => {
-                    p.update(0); // Dùng amplitude = 0 để di chuyển chậm
+                    p.update(0); 
                     p.draw();
                  });
             }
@@ -230,6 +232,7 @@
             if (!audioContext) {
                 setupAudio();
             }
+            if (!audioContext || !audio) return; // Thoát nếu không thể setup audio
 
             if (isPlaying) {
                 audio.pause();
@@ -239,7 +242,11 @@
                 if (audioContext.state === 'suspended') {
                     audioContext.resume();
                 }
-                audio.play();
+                audio.play().catch(e => {
+                    // Xử lý lỗi khi trình duyệt chặn tự động phát
+                    console.error("Lỗi tự động phát:", e);
+                    alert("Trình duyệt có thể chặn tự động phát. Vui lòng thử lại.");
+                });
                 isPlaying = true;
                 playState.textContent = '⏸';
             }
