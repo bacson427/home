@@ -32,6 +32,179 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
+/* Event Popup Styles - Modular and Maintainable */
+.event-popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 999999;
+    animation: eventPopupFadeIn 0.3s ease;
+}
+
+.event-popup-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    overflow: hidden;
+    animation: eventPopupSlideUp 0.4s ease;
+}
+
+.event-popup-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.event-popup-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.event-popup-info {
+    padding: 25px;
+}
+
+.event-popup-title {
+    color: #2c3e50;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.event-popup-detail {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.event-popup-detail .event-popup-icon {
+    margin-right: 10px;
+    font-size: 1.1em;
+}
+
+.event-popup-detail .event-popup-text {
+    font-size: 0.95em;
+}
+
+.event-popup-description {
+    color: #666;
+    line-height: 1.5;
+    margin: 15px 0;
+    font-size: 0.9em;
+}
+
+.event-popup-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.event-popup-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.event-popup-btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.event-popup-btn-primary:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+}
+
+.event-popup-btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.event-popup-btn-secondary:hover {
+    background: #7f8c8d;
+    transform: translateY(-2px);
+}
+
+.event-popup-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    z-index: 1;
+}
+
+.event-popup-close:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* Animations */
+@keyframes eventPopupFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes eventPopupSlideUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@keyframes eventPopupFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .event-popup-container {
+        width: 95%;
+    }
+    
+    .event-popup-info {
+        padding: 20px;
+    }
+    
+    .event-popup-buttons {
+        flex-direction: column;
+    }
+    
+    .event-popup-title {
+        font-size: 1.3em;
+    }
+}
+
+
+
 
 /* Target theo cấu trúc HTML */
 body > div:last-child,
@@ -2058,6 +2231,11 @@ document.addEventListener('click', function(e) {
     }
 });
 
+
+
+
+
+
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
@@ -2079,7 +2257,220 @@ document.addEventListener('click', function(e) {
 
     
 
+// Event Popup Module - Easy to Maintain and Customize
+const EventPopup = (function() {
+    // ==================== CONFIGURATION ====================
+    // Dễ dàng thay đổi thông số tại đây
+    const config = {
+        // Thời gian hiển thị popup (miliseconds)
+        showDelay: 1000,
+        
+        // Thông tin sự kiện - THAY ĐỔI Ở ĐÂY
+        eventData: {
+            image: "https://via.placeholder.com/400x200/4A90E2/FFFFFF?text=Hình+Ảnh+Sự+Kiện",
+            title: "Hackathon Công nghệ 2024",
+            location: "Trung tâm Hội nghị Quốc gia, Hà Nội",
+            time: "15-16/12/2024 | 08:00 - 18:00",
+            description: "Tham gia sự kiện công nghệ lớn nhất năm với các chuyên gia hàng đầu. Cơ hội networking và học hỏi những xu hướng mới nhất.",
+            detailUrl: "https://github.com/your-repo/event-details"
+        },
+        
+        // Text cho button - có thể custom
+        buttonText: {
+            viewDetail: "Xem chi tiết",
+            skip: "Bỏ qua"
+        },
+        
+        // Animation duration
+        animationDuration: 300
+    };
 
+    // ==================== DOM ELEMENTS ====================
+    let elements = {};
+
+    // ==================== TEMPLATES ====================
+    // Template HTML - dễ dàng chỉnh sửa cấu trúc
+    const templates = {
+        popup: (data) => `
+            <div id="eventPopupOverlay" class="event-popup-overlay">
+                <div class="event-popup-container">
+                    ${templates.image(data.image)}
+                    ${templates.info(data)}
+                    ${templates.closeButton()}
+                </div>
+            </div>
+        `,
+        
+        image: (imageUrl) => `
+            <div class="event-popup-image">
+                <img src="${imageUrl}" alt="Sự kiện" onerror="this.src='https://via.placeholder.com/400x200/CCCCCC/666666?text=Image+Error'">
+            </div>
+        `,
+        
+        info: (data) => `
+            <div class="event-popup-info">
+                <h2 class="event-popup-title">${data.title}</h2>
+                
+                <div class="event-popup-detail">
+                    <span class="event-popup-icon">📍</span>
+                    <span class="event-popup-text">${data.location}</span>
+                </div>
+                
+                <div class="event-popup-detail">
+                    <span class="event-popup-icon">📅</span>
+                    <span class="event-popup-text">${data.time}</span>
+                </div>
+                
+                <p class="event-popup-description">${data.description}</p>
+                
+                ${templates.buttons()}
+            </div>
+        `,
+        
+        buttons: () => `
+            <div class="event-popup-buttons">
+                <button id="eventPopupViewDetail" class="event-popup-btn event-popup-btn-primary">
+                    ${config.buttonText.viewDetail}
+                </button>
+                <button id="eventPopupSkip" class="event-popup-btn event-popup-btn-secondary">
+                    ${config.buttonText.skip}
+                </button>
+            </div>
+        `,
+        
+        closeButton: () => `
+            <button id="eventPopupClose" class="event-popup-close">×</button>
+        `
+    };
+
+    // ==================== CORE FUNCTIONS ====================
+    function init() {
+        if (isAlreadyExists() || shouldNotShow()) return;
+        
+        createPopup();
+        setupEventListeners();
+        showPopup();
+    }
+
+    function isAlreadyExists() {
+        return document.getElementById('eventPopupOverlay');
+    }
+
+    function shouldNotShow() {
+        // Có thể thêm điều kiện không hiển thị popup ở đây
+        // Ví dụ: đã đóng popup trước đó, mobile only, etc.
+        return false;
+    }
+
+    function createPopup() {
+        const popupHTML = templates.popup(config.eventData);
+        document.body.insertAdjacentHTML('beforeend', popupHTML');
+        
+        // Cache DOM elements
+        elements = {
+            overlay: document.getElementById('eventPopupOverlay'),
+            closeBtn: document.getElementById('eventPopupClose'),
+            skipBtn: document.getElementById('eventPopupSkip'),
+            viewDetailBtn: document.getElementById('eventPopupViewDetail')
+        };
+    }
+
+    function setupEventListeners() {
+        if (!elements.overlay) return;
+
+        elements.closeBtn.addEventListener('click', close);
+        elements.skipBtn.addEventListener('click', close);
+        elements.viewDetailBtn.addEventListener('click', viewDetails);
+        
+        elements.overlay.addEventListener('click', (e) => {
+            if (e.target === elements.overlay) close();
+        });
+
+        document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    function showPopup() {
+        setTimeout(() => {
+            if (elements.overlay) {
+                elements.overlay.style.display = 'block';
+            }
+        }, config.showDelay);
+    }
+
+    function close() {
+        if (!elements.overlay) return;
+        
+        elements.overlay.style.animation = 'eventPopupFadeOut 0.3s ease';
+        setTimeout(() => {
+            elements.overlay.style.display = 'none';
+            cleanup();
+        }, config.animationDuration);
+    }
+
+    function viewDetails() {
+        if (config.eventData.detailUrl) {
+            window.open(config.eventData.detailUrl, '_blank');
+        }
+        close();
+    }
+
+    function handleEscapeKey(e) {
+        if (e.key === 'Escape' && elements.overlay && elements.overlay.style.display === 'block') {
+            close();
+        }
+    }
+
+    function cleanup() {
+        document.removeEventListener('keydown', handleEscapeKey);
+    }
+
+    // ==================== PUBLIC API ====================
+    return {
+        // Khởi tạo popup
+        init,
+        
+        // Đóng popup thủ công
+        close,
+        
+        // Mở popup thủ công
+        open: () => {
+            if (elements.overlay) {
+                elements.overlay.style.display = 'block';
+            }
+        },
+        
+        // Cập nhật cấu hình mới
+        updateConfig: (newConfig) => {
+            Object.assign(config, newConfig);
+        },
+        
+        // Lấy config hiện tại (cho debug)
+        getConfig: () => ({ ...config }),
+        
+        // Hủy popup hoàn toàn
+        destroy: () => {
+            close();
+            if (elements.overlay && elements.overlay.parentNode) {
+                elements.overlay.parentNode.removeChild(elements.overlay);
+            }
+            elements = {};
+        }
+    };
+})();
+
+// ==================== AUTO INITIALIZATION ====================
+// Tự động khởi chạy khi trang load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', EventPopup.init);
+} else {
+    EventPopup.init();
+}
+
+// ==================== GLOBAL ACCESS ====================
+// Cho phép truy cập từ console hoặc script khác
+if (typeof window !== 'undefined') {
+    window.EventPopup = EventPopup;
+}
 </body>
 </html>
 <!-- trigger -->
