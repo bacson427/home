@@ -2074,127 +2074,120 @@ document.addEventListener('click', function(e) {
 
 
 
-// CODE ĐƠN GIẢN - CHẮC CHẮN CHẠY
-function initVisualizer() {
-    console.log('🎵 Bắt đầu khởi tạo visualizer...');
-    
-    // Tạo visualizer
-    const visualizer = document.createElement('div');
-    visualizer.id = 'simple-visualizer';
-    visualizer.innerHTML = '<canvas id="visualizer-canvas"></canvas>';
-    document.body.appendChild(visualizer);
+ function initVisualizer() {
+    console.log('🎵 Visualizer với audio...');
     
     const canvas = document.getElementById('visualizer-canvas');
     const ctx = canvas.getContext('2d');
-    
-    // Kích thước canvas
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
     
+    let hue = 0;
+    let bars = Array(40).fill(0);
     let audioContext = null;
     let analyser = null;
     let dataArray = null;
     
-    // Biến cho hiệu ứng nền
-    let hue = 0;
-    
-    // Tìm audio element
-    function findAudio() {
-        console.log('🔍 Đang tìm audio...');
-        const audios = document.querySelectorAll('audio');
-        console.log('Tìm thấy', audios.length, 'audio elements');
-        
-        for (let audio of audios) {
-            console.log('Audio:', {
-                src: audio.src,
-                paused: audio.paused,
-                currentTime: audio.currentTime,
-                duration: audio.duration
-            });
-            
-            if (!audio.paused && audio.duration > 0) {
-                console.log('✅ Tìm thấy audio đang phát!');
-                connectToAudio(audio);
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    // Kết nối với audio
-    function connectToAudio(audio) {
+    // Tìm và kết nối audio - KHÔNG BAO GIỜ LỖI
+    function setupAudio() {
         try {
-            console.log('🔄 Kết nối AudioContext...');
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioContext.createAnalyser();
-            const source = audioContext.createMediaElementSource(audio);
-            
-            source.connect(analyser);
-            analyser.connect(audioContext.destination);
-            
-            analyser.fftSize = 256;
-            dataArray = new Uint8Array(analyser.frequencyBinCount);
-            
-            console.log('✅ Kết nối thành công!');
-            startAnimation();
-            
+            const audios = document.querySelectorAll('audio');
+            for (let audio of audios) {
+                if (!audio.paused && audio.duration > 0) {
+                    console.log('🎵 Kết nối audio...');
+                    
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioContext.createAnalyser();
+                    const source = audioContext.createMediaElementSource(audio);
+                    
+                    source.connect(analyser);
+                    analyser.connect(audioContext.destination);
+                    
+                    analyser.fftSize = 256;
+                    dataArray = new Uint8Array(analyser.frequencyBinCount);
+                    
+                    // QUAN TRỌNG: Resume context ngay lập tức
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume();
+                    }
+                    
+                    console.log('✅ Audio connected!');
+                    break;
+                }
+            }
         } catch (error) {
-            console.log('❌ Lỗi kết nối:', error);
+            console.log('⚠️ Không kết nối được audio, dùng demo');
+            // KHÔNG BAO GIỜ DỪNG, CỨ TIẾP TỤC CHẠY
         }
     }
     
-    // Vẽ visualizer
     function draw() {
-        // Tạo nền gradient di chuyển
-        hue = (hue + 0.5) % 360;
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-        gradient.addColorStop(0, `hsl(${hue}, 80%, 10%)`);
-        gradient.addColorStop(0.5, `hsl(${hue + 60}, 80%, 15%)`);
-        gradient.addColorStop(1, `hsl(${hue + 120}, 80%, 10%)`);
-        
-        ctx.fillStyle = gradient;
+        // Nền
+        ctx.fillStyle = 'rgba(10, 10, 30, 0.3)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
+        const barWidth = canvas.width / bars.length;
+        const time = Date.now() / 1000;
+        
+        // Xử lý audio data hoặc demo
         if (analyser && dataArray) {
-            analyser.getByteFrequencyData(dataArray);
-            
-            // Vẽ bars
-            const barWidth = canvas.width / dataArray.length;
-            
-            for (let i = 0; i < dataArray.length; i++) {
-                const value = dataArray[i];
-                const barHeight = (value / 255) * canvas.height;
+            try {
+                analyser.getByteFrequencyData(dataArray);
                 
-                ctx.fillStyle = `hsl(${i * 2 + hue}, 100%, 60%)`;
-                ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
+                // Audio thật
+                for (let i = 0; i < bars.length; i++) {
+                    const value = dataArray[Math.floor(i / bars.length * dataArray.length)];
+                    const targetHeight = (value / 255) * canvas.height * 0.8;
+                    bars[i] += (targetHeight - bars[i]) * 0.3;
+                    
+                    const hue = 220 + (value / 255) * 60;
+                    drawBar(i, barWidth, bars[i], hue);
+                }
+            } catch (error) {
+                // Nếu audio lỗi, tự động chuyển sang demo
+                analyser = null;
+                dataArray = null;
+                console.log('🔄 Chuyển sang demo mode');
+            }
+        } else {
+            // Demo mode
+            for (let i = 0; i < bars.length; i++) {
+                const randomSeed = i * 0.3;
+                const wave1 = Math.sin(time * 1.5 + randomSeed) * 0.4;
+                const wave2 = Math.sin(time * 3 + randomSeed * 2) * 0.3;
+                const targetHeight = (wave1 + wave2 + 1) * canvas.height * 0.6;
+                bars[i] += (targetHeight - bars[i]) * 0.2;
+                
+                const hue = 220 + Math.sin(time * 0.5 + i * 0.1) * 30;
+                drawBar(i, barWidth, bars[i], hue);
             }
         }
         
+        hue = (hue + 0.2) % 360;
         requestAnimationFrame(draw);
     }
     
-    function startAnimation() {
-        console.log('🎨 Bắt đầu vẽ visualizer...');
-        draw();
+    function drawBar(i, barWidth, height, hue) {
+        const gradient = ctx.createLinearGradient(0, canvas.height - height, 0, canvas.height);
+        gradient.addColorStop(0, `hsla(${hue}, 70%, 60%, 0.8)`);
+        gradient.addColorStop(1, `hsla(${hue}, 90%, 40%, 0.3)`);
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(i * barWidth, canvas.height - height, barWidth - 1, height);
+        
+        ctx.fillStyle = `hsla(${hue}, 100%, 80%, 0.3)`;
+        ctx.fillRect(i * barWidth, canvas.height - height, barWidth - 1, 2);
     }
     
-    // Thử kết nối ngay
-    setTimeout(() => {
-        if (!findAudio()) {
-            console.log('⏳ Chưa tìm thấy audio, thử lại sau 2 giây...');
-            setInterval(findAudio, 2000);
-        }
-    }, 1000);
+    // Khởi động
+    setupAudio();
+    draw();
+    
+    // Thử kết nối lại audio mỗi 5 giây
+    setInterval(setupAudio, 5000);
 }
 
-// Chạy khi trang load xong
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initVisualizer);
-} else {
-    initVisualizer();
-}
-
-console.log('🚀 Visualizer script đã được tải!');
+setTimeout(initVisualizer, 1000);
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
