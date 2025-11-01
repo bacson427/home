@@ -32,6 +32,24 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
+#simple-visualizer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    background: rgba(0,0,0,0.8);
+    z-index: 9999;
+}
+
+#visualizer-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+
+
 /* Target theo cấu trúc HTML */
 body > div:last-child,
 div[style*="position: fixed"],
@@ -2056,6 +2074,121 @@ document.addEventListener('click', function(e) {
         menu.style.display = 'none';
     }
 });
+
+
+
+// CODE ĐƠN GIẢN - CHẮC CHẮN CHẠY
+function initVisualizer() {
+    console.log('🎵 Bắt đầu khởi tạo visualizer...');
+    
+    // Tạo visualizer
+    const visualizer = document.createElement('div');
+    visualizer.id = 'simple-visualizer';
+    visualizer.innerHTML = '<canvas id="visualizer-canvas"></canvas>';
+    document.body.appendChild(visualizer);
+    
+    const canvas = document.getElementById('visualizer-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Kích thước canvas
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    
+    let audioContext = null;
+    let analyser = null;
+    let dataArray = null;
+    
+    // Tìm audio element
+    function findAudio() {
+        console.log('🔍 Đang tìm audio...');
+        const audios = document.querySelectorAll('audio');
+        console.log('Tìm thấy', audios.length, 'audio elements');
+        
+        for (let audio of audios) {
+            console.log('Audio:', {
+                src: audio.src,
+                paused: audio.paused,
+                currentTime: audio.currentTime,
+                duration: audio.duration
+            });
+            
+            if (!audio.paused && audio.duration > 0) {
+                console.log('✅ Tìm thấy audio đang phát!');
+                connectToAudio(audio);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    // Kết nối với audio
+    function connectToAudio(audio) {
+        try {
+            console.log('🔄 Kết nối AudioContext...');
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            const source = audioContext.createMediaElementSource(audio);
+            
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+            
+            analyser.fftSize = 256;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+            
+            console.log('✅ Kết nối thành công!');
+            startAnimation();
+            
+        } catch (error) {
+            console.log('❌ Lỗi kết nối:', error);
+        }
+    }
+    
+    // Vẽ visualizer
+    function draw() {
+        if (!analyser) return;
+        
+        analyser.getByteFrequencyData(dataArray);
+        
+        // Xóa canvas
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Vẽ bars
+        const barWidth = canvas.width / dataArray.length;
+        
+        for (let i = 0; i < dataArray.length; i++) {
+            const value = dataArray[i];
+            const barHeight = (value / 255) * canvas.height;
+            
+            ctx.fillStyle = `hsl(${i * 2}, 100%, 50%)`;
+            ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
+        }
+        
+        requestAnimationFrame(draw);
+    }
+    
+    function startAnimation() {
+        console.log('🎨 Bắt đầu vẽ visualizer...');
+        draw();
+    }
+    
+    // Thử kết nối ngay
+    setTimeout(() => {
+        if (!findAudio()) {
+            console.log('⏳ Chưa tìm thấy audio, thử lại sau 2 giây...');
+            setInterval(findAudio, 2000);
+        }
+    }, 1000);
+}
+
+// Chạy khi trang load xong
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initVisualizer);
+} else {
+    initVisualizer();
+}
+
+console.log('🚀 Visualizer script đã được tải!');
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
@@ -2071,6 +2204,11 @@ document.addEventListener('click', function(e) {
     <a href="https://nguyenbacson.io.vn/improve-the-website/index.html">Improve the website</a>
     <a href="#" id="addToHomeScreen">Download</a>
 </div>
+</div>
+
+
+<div id="simple-visualizer">
+    <canvas id="visualizer-canvas"></canvas>
 </div>
 </body>
 </html>
