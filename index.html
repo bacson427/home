@@ -2074,7 +2074,7 @@ document.addEventListener('click', function(e) {
 
 
 
- // CODE ĐƠN GIẢN - CHẮC CHẮN CHẠY
+// CODE ĐƠN GIẢN - CHẮC CHẮN CHẠY
 function initVisualizer() {
     console.log('🎵 Bắt đầu khởi tạo visualizer...');
     
@@ -2094,6 +2094,9 @@ function initVisualizer() {
     let audioContext = null;
     let analyser = null;
     let dataArray = null;
+    
+    // Biến cho hiệu ứng nền
+    let hue = 0;
     
     // Tìm audio element
     function findAudio() {
@@ -2142,23 +2145,29 @@ function initVisualizer() {
     
     // Vẽ visualizer
     function draw() {
-        if (!analyser) return;
+        // Tạo nền gradient di chuyển
+        hue = (hue + 0.5) % 360;
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, `hsl(${hue}, 80%, 10%)`);
+        gradient.addColorStop(0.5, `hsl(${hue + 60}, 80%, 15%)`);
+        gradient.addColorStop(1, `hsl(${hue + 120}, 80%, 10%)`);
         
-        analyser.getByteFrequencyData(dataArray);
-        
-        // Xóa canvas
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // Vẽ bars
-        const barWidth = canvas.width / dataArray.length;
-        
-        for (let i = 0; i < dataArray.length; i++) {
-            const value = dataArray[i];
-            const barHeight = (value / 255) * canvas.height;
+        if (analyser && dataArray) {
+            analyser.getByteFrequencyData(dataArray);
             
-            ctx.fillStyle = `hsl(${i * 2}, 100%, 50%)`;
-            ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
+            // Vẽ bars
+            const barWidth = canvas.width / dataArray.length;
+            
+            for (let i = 0; i < dataArray.length; i++) {
+                const value = dataArray[i];
+                const barHeight = (value / 255) * canvas.height;
+                
+                ctx.fillStyle = `hsl(${i * 2 + hue}, 100%, 60%)`;
+                ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
+            }
         }
         
         requestAnimationFrame(draw);
