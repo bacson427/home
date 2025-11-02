@@ -32,28 +32,28 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-#simple-visualizer {
+.firefly {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 60px; /* Giảm từ 120px xuống 60px */
-    background: rgba(0,0,0,0.8);
-    z-index: 9999;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    filter: blur(0.8px);
+    box-shadow: 0 0 12px currentColor;
+    opacity: 0;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
-#visualizer-canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-/* Cho mobile */
+/* Mobile */
 @media (max-width: 768px) {
-    #simple-visualizer {
-        height: 50px; /* Còn nhỏ hơn trên mobile */
+    .firefly {
+        width: 5px;
+        height: 5px;
     }
 }
+
 .firefly {
     position: fixed;
     width: 6px;
@@ -2161,125 +2161,145 @@ document.addEventListener('click', function(e) {
 
 setTimeout(initVisualizer, 1000);
 
+
 function initFireflies() {
-    console.log('✨ Khởi tạo đom đóm...');
+    console.log('✨ Đom đóm full màn hình...');
     
     const colors = [
         '#FF5252', '#FF4081', '#E040FB', '#7C4DFF', 
-        '#536DFE', '#448AFF', '#40C4FF', '#18FFFF',
-        '#64FFDA', '#69F0AE', '#B2FF59', '#EEFF41',
-        '#FFFF00', '#FFD740', '#FFAB40', '#FF6E40'
+        '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', 
+        '#69F0AE', '#B2FF59', '#EEFF41', '#FFFF00',
+        '#FFD740', '#FFAB40', '#FF6E40', '#FF4081'
     ];
     
     let fireflies = [];
-    let audioIntensity = 0.5; // Cường độ nhạc
+    let audioIntensity = 0.3;
     
-    // Tạo đom đóm
+    // Tạo nhiều đom đóm
     function createFireflies(count) {
+        const fragment = document.createDocumentFragment();
+        
         for (let i = 0; i < count; i++) {
-            setTimeout(() => {
-                const firefly = document.createElement('div');
-                firefly.className = 'firefly';
-                
-                // Vị trí ngẫu nhiên
-                const x = Math.random() * 100;
-                const y = Math.random() * 80; // Tránh phần visualizer
-                firefly.style.left = `${x}%`;
-                firefly.style.top = `${y}%`;
-                
-                // Màu sắc ngẫu nhiên
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                firefly.style.backgroundColor = color;
-                
-                document.body.appendChild(firefly);
-                fireflies.push({
-                    element: firefly,
-                    x: parseFloat(x),
-                    y: parseFloat(y),
-                    speed: 0.2 + Math.random() * 0.3,
-                    color: color,
-                    opacity: 0,
-                    targetX: Math.random() * 100,
-                    targetY: Math.random() * 80
-                });
-                
-                // Hiệu ứng xuất hiện
-                setTimeout(() => {
-                    firefly.style.opacity = '0.8';
-                }, Math.random() * 2000);
-                
-            }, i * 300);
+            const firefly = document.createElement('div');
+            firefly.className = 'firefly';
+            
+            // Full màn hình - từ 0-100% cả chiều ngang và dọc
+            const startX = Math.random() * 100;
+            const startY = Math.random() * 100; // Full height
+            const angle = Math.random() * Math.PI * 2;
+            
+            firefly.style.cssText = `
+                left: ${startX}%;
+                top: ${startY}%;
+                background-color: ${colors[Math.floor(Math.random() * colors.length)]};
+                opacity: 0.8;
+            `;
+            
+            fragment.appendChild(firefly);
+            fireflies.push({
+                element: firefly,
+                x: startX,
+                y: startY,
+                angle: angle,
+                speed: 0.04 + Math.random() * 0.08,
+                colorChangeTimer: 0,
+                size: 0.8 + Math.random() * 0.4 // Kích thước ngẫu nhiên
+            });
         }
+        
+        document.body.appendChild(fragment);
+        console.log(`✅ Đã tạo ${count} đom đóm full màn hình`);
     }
     
-    // Cập nhật chuyển động đom đóm
+    // Cập nhật chuyển động
     function updateFireflies() {
-        const intensity = audioIntensity; // Lấy cường độ nhạc
+        const intensity = audioIntensity;
+        const baseSpeed = 0.06 + intensity * 0.2;
         
-        fireflies.forEach(firefly => {
-            // Tốc độ di chuyển theo cường độ nhạc
-            const speed = firefly.speed * (0.5 + intensity * 1.5);
+        for (let i = 0; i < fireflies.length; i++) {
+            const firefly = fireflies[i];
             
-            // Di chuyển đến target
-            const dx = firefly.targetX - firefly.x;
-            const dy = firefly.targetY - firefly.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            // Tốc độ theo nhạc
+            const currentSpeed = firefly.speed * (0.4 + intensity * 1.6);
             
-            if (distance < 2) {
-                // Đổi target mới
-                firefly.targetX = Math.random() * 100;
-                firefly.targetY = Math.random() * 80;
-                
-                // Đổi màu thường xuyên hơn khi nhạc mạnh
-                if (Math.random() < 0.1 + intensity * 0.2) {
-                    const newColor = colors[Math.floor(Math.random() * colors.length)];
-                    firefly.element.style.backgroundColor = newColor;
-                    firefly.color = newColor;
-                }
-            } else {
-                // Di chuyển
-                firefly.x += (dx / distance) * speed;
-                firefly.y += (dy / distance) * speed;
-                
-                firefly.element.style.left = `${firefly.x}%`;
-                firefly.element.style.top = `${firefly.y}%`;
+            // Di chuyển thẳng
+            firefly.x += Math.cos(firefly.angle) * currentSpeed;
+            firefly.y += Math.sin(firefly.angle) * currentSpeed;
+            
+            // Xử lý biên - full màn hình
+            if (firefly.x < -2) {
+                firefly.x = 102;
+                firefly.angle = Math.random() * Math.PI * 2;
+            } else if (firefly.x > 102) {
+                firefly.x = -2;
+                firefly.angle = Math.random() * Math.PI * 2;
             }
             
-            // Nhấp nháy theo cường độ nhạc
-            const blinkSpeed = 0.5 + intensity * 2;
-            const blink = Math.sin(Date.now() * 0.005 * blinkSpeed) * 0.3 + 0.7;
-            firefly.element.style.opacity = `${blink * 0.8}`;
+            if (firefly.y < -2) {
+                firefly.y = 102;
+                firefly.angle = Math.random() * Math.PI * 2;
+            } else if (firefly.y > 102) {
+                firefly.y = -2;
+                firefly.angle = Math.random() * Math.PI * 2;
+            }
             
-            // Hiệu ứng glow theo cường độ
-            const glowSize = 5 + intensity * 10;
-            firefly.element.style.boxShadow = `0 0 ${glowSize}px ${firefly.color}`;
-        });
+            // Cập nhật vị trí
+            firefly.element.style.left = firefly.x + '%';
+            firefly.element.style.top = firefly.y + '%';
+            
+            // Đổi màu theo nhạc
+            firefly.colorChangeTimer++;
+            if (firefly.colorChangeTimer > 50 - (intensity * 35)) {
+                firefly.element.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                firefly.colorChangeTimer = 0;
+                
+                // Thỉnh thoảng đổi kích thước
+                if (Math.random() < 0.3) {
+                    const newSize = 0.7 + Math.random() * 0.6;
+                    firefly.element.style.transform = `scale(${newSize})`;
+                }
+            }
+            
+            // Hiệu ứng nhấp nháy và glow
+            const blink = 0.5 + Math.sin(Date.now() * 0.002 * (1 + intensity) + i) * 0.3;
+            firefly.element.style.opacity = blink.toString();
+            
+            const glowSize = 10 + intensity * 20;
+            firefly.element.style.boxShadow = `0 0 ${glowSize}px currentColor`;
+        }
         
         requestAnimationFrame(updateFireflies);
     }
     
-    // Giả lập cường độ nhạc thay đổi (có thể thay bằng audio real)
+    // Giả lập cường độ nhạc
     function simulateAudioIntensity() {
-        setInterval(() => {
-            // Random cường độ để test
-            audioIntensity = 0.3 + Math.random() * 0.7;
-        }, 2000);
+        let targetIntensity = 0.3;
+        let intensityChangeTime = 0;
+        
+        function updateIntensity() {
+            intensityChangeTime++;
+            
+            // Thay đổi cường độ mượt mà
+            audioIntensity += (targetIntensity - audioIntensity) * 0.08;
+            
+            // Đổi target sau 2-8 giây
+            if (intensityChangeTime > 120 + Math.random() * 240) {
+                targetIntensity = 0.1 + Math.random() * 0.8;
+                intensityChangeTime = 0;
+            }
+        }
+        
+        setInterval(updateIntensity, 50);
     }
     
-    // Khởi tạo
-    createFireflies(15); // Số lượng đom đóm
+    // Khởi tạo với nhiều đom đóm hơn
+    createFireflies(35); // Tăng lên 35 đom đóm
     updateFireflies();
     simulateAudioIntensity();
-    
-    console.log('✅ Đom đóm đang bay!');
 }
 
-// Chạy khi trang load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFireflies);
-} else {
-    initFireflies();
-}
+// Chạy ngay
+setTimeout(initFireflies, 500);
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
