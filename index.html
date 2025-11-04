@@ -115,7 +115,7 @@ button:hover {
         height: 80px;
     }
 }
-            
+        
 
 
 
@@ -2294,94 +2294,6 @@ function updateVisualizer() {
         bars[i].style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(${hue + 60}, 100%, 50%))`;
     }
 
-    // Cập nhật hiệu ứng đom đóm dựa trên cường độ âm thanh
-    const avgIntensity = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
-
-    // Tăng số lượng đom đóm khi âm thanh mạnh
-    if (avgIntensity > 150 && fireflies.length < 100) {
-        createFireflies(5);
-    }
-
-    // Điều chỉnh độ sáng của đom đóm dựa trên cường độ âm thanh
-    fireflies.forEach(firefly => {
-        const brightness = Math.min(0.9, avgIntensity / 255 * 0.9);
-        firefly.style.opacity = `${brightness}`;
-    });
-}
-
-// Tự động tìm và kết nối với audio đang phát trên trang
-function connectToExistingAudio() {
-    // Tìm tất cả các thẻ audio trên trang
-    const allAudios = document.querySelectorAll('audio');
-    
-    if (allAudios.length > 0) {
-        // Lấy audio đầu tiên đang phát hoặc có thể phát
-        audio = allAudios[0];
-        console.log('Đã tìm thấy audio trên trang:', audio);
-        
-        // Khởi tạo audio context
-        initAudio(audio);
-        
-        // Theo dõi sự kiện phát nhạc
-        audio.addEventListener('play', function() {
-            isPlaying = true;
-            updateVisualizer();
-        });
-        
-        audio.addEventListener('pause', function() {
-            isPlaying = false;
-        });
-        
-        // Nếu audio đang phát, bắt đầu visualizer
-        if (!audio.paused) {
-            isPlaying = true;
-            updateVisualizer();
-        }
-        
-        return true;
-    }
-    
-    return false;
-}
-
-// Tự động chạy khi trang tải xong
-window.addEventListener('load', function() {
-    // Tạo đom đóm ban đầu
-    createFireflies(30);
-    
-    // Thử kết nối với audio có sẵn trên trang
-    if (!connectToExistingAudio()) {
-        console.log('Không tìm thấy audio trên trang, tạo đom đóm không có nhạc');
-        createFireflies(50);
-    }
-});
-
-// Hàm để kết nối thủ công với một audio element
-function connectToAudio(audioElement) {
-    if (audio) {
-        // Ngắt kết nối audio cũ nếu có
-        if (source) {
-            source.disconnect();
-        }
-    }
-    
-    audio = audioElement;
-    initAudio(audio);
-    
-    audio.addEventListener('play', function() {
-        isPlaying = true;
-        updateVisualizer();
-    });
-    
-    audio.addEventListener('pause', function() {
-        isPlaying = false;
-    });
-    
-    if (!audio.paused) {
-        isPlaying = true;
-        updateVisualizer();
-    }
-}
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
