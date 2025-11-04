@@ -39,7 +39,7 @@
 }
 
 .firefly-body {
-    background: transparent !important;
+    background: linear-gradient(to bottom, #0a0a2a, #1a1a3a);
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
@@ -53,32 +53,29 @@
 .firefly-container {
     text-align: center;
     z-index: 10;
-    padding: 10px !important;
-    background: transparent !important;
-    border-radius: 10px;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
     backdrop-filter: blur(5px);
-    max-width: 60% !important;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    max-width: 90%;
     margin: 0 auto;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 .firefly-visualizer {
-    width: 80%;
-    height: 60px;
-    margin: 10px 0;
+    width: 100%;
+    height: 100px;
+    margin: 20px 0;
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    gap: 2px;
+    gap: 3px;
 }
 
 .firefly-bar {
-    width: 4px;
+    width: 8px;
     background: linear-gradient(to top, #00ffff, #ff00ff);
-    border-radius: 3px 3px 0 0;
+    border-radius: 5px 5px 0 0;
     transition: height 0.1s ease;
 }
 
@@ -94,31 +91,53 @@
 
 .firefly {
     position: absolute;
-    width: 4px;
-    height: 4px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     pointer-events: none;
     opacity: 0;
     filter: blur(1px);
     transition: opacity 0.5s ease;
-    box-shadow: 0 0 8px currentColor;
+    box-shadow: 0 0 10px currentColor;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #00ffff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+}
+
+p {
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+button {
+    background: linear-gradient(to right, #00ffff, #ff00ff);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform 0.3s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
 }
 
 @media (max-width: 600px) {
     .firefly-container {
-        padding: 8px !important;
-        max-width: 70% !important;
+        padding: 20px;
     }
     
     .firefly-visualizer {
-        width: 90%;
-        height: 50px;
-    }
-    
-    .firefly-bar {
-        width: 3px;
+        height: 80px;
     }
 }
+
 
             
 
@@ -861,6 +880,11 @@ body {
     <div class="firefly-visualizer" id="firefly-visualizer">
         <!-- Các thanh visualizer sẽ được tạo bằng JavaScript -->
     </div>
+
+    <audio id="firefly-audio" preload="metadata">
+        <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mpeg">
+        Trình duyệt của bạn không hỗ trợ phát nhạc.
+    </audio>
 </div>
 
   
@@ -2162,6 +2186,9 @@ document.addEventListener('click', function(e) {
 
   
             
+
+            
+
 // Khai báo các biến toàn cục
 const visualizer = document.getElementById('firefly-visualizer');
 const fireflyContainer = document.getElementById('firefly-container');
@@ -2188,12 +2215,12 @@ const colors = [
 // Tạo các thanh visualizer
 function createVisualizerBars() {
     visualizer.innerHTML = '';
-    const barCount = 40; // Giảm số lượng thanh
+    const barCount = 64;
 
     for (let i = 0; i < barCount; i++) {
         const bar = document.createElement('div');
         bar.className = 'firefly-bar';
-        bar.style.height = '3px';
+        bar.style.height = '5px';
         visualizer.appendChild(bar);
     }
 }
@@ -2207,7 +2234,7 @@ function initAudio(audioElement) {
     source.connect(analyser);
     analyser.connect(audioContext.destination);
 
-    analyser.fftSize = 128; // Giảm fftSize để nhẹ hơn
+    analyser.fftSize = 256;
     bufferLength = analyser.frequencyBinCount;
     dataArray = new Uint8Array(bufferLength);
 
@@ -2247,13 +2274,13 @@ function animateFirefly(firefly) {
 
     setTimeout(() => {
         // Hiệu ứng xuất hiện
-        firefly.style.opacity = '0.7';
-        firefly.style.transform = 'scale(1.3)';
+        firefly.style.opacity = '0.9';
+        firefly.style.transform = 'scale(1.5)';
 
         // Di chuyển ngẫu nhiên
-        const moveX = (Math.random() - 0.5) * 20;
-        const moveY = (Math.random() - 0.5) * 20;
-        firefly.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.3)`;
+        const moveX = (Math.random() - 0.5) * 30;
+        const moveY = (Math.random() - 0.5) * 30;
+        firefly.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.5)`;
 
         // Hiệu ứng biến mất
         setTimeout(() => {
@@ -2280,7 +2307,7 @@ function updateVisualizer() {
     const bars = document.querySelectorAll('.firefly-bar');
     for (let i = 0; i < bars.length; i++) {
         const value = dataArray[i % bufferLength];
-        const height = (value / 255) * 50; // Giảm chiều cao
+        const height = (value / 255) * 100;
         bars[i].style.height = `${height}px`;
 
         // Thay đổi màu sắc dựa trên cường độ âm thanh
@@ -2292,13 +2319,13 @@ function updateVisualizer() {
     const avgIntensity = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
 
     // Tăng số lượng đom đóm khi âm thanh mạnh
-    if (avgIntensity > 150 && fireflies.length < 80) {
-        createFireflies(3);
+    if (avgIntensity > 150 && fireflies.length < 100) {
+        createFireflies(5);
     }
 
     // Điều chỉnh độ sáng của đom đóm dựa trên cường độ âm thanh
     fireflies.forEach(firefly => {
-        const brightness = Math.min(0.7, avgIntensity / 255 * 0.7);
+        const brightness = Math.min(0.9, avgIntensity / 255 * 0.9);
         firefly.style.opacity = `${brightness}`;
     });
 }
@@ -2341,12 +2368,12 @@ function connectToExistingAudio() {
 // Tự động chạy khi trang tải xong
 window.addEventListener('load', function() {
     // Tạo đom đóm ban đầu
-    createFireflies(20); // Giảm số lượng đom đóm
+    createFireflies(30);
     
     // Thử kết nối với audio có sẵn trên trang
     if (!connectToExistingAudio()) {
         console.log('Không tìm thấy audio trên trang, tạo đom đóm không có nhạc');
-        createFireflies(30);
+        createFireflies(50);
     }
 });
 
