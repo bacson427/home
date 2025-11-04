@@ -32,6 +32,128 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
+              * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #0a0a2a, #1a1a3a);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            max-width: 90%;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px cyan;
+            color: #fff;
+        }
+
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        button {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 65, 108, 0.6);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .visualizer {
+            width: 100%;
+            height: 100px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 3px;
+        }
+
+        .bar {
+            width: 8px;
+            background: linear-gradient(to top, #00ffff, #ff00ff);
+            border-radius: 5px 5px 0 0;
+            transition: height 0.1s ease;
+        }
+
+        #firefly-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .firefly {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            filter: blur(1px);
+            transition: opacity 0.5s ease;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .info {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .container {
+                padding: 15px;
+            }
+        }
+
+
+      
 .firefly {
     position: fixed;
     width: 6px;
@@ -53,31 +175,6 @@
         height: 5px;
     }
 }
-
-#simple-visualizer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 60px; /* Giảm từ 120px xuống 60px */
-    background: rgba(0,0,0,0.8);
-    z-index: 9999;
-}
-
-#visualizer-canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-/* Cho mobile */
-@media (max-width: 768px) {
-    #simple-visualizer {
-        height: 50px; /* Còn nhỏ hơn trên mobile */
-    }
-}
-
-
 
 
 /* Target theo cấu trúc HTML */
@@ -784,7 +881,8 @@ body {
 <meta property="og:image" content="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png">
 </head>
 <body>
-
+    <div id="firefly-container"></div>
+  
 <div class="fullscreen-bubbles"></div>
   <div class="container">
         <!-- Profile Card -->
@@ -814,6 +912,19 @@ body {
     Bản quyền © 2025 thuộc về Nguyen Bac Son 
     <a href="https://nguyenbacson.io.vn/privacy-policy.html">Chính sách bảo mật</a>
 </div>
+          <div class="visualizer" id="visualizer">
+            <!-- Các thanh visualizer sẽ được tạo bằng JavaScript -->
+        </div>
+
+        <div class="controls">
+            <button id="playBtn">Phát nhạc</button>
+            <button id="pauseBtn">Tạm dừng</button>
+        </div>
+
+        <audio id="audio" preload="metadata">
+            <source src="https://nguyenbacson.io.vn/nguyenbacson.mp3" type="audio/mpeg">
+            Trình duyệt của bạn không hỗ trợ phát nhạc.
+        </audio>
             <!-- Links Container -->
     <div class="links-container">
         <a href="https://drive.google.com/file/d/14Wbb0Nm4LveABnwLsz0x39aqwsmBZR2g/view?usp=drivesdk" class="link-button color-1">
@@ -2272,35 +2383,135 @@ function initFireflies() {
         requestAnimationFrame(updateFireflies);
     }
     
-    // Giả lập cường độ nhạc
-    function simulateAudioIntensity() {
-        let targetIntensity = 0.3;
-        let intensityChangeTime = 0;
-        
-        function updateIntensity() {
-            intensityChangeTime++;
-            
-            // Thay đổi cường độ mượt mà
-            audioIntensity += (targetIntensity - audioIntensity) * 0.08;
-            
-            // Đổi target sau 2-8 giây
-            if (intensityChangeTime > 120 + Math.random() * 240) {
-                targetIntensity = 0.1 + Math.random() * 0.8;
-                intensityChangeTime = 0;
+            // Khai báo các biến toàn cục
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const visualizer = document.getElementById('visualizer');
+        const fireflyContainer = document.getElementById('firefly-container');
+
+        let audioContext;
+        let analyser;
+        let source;
+        let dataArray;
+        let bufferLength;
+        let isPlaying = false;
+
+        // Mảng lưu trữ các đom đóm
+        let fireflies = [];
+
+        // Màu sắc cho đom đóm
+        const colors = [
+            '#FF5252', '#FF4081', '#E040FB', '#7C4DFF', 
+            '#536DFE', '#448AFF', '#40C4FF', '#18FFFF',
+            '#64FFDA', '#69F0AE', '#B2FF59', '#EEFF41',
+            '#FFFF00', '#FFD740', '#FFAB40', '#FF6E40'
+        ];
+
+        // Tạo các thanh visualizer
+        function createVisualizerBars() {
+            visualizer.innerHTML = '';
+            const barCount = 64;
+
+            for (let i = 0; i < barCount; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = '5px';
+                visualizer.appendChild(bar);
             }
         }
-        
-        setInterval(updateIntensity, 50);
-    }
-    
-    // Khởi tạo với nhiều đom đóm hơn
-    createFireflies(35); // Tăng lên 35 đom đóm
-    updateFireflies();
-    simulateAudioIntensity();
-}
 
-// Chạy ngay
-setTimeout(initFireflies, 500);
+        // Khởi tạo Audio Context và Analyser
+        function initAudio() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            source = audioContext.createMediaElementSource(audio);
+
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+
+            analyser.fftSize = 256;
+            bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+
+            createVisualizerBars();
+        }
+
+        // Tạo đom đóm
+        function createFireflies(count) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const firefly = document.createElement('div');
+                    firefly.className = 'firefly';
+
+                    // Vị trí ngẫu nhiên
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    firefly.style.left = `${x}%`;
+                    firefly.style.top = `${y}%`;
+
+                    // Màu sắc ngẫu nhiên
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    firefly.style.backgroundColor = color;
+
+                    fireflyContainer.appendChild(firefly);
+                    fireflies.push(firefly);
+
+                    // Hiệu ứng nhấp nháy
+                    animateFirefly(firefly);
+                }, i * 100);
+            }
+        }
+
+        // Hiệu ứng nhấp nháy cho đom đóm
+        function animateFirefly(firefly) {
+            const duration = 1000 + Math.random() * 2000;
+            const delay = Math.random() * 3000;
+
+            setTimeout(() => {
+                // Hiệu ứng xuất hiện
+                firefly.style.opacity = '0.9';
+                firefly.style.transform = 'scale(1.5)';
+
+                // Di chuyển ngẫu nhiên
+                const moveX = (Math.random() - 0.5) * 30;
+                const moveY = (Math.random() - 0.5) * 30;
+                firefly.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.5)`;
+
+                // Hiệu ứng biến mất
+                setTimeout(() => {
+                    firefly.style.opacity = '0';
+                    firefly.style.transform = 'scale(1)';
+
+                    // Lặp lại hiệu ứng
+                    setTimeout(() => {
+                        animateFirefly(firefly);
+                    }, Math.random() * 2000);
+                }, duration);
+            }, delay);
+        }
+
+
+  
+        // Cập nhật visualizer và đom đóm theo âm nhạc
+        function updateVisualizer() {
+            if (!isPlaying) return;
+
+            requestAnimationFrame(updateVisualizer);
+
+            analyser.getByteFrequencyData(dataArray);
+
+            // Cập nhật các thanh visualizer
+            const bars = document.querySelectorAll('.bar');
+            for (let i = 0; i < bars.length; i++) {
+                const value = dataArray[i % bufferLength];
+                const height = (value / 255) * 100;
+                bars[i].style.height = `${height}px`;
+
+                // Thay đổi màu sắc dựa trên cường độ âm thanh
+                const hue = (i / bars.length) * 360 + (value / 255) * 60;
+                bars[i].style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(${hue + 60}, 100%, 50%))`;
+              }
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
@@ -2318,9 +2529,6 @@ setTimeout(initFireflies, 500);
 </div>
 </div>
 
-<div id="simple-visualizer">
-    <canvas id="visualizer-canvas"></canvas>
-</div>
 </body>
 </html>
 <!-- trigger -->
