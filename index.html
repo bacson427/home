@@ -31,21 +31,20 @@
 
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
-    <style>
+   <style>
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-.firefly-body {
+body {
     background: linear-gradient(to bottom, #0a0a2a, #1a1a3a);
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
     overflow: hidden;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
@@ -53,13 +52,13 @@
 .firefly-container {
     text-align: center;
     z-index: 10;
-    padding: 30px;
+    padding: 20px;
     background: rgba(0, 0, 0, 0.5);
     border-radius: 15px;
     backdrop-filter: blur(5px);
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
     max-width: 90%;
-    margin: 0 auto;
+    width: 400px;
 }
 
 .firefly-visualizer {
@@ -79,43 +78,17 @@
     transition: height 0.1s ease;
 }
 
-h1 {
-    margin-bottom: 20px;
-    color: #00ffff;
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
-}
-
-p {
-    margin-bottom: 15px;
-    line-height: 1.5;
-}
-
-button {
-    background: linear-gradient(to right, #00ffff, #ff00ff);
-    border: none;
-    padding: 10px 20px;
-    border-radius: 25px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: transform 0.3s ease;
-}
-
-button:hover {
-    transform: scale(1.05);
-}
-
 @media (max-width: 600px) {
     .firefly-container {
-        padding: 20px;
+        padding: 15px;
+        width: 95%;
     }
     
     .firefly-visualizer {
         height: 80px;
     }
 }
-        
+
 
 
 
@@ -2166,11 +2139,11 @@ document.addEventListener('click', function(e) {
   
             
 
-            
+ 
+
 
 // Khai báo các biến toàn cục
 const visualizer = document.getElementById('firefly-visualizer');
-const fireflyContainer = document.getElementById('firefly-container');
 
 let audioContext;
 let analyser;
@@ -2179,17 +2152,6 @@ let dataArray;
 let bufferLength;
 let isPlaying = false;
 let audio = null;
-
-// Mảng lưu trữ các đom đóm
-let fireflies = [];
-
-// Màu sắc cho đom đóm
-const colors = [
-    '#FF5252', '#FF4081', '#E040FB', '#7C4DFF', 
-    '#536DFE', '#448AFF', '#40C4FF', '#18FFFF',
-    '#64FFDA', '#69F0AE', '#B2FF59', '#EEFF41',
-    '#FFFF00', '#FFD740', '#FFAB40', '#FF6E40'
-];
 
 // Tạo các thanh visualizer
 function createVisualizerBars() {
@@ -2220,61 +2182,7 @@ function initAudio(audioElement) {
     createVisualizerBars();
 }
 
-// Tạo đom đóm
-function createFireflies(count) {
-    for (let i = 0; i < count; i++) {
-        setTimeout(() => {
-            const firefly = document.createElement('div');
-            firefly.className = 'firefly';
-
-            // Vị trí ngẫu nhiên
-            const x = Math.random() * 100;
-            const y = Math.random() * 100;
-            firefly.style.left = `${x}%`;
-            firefly.style.top = `${y}%`;
-
-            // Màu sắc ngẫu nhiên
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            firefly.style.backgroundColor = color;
-
-            fireflyContainer.appendChild(firefly);
-            fireflies.push(firefly);
-
-            // Hiệu ứng nhấp nháy
-            animateFirefly(firefly);
-        }, i * 100);
-    }
-}
-
-// Hiệu ứng nhấp nháy cho đom đóm
-function animateFirefly(firefly) {
-    const duration = 1000 + Math.random() * 2000;
-    const delay = Math.random() * 3000;
-
-    setTimeout(() => {
-        // Hiệu ứng xuất hiện
-        firefly.style.opacity = '0.9';
-        firefly.style.transform = 'scale(1.5)';
-
-        // Di chuyển ngẫu nhiên
-        const moveX = (Math.random() - 0.5) * 30;
-        const moveY = (Math.random() - 0.5) * 30;
-        firefly.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.5)`;
-
-        // Hiệu ứng biến mất
-        setTimeout(() => {
-            firefly.style.opacity = '0';
-            firefly.style.transform = 'scale(1)';
-
-            // Lặp lại hiệu ứng
-            setTimeout(() => {
-                animateFirefly(firefly);
-            }, Math.random() * 2000);
-        }, duration);
-    }, delay);
-}
-
-// Cập nhật visualizer và đom đóm theo âm nhạc
+// Cập nhật visualizer theo âm nhạc
 function updateVisualizer() {
     if (!isPlaying || !analyser) return;
 
@@ -2293,7 +2201,77 @@ function updateVisualizer() {
         const hue = (i / bars.length) * 360 + (value / 255) * 60;
         bars[i].style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(${hue + 60}, 100%, 50%))`;
     }
+}
 
+// Tự động tìm và kết nối với audio đang phát trên trang
+function connectToExistingAudio() {
+    // Tìm tất cả các thẻ audio trên trang
+    const allAudios = document.querySelectorAll('audio');
+    
+    if (allAudios.length > 0) {
+        // Lấy audio đầu tiên đang phát hoặc có thể phát
+        audio = allAudios[0];
+        console.log('Đã tìm thấy audio trên trang:', audio);
+        
+        // Khởi tạo audio context
+        initAudio(audio);
+        
+        // Theo dõi sự kiện phát nhạc
+        audio.addEventListener('play', function() {
+            isPlaying = true;
+            updateVisualizer();
+        });
+        
+        audio.addEventListener('pause', function() {
+            isPlaying = false;
+        });
+        
+        // Nếu audio đang phát, bắt đầu visualizer
+        if (!audio.paused) {
+            isPlaying = true;
+            updateVisualizer();
+        }
+        
+        return true;
+    }
+    
+    return false;
+}
+
+// Tự động chạy khi trang tải xong
+window.addEventListener('load', function() {
+    // Thử kết nối với audio có sẵn trên trang
+    if (!connectToExistingAudio()) {
+        console.log('Không tìm thấy audio trên trang');
+    }
+});
+
+// Hàm để kết nối thủ công với một audio element
+function connectToAudio(audioElement) {
+    if (audio) {
+        // Ngắt kết nối audio cũ nếu có
+        if (source) {
+            source.disconnect();
+        }
+    }
+    
+    audio = audioElement;
+    initAudio(audio);
+    
+    audio.addEventListener('play', function() {
+        isPlaying = true;
+        updateVisualizer();
+    });
+    
+    audio.addEventListener('pause', function() {
+        isPlaying = false;
+    });
+    
+    if (!audio.paused) {
+        isPlaying = true;
+        updateVisualizer();
+    }
+}
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
