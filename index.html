@@ -32,52 +32,125 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-.firefly {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.firefly-body {
+    background: linear-gradient(to bottom, #0a0a2a, #1a1a3a);
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.firefly-container {
+    text-align: center;
+    z-index: 10;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    max-width: 90%;
+}
+
+.firefly-title {
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    text-shadow: 0 0 10px cyan;
+    color: #fff;
+}
+
+.firefly-controls {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.firefly-btn {
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
+}
+
+.firefly-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 65, 108, 0.6);
+}
+
+.firefly-btn:active {
+    transform: translateY(1px);
+}
+
+.firefly-visualizer {
+    width: 100%;
+    height: 100px;
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 3px;
+}
+
+.firefly-bar {
+    width: 8px;
+    background: linear-gradient(to top, #00ffff, #ff00ff);
+    border-radius: 5px 5px 0 0;
+    transition: height 0.1s ease;
+}
+
+#firefly-container {
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.firefly {
+    position: absolute;
     width: 6px;
     height: 6px;
     border-radius: 50%;
     pointer-events: none;
-    z-index: 10000;
-    filter: blur(0.8px);
-    box-shadow: 0 0 12px currentColor;
     opacity: 0;
-    will-change: transform;
-    transform: translateZ(0);
+    filter: blur(1px);
+    transition: opacity 0.5s ease;
+    box-shadow: 0 0 10px currentColor;
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-    .firefly {
-        width: 5px;
-        height: 5px;
+.firefly-info {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+@media (max-width: 600px) {
+    .firefly-title {
+        font-size: 1.8rem;
+    }
+
+    .firefly-container {
+        padding: 15px;
     }
 }
-
-#simple-visualizer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 60px; /* Giảm từ 120px xuống 60px */
-    background: rgba(0,0,0,0.8);
-    z-index: 9999;
-}
-
-#visualizer-canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-/* Cho mobile */
-@media (max-width: 768px) {
-    #simple-visualizer {
-        height: 50px; /* Còn nhỏ hơn trên mobile */
-    }
-}
-
-
 
 
 /* Target theo cấu trúc HTML */
@@ -2105,201 +2178,221 @@ document.addEventListener('click', function(e) {
 
 
 
-    function initVisualizer() {
-    console.log('🎵 Visualizer nhỏ gọn...');
+    
+// Khai báo các biến toàn cục
+const visualizer = document.getElementById('firefly-visualizer');
+const fireflyContainer = document.getElementById('firefly-container');
 
-    const canvas = document.getElementById('visualizer-canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+let audioContext;
+let analyser;
+let source;
+let dataArray;
+let bufferLength;
+let isPlaying = false;
+let audio = null;
 
-    let hue = 0;
-    let bars = Array(30).fill(0); // Giảm số bar
+// Mảng lưu trữ các đom đóm
+let fireflies = [];
 
-    function draw() {
-        // Nền
-        hue = (hue + 0.2) % 360;
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-        gradient.addColorStop(0, `hsla(${hue}, 60%, 8%, 0.6)`);
-        gradient.addColorStop(1, `hsla(${hue + 60}, 60%, 12%, 0.6)`);
+// Màu sắc cho đom đóm
+const colors = [
+    '#FF5252', '#FF4081', '#E040FB', '#7C4DFF', 
+    '#536DFE', '#448AFF', '#40C4FF', '#18FFFF',
+    '#64FFDA', '#69F0AE', '#B2FF59', '#EEFF41',
+    '#FFFF00', '#FFD740', '#FFAB40', '#FF6E40'
+];
 
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+// Tạo các thanh visualizer
+function createVisualizerBars() {
+    visualizer.innerHTML = '';
+    const barCount = 64;
 
-        const barWidth = canvas.width / bars.length;
-        const time = Date.now() / 1000;
-
-        for (let i = 0; i < bars.length; i++) {
-            const randomSeed = i * 0.3;
-            const wave1 = Math.sin(time * 1.8 + randomSeed) * 0.5;
-            const wave2 = Math.sin(time * 3.2 + randomSeed * 1.7) * 0.3;
-            const wave3 = Math.sin(time * 5.5 + randomSeed * 2.3) * 0.2;
-
-            // Giảm chiều cao cho phù hợp
-            const targetHeight = (wave1 + wave2 + wave3 + 1.2) * canvas.height * 0.4;
-            bars[i] += (targetHeight - bars[i]) * 0.15;
-
-            const barHue = 200 + Math.sin(time * 0.3 + i * 0.15) * 40;
-
-            const barGradient = ctx.createLinearGradient(0, canvas.height - bars[i], 0, canvas.height);
-            barGradient.addColorStop(0, `hsla(${barHue}, 80%, 65%, 0.9)`);
-            barGradient.addColorStop(0.7, `hsla(${barHue}, 70%, 50%, 0.5)`);
-            barGradient.addColorStop(1, `hsla(${barHue}, 60%, 40%, 0.2)`);
-
-            ctx.fillStyle = barGradient;
-            ctx.fillRect(i * barWidth, canvas.height - bars[i], barWidth - 1, bars[i]);
-
-            ctx.fillStyle = `hsla(${barHue}, 100%, 80%, 0.4)`;
-            ctx.fillRect(i * barWidth, canvas.height - bars[i], barWidth - 1, 2);
-        }
-
-        requestAnimationFrame(draw);
+    for (let i = 0; i < barCount; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'firefly-bar';
+        bar.style.height = '5px';
+        visualizer.appendChild(bar);
     }
-
-    draw();
 }
 
-setTimeout(initVisualizer, 1000);
+// Khởi tạo Audio Context và Analyser
+function initAudio(audioElement) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioContext.createAnalyser();
+    source = audioContext.createMediaElementSource(audioElement);
 
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
 
-function initFireflies() {
-    console.log('✨ Đom đóm full màn hình...');
+    analyser.fftSize = 256;
+    bufferLength = analyser.frequencyBinCount;
+    dataArray = new Uint8Array(bufferLength);
 
-    const colors = [
-        '#FF5252', '#FF4081', '#E040FB', '#7C4DFF', 
-        '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', 
-        '#69F0AE', '#B2FF59', '#EEFF41', '#FFFF00',
-        '#FFD740', '#FFAB40', '#FF6E40', '#FF4081'
-    ];
+    createVisualizerBars();
+}
 
-    let fireflies = [];
-    let audioIntensity = 0.3;
-
-    // Tạo nhiều đom đóm
-    function createFireflies(count) {
-        const fragment = document.createDocumentFragment();
-
-        for (let i = 0; i < count; i++) {
+// Tạo đom đóm
+function createFireflies(count) {
+    for (let i = 0; i < count; i++) {
+        setTimeout(() => {
             const firefly = document.createElement('div');
             firefly.className = 'firefly';
 
-            // Full màn hình - từ 0-100% cả chiều ngang và dọc
-            const startX = Math.random() * 100;
-            const startY = Math.random() * 100; // Full height
-            const angle = Math.random() * Math.PI * 2;
+            // Vị trí ngẫu nhiên
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            firefly.style.left = `${x}%`;
+            firefly.style.top = `${y}%`;
 
-            firefly.style.cssText = `
-                left: ${startX}%;
-                top: ${startY}%;
-                background-color: ${colors[Math.floor(Math.random() * colors.length)]};
-                opacity: 0.8;
-            `;
+            // Màu sắc ngẫu nhiên
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            firefly.style.backgroundColor = color;
 
-            fragment.appendChild(firefly);
-            fireflies.push({
-                element: firefly,
-                x: startX,
-                y: startY,
-                angle: angle,
-                speed: 0.04 + Math.random() * 0.08,
-                colorChangeTimer: 0,
-                size: 0.8 + Math.random() * 0.4 // Kích thước ngẫu nhiên
-            });
-        }
+            fireflyContainer.appendChild(firefly);
+            fireflies.push(firefly);
 
-        document.body.appendChild(fragment);
-        console.log(`✅ Đã tạo ${count} đom đóm full màn hình`);
+            // Hiệu ứng nhấp nháy
+            animateFirefly(firefly);
+        }, i * 100);
     }
-
-    // Cập nhật chuyển động
-    function updateFireflies() {
-        const intensity = audioIntensity;
-        const baseSpeed = 0.06 + intensity * 0.2;
-
-        for (let i = 0; i < fireflies.length; i++) {
-            const firefly = fireflies[i];
-
-            // Tốc độ theo nhạc
-            const currentSpeed = firefly.speed * (0.4 + intensity * 1.6);
-
-            // Di chuyển thẳng
-            firefly.x += Math.cos(firefly.angle) * currentSpeed;
-            firefly.y += Math.sin(firefly.angle) * currentSpeed;
-
-            // Xử lý biên - full màn hình
-            if (firefly.x < -2) {
-                firefly.x = 102;
-                firefly.angle = Math.random() * Math.PI * 2;
-            } else if (firefly.x > 102) {
-                firefly.x = -2;
-                firefly.angle = Math.random() * Math.PI * 2;
-            }
-
-            if (firefly.y < -2) {
-                firefly.y = 102;
-                firefly.angle = Math.random() * Math.PI * 2;
-            } else if (firefly.y > 102) {
-                firefly.y = -2;
-                firefly.angle = Math.random() * Math.PI * 2;
-            }
-
-            // Cập nhật vị trí
-            firefly.element.style.left = firefly.x + '%';
-            firefly.element.style.top = firefly.y + '%';
-
-            // Đổi màu theo nhạc
-            firefly.colorChangeTimer++;
-            if (firefly.colorChangeTimer > 50 - (intensity * 35)) {
-                firefly.element.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                firefly.colorChangeTimer = 0;
-
-                // Thỉnh thoảng đổi kích thước
-                if (Math.random() < 0.3) {
-                    const newSize = 0.7 + Math.random() * 0.6;
-                    firefly.element.style.transform = `scale(${newSize})`;
-                }
-            }
-
-            // Hiệu ứng nhấp nháy và glow
-            const blink = 0.5 + Math.sin(Date.now() * 0.002 * (1 + intensity) + i) * 0.3;
-            firefly.element.style.opacity = blink.toString();
-
-            const glowSize = 10 + intensity * 20;
-            firefly.element.style.boxShadow = `0 0 ${glowSize}px currentColor`;
-        }
-
-        requestAnimationFrame(updateFireflies);
-    }
-
-    // Giả lập cường độ nhạc
-    function simulateAudioIntensity() {
-        let targetIntensity = 0.3;
-        let intensityChangeTime = 0;
-
-        function updateIntensity() {
-            intensityChangeTime++;
-
-            // Thay đổi cường độ mượt mà
-            audioIntensity += (targetIntensity - audioIntensity) * 0.08;
-
-            // Đổi target sau 2-8 giây
-            if (intensityChangeTime > 120 + Math.random() * 240) {
-                targetIntensity = 0.1 + Math.random() * 0.8;
-                intensityChangeTime = 0;
-            }
-        }
-
-        setInterval(updateIntensity, 50);
-    }
-
-    // Khởi tạo với nhiều đom đóm hơn
-    createFireflies(35); // Tăng lên 35 đom đóm
-    updateFireflies();
-    simulateAudioIntensity();
 }
 
-// Chạy ngay
-setTimeout(initFireflies, 500);
+// Hiệu ứng nhấp nháy cho đom đóm
+function animateFirefly(firefly) {
+    const duration = 1000 + Math.random() * 2000;
+    const delay = Math.random() * 3000;
+
+    setTimeout(() => {
+        // Hiệu ứng xuất hiện
+        firefly.style.opacity = '0.9';
+        firefly.style.transform = 'scale(1.5)';
+
+        // Di chuyển ngẫu nhiên
+        const moveX = (Math.random() - 0.5) * 30;
+        const moveY = (Math.random() - 0.5) * 30;
+        firefly.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.5)`;
+
+        // Hiệu ứng biến mất
+        setTimeout(() => {
+            firefly.style.opacity = '0';
+            firefly.style.transform = 'scale(1)';
+
+            // Lặp lại hiệu ứng
+            setTimeout(() => {
+                animateFirefly(firefly);
+            }, Math.random() * 2000);
+        }, duration);
+    }, delay);
+}
+
+// Cập nhật visualizer và đom đóm theo âm nhạc
+function updateVisualizer() {
+    if (!isPlaying || !analyser) return;
+
+    requestAnimationFrame(updateVisualizer);
+
+    analyser.getByteFrequencyData(dataArray);
+
+    // Cập nhật các thanh visualizer
+    const bars = document.querySelectorAll('.firefly-bar');
+    for (let i = 0; i < bars.length; i++) {
+        const value = dataArray[i % bufferLength];
+        const height = (value / 255) * 100;
+        bars[i].style.height = `${height}px`;
+
+        // Thay đổi màu sắc dựa trên cường độ âm thanh
+        const hue = (i / bars.length) * 360 + (value / 255) * 60;
+        bars[i].style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(${hue + 60}, 100%, 50%))`;
+    }
+
+    // Cập nhật hiệu ứng đom đóm dựa trên cường độ âm thanh
+    const avgIntensity = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
+
+    // Tăng số lượng đom đóm khi âm thanh mạnh
+    if (avgIntensity > 150 && fireflies.length < 100) {
+        createFireflies(5);
+    }
+
+    // Điều chỉnh độ sáng của đom đóm dựa trên cường độ âm thanh
+    fireflies.forEach(firefly => {
+        const brightness = Math.min(0.9, avgIntensity / 255 * 0.9);
+        firefly.style.opacity = `${brightness}`;
+    });
+}
+
+// Tự động tìm và kết nối với audio đang phát trên trang
+function connectToExistingAudio() {
+    // Tìm tất cả các thẻ audio trên trang
+    const allAudios = document.querySelectorAll('audio');
+    
+    if (allAudios.length > 0) {
+        // Lấy audio đầu tiên đang phát hoặc có thể phát
+        audio = allAudios[0];
+        console.log('Đã tìm thấy audio trên trang:', audio);
+        
+        // Khởi tạo audio context
+        initAudio(audio);
+        
+        // Theo dõi sự kiện phát nhạc
+        audio.addEventListener('play', function() {
+            isPlaying = true;
+            updateVisualizer();
+        });
+        
+        audio.addEventListener('pause', function() {
+            isPlaying = false;
+        });
+        
+        // Nếu audio đang phát, bắt đầu visualizer
+        if (!audio.paused) {
+            isPlaying = true;
+            updateVisualizer();
+        }
+        
+        return true;
+    }
+    
+    return false;
+}
+
+// Tự động chạy khi trang tải xong
+window.addEventListener('load', function() {
+    // Tạo đom đóm ban đầu
+    createFireflies(30);
+    
+    // Thử kết nối với audio có sẵn trên trang
+    if (!connectToExistingAudio()) {
+        console.log('Không tìm thấy audio trên trang, tạo đom đóm không có nhạc');
+        createFireflies(50);
+    }
+});
+
+// Hàm để kết nối thủ công với một audio element
+function connectToAudio(audioElement) {
+    if (audio) {
+        // Ngắt kết nối audio cũ nếu có
+        if (source) {
+            source.disconnect();
+        }
+    }
+    
+    audio = audioElement;
+    initAudio(audio);
+    
+    audio.addEventListener('play', function() {
+        isPlaying = true;
+        updateVisualizer();
+    });
+    
+    audio.addEventListener('pause', function() {
+        isPlaying = false;
+    });
+    
+    if (!audio.paused) {
+        isPlaying = true;
+        updateVisualizer();
+    }
+}
 </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
