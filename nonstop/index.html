@@ -3,204 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NGUYEN BAC SON - NONSTOP</title>
+    <title>Nguyen Bac Son - Nonstop</title>
     <style>
         body {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
+            height: 100vh;
             margin: 0;
-            padding: 20px 0; /* Thêm padding cho nội dung */
             background-color: #0d0d1a; /* Nền tối hơn */
             color: white;
             font-family: Arial, sans-serif;
-            overflow-x: hidden; /* Chỉ ngăn cuộn ngang */
+            overflow: hidden; /* Ngăn cuộn */
         }
 
-        /* Tiêu đề bài hát, sẽ được cập nhật bằng JS */
-        #currentSongTitle {
+        #visualizerCanvas {
+            border: none; /* Không viền */
+            background-color: #0d0d1a; /* Nền giống body */
             margin-bottom: 20px;
-            color: #61dafb;
-            text-shadow: 0 0 15px rgba(97, 218, 251, 0.5);
-            font-size: 1.5rem;
-            text-align: center;
-        }
-        
-        /* Menu chọn nhạc */
-        #songSelector {
-            background-color: #1e2126;
-            color: #61dafb;
-            border: 2px solid #61dafb;
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 20px; /* Khoảng cách giữa menu và player */
-            border-radius: 5px;
-            width: 80%;
-            max-width: 600px;
-            cursor: pointer;
+            /* Thêm box-shadow nhẹ để tạo điểm nhấn */
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.1); 
         }
 
         #audioElement {
             width: 80%;
             max-width: 600px;
-            margin-top: 0; /* Xóa margin-top vì đã có menu ở trên */
-            filter: invert(0.9) hue-rotate(180deg);
+            margin-top: 20px; /* Khoảng cách với canvas */
+            filter: invert(0.9) hue-rotate(180deg); /* Làm sáng và đổi màu thanh audio */
         }
 
-        #visualizerCanvas {
-            border: none;
-            background-color: #0d0d1a;
-            margin-top: 20px; /* Thêm khoảng cách với player */
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.1);
-            max-width: 900px; /* Đặt chiều rộng tối đa */
-            width: 90%; /* Responsive */
+        h1 {
+            margin-bottom: 40px;
+            color: #61dafb;
+            text-shadow: 0 0 15px rgba(97, 218, 251, 0.5);
         }
-
     </style>
 </head>
 <body>
 
-    <h1 id="currentSongTitle">Loading playlist...</h1>
-    
-    <select id="songSelector"></select>
+    <h1>Nguyen Bac Son Music - Audio - Visualizer</h1>
 
-    <audio id="audioElement" controls crossorigin="anonymous"></audio>
+    <audio id="audioElement" controls crossorigin="anonymous">
+        <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mp3">
+        <p>Trình duyệt của bạn không hỗ trợ phần tử audio.</p>
+    </audio>
 
     <canvas id="visualizerCanvas"></canvas>
 
     <script>
-        // --- 🎵 YOUR PLAYLIST 🎵 ---
-        //
-        // Thêm các bài nhạc của bạn vào đây.
-        // Chỉ cần cung cấp 'title' (tên hiển thị) và 'src' (URL của file mp3).
-        //
-        const playlist = [
-            {
-                title: "Fortune Telling ",
-                src: "https://nguyenbacson.io.vn/nguyenbacson-music.mp3"
-            },
-            {
-                title: "Bass Down Low",
-                src: "https://nguyenbacson.io.vn/nguyenbacson.mp3" 
-            },
-            {
-                title: "More updates coming soon",
-                src: "URL_BAI_NHAC_THU_3_CUA_BAN.mp3" // 
-            }
-            
-
-
         // Cài đặt kích thước Canvas
-        const canvas = document.getElementById('visualizerCanvas');
-        // Lấy chiều rộng từ CSS (90% hoặc tối đa 900px)
-        canvas.width = canvas.clientWidth; 
-        canvas.height = 300; // Giữ chiều cao cố định
-        
-        const WIDTH = canvas.width;
-        const HEIGHT = canvas.height;
+        const WIDTH = 900; // Rộng hơn để chứa nhiều thanh mỏng
+        const HEIGHT = 300; // Cao hơn để các thanh có độ dài tốt hơn
 
-        // --- Lấy các phần tử DOM ---
+        // --- Cài đặt Canvas và Audio ---
+        const canvas = document.getElementById('visualizerCanvas');
+        canvas.width = WIDTH;
+        canvas.height = HEIGHT;
         const ctx = canvas.getContext('2d');
         const audio = document.getElementById('audioElement');
-        const songSelector = document.getElementById('songSelector');
-        const currentSongTitle = document.getElementById('currentSongTitle');
 
         // --- Cài đặt Web Audio API ---
         let audioCtx;
         let analyser;
         let source;
-        let dataArray; 
+        let dataArray; // Khai báo ở ngoài để có thể dùng trong draw()
 
-        // --- 1. Hàm Khởi Tạo (MỚI) ---
-        function initializePlaylist() {
-            // 1. Đổ dữ liệu từ `playlist` vào menu <select>
-            playlist.forEach((song, index) => {
-                const option = document.createElement('option');
-                option.value = index; // Giá trị là vị trí (index) trong mảng
-                option.textContent = song.title;
-                songSelector.appendChild(option);
-            });
-            
-            // 2. Tải bài hát đầu tiên lên trình phát
-            loadSong(0); 
-            
-            // 3. Thêm sự kiện 'change' cho menu <select>
-            songSelector.addEventListener('change', (e) => {
-                const selectedSongIndex = e.target.value;
-                loadSong(selectedSongIndex);
-                audio.play(); // Tự động phát khi chọn bài mới
-            });
-        }
-
-        // --- 2. Hàm Tải Bài Hát (MỚI) ---
-        function loadSong(index) {
-            const song = playlist[index];
-            audio.src = song.src; // Đặt nguồn (src) cho thẻ <audio>
-            currentSongTitle.textContent = song.title; // Cập nhật tiêu đề
-            audio.load(); // Tải file nhạc
-        }
-
-        // --- 3. Hàm Cài Đặt Audio Context ---
-        // (Không thay đổi, vẫn chạy khi người dùng nhấn 'play' lần đầu)
+        // Hàm khởi tạo Audio Context khi người dùng tương tác lần đầu
         function setupAudioContext() {
             if (audioCtx) return; // Đảm bảo chỉ khởi tạo một lần
-            
+
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             analyser = audioCtx.createAnalyser();
+
+            // Tăng fftSize để có nhiều thanh hơn và mượt mà hơn
             analyser.fftSize = 2048; 
-            
+
             const bufferLength = analyser.frequencyBinCount;
-            dataArray = new Uint8Array(bufferLength); 
-            
+            dataArray = new Uint8Array(bufferLength); // Gán vào biến đã khai báo
+
             source = audioCtx.createMediaElementSource(audio);
-            
+
             source.connect(analyser);
             analyser.connect(audioCtx.destination);
 
             // Bắt đầu vòng lặp vẽ
-            draw(); 
+            draw(); // Gọi draw mà không cần truyền tham số nữa
         }
 
-        // Kích hoạt setupAudioContext khi người dùng nhấn 'play'
+        // CHÚ Ý QUAN TRỌNG:
+        // Cần khởi tạo Audio Context sau khi người dùng tương tác (ví dụ: nhấn Play), 
+        // nếu không sẽ bị chặn do chính sách bảo mật của trình duyệt.
         audio.addEventListener('play', setupAudioContext);
 
-        // --- 4. Hàm Vẽ Sóng Nhạc ---
-        // (Không thay đổi)
+        // --- Hàm Vẽ Hiệu Ứng Sóng Nhạc ---
         function draw() {
+            // Dừng vẽ nếu audioCtx chưa được khởi tạo (chưa nhấn play)
             if (!audioCtx) {
                 requestAnimationFrame(draw); 
                 return;
             }
 
+            // Gọi lại hàm draw cho frame tiếp theo
             requestAnimationFrame(draw);
+
+            // Lấy dữ liệu tần số
             analyser.getByteFrequencyData(dataArray);
+
+            // Xóa Canvas để vẽ lại
             ctx.clearRect(0, 0, WIDTH, HEIGHT); 
-            
-            const barWidth = 2;
-            const spacing = 1;
+
+            // Tinh chỉnh để có nhiều thanh mỏng hơn, gần nhau hơn
+            const barWidth = 2; // Chiều rộng mỗi thanh cố định
+            const spacing = 1; // Khoảng cách giữa các thanh
             const totalBarWidth = barWidth + spacing;
+
+            // Số lượng thanh hiển thị được trên canvas
             const numBars = Math.floor(WIDTH / totalBarWidth);
-            let x = 0; 
+
+            let x = 0; // Vị trí X bắt đầu vẽ
 
             for (let i = 0; i < numBars; i++) {
-                // Lấy mẫu dữ liệu tần số một cách thông minh để vừa vặn
-                const dataIndex = Math.floor(i * (dataArray.length / numBars));
-                const barHeight = dataArray[dataIndex] * 0.8;
-                
+                // Lấy giá trị từ dataArray, có thể bỏ qua một số phần tử đầu/cuối nếu muốn
+                // Hoặc lấy trung bình của một nhóm nhỏ để làm mượt
+                const barHeight = dataArray[i] * 0.8; // Nhân 0.8 để các thanh không quá cao
+
+                // Điều chỉnh màu sắc: vẫn dùng HSL nhưng có thể thêm độ sáng động
                 const hue = i / numBars * 360; 
-                const lightness = 40 + (barHeight / HEIGHT) * 50; 
+                const lightness = 40 + (barHeight / HEIGHT) * 50; // Độ sáng tăng theo chiều cao
                 ctx.fillStyle = `hsl(${hue}, 100%, ${lightness}%)`; 
-                
+
+                // Vẽ thanh, đặt điểm gốc vẽ ở giữa chiều cao canvas để sóng đối xứng
                 ctx.fillRect(x, HEIGHT / 2 - barHeight / 2, barWidth, barHeight);
+
+                // Cập nhật vị trí X cho thanh tiếp theo
                 x += totalBarWidth; 
             }
         };
-
-        // --- 5. Chạy Hàm Khởi Tạo ---
-        initializePlaylist();
-
     </script>
 </body>
 </html>
