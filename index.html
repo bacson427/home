@@ -32,40 +32,7 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-                body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #0d0d1a; /* Nền tối hơn */
-            color: white;
-            font-family: Arial, sans-serif;
-            overflow: hidden; /* Ngăn cuộn */
-        }
-
-        #visualizerCanvas {
-            border: none; /* Không viền */
-            background-color: #0d0d1a; /* Nền giống body */
-            margin-bottom: 20px;
-            /* Thêm box-shadow nhẹ để tạo điểm nhấn */
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.1); 
-        }
-
-        #audioElement {
-            width: 80%;
-            max-width: 600px;
-            margin-top: 20px; /* Khoảng cách với canvas */
-            filter: invert(0.9) hue-rotate(180deg); /* Làm sáng và đổi màu thanh audio */
-        }
-
-        h1 {
-            margin-bottom: 40px;
-            color: #61dafb;
-            text-shadow: 0 0 15px rgba(97, 218, 251, 0.5);
-        }
-
+                
 
 
 /* Target theo cấu trúc HTML */
@@ -786,13 +753,7 @@ body {
         </div>
 
 
-    <audio id="audioElement" controls crossorigin="anonymous">
-        <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mp3">
-        <p>Trình duyệt của bạn không hỗ trợ phần tử audio.</p>
-    </audio>
-
-    <canvas id="visualizerCanvas"></canvas>
-
+    
 
 
 <!-- Chỉ cần copy thẻ này -->
@@ -2103,98 +2064,6 @@ document.addEventListener('click', function(e) {
 });
 
 
-
-    
-
-
-            // Cài đặt kích thước Canvas
-        const WIDTH = 900; // Rộng hơn để chứa nhiều thanh mỏng
-        const HEIGHT = 300; // Cao hơn để các thanh có độ dài tốt hơn
-
-        // --- Cài đặt Canvas và Audio ---
-        const canvas = document.getElementById('visualizerCanvas');
-        canvas.width = WIDTH;
-        canvas.height = HEIGHT;
-        const ctx = canvas.getContext('2d');
-        const audio = document.getElementById('audioElement');
-
-        // --- Cài đặt Web Audio API ---
-        let audioCtx;
-        let analyser;
-        let source;
-        let dataArray; // Khai báo ở ngoài để có thể dùng trong draw()
-
-        // Hàm khởi tạo Audio Context khi người dùng tương tác lần đầu
-        function setupAudioContext() {
-            if (audioCtx) return; // Đảm bảo chỉ khởi tạo một lần
-
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioCtx.createAnalyser();
-
-            // Tăng fftSize để có nhiều thanh hơn và mượt mà hơn
-            analyser.fftSize = 2048; 
-
-            const bufferLength = analyser.frequencyBinCount;
-            dataArray = new Uint8Array(bufferLength); // Gán vào biến đã khai báo
-
-            source = audioCtx.createMediaElementSource(audio);
-
-            source.connect(analyser);
-            analyser.connect(audioCtx.destination);
-
-            // Bắt đầu vòng lặp vẽ
-            draw(); // Gọi draw mà không cần truyền tham số nữa
-        }
-
-        // CHÚ Ý QUAN TRỌNG:
-        // Cần khởi tạo Audio Context sau khi người dùng tương tác (ví dụ: nhấn Play), 
-        // nếu không sẽ bị chặn do chính sách bảo mật của trình duyệt.
-        audio.addEventListener('play', setupAudioContext);
-
-        // --- Hàm Vẽ Hiệu Ứng Sóng Nhạc ---
-        function draw() {
-            // Dừng vẽ nếu audioCtx chưa được khởi tạo (chưa nhấn play)
-            if (!audioCtx) {
-                requestAnimationFrame(draw); 
-                return;
-            }
-
-            // Gọi lại hàm draw cho frame tiếp theo
-            requestAnimationFrame(draw);
-
-            // Lấy dữ liệu tần số
-            analyser.getByteFrequencyData(dataArray);
-
-            // Xóa Canvas để vẽ lại
-            ctx.clearRect(0, 0, WIDTH, HEIGHT); 
-
-            // Tinh chỉnh để có nhiều thanh mỏng hơn, gần nhau hơn
-            const barWidth = 2; // Chiều rộng mỗi thanh cố định
-            const spacing = 1; // Khoảng cách giữa các thanh
-            const totalBarWidth = barWidth + spacing;
-
-            // Số lượng thanh hiển thị được trên canvas
-            const numBars = Math.floor(WIDTH / totalBarWidth);
-
-            let x = 0; // Vị trí X bắt đầu vẽ
-
-            for (let i = 0; i < numBars; i++) {
-                // Lấy giá trị từ dataArray, có thể bỏ qua một số phần tử đầu/cuối nếu muốn
-                // Hoặc lấy trung bình của một nhóm nhỏ để làm mượt
-                const barHeight = dataArray[i] * 0.8; // Nhân 0.8 để các thanh không quá cao
-
-                // Điều chỉnh màu sắc: vẫn dùng HSL nhưng có thể thêm độ sáng động
-                const hue = i / numBars * 360; 
-                const lightness = 40 + (barHeight / HEIGHT) * 50; // Độ sáng tăng theo chiều cao
-                ctx.fillStyle = `hsl(${hue}, 100%, ${lightness}%)`; 
-
-                // Vẽ thanh, đặt điểm gốc vẽ ở giữa chiều cao canvas để sóng đối xứng
-                ctx.fillRect(x, HEIGHT / 2 - barHeight / 2, barWidth, barHeight);
-
-                // Cập nhật vị trí X cho thanh tiếp theo
-                x += totalBarWidth; 
-            }
-        };
     </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
