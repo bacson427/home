@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hiệu ứng Sóng Nhạc Đơn Giản</title>
+    <title>Hiệu ứng Sóng Nhạc Đẹp Mắt</title>
     <style>
         body {
             display: flex;
@@ -12,45 +12,49 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #282c34; /* Nền tối */
+            background-color: #0d0d1a; /* Nền tối hơn */
             color: white;
             font-family: Arial, sans-serif;
+            overflow: hidden; /* Ngăn cuộn */
         }
 
         #visualizerCanvas {
-            border: 2px solid #61dafb;
-            background-color: #1e2126;
+            border: none; /* Không viền */
+            background-color: #0d0d1a; /* Nền giống body */
             margin-bottom: 20px;
+            /* Thêm box-shadow nhẹ để tạo điểm nhấn */
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.1); 
         }
 
-        /* Tùy chỉnh thanh điều khiển audio */
         #audioElement {
             width: 80%;
             max-width: 600px;
+            margin-top: 20px; /* Khoảng cách với canvas */
+            filter: invert(0.9) hue-rotate(180deg); /* Làm sáng và đổi màu thanh audio */
+        }
+
+        h1 {
+            margin-bottom: 40px;
+            color: #61dafb;
+            text-shadow: 0 0 15px rgba(97, 218, 251, 0.5);
         }
     </style>
 </head>
 <body>
 
-    <h1>Sóng Nhạc Web Audio API</h1>
+    <h1>Nguyễn Bá Sơn - Sóng Nhạc</h1>
     
     <audio id="audioElement" controls crossorigin="anonymous">
-    <source src="your_music.mp3" type="audio/mp3">
-    <p>Trình duyệt của bạn không hỗ trợ phần tử audio.</p>
-</audio>
-
-<audio id="audioElement" controls crossorigin="anonymous">
-    <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mp3">
-    <p>Trình duyệt của bạn không hỗ trợ phần tử audio.</p>
-</audio>
-
+        <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mp3">
+        <p>Trình duyệt của bạn không hỗ trợ phần tử audio.</p>
+    </audio>
 
     <canvas id="visualizerCanvas"></canvas>
 
     <script>
         // Cài đặt kích thước Canvas
-        const WIDTH = 600;
-        const HEIGHT = 200;
+        const WIDTH = 900; // Rộng hơn để chứa nhiều thanh mỏng
+        const HEIGHT = 300; // Cao hơn để các thanh có độ dài tốt hơn
 
         // --- Cài đặt Canvas và Audio ---
         const canvas = document.getElementById('visualizerCanvas');
@@ -63,31 +67,28 @@
         let audioCtx;
         let analyser;
         let source;
+        let dataArray; // Khai báo ở ngoài để có thể dùng trong draw()
 
         // Hàm khởi tạo Audio Context khi người dùng tương tác lần đầu
         function setupAudioContext() {
             if (audioCtx) return; // Đảm bảo chỉ khởi tạo một lần
             
-            // Khởi tạo Audio Context
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // Tạo AnalyserNode
             analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 1024; // Kích thước FFT (ảnh hưởng đến số lượng thanh)
             
-            // Tính toán kích thước buffer
+            // Tăng fftSize để có nhiều thanh hơn và mượt mà hơn
+            analyser.fftSize = 2048; 
+            
             const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
+            dataArray = new Uint8Array(bufferLength); // Gán vào biến đã khai báo
             
-            // Tạo nguồn từ thẻ Audio
             source = audioCtx.createMediaElementSource(audio);
             
-            // Kết nối các node: Nguồn -> Bộ phân tích -> Loa (Output)
             source.connect(analyser);
             analyser.connect(audioCtx.destination);
 
             // Bắt đầu vòng lặp vẽ
-            draw(dataArray, bufferLength);
+            draw(); // Gọi draw mà không cần truyền tham số nữa
         }
 
         // CHÚ Ý QUAN TRỌNG:
@@ -96,34 +97,47 @@
         audio.addEventListener('play', setupAudioContext);
 
         // --- Hàm Vẽ Hiệu Ứng Sóng Nhạc ---
-        function draw(dataArray, bufferLength) {
-            
-            requestAnimationFrame(() => draw(dataArray, bufferLength));
+        function draw() {
+            // Dừng vẽ nếu audioCtx chưa được khởi tạo (chưa nhấn play)
+            if (!audioCtx) {
+                requestAnimationFrame(draw); 
+                return;
+            }
 
-            // Lấy dữ liệu tần số từ AnalyserNode
-            // Mỗi phần tử trong dataArray là cường độ (0-255) của một dải tần số
+            // Gọi lại hàm draw cho frame tiếp theo
+            requestAnimationFrame(draw);
+
+            // Lấy dữ liệu tần số
             analyser.getByteFrequencyData(dataArray);
 
             // Xóa Canvas để vẽ lại
             ctx.clearRect(0, 0, WIDTH, HEIGHT); 
             
-            const barWidth = (WIDTH / bufferLength) * 2.5; // Chiều rộng mỗi thanh
+            // Tinh chỉnh để có nhiều thanh mỏng hơn, gần nhau hơn
+            const barWidth = 2; // Chiều rộng mỗi thanh cố định
+            const spacing = 1; // Khoảng cách giữa các thanh
+            const totalBarWidth = barWidth + spacing;
+
+            // Số lượng thanh hiển thị được trên canvas
+            const numBars = Math.floor(WIDTH / totalBarWidth);
+
             let x = 0; // Vị trí X bắt đầu vẽ
 
-            for (let i = 0; i < bufferLength; i++) {
-                const barHeight = dataArray[i]; 
-
-                // Thiết lập màu sắc và kiểu vẽ cho thanh
-                // Dùng HSL để tạo màu chuyển (tùy thuộc vào dải tần số)
-                const hue = i * 360 / bufferLength; 
-                ctx.fillStyle = 'hsl(' + hue + ', 100%, 50%)'; 
+            for (let i = 0; i < numBars; i++) {
+                // Lấy giá trị từ dataArray, có thể bỏ qua một số phần tử đầu/cuối nếu muốn
+                // Hoặc lấy trung bình của một nhóm nhỏ để làm mượt
+                const barHeight = dataArray[i] * 0.8; // Nhân 0.8 để các thanh không quá cao
                 
-                // Vẽ thanh (hình chữ nhật)
-                // barHeight càng cao (âm thanh càng to/mạnh) thì vẽ càng cao
-                ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+                // Điều chỉnh màu sắc: vẫn dùng HSL nhưng có thể thêm độ sáng động
+                const hue = i / numBars * 360; 
+                const lightness = 40 + (barHeight / HEIGHT) * 50; // Độ sáng tăng theo chiều cao
+                ctx.fillStyle = `hsl(${hue}, 100%, ${lightness}%)`; 
+                
+                // Vẽ thanh, đặt điểm gốc vẽ ở giữa chiều cao canvas để sóng đối xứng
+                ctx.fillRect(x, HEIGHT / 2 - barHeight / 2, barWidth, barHeight);
 
                 // Cập nhật vị trí X cho thanh tiếp theo
-                x += barWidth + 1; // +1 là khoảng cách giữa các thanh
+                x += totalBarWidth; 
             }
         };
     </script>
