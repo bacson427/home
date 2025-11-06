@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hiệu ứng Sóng Nhạc Đơn Giản</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #282c34; /* Nền tối */
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        #visualizerCanvas {
+            border: 2px solid #61dafb;
+            background-color: #1e2126;
+            margin-bottom: 20px;
+        }
+
+        /* Tùy chỉnh thanh điều khiển audio */
+        #audioElement {
+            width: 80%;
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Sóng Nhạc Web Audio API</h1>
+    
+    <audio id="audioElement" controls crossorigin="anonymous">
+        <source src="your_music.mp3" type="audio/mp3">
+        <p>Trình duyệt của bạn không hỗ trợ phần tử audio.</p>
+    </audio>
+
+    <canvas id="visualizerCanvas"></canvas>
+
+    <script>
+        // Cài đặt kích thước Canvas
+        const WIDTH = 600;
+        const HEIGHT = 200;
+
+        // --- Cài đặt Canvas và Audio ---
+        const canvas = document.getElementById('visualizerCanvas');
+        canvas.width = WIDTH;
+        canvas.height = HEIGHT;
+        const ctx = canvas.getContext('2d');
+        const audio = document.getElementById('audioElement');
+
+        // --- Cài đặt Web Audio API ---
+        let audioCtx;
+        let analyser;
+        let source;
+
+        // Hàm khởi tạo Audio Context khi người dùng tương tác lần đầu
+        function setupAudioContext() {
+            if (audioCtx) return; // Đảm bảo chỉ khởi tạo một lần
+            
+            // Khởi tạo Audio Context
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Tạo AnalyserNode
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 1024; // Kích thước FFT (ảnh hưởng đến số lượng thanh)
+            
+            // Tính toán kích thước buffer
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            
+            // Tạo nguồn từ thẻ Audio
+            source = audioCtx.createMediaElementSource(audio);
+            
+            // Kết nối các node: Nguồn -> Bộ phân tích -> Loa (Output)
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+
+            // Bắt đầu vòng lặp vẽ
+            draw(dataArray, bufferLength);
+        }
+
+        // CHÚ Ý QUAN TRỌNG:
+        // Cần khởi tạo Audio Context sau khi người dùng tương tác (ví dụ: nhấn Play), 
+        // nếu không sẽ bị chặn do chính sách bảo mật của trình duyệt.
+        audio.addEventListener('play', setupAudioContext);
+
+        // --- Hàm Vẽ Hiệu Ứng Sóng Nhạc ---
+        function draw(dataArray, bufferLength) {
+            
+            requestAnimationFrame(() => draw(dataArray, bufferLength));
+
+            // Lấy dữ liệu tần số từ AnalyserNode
+            // Mỗi phần tử trong dataArray là cường độ (0-255) của một dải tần số
+            analyser.getByteFrequencyData(dataArray);
+
+            // Xóa Canvas để vẽ lại
+            ctx.clearRect(0, 0, WIDTH, HEIGHT); 
+            
+            const barWidth = (WIDTH / bufferLength) * 2.5; // Chiều rộng mỗi thanh
+            let x = 0; // Vị trí X bắt đầu vẽ
+
+            for (let i = 0; i < bufferLength; i++) {
+                const barHeight = dataArray[i]; 
+
+                // Thiết lập màu sắc và kiểu vẽ cho thanh
+                // Dùng HSL để tạo màu chuyển (tùy thuộc vào dải tần số)
+                const hue = i * 360 / bufferLength; 
+                ctx.fillStyle = 'hsl(' + hue + ', 100%, 50%)'; 
+                
+                // Vẽ thanh (hình chữ nhật)
+                // barHeight càng cao (âm thanh càng to/mạnh) thì vẽ càng cao
+                ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+
+                // Cập nhật vị trí X cho thanh tiếp theo
+                x += barWidth + 1; // +1 là khoảng cách giữa các thanh
+            }
+        };
+    </script>
+</body>
+</html>
