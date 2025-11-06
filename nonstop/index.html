@@ -3,325 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đom đóm nhấp nháy theo nhạc</title>
+    <title>Nguyễn Bắc Sơn - Nonstop</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            background: linear-gradient(to bottom, #0a0a2a, #1a1a3a);
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             min-height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .container {
-            text-align: center;
-            z-index: 10;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-            max-width: 90%;
-        }
-        
-        h1 {
-            margin-bottom: 20px;
-            font-size: 2.5rem;
-            text-shadow: 0 0 10px cyan;
-            color: #fff;
-        }
-        
-        .controls {
-            margin: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        button {
-            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            margin: 0;
+            padding: 20px 0; /* Thêm padding cho nội dung */
+            background-color: #0d0d1a; /* Nền tối hơn */
             color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 1rem;
-            border-radius: 30px;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden; /* Chỉ ngăn cuộn ngang */
+        }
+
+        /* Tiêu đề bài hát, sẽ được cập nhật bằng JS */
+        #currentSongTitle {
+            margin-bottom: 20px;
+            color: #61dafb;
+            text-shadow: 0 0 15px rgba(97, 218, 251, 0.5);
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        
+        /* Menu chọn nhạc */
+        #songSelector {
+            background-color: #1e2126;
+            color: #61dafb;
+            border: 2px solid #61dafb;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px; /* Khoảng cách giữa menu và player */
+            border-radius: 5px;
+            width: 80%;
+            max-width: 600px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
         }
-        
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 65, 108, 0.6);
+
+        #audioElement {
+            width: 80%;
+            max-width: 600px;
+            margin-top: 0; /* Xóa margin-top vì đã có menu ở trên */
+            filter: invert(0.9) hue-rotate(180deg);
         }
-        
-        button:active {
-            transform: translateY(1px);
+
+        #visualizerCanvas {
+            border: none;
+            background-color: #0d0d1a;
+            margin-top: 20px; /* Thêm khoảng cách với player */
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.1);
+            max-width: 900px; /* Đặt chiều rộng tối đa */
+            width: 90%; /* Responsive */
         }
-        
-        .visualizer {
-            width: 100%;
-            height: 100px;
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            gap: 3px;
-        }
-        
-        .bar {
-            width: 8px;
-            background: linear-gradient(to top, #00ffff, #ff00ff);
-            border-radius: 5px 5px 0 0;
-            transition: height 0.1s ease;
-        }
-        
-        #firefly-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .firefly {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0;
-            filter: blur(1px);
-            transition: opacity 0.5s ease;
-            box-shadow: 0 0 10px currentColor;
-        }
-        
-        .info {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-        
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .container {
-                padding: 15px;
-            }
-        }
+
     </style>
 </head>
 <body>
-    <div id="firefly-container"></div>
+
+    <h1 id="currentSongTitle">Đang tải danh sách nhạc...</h1>
     
-    <div class="container">
-        <h1>Đom Đóm Nhấp Nháy Theo Nhạc</h1>
-        
-        <div class="visualizer" id="visualizer">
-            <!-- Các thanh visualizer sẽ được tạo bằng JavaScript -->
-        </div>
-        
-        <div class="controls">
-            <button id="playBtn">Phát nhạc</button>
-            <button id="pauseBtn">Tạm dừng</button>
-        </div>
-        
-        <audio id="audio" preload="metadata">
-            <source src="https://nguyenbacson.io.vn/nguyenbacson.mp3" type="audio/mpeg">
-            Trình duyệt của bạn không hỗ trợ phát nhạc.
-        </audio>
-        
-        <p class="info">Hiệu ứng đom đóm sẽ nhấp nháy theo nhịp điệu bài hát</p>
-    </div>
+    <select id="songSelector"></select>
+
+    <audio id="audioElement" controls crossorigin="anonymous"></audio>
+
+    <canvas id="visualizerCanvas"></canvas>
 
     <script>
-        // Khai báo các biến toàn cục
-        const audio = document.getElementById('audio');
-        const playBtn = document.getElementById('playBtn');
-        const pauseBtn = document.getElementById('pauseBtn');
-        const visualizer = document.getElementById('visualizer');
-        const fireflyContainer = document.getElementById('firefly-container');
+        // --- 🎵 DANH SÁCH NHẠC CỦA BẠN 🎵 ---
+        //
+        // Thêm các bài nhạc của bạn vào đây.
+        // Chỉ cần cung cấp 'title' (tên hiển thị) và 'src' (URL của file mp3).
+        //
+        const playlist = [
+            {
+                title: "Nguyễn Bắc Sơn Music (Bài 1)",
+                src: "https://nguyenbacson.io.vn/nguyenbacson-music.mp3"
+            },
+            {
+                title: "Bài nhạc Nonstop (Bài 2)",
+                src: "URL_BAI_NHAC_THU_2_CUA_BAN.mp3" // <-- 🛑 THAY THẾ URL NÀY
+            },
+            {
+                title: "Một bài nhạc khác (Bài 3)",
+                src: "URL_BAI_NHAC_THU_3_CUA_BAN.mp3" // <-- 🛑 THAY THẾ URL NÀY
+            }
+            // Thêm bao nhiêu bài tùy thích...
+            // { title: "Bài 4", src: "..." },
+        ];
+        // ------------------------------------
+
+
+        // Cài đặt kích thước Canvas
+        const canvas = document.getElementById('visualizerCanvas');
+        // Lấy chiều rộng từ CSS (90% hoặc tối đa 900px)
+        canvas.width = canvas.clientWidth; 
+        canvas.height = 300; // Giữ chiều cao cố định
         
-        let audioContext;
+        const WIDTH = canvas.width;
+        const HEIGHT = canvas.height;
+
+        // --- Lấy các phần tử DOM ---
+        const ctx = canvas.getContext('2d');
+        const audio = document.getElementById('audioElement');
+        const songSelector = document.getElementById('songSelector');
+        const currentSongTitle = document.getElementById('currentSongTitle');
+
+        // --- Cài đặt Web Audio API ---
+        let audioCtx;
         let analyser;
         let source;
-        let dataArray;
-        let bufferLength;
-        let isPlaying = false;
-        
-        // Mảng lưu trữ các đom đóm
-        let fireflies = [];
-        
-        // Màu sắc cho đom đóm
-        const colors = [
-            '#FF5252', '#FF4081', '#E040FB', '#7C4DFF', 
-            '#536DFE', '#448AFF', '#40C4FF', '#18FFFF',
-            '#64FFDA', '#69F0AE', '#B2FF59', '#EEFF41',
-            '#FFFF00', '#FFD740', '#FFAB40', '#FF6E40'
-        ];
-        
-        // Tạo các thanh visualizer
-        function createVisualizerBars() {
-            visualizer.innerHTML = '';
-            const barCount = 64;
+        let dataArray; 
+
+        // --- 1. Hàm Khởi Tạo (MỚI) ---
+        function initializePlaylist() {
+            // 1. Đổ dữ liệu từ `playlist` vào menu <select>
+            playlist.forEach((song, index) => {
+                const option = document.createElement('option');
+                option.value = index; // Giá trị là vị trí (index) trong mảng
+                option.textContent = song.title;
+                songSelector.appendChild(option);
+            });
             
-            for (let i = 0; i < barCount; i++) {
-                const bar = document.createElement('div');
-                bar.className = 'bar';
-                bar.style.height = '5px';
-                visualizer.appendChild(bar);
-            }
+            // 2. Tải bài hát đầu tiên lên trình phát
+            loadSong(0); 
+            
+            // 3. Thêm sự kiện 'change' cho menu <select>
+            songSelector.addEventListener('change', (e) => {
+                const selectedSongIndex = e.target.value;
+                loadSong(selectedSongIndex);
+                audio.play(); // Tự động phát khi chọn bài mới
+            });
         }
-        
-        // Khởi tạo Audio Context và Analyser
-        function initAudio() {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioContext.createAnalyser();
-            source = audioContext.createMediaElementSource(audio);
+
+        // --- 2. Hàm Tải Bài Hát (MỚI) ---
+        function loadSong(index) {
+            const song = playlist[index];
+            audio.src = song.src; // Đặt nguồn (src) cho thẻ <audio>
+            currentSongTitle.textContent = song.title; // Cập nhật tiêu đề
+            audio.load(); // Tải file nhạc
+        }
+
+        // --- 3. Hàm Cài Đặt Audio Context ---
+        // (Không thay đổi, vẫn chạy khi người dùng nhấn 'play' lần đầu)
+        function setupAudioContext() {
+            if (audioCtx) return; // Đảm bảo chỉ khởi tạo một lần
+            
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 2048; 
+            
+            const bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength); 
+            
+            source = audioCtx.createMediaElementSource(audio);
             
             source.connect(analyser);
-            analyser.connect(audioContext.destination);
-            
-            analyser.fftSize = 256;
-            bufferLength = analyser.frequencyBinCount;
-            dataArray = new Uint8Array(bufferLength);
-            
-            createVisualizerBars();
+            analyser.connect(audioCtx.destination);
+
+            // Bắt đầu vòng lặp vẽ
+            draw(); 
         }
-        
-        // Tạo đom đóm
-        function createFireflies(count) {
-            for (let i = 0; i < count; i++) {
-                setTimeout(() => {
-                    const firefly = document.createElement('div');
-                    firefly.className = 'firefly';
-                    
-                    // Vị trí ngẫu nhiên
-                    const x = Math.random() * 100;
-                    const y = Math.random() * 100;
-                    firefly.style.left = `${x}%`;
-                    firefly.style.top = `${y}%`;
-                    
-                    // Màu sắc ngẫu nhiên
-                    const color = colors[Math.floor(Math.random() * colors.length)];
-                    firefly.style.backgroundColor = color;
-                    
-                    fireflyContainer.appendChild(firefly);
-                    fireflies.push(firefly);
-                    
-                    // Hiệu ứng nhấp nháy
-                    animateFirefly(firefly);
-                }, i * 100);
+
+        // Kích hoạt setupAudioContext khi người dùng nhấn 'play'
+        audio.addEventListener('play', setupAudioContext);
+
+        // --- 4. Hàm Vẽ Sóng Nhạc ---
+        // (Không thay đổi)
+        function draw() {
+            if (!audioCtx) {
+                requestAnimationFrame(draw); 
+                return;
             }
-        }
-        
-        // Hiệu ứng nhấp nháy cho đom đóm
-        function animateFirefly(firefly) {
-            const duration = 1000 + Math.random() * 2000;
-            const delay = Math.random() * 3000;
-            
-            setTimeout(() => {
-                // Hiệu ứng xuất hiện
-                firefly.style.opacity = '0.9';
-                firefly.style.transform = 'scale(1.5)';
-                
-                // Di chuyển ngẫu nhiên
-                const moveX = (Math.random() - 0.5) * 30;
-                const moveY = (Math.random() - 0.5) * 30;
-                firefly.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.5)`;
-                
-                // Hiệu ứng biến mất
-                setTimeout(() => {
-                    firefly.style.opacity = '0';
-                    firefly.style.transform = 'scale(1)';
-                    
-                    // Lặp lại hiệu ứng
-                    setTimeout(() => {
-                        animateFirefly(firefly);
-                    }, Math.random() * 2000);
-                }, duration);
-            }, delay);
-        }
-        
-        // Cập nhật visualizer và đom đóm theo âm nhạc
-        function updateVisualizer() {
-            if (!isPlaying) return;
-            
-            requestAnimationFrame(updateVisualizer);
-            
+
+            requestAnimationFrame(draw);
             analyser.getByteFrequencyData(dataArray);
+            ctx.clearRect(0, 0, WIDTH, HEIGHT); 
             
-            // Cập nhật các thanh visualizer
-            const bars = document.querySelectorAll('.bar');
-            for (let i = 0; i < bars.length; i++) {
-                const value = dataArray[i % bufferLength];
-                const height = (value / 255) * 100;
-                bars[i].style.height = `${height}px`;
+            const barWidth = 2;
+            const spacing = 1;
+            const totalBarWidth = barWidth + spacing;
+            const numBars = Math.floor(WIDTH / totalBarWidth);
+            let x = 0; 
+
+            for (let i = 0; i < numBars; i++) {
+                // Lấy mẫu dữ liệu tần số một cách thông minh để vừa vặn
+                const dataIndex = Math.floor(i * (dataArray.length / numBars));
+                const barHeight = dataArray[dataIndex] * 0.8;
                 
-                // Thay đổi màu sắc dựa trên cường độ âm thanh
-                const hue = (i / bars.length) * 360 + (value / 255) * 60;
-                bars[i].style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(${hue + 60}, 100%, 50%))`;
+                const hue = i / numBars * 360; 
+                const lightness = 40 + (barHeight / HEIGHT) * 50; 
+                ctx.fillStyle = `hsl(${hue}, 100%, ${lightness}%)`; 
+                
+                ctx.fillRect(x, HEIGHT / 2 - barHeight / 2, barWidth, barHeight);
+                x += totalBarWidth; 
             }
-            
-            // Cập nhật hiệu ứng đom đóm dựa trên cường độ âm thanh
-            const avgIntensity = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
-            
-            // Tăng số lượng đom đóm khi âm thanh mạnh
-            if (avgIntensity > 150 && fireflies.length < 100) {
-                createFireflies(5);
-            }
-            
-            // Điều chỉnh độ sáng của đom đóm dựa trên cường độ âm thanh
-            fireflies.forEach(firefly => {
-                const brightness = Math.min(0.9, avgIntensity / 255 * 0.9);
-                firefly.style.opacity = `${brightness}`;
-            });
-        }
-        
-        // Xử lý sự kiện nút phát nhạc
-        playBtn.addEventListener('click', () => {
-            if (!audioContext) {
-                initAudio();
-            }
-            
-            audio.play();
-            isPlaying = true;
-            updateVisualizer();
-            
-            // Tạo đom đóm ban đầu
-            if (fireflies.length === 0) {
-                createFireflies(30);
-            }
-        });
-        
-        // Xử lý sự kiện nút tạm dừng
-        pauseBtn.addEventListener('click', () => {
-            audio.pause();
-            isPlaying = false;
-            
-            // Làm mờ đom đóm khi tạm dừng
-            fireflies.forEach(firefly => {
-                firefly.style.opacity = '0.2';
-            });
-        });
-        
-        // Tạo một vài đom đóm ban đầu
-        createFireflies(15);
+        };
+
+        // --- 5. Chạy Hàm Khởi Tạo ---
+        initializePlaylist();
+
     </script>
 </body>
 </html>
