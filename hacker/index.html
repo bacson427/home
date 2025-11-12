@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nguyen Bac Son - Hacker</title>
+    <title>Matrix Rain (Giải mã)</title>
     
     <style>
         /* Đảm bảo không có viền trắng hay thanh cuộn */
@@ -47,11 +47,10 @@
             drops[x] = 1; 
         }
 
-        // --- CÀI ĐẶT CHO HIỆU ỨNG NGANG (MỚI) ---
+        // --- CÀI ĐẶT CHO HIỆU ỨNG NGANG ---
         let horizontalRows = Math.floor(canvas.height / fontSize);
         const horizontalDrops = []; // Mảng cho các giọt mưa NGANG
         for (let y = 0; y < horizontalRows; y++) {
-            // Bắt đầu ngẫu nhiên từ bên trái màn hình
             horizontalDrops[y] = Math.random() * -canvas.width; 
         }
 
@@ -66,7 +65,7 @@
             ctx.font = fontSize + 'px monospace';
             ctx.textAlign = 'left'; // Reset căn lề
 
-            // --- VÒNG LẶP 3: VẼ HIỆU ỨNG DỌC (CŨ) ---
+            // --- VẼ HIỆU ỨNG DỌC ---
             for (let i = 0; i < drops.length; i++) {
                 const text = alphabet[Math.floor(Math.random() * alphabet.length)];
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
@@ -76,22 +75,15 @@
                 }
             }
 
-            // --- VÒNG LẶP 4: VẼ HIỆU ỨNG NGANG (MỚI) ---
+            // --- VẼ HIỆU ỨNG NGANG ---
             for (let j = 0; j < horizontalDrops.length; j++) {
-                // Chỉ vẽ 1/3 số hàng ngang để đỡ rối mắt
-                if (j % 3 !== 0) continue; 
+                if (j % 3 !== 0) continue; // Giảm số lượng hàng ngang cho đỡ rối
 
                 const text = alphabet[Math.floor(Math.random() * alphabet.length)];
-                // j * fontSize là vị trí Y
-                // horizontalDrops[j] * fontSize là vị trí X
                 ctx.fillText(text, horizontalDrops[j] * fontSize, j * fontSize);
-                
-                // Di chuyển 'drop' sang BÊN PHẢI
                 horizontalDrops[j]++;
-
-                // Reset 'drop' về BÊN TRÁI nếu nó đi quá xa
                 if (horizontalDrops[j] * fontSize > canvas.width && Math.random() > 0.975) {
-                    horizontalDrops[j] = 0; // Đặt lại x về 0
+                    horizontalDrops[j] = 0; 
                 }
             }
         }
@@ -99,13 +91,26 @@
         // Chạy hàm draw lặp đi lặp lại (hiệu ứng mưa)
         setInterval(draw, 33); // Khoảng 30fps
 
-        // --- PHẦN LẶP LẠI MỖI 1.5 PHÚT (GIỮ NGUYÊN) ---
+        // *** PHẦN LẶP LẠI MỖI 1.5 PHÚT (ĐÃ CẬP NHẬT) ***
         setInterval(() => {
-            ctx.fillStyle = '#FFF'; // Màu trắng cho nổi bật
-            ctx.font = '30px monospace';
             ctx.textAlign = 'center'; // Căn chữ ra giữa
-            ctx.fillText('nguyenbacson.io.vn', canvas.width / 2, canvas.height / 2 - 20);
-            ctx.fillText('Nguyen Bac Son - My Bio', canvas.width / 2, canvas.height / 2 + 20);
+            const midY = canvas.height / 2; // Tìm điểm giữa chiều dọc
+
+            // Dòng 1 (Trang web)
+            ctx.fillStyle = '#FFF'; // Màu trắng
+            ctx.font = '30px monospace';
+            ctx.fillText('nguyenbacson.io.vn', canvas.width / 2, midY - 35);
+
+            // Dòng 2 (Tên)
+            ctx.fillStyle = '#FFF'; // Màu trắng
+            ctx.font = '30px monospace';
+            ctx.fillText('Nguyen Bac Son - My Bio', canvas.width / 2, midY);
+
+            // Dòng 3 (Mật mã) - MỚI
+            ctx.fillStyle = '#0F0'; // Màu xanh lá
+            ctx.font = '24px monospace'; // Cỡ chữ nhỏ hơn
+            ctx.fillText('Giải mã: 04022007', canvas.width / 2, midY + 35);
+
         }, 90000); // 90,000 milliseconds = 1.5 phút
 
         // Cập nhật kích thước canvas nếu người dùng thay đổi kích thước cửa sổ
