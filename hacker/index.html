@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Rain</title>
+    
+    <style>
+        /* Đảm bảo không có viền trắng hay thanh cuộn */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Ẩn thanh cuộn */
+            background-color: #000; /* Nền đen tuyền */
+        }
+
+        /* Đảm bảo canvas nằm đúng vị trí */
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrixCanvas"></canvas>
+
+    <script>
+        // Lấy phần tử canvas từ HTML
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Thiết lập canvas lấp đầy màn hình
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Chuỗi ký tự sẽ rơi (Katakana, số, chữ cái)
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズヅブプ';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nums = '0123456789';
+
+        const alphabet = katakana + latin + nums;
+
+        // Thiết lập kích thước font và tính toán số cột
+        const fontSize = 16;
+        const columns = Math.floor(canvas.width / fontSize);
+
+        // Tạo một mảng 'drops' (giọt mưa)
+        // Mỗi 'drop' sẽ theo dõi vị trí y của nó trên một cột
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1; // Bắt đầu từ vị trí y = 1
+        }
+
+        // Hàm vẽ chính
+        function draw() {
+            // 1. Làm mờ màn hình (vẽ 1 hình chữ nhật đen bán trong suốt)
+            // Đây là chìa khóa để tạo hiệu ứng "đuôi" mờ dần
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. Thiết lập màu và font chữ cho các ký tự rơi
+            ctx.fillStyle = '#0F0'; // Màu xanh lá cây (giống Matrix)
+            ctx.font = fontSize + 'px monospace';
+
+            // 3. Lặp qua tất cả các cột (drops)
+            for (let i = 0; i < drops.length; i++) {
+                // Chọn một ký tự ngẫu nhiên từ chuỗi alphabet
+                const text = alphabet[Math.floor(Math.random() * alphabet.length)];
+
+                // Vẽ ký tự tại vị trí x và y
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                // Di chuyển 'drop' xuống dưới cho lần vẽ tiếp theo
+                drops[i]++;
+
+                // 4. Reset 'drop' về đầu màn hình nếu nó đi quá xa
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0; // Đặt lại y về 0 (lên đầu)
+                }
+            }
+        }
+
+        // Chạy hàm draw lặp đi lặp lại (khoảng 30 lần mỗi giây)
+        setInterval(draw, 33);
+
+        // Cập nhật kích thước canvas nếu người dùng thay đổi kích thước cửa sổ
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Tính toán lại số cột khi resize
+            const newColumns = Math.floor(canvas.width / fontSize);
+            
+            // Cập nhật mảng drops cho phù hợp
+            if (newColumns > columns) {
+                for (let x = columns; x < newColumns; x++) {
+                    drops[x] = 1;
+                }
+            } else {
+                drops.length = newColumns;
+            }
+        });
+    </script>
+</body>
+</html>
