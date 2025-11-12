@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matrix Rain (Chỉ số)</title>
+    <title>Matrix Rain (Phiên bản tùy chỉnh)</title>
     
     <style>
         /* Đảm bảo không có viền trắng hay thanh cuộn */
@@ -32,10 +32,10 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        // *** ĐÃ THAY ĐỔI THEO YÊU CẦU CỦA BẠN ***
-        // Chuỗi ký tự sẽ rơi (Chỉ dùng số)
-        const nums = '0123456789';
-        const alphabet = nums; // Chỉ sử dụng chuỗi số
+        // Chuỗi ký tự sẽ rơi (Chỉ dùng chữ La Tinh và số)
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // Chữ cái La Tinh
+        const nums = '0123456789'; // Số
+        const alphabet = latin + nums; // Kết hợp cả chữ và số
 
         // Thiết lập kích thước font và tính toán số cột
         const fontSize = 16;
@@ -47,19 +47,20 @@
             drops[x] = 1; 
         }
 
-        // Hàm vẽ chính
+        // Hàm vẽ chính (vẽ các ký tự ngẫu nhiên)
         function draw() {
-            // Làm mờ màn hình (tạo hiệu ứng đuôi mờ dần)
+            // 1. Làm mờ màn hình (tạo hiệu ứng đuôi mờ dần)
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Thiết lập màu và font chữ cho các ký tự rơi
+            // 2. Thiết lập màu và font chữ cho các ký tự rơi
             ctx.fillStyle = '#0F0'; // Màu xanh lá cây
             ctx.font = fontSize + 'px monospace';
+            ctx.textAlign = 'left'; // Reset lại căn lề cho các giọt mưa
 
-            // Lặp qua tất cả các cột
+            // 3. Lặp qua tất cả các cột
             for (let i = 0; i < drops.length; i++) {
-                // Chọn một ký tự ngẫu nhiên (bây giờ chỉ là số)
+                // Chọn một ký tự ngẫu nhiên
                 const text = alphabet[Math.floor(Math.random() * alphabet.length)];
 
                 // Vẽ ký tự
@@ -68,15 +69,30 @@
                 // Di chuyển 'drop' xuống dưới
                 drops[i]++;
 
-                // Reset 'drop' về đầu màn hình nếu nó đi quá xa
+                // 4. Reset 'drop' về đầu màn hình nếu nó đi quá xa
                 if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                     drops[i] = 0; 
                 }
             }
         }
 
-        // Chạy hàm draw lặp đi lặp lại
-        setInterval(draw, 33);
+        // Chạy hàm draw lặp đi lặp lại (hiệu ứng mưa)
+        setInterval(draw, 33); // Khoảng 30fps
+
+        // *** PHẦN THÊM MỚI THEO YÊU CẦU CỦA BẠN ***
+        // Vòng lặp này chạy 1.5 phút (90000 ms) một lần
+        setInterval(() => {
+            // Thiết lập font chữ đặc biệt (màu trắng, to, căn giữa)
+            ctx.fillStyle = '#FFF'; // Màu trắng cho nổi bật
+            ctx.font = '30px monospace';
+            ctx.textAlign = 'center'; // Căn chữ ra giữa
+
+            // Vẽ 2 dòng text của bạn vào giữa màn hình
+            // Hàm draw() chính sẽ tự động làm mờ nó đi
+            ctx.fillText('nguyenbacson.io.vn', canvas.width / 2, canvas.height / 2 - 20);
+            ctx.fillText('Nguyen Bac Son - My Bio', canvas.width / 2, canvas.height / 2 + 20);
+
+        }, 90000); // 90,000 milliseconds = 1.5 phút
 
         // Cập nhật kích thước canvas nếu người dùng thay đổi kích thước cửa sổ
         window.addEventListener('resize', () => {
