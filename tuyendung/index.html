@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Tuyển dụng</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #0056b3;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        p.description {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1em;
+            color: #555;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="tel"],
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; 
+            font-size: 1em;
+            font-family: Arial, sans-serif;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        button[type="submit"]:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+
+        #form-status {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+    </style>
+    </head>
+<body>
+
+    <div class="form-container">
+        <h2>Form Ứng tuyển</h2>
+        <p class="description">Vui lòng điền thông tin chính xác bên dưới.</p>
+        
+        <form id="recruitment-form" data-form-id="1FAIpQLSdDuHvaim2wwzMvZFmakWJFAzwhwMdar_q0LWQxglYWodR65A">
+            
+            <div class="form-group">
+                <label for="ho-ten">Họ và tên</label>
+                <input type="text" id="ho-ten" name="entry.297361494" placeholder="Ví dụ: Nguyễn Bắc Sơn" required>
+            </div>
+
+            <div class="form-group">
+                <label for="sinh-nhat">Sinh nhật</label>
+                <input type="date" id="sinh-nhat" name="entry.1802896445" required>
+            </div>
+
+            <div class="form-group">
+                <label for="que-quan">Quê quán</label>
+                <input type="text" id="que-quan" name="entry.30630168" placeholder="Ví dụ: Yển Vũ, Đức Chính, Cẩm Giàng, Hải Dương" required>
+            </div>
+
+            <div class="form-group">
+                <label for="noi-o">Nơi ở hiện nay</label>
+                <input type="text" id="noi-o" name="entry.861705784" placeholder="Ví dụ: Lĩnh Nam, Hoàng Mai, Hà Nội" required>
+            </div>
+
+            <div class="form-group">
+                <label for="sdt">Số điện thoại</label>
+                <input type="tel" id="sdt" name="entry.430462608" placeholder="Ví dụ: 0347432736" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email (Nếu có)</label>
+                <input type="email" id="email" name="entry.1681323536" placeholder="Ví dụ: bacson20062007@gmail.com">
+            </div>
+
+            <button type="submit" id="submit-btn">Gửi Đơn Ứng tuyển</button>
+            <p id="form-status"></p>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('recruitment-form');
+            const status = document.getElementById('form-status');
+            const submitBtn = document.getElementById('submit-btn');
+
+            // Lấy ID biểu mẫu từ thuộc tính data-
+            const formId = form.dataset.formId;
+            
+            if (!formId || formId === "YOUR_FORM_ID") {
+                console.error("Lỗi: Không tìm thấy data-form-id!");
+                status.textContent = "Lỗi cấu hình: Vui lòng liên hệ quản trị viên.";
+                status.style.color = 'red';
+                submitBtn.disabled = true;
+                return;
+            }
+
+            // Xây dựng URL để gửi Google Form
+            const googleFormUrl = `https://docs.google.com/forms/d/e/${formId}/formResponse`;
+
+            form.addEventListener('submit', function (e) {
+                // Ngăn chặn hành vi gửi form mặc định
+                e.preventDefault();
+
+                // Vô hiệu hóa nút gửi
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Đang gửi...';
+
+                // Lấy tất cả dữ liệu từ form
+                const formData = new FormData(form);
+
+                // Gửi dữ liệu đến Google Form bằng 'fetch'
+                fetch(googleFormUrl, {
+                    method: 'POST',
+                    body: formData,
+                    mode: 'no-cors' // Quan trọng: Cần để 'no-cors'
+                })
+                .then(response => {
+                    // Giả định là đã thành công
+                    console.log('Gửi thành công (giả định)');
+                    
+                    status.textContent = 'Đã gửi đơn ứng tuyển thành công!';
+                    status.style.color = 'green';
+
+                    form.reset(); // Xóa các trường đã điền
+                    submitBtn.style.display = 'none'; // Ẩn nút đi
+                    
+                    // Hiển thị lại form sau 5 giây để người khác có thể nhập
+                    setTimeout(() => {
+                        status.textContent = '';
+                        submitBtn.style.display = 'block';
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Gửi Đơn Ứng tuyển';
+                    }, 5000);
+
+                })
+                .catch(error => {
+                    // Bắt lỗi (ví dụ: lỗi mạng)
+                    console.error('Lỗi khi gửi form:', error);
+                    status.textContent = 'Có lỗi xảy ra. Vui lòng thử lại.';
+                    status.style.color = 'red';
+
+                    // Bật lại nút gửi
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Gửi Đơn Ứng tuyển';
+                });
+            });
+        });
+    </script>
+    </body>
+</html>
