@@ -32,34 +32,7 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-        #snow-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
-}
-
-.snowflake {
-    position: absolute;
-    background-color: white;
-    border-radius: 50%;
-    opacity: 0.8;
-    animation-name: fall;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-}
-
-@keyframes fall {
-    0% {
-        transform: translateY(-10px) translateX(0) rotate(0deg);
-    }
-    100% {
-        transform: translateY(100vh) translateX(20px) rotate(360deg);
-    }
-}
+        
         
         
                 
@@ -2115,47 +2088,81 @@ document.addEventListener('click', function(e) {
 </div>
 
 
+
+<div id="snow-container"></div>
+
+<style>
+#snow-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.snowflake {
+    position: absolute;
+    background-color: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-10px) translateX(0);
+    }
+    100% {
+        transform: translateY(100vh) translateX(20px);
+    }
+}
+</style>
+
 <script>
-// Tạo container cho tuyết
-const snowContainer = document.createElement('div');
-snowContainer.id = 'snow-container';
-document.body.appendChild(snowContainer);
-
-// Số lượng bông tuyết
-const snowflakeCount = 100;
-
-// Tạo các bông tuyết
-for (let i = 0; i < snowflakeCount; i++) {
-    createSnowflake();
+// Tạo hiệu ứng tuyết rơi
+function createSnow() {
+    const container = document.getElementById('snow-container');
+    if (!container) return;
+    
+    for (let i = 0; i < 80; i++) {
+        setTimeout(() => {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            
+            // Random kích thước
+            const size = Math.random() * 5 + 2;
+            snowflake.style.width = size + 'px';
+            snowflake.style.height = size + 'px';
+            
+            // Random vị trí bắt đầu
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            
+            // Random tốc độ rơi
+            const duration = Math.random() * 5 + 3;
+            snowflake.style.animationDuration = duration + 's';
+            
+            // Random độ mờ
+            snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+            
+            container.appendChild(snowflake);
+            
+            // Xóa sau khi rơi xong
+            setTimeout(() => {
+                if (snowflake.parentNode) {
+                    snowflake.remove();
+                }
+            }, duration * 1000);
+        }, i * 200);
+    }
 }
 
-function createSnowflake() {
-    const snowflake = document.createElement('div');
-    snowflake.classList.add('snowflake');
-    
-    // Kích thước ngẫu nhiên từ 2px đến 6px
-    const size = Math.random() * 4 + 2;
-    snowflake.style.width = `${size}px`;
-    snowflake.style.height = `${size}px`;
-    
-    // Vị trí ngẫu nhiên
-    snowflake.style.left = `${Math.random() * 100}vw`;
-    
-    // Thời gian rơi ngẫu nhiên từ 3 đến 8 giây
-    const duration = Math.random() * 5 + 3;
-    snowflake.style.animationDuration = `${duration}s`;
-    
-    // Độ mờ ngẫu nhiên
-    snowflake.style.opacity = Math.random() * 0.7 + 0.3;
-    
-    snowContainer.appendChild(snowflake);
-    
-    // Khi bông tuyết rơi xong, tạo lại bông tuyết mới
-    setTimeout(() => {
-        snowflake.remove();
-        createSnowflake();
-    }, duration * 1000);
-}
+// Chạy hiệu ứng
+createSnow();
+setInterval(createSnow, 5000);
 </script>
 </body>
 </html>
