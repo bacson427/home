@@ -2090,139 +2090,64 @@ document.addEventListener('click', function(e) {
 
 
 
-<div id="snow-container"></div>
-
-<style>
-#snow-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
-}
-
-.snowflake {
-    position: absolute;
-    color: white;
-    font-size: 20px;
-    opacity: 0.8;
-    animation-name: snowfall;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-    user-select: none;
-}
-
-@keyframes snowfall {
-    0% {
-        transform: translateY(-20px) translateX(0) rotate(0deg);
-        opacity: 0;
-    }
-    10% {
-        opacity: 0.8;
-    }
-    90% {
-        opacity: 0.7;
-    }
-    100% {
-        transform: translateY(100vh) translateX(30px) rotate(360deg);
-        opacity: 0;
-    }
-}
-
-.snowflake:nth-child(6n) { content: "❄"; }
-.snowflake:nth-child(6n+1) { content: "❅"; }
-.snowflake:nth-child(6n+2) { content: "❆"; }
-.snowflake:nth-child(6n+3) { content: "•"; }
-.snowflake:nth-child(6n+4) { content: "·"; }
-.snowflake:nth-child(6n+5) { content: "✦"; }
-</style>
+<div id="tuyetroi"></div>
 
 <script>
-// Tạo hiệu ứng tuyết rơi với ký tự ❄️
-function createSnow() {
-    const container = document.getElementById('snow-container');
-    if (!container) return;
+// Tạo hiệu ứng tuyết rơi đơn giản
+function taoTuyet() {
+    const container = document.getElementById('tuyetroi');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'tuyetroi';
+        container.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        `;
+        document.body.appendChild(container);
+    }
     
-    const snowflakeCount = 60; // Giảm số lượng để mượt hơn
-    
-    for (let i = 0; i < snowflakeCount; i++) {
+    for (let i = 0; i < 40; i++) {
         setTimeout(() => {
             const snowflake = document.createElement('div');
-            snowflake.className = 'snowflake';
             snowflake.innerHTML = '❄';
-            
-            // Random kích thước
-            const size = Math.random() * 25 + 15; // Font size từ 15-40px
-            snowflake.style.fontSize = size + 'px';
-            
-            // Random vị trí bắt đầu
-            snowflake.style.left = Math.random() * 100 + 'vw';
-            
-            // Random tốc độ rơi
-            const duration = Math.random() * 8 + 5; // 5-13 giây
-            snowflake.style.animationDuration = duration + 's';
-            
-            // Random độ lắc
-            const sway = Math.random() * 50 + 25;
-            snowflake.style.setProperty('--sway', sway + 'px');
-            
-            // Random độ mờ
-            snowflake.style.opacity = Math.random() * 0.6 + 0.4;
-            
-            // Random ký tự tuyết
-            const snowChars = ['❄', '❅', '❆', '•', '·', '✦'];
-            snowflake.innerHTML = snowChars[Math.floor(Math.random() * snowChars.length)];
+            snowflake.style.cssText = `
+                position: absolute;
+                color: white;
+                font-size: ${Math.random() * 20 + 15}px;
+                left: ${Math.random() * 100}vw;
+                opacity: ${Math.random() * 0.7 + 0.3};
+                animation: fall ${Math.random() * 5 + 3}s linear infinite;
+            `;
             
             container.appendChild(snowflake);
             
-            // Xóa sau khi rơi xong
             setTimeout(() => {
-                if (snowflake.parentNode) {
-                    snowflake.remove();
-                }
-            }, duration * 1000);
-        }, i * 300); // Tạo chậm hơn để tránh lag
+                snowflake.remove();
+            }, 8000);
+        }, i * 200);
     }
 }
 
-// Thêm keyframes động cho hiệu ứng lắc
+// Thêm CSS animation
 const style = document.createElement('style');
 style.textContent = `
-    @keyframes snowfall {
-        0% {
-            transform: translateY(-20px) translateX(0) rotate(0deg);
-            opacity: 0;
-        }
-        10% {
-            opacity: 0.8;
-        }
-        50% {
-            transform: translateX(calc(var(--sway, 25px) * 0.5));
-        }
-        90% {
-            opacity: 0.7;
-        }
-        100% {
-            transform: translateY(100vh) translateX(var(--sway, 25px)) rotate(360deg);
-            opacity: 0;
-        }
+    @keyframes fall {
+        0% { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 0.7; }
+        100% { transform: translateY(100vh) translateX(20px) rotate(360deg); opacity: 0; }
     }
 `;
 document.head.appendChild(style);
 
-// Chạy hiệu ứng
-createSnow();
-setInterval(createSnow, 8000); // Tạo tuyết mới mỗi 8 giây
-
-// Tạo thêm tuyết khi cuộn trang (tùy chọn)
-window.addEventListener('scroll', () => {
-    if (Math.random() > 0.7) {
-        createSnow();
-    }
-});
+// Bắt đầu hiệu ứng
+taoTuyet();
+setInterval(taoTuyet, 4000);
 </script>
 </body>
 </html>
