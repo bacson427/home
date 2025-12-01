@@ -2093,22 +2093,25 @@ document.addEventListener('click', function(e) {
 <div id="snow-container"></div>
 
 <style>
+/* 1. Cài đặt khung chứa */
 #snow-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none; /* Giúp click xuyên qua tuyết */
+    pointer-events: none; /* Click xuyên qua tuyết */
     z-index: 9999;
 }
 
+/* 2. Cài đặt hạt tuyết */
 .snowflake {
     position: absolute;
-    color: white; /* Màu tuyết */
-    text-shadow: 0 0 5px rgba(0,0,0,0.2); /* Tạo bóng nhẹ để nhìn rõ trên nền trắng */
+    color: white; 
+    text-shadow: 0 0 5px rgba(0,0,0,0.2);
     user-select: none;
     cursor: default;
+    opacity: 0; /* Mặc định ẩn cho đỡ giật */
     
     /* Animation */
     animation-name: fall-and-spin;
@@ -2116,7 +2119,7 @@ document.addEventListener('click', function(e) {
     animation-iteration-count: infinite;
 }
 
-/* Hiệu ứng vừa rơi vừa xoay nhẹ */
+/* 3. Hiệu ứng chuyển động */
 @keyframes fall-and-spin {
     0% {
         transform: translateY(-50px) translateX(0) rotate(0deg);
@@ -2133,34 +2136,43 @@ document.addEventListener('click', function(e) {
 </style>
 
 <script>
-// CẤU HÌNH Ở ĐÂY (DỄ DÀNG UPDATE)
+// --- CẤU HÌNH ---
 const SNOW_CONFIG = {
-    symbol: '❄️',      // Đổi icon ở đây (ví dụ: ❅, ❆, *)
-    amount: 50,        // Số lượng tuyết mỗi đợt
-    minSize: 10,       // Kích thước nhỏ nhất (px)
-    maxSize: 25,       // Kích thước lớn nhất (px)
-    minSpeed: 3,       // Tốc độ rơi nhanh nhất (giây)
-    maxSpeed: 8        // Tốc độ rơi chậm nhất (giây)
+    symbol: '❄️',      
+    amount: 30,        // Số lượng hạt mỗi đợt thả (vừa phải để không lag)
+    minSize: 10,       
+    maxSize: 25,       
+    minSpeed: 3,       
+    maxSpeed: 8        
 };
 
+let snowInterval = null; // Biến kiểm soát việc thả tuyết
+const container = document.getElementById('snow-container');
+
+// --- HÀM TẠO TUYẾT ---
 function createSnow() {
-    const container = document.getElementById('snow-container');
     if (!container) return;
     
+    // Chỉ tạo tuyết nếu đang trong trạng thái "Bật" (snowInterval có giá trị)
+    if (!snowInterval) return;
+
     for (let i = 0; i < SNOW_CONFIG.amount; i++) {
         setTimeout(() => {
+            // Kiểm tra lại lần nữa: Nếu nhạc tắt giữa chừng thì không tạo thêm hạt này
+            if (!snowInterval) return;
+
             const snowflake = document.createElement('div');
             snowflake.className = 'snowflake';
             snowflake.textContent = SNOW_CONFIG.symbol;
             
-            // Random kích thước (Font size thay vì width/height)
+            // Random kích thước
             const size = Math.random() * (SNOW_CONFIG.maxSize - SNOW_CONFIG.minSize) + SNOW_CONFIG.minSize;
             snowflake.style.fontSize = size + 'px';
             
-            // Random vị trí bắt đầu theo chiều ngang
+            // Random vị trí ngang
             snowflake.style.left = Math.random() * 100 + 'vw';
             
-            // Random tốc độ rơi
+            // Random tốc độ
             const duration = Math.random() * (SNOW_CONFIG.maxSpeed - SNOW_CONFIG.minSpeed) + SNOW_CONFIG.minSpeed;
             snowflake.style.animationDuration = duration + 's';
             
@@ -2169,21 +2181,50 @@ function createSnow() {
             
             container.appendChild(snowflake);
             
-            // Xóa element sau khi rơi xong để tránh nặng máy
+            // Tự hủy sau khi rơi xong
             setTimeout(() => {
-                if (snowflake.parentNode) {
-                    snowflake.remove();
-                }
+                if (snowflake.parentNode) snowflake.remove();
             }, duration * 1000);
             
-        }, i * 300); // Khoảng cách xuất hiện giữa các bông tuyết
+        }, i * 300);
     }
 }
 
-// Khởi chạy
-createSnow();
-// Lặp lại chu kỳ rơi
-setInterval(createSnow, 6000);
+// --- LOGIC KẾT NỐI VỚI NHẠC ---
+document.addEventListener("DOMContentLoaded", function() {
+    // Tự động tìm thẻ audio trên trang web của bạn
+    const audioPlayer = document.querySelector('audio');
+
+    if (audioPlayer) {
+        console.log("Đã tìm thấy trình phát nhạc. Chờ lệnh Play...");
+
+        // 1. Khi bấm Play -> Bắt đầu thả tuyết
+        audioPlayer.addEventListener('play', function() {
+            if (!snowInterval) {
+                createSnow(); // Thả đợt đầu ngay lập tức
+                snowInterval = setInterval(createSnow, 6000); // Lên lịch các đợt tiếp theo
+                console.log("▶️ Nhạc chạy: Tuyết rơi");
+            }
+        });
+
+        // 2. Khi bấm Pause hoặc Hết bài -> Dừng thả tuyết mới
+        const stopSnow = function() {
+            if (snowInterval) {
+                clearInterval(snowInterval);
+                snowInterval = null;
+                console.log("⏸️ Nhạc dừng: Tuyết ngưng");
+            }
+        };
+
+        audioPlayer.addEventListener('pause', stopSnow);
+        audioPlayer.addEventListener('ended', stopSnow);
+
+    } else {
+        console.warn("⚠️ Không tìm thấy thẻ <audio> nào. Tuyết sẽ không rơi.");
+    }
+});
+</script>
+
 </script>
 
 </body>
