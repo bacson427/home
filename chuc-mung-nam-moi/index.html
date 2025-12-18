@@ -3,48 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giat Li Xi - Nguyen Bac Son</title>
+    <title>Happy New Year - Nguyen Bac Son</title>
     <style>
-<div class="footer">
-    /* --- CSS Footer Bản Quyền --- */
-.footer {
-    position: fixed;
-    bottom: 10px;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.6); /* Màu trắng mờ nhẹ */
-    font-size: 0.9rem;
-    font-family: 'Arial', sans-serif;
-    z-index: 20; /* Nổi lên trên canvas */
-    pointer-events: auto; /* Để click được vào link */
-}
-
-.footer a {
-    color: #ffd700; /* Màu link vàng kim */
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.footer a:hover {
-    color: #fff; /* Rê chuột vào đổi màu trắng */
-    text-decoration: underline;
-}
-
-/* Chỉnh nhỏ trên mobile cho đỡ vướng */
-@media (max-width: 768px) {
-    .footer {
-        font-size: 0.75rem;
-        bottom: 5px;
-    }
-}
-
-        /* --- CSS --- */
+        /* --- CSS CHUNG --- */
         body {
             margin: 0;
             padding: 0;
             background: #000;
-            overflow: hidden;
+            overflow: hidden; /* Chặn thanh cuộn */
             font-family: 'Arial', sans-serif;
         }
 
@@ -53,7 +19,7 @@
             cursor: crosshair;
         }
 
-        /* Container chứa chữ */
+        /* --- PHẦN CHỮ VÀ NÚT --- */
         .container {
             position: absolute;
             top: 50%;
@@ -62,26 +28,16 @@
             width: 100%;
             text-align: center;
             z-index: 10;
-            pointer-events: none; /* Cho phép click xuyên qua nếu muốn */
+            pointer-events: none; /* Quan trọng: để click xuyên qua phần trống */
             user-select: none;
         }
 
-        /* Hiệu ứng chữ HAPPY NEW YEAR */
         .neon-text {
             font-size: 5rem;
             font-weight: 900;
             color: #fff;
             text-transform: uppercase;
-            /* Tạo hiệu ứng bóng đổ phát sáng (Neon) */
-            text-shadow: 
-                0 0 5px #fff,
-                0 0 10px #fff,
-                0 0 20px #ff00de,
-                0 0 40px #ff00de,
-                0 0 80px #ff00de,
-                0 0 90px #ff00de,
-                0 0 100px #ff00de,
-                0 0 150px #ff00de;
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 40px #ff00de, 0 0 80px #ff00de;
             animation: flicker 1.5s infinite alternate;
         }
 
@@ -96,318 +52,115 @@
             animation: zoomInOut 3s infinite ease-in-out;
         }
 
-        /* Animation nhấp nháy cho chữ */
-        @keyframes flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {     
-                text-shadow:
-                    0 0 5px #fff,
-                    0 0 10px #fff,
-                    0 0 20px #ff00de,
-                    0 0 40px #ff00de,
-                    0 0 80px #ff00de,
-                    0 0 90px #ff00de;
-            }
-            20%, 24%, 55% {        
-                text-shadow: none;
-            }    
+        .lixi-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: #ffd700;
+            background: #d60000;
+            border: 2px solid #ffd700;
+            border-radius: 50px;
+            box-shadow: 0 0 10px #d60000, 0 0 20px #ffd700;
+            transition: all 0.3s ease;
+            pointer-events: auto; /* Bật click cho nút này */
+            animation: pulse 1.5s infinite;
+        }
+        .lixi-btn:hover {
+            transform: scale(1.1);
+            background: #ffd700;
+            color: #d60000;
         }
 
-        /* Animation phóng to thu nhỏ nhẹ cho số năm */
+        /* --- FOOTER GHIM DƯỚI ĐÁY --- */
+        .footer {
+            position: fixed; /* Ghim cứng vào khung hình */
+            bottom: 0;       /* Nằm sát đáy */
+            left: 0;
+            width: 100%;
+            padding: 10px 0; /* Khoảng cách trên dưới */
+            text-align: center;
+            
+            /* Màu nền đen mờ để chữ dễ đọc hơn trên nền pháo hoa */
+            background: rgba(0, 0, 0, 0.6); 
+            backdrop-filter: blur(2px); /* Làm mờ pháo hoa phía sau footer một chút */
+            border-top: 1px solid rgba(255, 255, 255, 0.1); /* Đường viền mờ ngăn cách */
+            
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            z-index: 100; /* Luôn nổi lên trên cùng */
+            pointer-events: auto; /* Để click được link */
+        }
+
+        .footer a {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .footer a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        /* --- Animations --- */
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 40px #ff00de; }
+            20%, 24%, 55% { text-shadow: none; }    
+        }
         @keyframes zoomInOut {
             0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
 
-        /* Responsive cho mobile */
         @media (max-width: 768px) {
             .neon-text { font-size: 2.5rem; }
             .year-text { font-size: 4rem; }
+            .lixi-btn { font-size: 1.2rem; padding: 12px 25px; }
+            .footer { font-size: 0.7rem; padding: 8px 0; }
         }
-
-/* --- CSS Nút Lì Xì --- */
-.lixi-btn {
-    display: inline-block;
-    margin-top: 30px;
-    padding: 15px 40px;
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-decoration: none;
-    color: #ffd700; /* Chữ màu vàng kim */
-    background: #d60000; /* Nền đỏ thắm */
-    border: 2px solid #ffd700;
-    border-radius: 50px; /* Bo tròn nút */
-
-    /* Hiệu ứng phát sáng */
-    box-shadow: 0 0 10px #d60000, 0 0 20px #ffd700;
-    transition: all 0.3s ease;
-
-    /* QUAN TRỌNG: Để click được nút này (vì container đang chặn click) */
-    pointer-events: auto; 
-
-    /* Hiệu ứng rung nhẹ mời gọi */
-    animation: pulse 1.5s infinite;
-}
-
-.lixi-btn:hover {
-    background: #ffd700;
-    color: #d60000;
-    box-shadow: 0 0 30px #ffd700;
-    transform: scale(1.1); /* Phóng to khi di chuột vào */
-}
-
-/* Animation rung nhẹ */
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-/* Chỉnh nhỏ lại trên điện thoại */
-@media (max-width: 768px) {
-    .lixi-btn {
-        font-size: 1.2rem;
-        padding: 12px 25px;
-    }
-}
-
     </style>
 </head>
 <body>
 
-
-<div class="container">
-    <div class="neon-text">Happy New Year</div>
-    <div class="year-text">2026</div>
-
-    <a href="https://nguyenbacson.io.vn/Screenshot_2025-12-18-14-31-02-471_com.ss.android.ugc.trill-edit.jpg" class="lixi-btn" target="_blank">🧧 Giật Lì Xì Ngay 🧧</a>
-</div>
-
+    <div class="container">
+        <div class="neon-text">Happy New Year</div>
+        <div class="year-text">2026</div>
+        
+        <a href="LINK_WEB_LI_XI_CUA_BAN" class="lixi-btn" target="_blank">🧧 Giật Lì Xì Ngay 🧧</a>
+    </div>
 
     <canvas id="canvas"></canvas>
 
+    <div class="footer">
+        Bản quyền © 2025 thuộc về <strong>Nguyen Bac Son</strong> | 
+        <a href="https://nguyenbacson.io.vn/privacy-policy.html" target="_blank">Chính sách bảo mật</a>
+    </div>
+
     <script>
-        /* --- JAVASCRIPT --- */
-        window.requestAnimFrame = (function() {
-            return window.requestAnimationFrame ||
-                window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame ||
-                function(callback) {
-                    window.setTimeout(callback, 1000 / 60);
-                };
-        })();
-
-        var canvas = document.getElementById('canvas'),
-            ctx = canvas.getContext('2d'),
-            cw = window.innerWidth,
-            ch = window.innerHeight,
-            fireworks = [],
-            particles = [],
-            hue = 120,
-            limiterTotal = 5, // Tốc độ bắn (số càng nhỏ bắn càng nhanh)
-            limiterTick = 0,
-            timerTotal = 80, // Định thời gian ngẫu nhiên bắn tự động
-            timerTick = 0,
-            mousedown = false,
-            mx,
-            my;
-
-        canvas.width = cw;
-        canvas.height = ch;
-
-        function random(min, max) {
-            return Math.random() * (max - min) + min;
-        }
-
-        function calculateDistance(p1x, p1y, p2x, p2y) {
-            var xDistance = p1x - p2x,
-                yDistance = p1y - p2y;
-            return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
-        }
-
-        // Class Pháo hoa
-        function Firework(sx, sy, tx, ty) {
-            this.x = sx;
-            this.y = sy;
-            this.sx = sx;
-            this.sy = sy;
-            this.tx = tx;
-            this.ty = ty;
-            this.distanceToTarget = calculateDistance(sx, sy, tx, ty);
-            this.distanceTraveled = 0;
-            this.coordinates = [];
-            this.coordinateCount = 3;
-            while (this.coordinateCount--) {
-                this.coordinates.push([this.x, this.y]);
-            }
-            this.angle = Math.atan2(ty - sy, tx - sx);
-            this.speed = 2;
-            this.acceleration = 1.05;
-            this.brightness = random(50, 70);
-            this.targetRadius = 1;
-        }
-
-        Firework.prototype.update = function(index) {
-            this.coordinates.pop();
-            this.coordinates.unshift([this.x, this.y]);
-
-            if (this.targetRadius < 8) {
-                this.targetRadius += 0.3;
-            } else {
-                this.targetRadius = 1;
-            }
-
-            this.speed *= this.acceleration;
-            var vx = Math.cos(this.angle) * this.speed,
-                vy = Math.sin(this.angle) * this.speed;
-            this.distanceTraveled = calculateDistance(this.sx, this.sy, this.x + vx, this.y + vy);
-
-            if (this.distanceTraveled >= this.distanceToTarget) {
-                createParticles(this.tx, this.ty);
-                fireworks.splice(index, 1);
-            } else {
-                this.x += vx;
-                this.y += vy;
-            }
-        }
-
-        Firework.prototype.draw = function() {
-            ctx.beginPath();
-            ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
-            ctx.lineTo(this.x, this.y);
-            ctx.strokeStyle = 'hsl(' + hue + ', 100%, ' + this.brightness + '%)';
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.arc(this.tx, this.ty, this.targetRadius, 0, Math.PI * 2);
-            ctx.stroke();
-        }
-
-        // Class Hạt nổ
-        function Particle(x, y) {
-            this.x = x;
-            this.y = y;
-            this.coordinates = [];
-            this.coordinateCount = 5;
-            while (this.coordinateCount--) {
-                this.coordinates.push([this.x, this.y]);
-            }
-            this.angle = random(0, Math.PI * 2);
-            this.speed = random(1, 10);
-            this.friction = 0.95;
-            this.gravity = 1;
-            this.hue = random(hue - 50, hue + 50);
-            this.brightness = random(50, 80);
-            this.alpha = 1;
-            this.decay = random(0.015, 0.03);
-        }
-
-        Particle.prototype.update = function(index) {
-            this.coordinates.pop();
-            this.coordinates.unshift([this.x, this.y]);
-            this.speed *= this.friction;
-            this.x += Math.cos(this.angle) * this.speed;
-            this.y += Math.sin(this.angle) * this.speed + this.gravity;
-            this.alpha -= this.decay;
-
-            if (this.alpha <= this.decay) {
-                particles.splice(index, 1);
-            }
-        }
-
-        Particle.prototype.draw = function() {
-            ctx.beginPath();
-            ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
-            ctx.lineTo(this.x, this.y);
-            ctx.strokeStyle = 'hsla(' + this.hue + ', 100%, ' + this.brightness + '%, ' + this.alpha + ')';
-            ctx.stroke();
-        }
-
-        function createParticles(x, y) {
-            var particleCount = 30;
-            while (particleCount--) {
-                particles.push(new Particle(x, y));
-            }
-        }
-
-        // Vòng lặp chính
-        function loop() {
-            requestAnimFrame(loop);
-
-            // Màu nền ngẫu nhiên thay đổi nhẹ để tạo hiệu ứng lung linh
-            hue = random(0, 360);
-
-            ctx.globalCompositeOperation = 'destination-out';
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            ctx.fillRect(0, 0, cw, ch);
-            ctx.globalCompositeOperation = 'lighter';
-
-            var i = fireworks.length;
-            while (i--) {
-                fireworks[i].draw();
-                fireworks[i].update(i);
-            }
-
-            var i = particles.length;
-            while (i--) {
-                particles[i].draw();
-                particles[i].update(i);
-            }
-
-            // TỰ ĐỘNG BẮN PHÁO HOA TẠI ĐÂY
-            if (timerTick >= timerTotal) {
-                // Khi đủ thời gian, bắn pháo hoa
-                fireworks.push(new Firework(cw / 2, ch, random(0, cw), random(0, ch / 2)));
-                timerTick = 0;
-            } else {
-                timerTick++;
-            }
-
-            // Bắn thêm ngẫu nhiên để dày hơn
-            if (limiterTick >= limiterTotal) {
-                if(mousedown) {
-                    fireworks.push(new Firework(cw / 2, ch, mx, my));
-                    limiterTick = 0;
-                } else {
-                    // Tự động bắn thêm ngẫu nhiên kể cả khi không bấm chuột
-                     if(random(0,10) > 8) {
-                         fireworks.push(new Firework(cw / 2, ch, random(0, cw), random(0, ch / 2)));
-                     }
-                }
-            } else {
-                limiterTick++;
-            }
-        }
-
-        // Xử lý sự kiện chuột (vẫn giữ để bạn click nếu thích)
-        canvas.addEventListener('mousemove', function(e) {
-            mx = e.pageX - canvas.offsetLeft;
-            my = e.pageY - canvas.offsetTop;
-        });
-
-        canvas.addEventListener('mousedown', function(e) {
-            e.preventDefault();
-            mousedown = true;
-        });
-
-        canvas.addEventListener('mouseup', function(e) {
-            e.preventDefault();
-            mousedown = false;
-        });
-
-        // Resize canvas khi đổi kích thước màn hình
-        window.onload = loop;
-        window.onresize = function() {
-            cw = window.innerWidth;
-            ch = window.innerHeight;
-            canvas.width = cw;
-            canvas.height = ch;
-        };
+        /* --- JAVASCRIPT PHÁO HOA --- */
+        window.requestAnimFrame=function(){return window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||function(a){window.setTimeout(a,1E3/60)}}();
+        var canvas=document.getElementById("canvas"),ctx=canvas.getContext("2d"),cw=window.innerWidth,ch=window.innerHeight,fireworks=[],particles=[],hue=120,limiterTotal=5,limiterTick=0,timerTotal=80,timerTick=0,mousedown=!1,mx,my;
+        canvas.width=cw;canvas.height=ch;
+        function random(a,b){return Math.random()*(b-a)+a}
+        function calculateDistance(a,b,c,d){return Math.sqrt(Math.pow(a-c,2)+Math.pow(b-d,2))}
+        function Firework(a,b,c,d){this.x=a;this.y=b;this.sx=a;this.sy=b;this.tx=c;this.ty=d;this.distanceToTarget=calculateDistance(a,b,c,d);this.distanceTraveled=0;this.coordinates=[];this.coordinateCount=3;for(;this.coordinateCount--;)this.coordinates.push([this.x,this.y]);this.angle=Math.atan2(d-b,c-a);this.speed=2;this.acceleration=1.05;this.brightness=random(50,70);this.targetRadius=1}
+        Firework.prototype.update=function(a){this.coordinates.pop();this.coordinates.unshift([this.x,this.y]);8>this.targetRadius?this.targetRadius+=.3:this.targetRadius=1;this.speed*=this.acceleration;var b=Math.cos(this.angle)*this.speed,c=Math.sin(this.angle)*this.speed;this.distanceTraveled=calculateDistance(this.sx,this.sy,this.x+b,this.y+c);this.distanceTraveled>=this.distanceToTarget?(createParticles(this.tx,this.ty),fireworks.splice(a,1)):(this.x+=b,this.y+=c)};
+        Firework.prototype.draw=function(){ctx.beginPath();ctx.moveTo(this.coordinates[this.coordinates.length-1][0],this.coordinates[this.coordinates.length-1][1]);ctx.lineTo(this.x,this.y);ctx.strokeStyle="hsl("+hue+", 100%, "+this.brightness+"%)";ctx.stroke();ctx.beginPath();ctx.arc(this.tx,this.ty,this.targetRadius,0,2*Math.PI);ctx.stroke()};
+        function Particle(a,b){this.x=a;this.y=b;this.coordinates=[];this.coordinateCount=5;for(;this.coordinateCount--;)this.coordinates.push([this.x,this.y]);this.angle=random(0,2*Math.PI);this.speed=random(1,10);this.friction=.95;this.gravity=1;this.hue=random(hue-50,hue+50);this.brightness=random(50,80);this.alpha=1;this.decay=random(.015,.03)}
+        Particle.prototype.update=function(a){this.coordinates.pop();this.coordinates.unshift([this.x,this.y]);this.speed*=this.friction;this.x+=Math.cos(this.angle)*this.speed;this.y+=Math.sin(this.angle)*this.speed+this.gravity;this.alpha-=this.decay;this.alpha<=this.decay&&particles.splice(a,1)};
+        Particle.prototype.draw=function(){ctx.beginPath();ctx.moveTo(this.coordinates[this.coordinates.length-1][0],this.coordinates[this.coordinates.length-1][1]);ctx.lineTo(this.x,this.y);ctx.strokeStyle="hsla("+this.hue+", 100%, "+this.brightness+"%, "+this.alpha+")";ctx.stroke()};
+        function createParticles(a,b){for(var c=30;c--;)particles.push(new Particle(a,b))}
+        function loop(){requestAnimFrame(loop);hue=random(0,360);ctx.globalCompositeOperation="destination-out";ctx.fillStyle="rgba(0, 0, 0, 0.5)";ctx.fillRect(0,0,cw,ch);ctx.globalCompositeOperation="lighter";for(var a=fireworks.length;a--;)fireworks[a].draw(),fireworks[a].update(a);for(a=particles.length;a--;)particles[a].draw(),particles[a].update(a);timerTick>=timerTotal?(fireworks.push(new Firework(cw/2,ch,random(0,cw),random(0,ch/2))),timerTick=0):timerTick++;limiterTick>=limiterTotal?(mousedown?(fireworks.push(new Firework(cw/2,ch,mx,my)),limiterTick=0):8<random(0,10)&&fireworks.push(new Firework(cw/2,ch,random(0,cw),random(0,ch/2))),limiterTick=0):limiterTick++}
+        canvas.addEventListener("mousemove",function(a){mx=a.pageX-canvas.offsetLeft;my=a.pageY-canvas.offsetTop});canvas.addEventListener("mousedown",function(a){a.preventDefault();mousedown=!0});canvas.addEventListener("mouseup",function(a){a.preventDefault();mousedown=!1});window.onload=loop;window.onresize=function(){cw=window.innerWidth;ch=window.innerHeight;canvas.width=cw;canvas.height=ch};
     </script>
-<div class="footer">
-    Bản quyền © 2025 thuộc về Nguyen Bac Son | 
-    <a href="https://nguyenbacson.io.vn/privacy-policy.html" target="_blank">Chính sách bảo mật</a>
-</div>
-
 </body>
 </html>
