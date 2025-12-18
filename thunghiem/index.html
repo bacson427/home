@@ -33,7 +33,90 @@
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
 
+body {
+    margin: 0;
+    padding: 0;
+    background: #000; /* Nền đen để pháo hoa nổi bật */
+    overflow: hidden; /* Chặn thanh cuộn */
+}
 
+canvas {
+    display: block;
+    cursor: crosshair;
+}
+
+/* --- Phần chữ Happy New Year --- */
+.container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+    pointer-events: none; /* Click xuyên qua chữ */
+    user-select: none;
+}
+
+.neon-text {
+    font-family: 'Arial', sans-serif;
+    font-size: 5rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    /* Hiệu ứng Neon tím hồng */
+    text-shadow: 
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #ff00de,
+        0 0 40px #ff00de,
+        0 0 80px #ff00de,
+        0 0 90px #ff00de;
+    animation: flicker 1.5s infinite alternate;
+}
+
+.year-text {
+    font-family: 'Arial', sans-serif;
+    font-size: 8rem;
+    font-weight: bold;
+    /* Hiệu ứng màu vàng kim loại */
+    background: linear-gradient(to right, #f8b500, #fceabb, #f8b500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-top: -20px;
+    filter: drop-shadow(0 0 15px rgba(248, 181, 0, 0.8));
+    animation: zoomInOut 3s infinite ease-in-out;
+}
+
+/* Animation nhấp nháy */
+@keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {     
+        text-shadow:
+            0 0 5px #fff,
+            0 0 10px #fff,
+            0 0 20px #ff00de,
+            0 0 40px #ff00de,
+            0 0 80px #ff00de,
+            0 0 90px #ff00de;
+    }
+    20%, 24%, 55% {        
+        text-shadow: none;
+    }    
+}
+
+/* Animation phóng to thu nhỏ */
+@keyframes zoomInOut {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Responsive mobile */
+@media (max-width: 768px) {
+    .neon-text { font-size: 2.5rem; }
+    .year-text { font-size: 4rem; }
+}
+      
 
 
 
@@ -384,18 +467,1902 @@ div:not(.main-content):not(.chat-box):contains("Câu trả lời không đúng")
         transform: scale(2.2) rotate(540deg);
         opacity: 0;
     }
+
+/* ... các quy tắc CSS khác ... */
+        /* Ẩn biểu tượng ngôi nhà (fa-house) */
+.fa-house {
+    display: none;
 }
 
-@keyframes ripple {
-    0% {
-        width: 0;
-        height: 0;
-        opacity: 0.9;
-        transform: translate(-50%, -50%) scale(0.1);
-        border-width: 2px;
+        /* Reset và thiết lập cơ bản */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; 
+            margin: 0; 
+            padding: 50px 0 100px 0;
+            color: #333; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; 
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Profile Card với hiệu ứng ánh sáng */
+        .profile-card {
+            background: black;
+            border-radius: 20px;
+            padding: 40px 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+     profile-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255,255,255,0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite linear;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        /* Tên với hiệu ứng gradient động */
+        .profile-name {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(
+                45deg,
+                #FF6B6B,
+                #4ECDC4,
+                #45B7D1,
+                #96CEB4,
+                #FFEAA7,
+                #DDA0DD,
+                #98D8C8
+            );
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 8s ease infinite;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            letter-spacing: 1px;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* Mô tả nổi bật */
+        .profile-description {
+            font-size: 16px;
+            margin-bottom: 10px; 
+            color: #2c3e50; 
+            line-height: 1.6;
+            font-weight: 600;
+            background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: red;
+            padding: 12px 20px;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            background-image: linear-gradient(blue, green), 
+                              linear-gradient(135deg, #ffeaa7, #fab1a0);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            position: relative;
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                transform: scale(1);
+            }
+            100% {
+                box-shadow: 0 6px 25px rgba(250, 177, 160, 0.3);
+                transform: scale(1.02);
+            }
+        }
+
+        /* Ảnh đại diện với hiệu ứng viền cầu vòng xoay */
+.profile-img-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
+.profile-img { 
+    border-radius: 50%; 
+    width: 140px; 
+    height: 140px; 
+    object-fit: cover; 
+    position: relative;
+    z-index: 2;
+}
+
+.profile-img-border {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid transparent;
+    border-top: 5px solid #ff0000;
+    border-right: 5px solid #ff8000;
+    border-bottom: 5px solid #ffff00;
+    border-left: 5px solid #00ff00;
+    animation: rotate 1.5s linear infinite;
+    z-index: 1;
+}
+
+@keyframes rotate {
+    0% { 
+        transform: rotate(0deg);
+        border-top-color: #ff0000;
+        border-right-color: #ff8000;
+        border-bottom-color: #ffff00;
+        border-left-color: #00ff00;
     }
-    30% {
-        opacity: 0.6;
-        transform: translate(-50%, -50%) scale(0.8);
+    25% {
+        border-top-color: #00ff00;
+        border-right-color: #ff0000;
+        border-bottom-color: #ff8000;
+        border-left-color: #ffff00;
+    }
+    50% {
+        border-top-color: #ffff00;
+        border-right-color: #00ff00;
+        border-bottom-color: #ff0000;
+        border-left-color: #ff8000;
+    }
+    75% {
+        border-top-color: #ff8000;
+        border-right-color: #ffff00;
+        border-bottom-color: #00ff00;
+        border-left-color: #ff0000;
+    }
+    100% { 
+        transform: rotate(360deg);
+        border-top-color: #ff0000;
+        border-right-color: #ff8000;
+        border-bottom-color: #ffff00;
+        border-left-color: #00ff00;
+    }
+}
+        .profile-img::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            z-index: -1;
+            animation: borderGlow 4s ease infinite;
+            opacity: 0.7;
+            filter: blur(8px);
+        }
+.slot-machine {
+    font-family: 'Courier New', monospace;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ff6b6b;
+    background: #2d3436;
+    padding: 15px 25px;
+    border-radius: 10px;
+    border: 3px solid #ff6b6b;
+    display: inline-block;
+    text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+    letter-spacing: 3px;
+}
+
+.slot-rolling {
+    animation: roll 0.1s infinite;
+}
+
+@keyframes roll {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+}
+
+.final-date {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+    transform: scale(1.05);
+    transition: all 0.5s ease;
+}
+.footer {
+    background-color: #f8f9fa;
+    padding: 15px 20px;
+    border-top: 1px solid #e9ecef;
+    text-align: center;
+    font-size: 14px;
+    color: #6c757d;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.footer a {
+    color: #007bff;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+body {
+    margin-bottom: 70px;
+}
+    </style>
+<!-- Meta tags hiện tại của bạn -->
+<link rel="icon" type="image/png" href="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png">
+<link rel="shortcut icon" href="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png">
+
+<!-- THÊM DÒNG NÀY (thay YOUR_VERIFICATION_CODE bằng code Google cho) -->
+<meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" />
+
+<!-- Các meta tags khác -->
+<meta property="og:image" content="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png">
+</head>
+<body>
+
+<div class="fullscreen-bubbles"></div>
+  <div class="container">
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <img src="nguyen-bac-son-cover.png"
+     alt="Anh đại diện" 
+     class="profile-img rainbow-effect">
+            <h1 class="profile-name">NGUYEN BAC SON</h1>
+<!-- CHỈ THÊM CLASS - KHÔNG THAY ĐỔI AVATAR -->
+            <p class="profile-description">The process is being updated. Thank you.♥️</p>
+        </div>
+
+<!-- Chỉ cần copy thẻ này -->
+<span class="counter-number slot-machine">00 00 0000</span>
+        </div>
+
+ <!-- THAY THẾ TOÀN BỘ PHẦN MUSIC HIỆN TẠI -->
+<div class="music-container">
+  <div class="music-section">
+    <h4>🎧Nguyen Bac Son Music🎶</h4>
+    <audio controls class="music-player">
+      <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+</div>
+<!-- Footer -->
+<div class="footer">
+    Bản quyền © 2025 thuộc về Nguyen Bac Son 
+    <a href="https://nguyenbacson.io.vn/privacy-policy.html">Chính sách bảo mật</a>
+</div>
+            <!-- Links Container -->
+    <div class="links-container">
+        <a href="https://drive.google.com/file/d/14Wbb0Nm4LveABnwLsz0x39aqwsmBZR2g/view?usp=drivesdk" class="link-button color-1">
+            <img src="a6cef8fb-f306-492b-8e7a-76e533d3582c_image.jpeg" class="link-icon" alt="Yearbook Icon">
+            <span class="link-text">High school yearbook</span>
+        </a>
+
+        <a href="https://www.facebook.com/bacson.427" class="link-button color-2">
+            <img src="6aa41df5-0183-4ade-9361-637adf912356_image.jpeg" class="link-icon" alt="Facebook Icon">
+            <span class="link-text">Facebook</span>
+        </a>
+      <a href="https://www.threads.com/@nguyenbacson427" class="link-button color-15">
+            <img src="Screenshot_2025-10-25-00-42-16-241_com.android.vending-edit.jpg" class="link-icon" alt="Thread Icon">
+            <span class="link-text">Thread</span>
+      </a>
+
+        <a href="mailto:bacson20062007@gmail.com" class="link-button color-3">
+            <img src="ee560656-c979-4486-b84d-5cdb83ba1ce2_image.jpeg" class="link-icon" alt="Gmail Icon">
+            <span class="link-text">Gmail</span>
+        </a>
+
+        <a href="https://drive.google.com/file/d/1r0DSmrze55PgSj2dVuB2yDyFpXqzmSB7/view?usp=drivesdk" class="link-button color-4">
+            <img src="508cc1ae-5081-4092-9f5f-2883aeb3a2a2_image.jpeg" class="link-icon" alt="Phone Icon">
+            <span class="link-text">Số điện thoại</span>
+        </a>
+                <a href="https://www.tiktok.com/@bacson_427" class="link-button color-5">
+            <img src="1f9a419d-f112-4727-824b-784f4c164253_image.jpeg" class="link-icon" alt="TikTok Icon">
+            <span class="link-text">TikTok</span>
+        </a>
+
+        <a href="https://locket.cam/bacson.427" class="link-button color-6">
+            <img src="a4da9cc0-6c4d-4dd5-97b8-67840fe2f8d8_image.jpeg" class="link-icon" alt="Locket Icon"> 
+            <span class="link-text">Locket</span>
+        </a>
+
+        <a href="https://drive.google.com/file/d/1EAo3HTYaUCl4cgAQXTp9ZMr5hNW9ihG_/view" class="link-button color-7">
+            <img src="b1c927f8-c382-44f2-878b-f37117b2b97b_image.jpeg" class="link-icon" alt="WeChat Icon">
+            <span class="link-text">WeChat</span>
+        </a>
+
+        <a href="https://www.duolingo.com/profile/bacson_427?via=share_profile_link" class="link-button color-8">
+            <img src="image2.jpeg" class="link-icon" alt="Duolingo Icon">
+            <span class="link-text">Duolingo</span>
+        </a>
+
+        <a href="https://zaloapp.com/qr/p/13gt23dbftkk0" class="link-button color-9">
+            <img src="image2 (1).jpeg" class="link-icon" alt="Zalo Icon">
+            <span class="link-text">Zalo</span>
+        </a>
+
+        <a href="https://api.whatsapp.com/send/?phone=84347432736" class="link-button color-10">
+            <img src="2a83bc9d-7275-4dc5-94d9-4650cd0d4720_image.jpeg" class="link-icon" alt="WhatsApp Icon">
+            <span class="link-text">WhatsApp</span>
+        </a>
+
+        <a href="http://t.me/bacson_427" class="link-button color-11">
+            <img src="00fb1b75-6f9b-478c-83ef-157b0c4c643a_image.jpeg" class="link-icon" alt="Telegram Icon">
+            <span class="link-text">Telegram</span>
+        </a>
+
+        <a href="https://www.facebook.com/share/15LYpoEpKW/" class="link-button color-12">
+            <img src="7981e36e-2135-4984-9db4-aada7f4cf512_451092928-122126210678315205-5147074455930422218-n.jpeg" class="link-icon" alt="Fanpage Icon">
+            <span class="link-text">Fanpage</span>
+        </a>
+
+        <a href="https://share.jagat.io/u/RnabNgt7oC" class="link-button color-13">
+            <img src="de1c5be5-95a8-4c9b-a682-c4d9c6907656_image.jpeg" class="link-icon" alt="Jagat Icon">
+            <span class="link-text">Jagat</span>
+        </a>
+
+        <a href="https://nguyenbacson427.blogspot.com/2025/05/bacson.427.html" class="link-button color-14">
+            <img src="a7d0a7ad-a0cc-4f12-beed-67213000f013_og-image.jpeg" class="link-icon" alt="Blog Icon">
+            <span class="link-text">Grade 12 Learning Process</span>
+        </a>
+    </div>
+</div>
+
+<style>
+    /* Links Container */
+    .links-container {
+        background: white;
+        border-radius: 20px;
+        padding: 30px 25px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+
+    .link-button {
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+        width: 100%;
+        margin: 12px auto; 
+        padding: 16px 20px; 
+        color: white; 
+        text-decoration: none;
+        border-radius: 15px; 
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15); 
+        position: relative; 
+        border: none;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .link-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .link-button:hover::before {
+        left: 100%;
+    }
+
+    .link-button:hover { 
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .link-icon {
+        width: 35px; 
+        height: 35px;
+        object-fit: contain; 
+        border-radius: 50%; 
+        padding: 3px; 
+        background: white;
+        flex-shrink: 0; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .link-button:hover .link-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .link-text {
+        flex: 1;
+        text-align: center;
+        padding: 0 20px;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+    }
+
+    /* MÀU NÚT */
+.color-1 { background-color: #FF6B6B; } 
+.color-2 { background-color: #FFC300; } 
+.color-3 { background-color: #0A6FA7; color: white ; } 
+.color-4 { background-color: #4ECDC4; } 
+.color-5 { background-color: #AF33FF; } 
+.color-6 { background-color: #FF33A1; } 
+.color-7 { background-color: #33FFF6; color: white; } 
+.color-8 { background-color: #7A33FF; } 
+.color-9 { background-color: #FF7A33; } 
+.color-10 { background-color: #33A1FF; } 
+.color-11 { background-color: #00CC66; } 
+.color-12 { background-color: #FF3333; } 
+.color-13 { background-color: #2C3E50; color: white; } 
+.color-14 { background-color: #95A5A6; }
+.color-15 { background-color: #67A5E8; }
+
+    </style>
+<style>
+
+     /* Links Container */
+    .links-container {
+        background: white;
+        border-radius: 20px;
+        padding: 30px 25px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+
+    .link-button {
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+        width: 100%;
+        margin: 12px auto; 
+        padding: 16px 20px; 
+        color: white; 
+        text-decoration: none;
+        border-radius: 15px; 
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15); 
+        position: relative; 
+        border: none;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .link-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .link-button:hover::before {
+        left: 100%;
+    }
+
+    .link-button:hover { 
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .link-icon {
+        width: 35px; 
+        height: 35px;
+        object-fit: contain; 
+        border-radius: 50%; 
+        padding: 3px; 
+        background: white;
+        flex-shrink: 0; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .link-button:hover .link-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .link-text {
+        flex: 1;
+        text-align: center;
+        padding: 0 20px;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+    }
+
+    /* BUTTON COLORS */
+.color-1 { background-color: #FF6B6B; } 
+.color-2 { background-color: #FFC300; } 
+.color-3 { background-color: #0A6FA7; color: white; } 
+.color-4 { background-color: #4ECDC4; } 
+.color-5 { background-color: #AF33FF; } 
+.color-6 { background-color: #FF33A1; } 
+.color-7 { background-color: #33FFF6; color: white; } 
+.color-8 { background-color: #7A33FF; } 
+.color-9 { background-color: #FF7A33; } 
+.color-10 { background-color: #33A1FF; } 
+.color-11 { background-color: #00CC66; } 
+.color-12 { background-color: #FF3333; } 
+.color-13 { background-color: #2C3E50; color: white; } 
+.color-14 { background-color: #95A5A6; }
+.color-15 { background-color: #67A5E8; }
+
+    </style>
+    <!-- AI ASSISTANT WIDGET -->
+<div id="ai-assistant-widget">
+    <button onclick="toggleAIChat()" class="ai-button">
+        💬
+    </button>
+
+    <div id="ai-chat-container">
+        <!-- Verification Overlay -->
+        <div id="verification-overlay" class="verification-overlay">
+            <div class="verification-box">
+                <div class="verification-title">🤖 User Verification</div>
+                <div class="verification-question" id="verification-question"></div>
+                <input type="text" id="verification-answer" class="verification-input" placeholder="Enter result" maxlength="3">
+                <button onclick="verifyHuman()" class="verify-btn">VERIFY</button>
+                <div id="error-message" class="error-message">❌ Incorrect answer. Please try again!</div>
+                <div class="rate-limit-info">Anti-bot & spam protection system</div>
+            </div>
+        </div>
+
+        <div class="ai-chat-header">
+            <strong>🤖 AI Assistant</strong>
+            <div>Virtual Assistant of Nguyen Bac Son</div>
+   <button class="close-btn" onclick="toggleAIChat()">×</button>
+        </div>
+
+        <div class="ai-chat-body" id="ai-chat-messages">
+            <div class="chat-message ai-message">
+                <div class="message-bubble">
+                    <strong>Hello! I'm 🤖 AI Assistant - Virtual Assistant of Nguyen Bac Son</strong><br><br>
+                    I can help you learn about:<br>
+                    • Personal information<br>
+                    • Education & major<br>
+                    • Skills & experience<br>
+                    • Contact & social media<br>
+                    • Hobbies & projects<br><br>
+                    <em>Choose from the pre-made questions below!</em>
+                    <div class="message-time">System: 🤖 AI Assistant - Virtual Assistant of Nguyen Bac Son uses AI-Powered Security System + Cloudflare + Tenten🛡️ to enhance security for both website and users 🧑‍💻.</div>
+                </div>
+            </div>
+
+            <!-- Quick Questions -->
+            <div style="margin-top: 20px;">
+                <div class="quick-question" onclick="askQuickQuestion('Introduce Nguyen Bac Son')">
+                    🤵 Introduce Nguyen Bac Son
+                </div>
+                <div class="quick-question" onclick="askQuickQuestion('Education and Industrial Electrical major')">
+                    🎓 Education and Industrial Electrical major
+                </div>
+                <div class="quick-question" onclick="askQuickQuestion('Contact information')">
+                    📞 Contact information
+                </div>
+                <div class="quick-question" onclick="askQuickQuestion('Skills and hobbies')">
+                    💼 Skills and hobbies
+                </div>
+                <div class="quick-question" onclick="askQuickQuestion('Social media and projects')">
+                    🌐 Social media and projects
+                </div>
+            </div>
+
+            <!-- Spam Warning -->
+            <div id="spam-warning" class="spam-warning">
+                ⚠️ <strong>SPAM DETECTED:</strong> Please wait <span id="countdown">30</span> seconds before sending next message.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* AI Widget */
+    #ai-assistant-widget {
+        position: fixed; 
+        bottom: 25px; 
+        right: 25px; 
+        z-index: 10000;
+    }
+
+    #ai-chat-container {
+        position: absolute; 
+        bottom: 80px; 
+        right: 0; 
+        width: 400px;
+        height: 650px;
+        background: white; 
+        border-radius: 20px; 
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
+        display: none;
+        overflow: hidden;
+        border: 3px solid transparent;
+        background-clip: padding-box;
+        position: relative;
+    }
+
+    #ai-chat-container::before {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
+        background-size: 400% 400%;
+        border-radius: 23px;
+        z-index: -1;
+        animation: borderGlow 4s ease infinite;
+    }
+
+    #ai-chat-container.active {
+        display: block;
+    }
+
+    .ai-button {
+        background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
+        background-size: 400% 400%;
+        color: white;
+        border: none;
+        padding: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 28px;
+        width: 75px;
+        height: 75px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+        animation: buttonGlow 4s ease infinite;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ai-button::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: inherit;
+        border-radius: 50%;
+        z-index: -1;
+        filter: blur(10px);
+        opacity: 0.7;
+        animation: buttonGlow 4s ease infinite;
+    }
+
+    @keyframes buttonGlow {
+        0% {
+            background-position: 0% 50%;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        50% {
+            background-position: 100% 50%;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+        }
+        100% {
+            background-position: 0% 50%;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+    }
+
+    .ai-button:hover {
+        transform: scale(1.15) rotate(5deg);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+    }
+      /* AI Chat Interface */
+    .ai-chat-header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 25px;
+        text-align: center;
+        border-radius: 17px 17px 0 0;
+        position: relative;
+    }
+
+    .ai-chat-header strong {
+        font-size: 20px;
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 700;
+    }
+
+    .ai-chat-header div {
+        font-size: 13px;
+        opacity: 0.9;
+        font-weight: 500;
+    }
+
+    .ai-chat-body {
+        height: calc(100% - 150px);
+        padding: 25px;
+        overflow-y: auto;
+        background: #f8fafc;
+    }
+
+    .chat-message {
+        margin-bottom: 18px;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .chat-message.user {
+        justify-content: flex-end;
+    }
+   .message-bubble {
+        max-width: 80%;
+        padding: 14px 18px;
+        border-radius: 20px;
+        font-size: 14px;
+        line-height: 1.6;
+        position: relative;
+    }
+
+    .ai-message .message-bubble {
+        background: white;
+        border: 1px solid #e5e7eb;
+        color: #374151;
+        border-bottom-left-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .user-message .message-bubble {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-bottom-right-radius: 8px;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .message-time {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 6px;
+        opacity: 0.7;
+    }
+
+    .quick-question {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin: 10px 0;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 14px;
+        text-align: center;
+        font-weight: 600;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .quick-question:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        background: linear-gradient(135deg, #764ba2, #667eea);
+    }
+
+    /* Verification */
+    .verification-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255,255,255,0.98);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 20;
+        padding: 30px;
+    }
+
+    .verification-box {
+        background: white;
+        padding: 35px;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        text-align: center;
+        max-width: 340px;
+        border: 3px solid transparent;
+        background-clip: padding-box;
+        position: relative;
+    }
+
+    .verification-box::before {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 23px;
+        z-index: -1;
+    }
+
+    .verification-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .verification-question {
+        font-size: 20px;
+        margin: 25px 0;
+        color: #2c3e50;
+        font-weight: 700;
+    }
+
+    .verification-input {
+        width: 130px;
+        padding: 14px;
+        font-size: 20px;
+        text-align: center;
+        border: 3px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    }
+
+    .verification-input:focus {
+        border-color: #667eea;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: scale(1.05);
+    }
+
+    .verify-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 14px 35px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        transition: all 0.3s;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .verify-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .error-message {
+        color: #e74c3c;
+        font-size: 14px;
+        margin-top: 15px;
+        display: none;
+        font-weight: 600;
+    }
+
+    .close-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        font-size: 22px;
+        cursor: pointer;
+        padding: 10px;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+
+    .close-btn:hover {
+        background: rgba(255,255,255,0.3);
+        transform: scale(1.1);
+    }
+
+    .spam-warning {
+        background: #ffeaa7;
+        color: #d63031;
+        padding: 12px;
+        border-radius: 10px;
+        margin: 12px 0;
+        font-size: 13px;
+        border: 2px solid #fab1a0;
+        display: none;
+        font-weight: 600;
+    }
+
+    .rate-limit-info {
+        font-size: 12px;
+        color: #666;
+        margin-top: 15px;
+        text-align: center;
+        font-weight: 500;
+    }
+</style>
+<script>
+    // Security system
+    const security = {
+        isVerified: false,
+        currentQuestion: {},
+        spam: {
+            lastMessage: 0,
+            messageCount: 0,
+            isBlocked: false,
+            blockUntil: 0
+        }
+    };
+
+    // Create verification question
+    function createVerification() {
+        const num1 = Math.floor(Math.random() * 8) + 2;
+        const num2 = Math.floor(Math.random() * 8) + 2;
+        const operators = ['+', '-', '*'];
+        const operator = operators[Math.floor(Math.random() * operators.length)];
+
+        let question = '';
+        let answer = '';
+
+        switch(operator) {
+            case '+':
+                question = `${num1} + ${num2} = ?`;
+                answer = (num1 + num2).toString();
+                break;
+            case '-':
+                const larger = Math.max(num1, num2);
+                const smaller = Math.min(num1, num2);
+                question = `${larger} - ${smaller} = ?`;
+                answer = (larger - smaller).toString();
+                break;
+            case '*':
+                question = `${num1} × ${num2} = ?`;
+                answer = (num1 * num2).toString();
+                break;
+        }
+
+        return { question, answer };
+    }
+
+    // Show verification
+    function showVerification() {
+        security.currentQuestion = createVerification();
+        document.getElementById('verification-question').textContent = security.currentQuestion.question;
+        document.getElementById('verification-answer').value = '';
+        document.getElementById('error-message').style.display = 'none';
+        document.getElementById('verification-overlay').style.display = 'flex';
+
+        setTimeout(() => {
+            document.getElementById('verification-answer').focus();
+        }, 100);
+    }
+
+    function hideVerification() {
+        document.getElementById('verification-overlay').style.display = 'none';
+    }
+
+    // Verify user
+    function verifyHuman() {
+        const userAnswer = document.getElementById('verification-answer').value.trim();
+        const correctAnswer = security.currentQuestion.answer;
+
+        if (userAnswer === correctAnswer) {
+            security.isVerified = true;
+            hideVerification();
+            addMessage("✅ 🤖 AI Assistant - Virtual Assistant of Nguyen Bac Son is ready.", 'ai');
+        } else {
+            document.getElementById('error-message').style.display = 'block';
+            document.getElementById('verification-answer').value = '';
+            document.getElementById('verification-answer').focus();
+        }
+    }
+// Check spam
+    function checkSpam() {
+        const now = Date.now();
+
+        if (security.spam.isBlocked) {
+            if (now < security.spam.blockUntil) {
+                const timeLeft = Math.ceil((security.spam.blockUntil - now) / 1000);
+                showSpamWarning(timeLeft);
+                return true;
+            } else {
+                security.spam.isBlocked = false;
+                security.spam.messageCount = 0;
+                hideSpamWarning();
+            }
+        }
+
+        const timeSinceLast = now - security.spam.lastMessage;
+
+        if (timeSinceLast < 2000) {
+            security.spam.messageCount++;
+
+            if (security.spam.messageCount >= 3) {
+                security.spam.isBlocked = true;
+                security.spam.blockUntil = now + 30000;
+                showSpamWarning(30);
+                return true;
+            }
+        } else {
+            security.spam.messageCount = 0;
+        }
+
+        security.spam.lastMessage = now;
+        return false;
+    }
+
+    // Show spam warning
+    function showSpamWarning(seconds) {
+        const warning = document.getElementById('spam-warning');
+        const countdown = document.getElementById('countdown');
+        countdown.textContent = seconds;
+        warning.style.display = 'block';
+
+        const interval = setInterval(() => {
+            seconds--;
+            countdown.textContent = seconds;
+
+            if (seconds <= 0) {
+                clearInterval(interval);
+                if (!security.spam.isBlocked) {
+                    hideSpamWarning();
+                }
+            }
+        }, 1000);
+    }
+
+    function hideSpamWarning() {
+        document.getElementById('spam-warning').style.display = 'none';
+    }
+
+    // AI Assistant functions
+    function toggleAIChat() {
+        const chatContainer = document.getElementById('ai-chat-container');
+        const isActive = chatContainer.classList.contains('active');
+
+        if (!isActive) {
+            chatContainer.classList.add('active');
+            if (!security.isVerified) {
+                showVerification();
+            }
+        } else {
+            chatContainer.classList.remove('active');
+        }
+    }
+
+    function askQuickQuestion(question) {
+        if (!security.isVerified) {
+            showVerification();
+            return;
+        }
+
+        if (checkSpam()) {
+            return;
+        }
+
+        addMessage(question, 'user');
+        showTypingIndicator();
+
+        setTimeout(() => {
+            removeTypingIndicator();
+            const response = getAIResponse(question);
+            addMessage(response, 'ai');
+        }, 1000 + Math.random() * 1000);
+  }
+  
+    function addMessage(text, sender) {
+        const chatMessages = document.getElementById('ai-chat-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${sender}-message`;
+
+        const time = new Date().toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+
+        messageDiv.innerHTML = `
+            <div class="message-bubble">
+                ${text.replace(/\n/g, '<br>')}
+                <div class="message-time">${time}</div>
+            </div>
+        `;
+
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+        const chatMessages = document.getElementById('ai-chat-messages');
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typing-indicator';
+        typingDiv.className = 'chat-message ai-message';
+        typingDiv.innerHTML = `
+            <div class="message-bubble">
+                <div class="ai-typing">
+                    Typing
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+        const typingIndicator = document.getElementById('typing-indicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
+    }
+
+    function getAIResponse(userMessage) {
+        const lowerMessage = userMessage.toLowerCase();
+
+        if (lowerMessage.includes('introduce') || lowerMessage.includes('bac son') || lowerMessage.includes('name')) {
+            return `🤵 <strong>PERSONAL INFORMATION</strong>\n\n• <strong>Full name:</strong> Nguyen Bac Son\n• <strong>Year of birth:</strong> 2007\n• <strong>Hometown:</strong> Hai Duong (now Hai Phong)\n• <strong>Current location:</strong> Hanoi\n• <strong>Education level:</strong> Vocational college students\n\nCurrently a student majoring in Industrial Electrical Engineering.`;
+        }
+        else if (lowerMessage.includes('education') || lowerMessage.includes('industrial electrical') || lowerMessage.includes('school') || lowerMessage.includes('hactech')) {
+            return `🎓 <strong>EDUCATION & MAJOR</strong>\n\n• <strong>School:</strong> Hanoi Polytechnic Vocational College - HACTECH\n• <strong>Affiliated with:</strong> Hanoi University of Science and Technology - HUST\n• <strong>Major:</strong> Industrial Electrical Engineering\n• <strong>Study areas:</strong>\n  - Industrial electrical systems\n  - Power electronics\n  - Electrical safety\n\nCurrently studying Industrial Electrical Engineering.`;
+        }
+        else if (lowerMessage.includes('contact') || lowerMessage.includes('phone') || lowerMessage.includes('number')) {
+            return `📞 <strong>CONTACT INFORMATION</strong>\n\n• <strong>Phone number:</strong> https://bit.ly/sodienthoai-nguyenbacson\n• <strong>Email:</strong> bacson20062007@gmail.com\n• <strong>Address:</strong> Hanoi, Vietnam\n\nContact via phone number or email.`;
+        }
+        else if (lowerMessage.includes('skill') || lowerMessage.includes('hobby') || lowerMessage.includes('experience')) {
+            return `💼 <strong>SKILLS & HOBBIES</strong>\n\n<strong>Professional skills:</strong>\n• Industrial electricity\n• Basic programming\n• Technical software usage\n• Occupational safety\n\n<strong>Hobbies:</strong>\n• Technology\n• Music\n• Video games`;
+        }
+        else if (lowerMessage.includes('social media') || lowerMessage.includes('facebook') || lowerMessage.includes('tiktok') || lowerMessage.includes('project') || lowerMessage.includes('link')) {
+            return `🌐 <strong>SOCIAL MEDIA & PROJECTS</strong>\n\n<strong>Connect with me through:</strong>\n• Facebook: facebook.com/bacson.427\n• TikTok: @bacson_427\n• Gmail: bacson20062007@gmail.com\n• Telegram: t.me/bacson_427\n• WhatsApp: https://bit.ly/whatsappnguyenbacson\n\n<strong>All links:</strong>\nhttps://nguyenbacson.io.vn/\n\nAll information and social media links are available in the link above.`;
+        }
+        else if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
+            return "Hello! I'm AI Assistant of Nguyen Bac Son. I can help you learn about:\n\n• Personal information\n• Education & Industrial Electrical major\n• Skills & hobbies\n• Contact information\n• Social media\n\nPlease choose from the pre-made questions.";
+        }
+        else if (lowerMessage.includes('thank')) {
+            return "You're welcome!";
+        }
+        else if (lowerMessage.includes('bye') || lowerMessage.includes('goodbye')) {
+            return "Goodbye!";
+        }
+        else {
+            return "I can help you learn about Nguyen Bac Son:\n\n• Personal information & education\n• Industrial Electrical Engineering major\n• Skills & experience\n• Contact information\n• Social media & projects\n\nPlease choose from the pre-made questions.";
+        }
+    }
+
+    // Event handling
+    document.addEventListener('click', function(event) {
+        const chatContainer = document.getElementById('ai-chat-container');
+        const aiButton = document.querySelector('#ai-assistant-widget button');
+        const verificationOverlay = document.getElementById('verification-overlay');
+
+        if (chatContainer.classList.contains('active') && 
+            !chatContainer.contains(event.target) && 
+            !aiButton.contains(event.target) &&
+            !verificationOverlay.contains(event.target)) {
+            chatContainer.classList.remove('active');
+        }
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            document.getElementById('ai-chat-container').classList.remove('active');
+        }
+    });
+
+    document.getElementById('verification-answer').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            verifyHuman();
+        }
+    });
+        // Khởi tạo
+        document.getElementById('verification-overlay').style.display = 'none';
+        document.getElementById('spam-warning').style.display = 'none';
+
+        console.log('🚀 Website đã sẵn sàng với đầy đủ tính năng!');
+
+
+// Khởi tạo
+document.getElementById('verification-overlay').style.display = 'none';
+document.getElementById('spam-warning').style.display = 'none';
+
+console.log('Website đã sẵn sàng với đầy đủ tính năng!');
+
+function slotMachineToDate(element) {
+    const counterElement = document.querySelector(element);
+    const finalDate = "04 02 2007";
+    let rolls = 0;
+    const maxRolls = 35;
+
+    counterElement.classList.add('slot-rolling');
+
+    const slotInterval = setInterval(() => {
+        // Tạo số ngẫu nhiên với format "00 00 0000"
+        const randomDate = 
+            Math.floor(Math.random() * 100).toString().padStart(2, '0') + " " +
+            Math.floor(Math.random() * 100).toString().padStart(2, '0') + " " +
+            Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+
+        counterElement.textContent = randomDate;
+        rolls++;
+
+        // Dừng slot machine và hiển thị "04 02 2007"
+        if (rolls >= maxRolls) {
+            clearInterval(slotInterval);
+            counterElement.classList.remove('slot-rolling');
+
+            // Hiệu ứng gõ từng ký tự
+            let currentDisplay = "";
+            let charIndex = 0;
+
+            const typeInterval = setInterval(() => {
+                currentDisplay += finalDate[charIndex];
+                counterElement.textContent = currentDisplay;
+                charIndex++;
+                if (charIndex >= finalDate.length) {
+                    clearInterval(typeInterval);
+                    // Hiệu ứng hoàn thành
+                    counterElement.classList.add('final-date');
+
+                    // Thêm hiệu ứng nhấp nháy
+                    setTimeout(() => {
+                        counterElement.style.animation = 'pulse 0.5s 3';
+                    }, 500);
+                }
+            }, 120);
+        }
+    }, 90);
+}
+
+// Start 
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+`;
+document.head.appendChild(style);
+
+// Gọi function khi trang load
+document.addEventListener('DOMContentLoaded', function() {
+    slotMachineToDate('.slot-machine');
+});
+
+class SmoothBubbleWorld {
+    constructor() {
+        this.container = document.querySelector('.fullscreen-bubbles');
+        this.bubbles = new Set();
+        this.maxBubbles = 15; // Giảm số lượng bong bóng tối đa
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.startGentleAnimation();
+        this.createInitialBubbles();
+    }
+
+    setupEventListeners() {
+        // Click to create bubble
+        this.container.addEventListener('click', (e) => {
+            if (e.target === this.container && this.bubbles.size < this.maxBubbles) {
+                this.createBubbleAtPosition(e.clientX, e.clientY);
+            }
+        });
+
+        // Touch to create bubble
+        this.container.addEventListener('touchstart', (e) => {
+            if (e.target === this.container && this.bubbles.size < this.maxBubbles) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                this.createBubbleAtPosition(touch.clientX, touch.clientY);
+            }
+        }, { passive: false });
+    }
+
+    createBubble() {
+        if (this.bubbles.size >= this.maxBubbles) return null;
+
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+
+        // Properties được tối ưu cho độ mượt
+        const size = this.getSmoothSize();
+        const speed = this.getSmoothSpeed();
+        const opacity = 0.6 + Math.random() * 0.3;
+
+        bubble.style.width = size + 'px';
+        bubble.style.height = size + 'px';
+        bubble.style.left = Math.random() * 100 + '%';
+        bubble.style.animationDuration = speed + 's';
+        bubble.style.animationDelay = (Math.random() * 1.5) + 's';
+
+        // Gradient mượt mà hơn
+        bubble.style.background = `radial-gradient(circle at 30% 30%, 
+            rgba(255, 255, 255, ${opacity}),
+            rgba(255, 255, 255, ${opacity * 0.35})
+        )`;
+
+        const handleInteraction = (e) => {
+            e.stopPropagation();
+            this.popBubble(bubble);
+        };
+
+        bubble.addEventListener('click', handleInteraction);
+        bubble.addEventListener('touchstart', handleInteraction, { passive: true });
+
+        this.container.appendChild(bubble);
+        this.bubbles.add(bubble);
+
+        // Auto remove
+        setTimeout(() => {
+            this.removeBubble(bubble);
+        }, (speed + 2) * 1000);
+
+        return bubble;
+    }
+
+    createBubbleAtPosition(x, y) {
+        if (this.bubbles.size >= this.maxBubbles) return;
+
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+
+        const size = this.getSmoothSize();
+        bubble.style.width = size + 'px';
+        bubble.style.height = size + 'px';
+        bubble.style.left = x + 'px';
+        bubble.style.bottom = (window.innerHeight - y) + 'px';
+        bubble.style.animationDuration = '12s'; // Chậm hơn để mượt
+        bubble.style.animationDelay = '0s';
+
+        const handleInteraction = (e) => {
+            e.stopPropagation();
+            this.popBubble(bubble);
+        };
+
+        bubble.addEventListener('click', handleInteraction);
+        bubble.addEventListener('touchstart', handleInteraction, { passive: true });
+
+
+// Polyfill cho requestAnimationFrame
+window.requestAnimFrame = (function() {
+    return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        function(callback) {
+            window.setTimeout(callback, 1000 / 60);
+        };
+})();
+
+// Khởi tạo các biến cơ bản
+var canvas = document.getElementById('canvas'),
+    ctx = canvas.getContext('2d'),
+    cw = window.innerWidth,
+    ch = window.innerHeight,
+    fireworks = [],
+    particles = [],
+    hue = 120,
+    limiterTotal = 5,
+    limiterTick = 0,
+    timerTotal = 80, 
+    timerTick = 0,
+    mousedown = false,
+    mx,
+    my;
+
+// Set kích thước canvas full màn hình
+canvas.width = cw;
+canvas.height = ch;
+
+// Hàm tiện ích random
+function random(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+// Hàm tính khoảng cách
+function calculateDistance(p1x, p1y, p2x, p2y) {
+    var xDistance = p1x - p2x,
+        yDistance = p1y - p2y;
+    return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
+}
+
+// --- LỚP ĐỐI TƯỢNG PHÁO HOA ---
+function Firework(sx, sy, tx, ty) {
+    this.x = sx;
+    this.y = sy;
+    this.sx = sx;
+    this.sy = sy;
+    this.tx = tx;
+    this.ty = ty;
+    this.distanceToTarget = calculateDistance(sx, sy, tx, ty);
+    this.distanceTraveled = 0;
+    this.coordinates = [];
+    this.coordinateCount = 3;
+    while (this.coordinateCount--) {
+        this.coordinates.push([this.x, this.y]);
+    }
+    this.angle = Math.atan2(ty - sy, tx - sx);
+    this.speed = 2;
+    this.acceleration = 1.05;
+    this.brightness = random(50, 70);
+    this.targetRadius = 1;
+}
+
+Firework.prototype.update = function(index) {
+    this.coordinates.pop();
+    this.coordinates.unshift([this.x, this.y]);
+
+    if (this.targetRadius < 8) {
+        this.targetRadius += 0.3;
+    } else {
+        this.targetRadius = 1;
+    }
+
+    this.speed *= this.acceleration;
+    var vx = Math.cos(this.angle) * this.speed,
+        vy = Math.sin(this.angle) * this.speed;
+    this.distanceTraveled = calculateDistance(this.sx, this.sy, this.x + vx, this.y + vy);
+
+    if (this.distanceTraveled >= this.distanceToTarget) {
+        createParticles(this.tx, this.ty);
+        fireworks.splice(index, 1);
+    } else {
+        this.x += vx;
+        this.y += vy;
+    }
+}
+
+Firework.prototype.draw = function() {
+    ctx.beginPath();
+    ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+    ctx.lineTo(this.x, this.y);
+    ctx.strokeStyle = 'hsl(' + hue + ', 100%, ' + this.brightness + '%)';
+    ctx.stroke();
     
-        border-width: 1.5px;
+    ctx.beginPath();
+    ctx.arc(this.tx, this.ty, this.targetRadius, 0, Math.PI * 2);
+    ctx.stroke();
+}
+
+// --- LỚP ĐỐI TƯỢNG HẠT NỔ ---
+function Particle(x, y) {
+    this.x = x;
+    this.y = y;
+    this.coordinates = [];
+    this.coordinateCount = 5;
+    while (this.coordinateCount--) {
+        this.coordinates.push([this.x, this.y]);
+    }
+    this.angle = random(0, Math.PI * 2);
+    this.speed = random(1, 10);
+    this.friction = 0.95;
+    this.gravity = 1;
+    this.hue = random(hue - 50, hue + 50);
+    this.brightness = random(50, 80);
+    this.alpha = 1;
+    this.decay = random(0.015, 0.03);
+}
+
+Particle.prototype.update = function(index) {
+    this.coordinates.pop();
+    this.coordinates.unshift([this.x, this.y]);
+    this.speed *= this.friction;
+    this.x += Math.cos(this.angle) * this.speed;
+    this.y += Math.sin(this.angle) * this.speed + this.gravity;
+    this.alpha -= this.decay;
+
+    if (this.alpha <= this.decay) {
+        particles.splice(index, 1);
+    }
+}
+
+Particle.prototype.draw = function() {
+    ctx.beginPath();
+    ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+    ctx.lineTo(this.x, this.y);
+    ctx.strokeStyle = 'hsla(' + this.hue + ', 100%, ' + this.brightness + '%, ' + this.alpha + ')';
+    ctx.stroke();
+}
+
+function createParticles(x, y) {
+    var particleCount = 30;
+    while (particleCount--) {
+        particles.push(new Particle(x, y));
+    }
+}
+
+// --- VÒNG LẶP CHÍNH (LOOP) ---
+function loop() {
+    requestAnimFrame(loop);
+    
+    // Đổi màu hue theo thời gian
+    hue = random(0, 360);
+    
+    // Xóa mờ canvas để tạo vệt đuôi
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.globalCompositeOperation = 'lighter';
+
+    // Xử lý pháo hoa
+    var i = fireworks.length;
+    while (i--) {
+        fireworks[i].draw();
+        fireworks[i].update(i);
+    }
+
+    // Xử lý hạt nổ
+    var i = particles.length;
+    while (i--) {
+        particles[i].draw();
+        particles[i].update(i);
+    }
+
+    // LOGIC TỰ ĐỘNG BẮN
+    if (timerTick >= timerTotal) {
+        fireworks.push(new Firework(cw / 2, ch, random(0, cw), random(0, ch / 2)));
+        timerTick = 0;
+    } else {
+        timerTick++;
+    }
+    
+    // Logic bắn ngẫu nhiên thêm
+    if (limiterTick >= limiterTotal) {
+        if (mousedown) {
+            fireworks.push(new Firework(cw / 2, ch, mx, my));
+            limiterTick = 0;
+        } else {
+             // 20% cơ hội bắn thêm pháo hoa ngẫu nhiên mỗi nhịp
+             if(random(0,10) > 8) {
+                 fireworks.push(new Firework(cw / 2, ch, random(0, cw), random(0, ch / 2)));
+             }
+        }
+    } else {
+        limiterTick++;
+    }
+}
+
+// Xử lý sự kiện chuột
+canvas.addEventListener('mousemove', function(e) {
+    mx = e.pageX - canvas.offsetLeft;
+    my = e.pageY - canvas.offsetTop;
+});
+
+canvas.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    mousedown = true;
+});
+
+canvas.addEventListener('mouseup', function(e) {
+    e.preventDefault();
+    mousedown = false;
+});
+
+// Resize canvas khi đổi kích thước màn hình
+window.onload = loop;
+window.onresize = function() {
+    cw = window.innerWidth;
+    ch = window.innerHeight;
+    canvas.width = cw;
+    canvas.height = ch;
+};
+// The end
+      
+// Khởi tạo
+document.addEventListener('DOMContentLoaded', () => {
+    new SmoothBubbleWorld();
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const audio = document.querySelector('.music-player');
+  const musicSection = document.querySelector('.music-section');
+  const emojis = ['❄️', '🌨️', '🌲', '🦌'];
+  let emojiInterval = null;
+  let emojiCount = 0;
+  const MAX_EMOJIS = 4;
+
+  audio.addEventListener('play', function() {
+        emojiInterval = setInterval(() => {
+      if (audio.paused || emojiCount >= MAX_EMOJIS) return;
+      createFloatingEmoji();
+    }, 2500);
+  });
+
+  audio.addEventListener('pause', function() {
+    clearInterval(emojiInterval);
+    emojiCount = 0;
+  });
+
+  function createFloatingEmoji() {
+    emojiCount++;
+
+    const emoji = document.createElement('div');
+    emoji.className = 'music-emoji';
+    emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+    const startX = Math.random() * (musicSection.offsetWidth - 30);
+    emoji.style.left = startX + 'px';
+
+    const size = 18 + Math.random() * 15;
+    emoji.style.fontSize = size + 'px';
+
+    const duration = 2.5 + Math.random() * 3;
+    emoji.style.animationDuration = duration + 's';
+
+    const endY = -50 - Math.random() * 80;
+    const endX = -20 + Math.random() * 40;
+    emoji.style.setProperty('--end-y', endY + 'px');
+    emoji.style.setProperty('--end-x', endX + 'px');
+
+    emoji.style.opacity = 0.7 + Math.random() * 0.3;
+    emoji.style.animationName = 'floatUp';
+
+    musicSection.appendChild(emoji);
+
+    setTimeout(() => {
+      if (emoji.parentNode) {
+        emoji.parentNode.removeChild(emoji);
+        emojiCount--;
+      }
+    }, duration * 1000);
+  }
+});
+// Thêm vào cuối file js hiện có
+document.getElementById('hamburgerMenu').addEventListener('click', function() {
+    var menu = document.getElementById('menuDropdown');
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+});
+
+document.getElementById('addToHomeScreen').addEventListener('click', function(e) {
+    e.preventDefault();
+    alert('To add to home screen: Open Web Application Menu  ( ⋮  ☰  ...  |||  ) → Add To Home Screen');
+});
+
+document.addEventListener('click', function(e) {
+    var menu = document.getElementById('menuDropdown');
+    var hamburger = document.getElementById('hamburgerMenu');
+    if (!hamburger.contains(e.target) && !menu.contains(e.target)) {
+        menu.style.display = 'none';
+    }
+});
+
+
+
+
+
+
+
+    </script>
+<div class="hamburger-menu" id="hamburgerMenu">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<div class="menu-dropdown" id="menuDropdown">
+    <a href="https://nguyenbacson.io.vn/cn/">Nguyen Bac Son - Chinese</a>
+    <a href="https://nguyenbacson.io.vn/game/">Nguyen Bac Son - Game</a>
+<a href="https://gemini.google.com/gem/e245a1fd072f">Nguyen Bac Son - Gemini</a>
+<a href="https://nguyenbacson.io.vn/nonstop">Nguyen Bac Son - Nonstop</a>
+    <a href="https://nguyenbacson.io.vn/privacy-policy.html">Nguyen Bac Son - Privacy Policy</a>
+    <a href="https://nguyenbacson.io.vn/improve-the-website/">Nguyen Bac Son - Improve the website</a>
+    <a href="#" id="addToHomeScreen">Nguyen Bac Son - Download</a>
+<a href="https://nguyenbacson.io.vn/hacker">Nguyen Bac Son - Decoding</a>
+</div>
+</div>
+
+
+
+
+
+<div id="snow-container"></div>
+
+<style>
+#snow-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Click xuyên qua tuyết */
+    z-index: 9999;
+}
+
+.snowflake {
+    position: absolute;
+    color: white; 
+    text-shadow: 0 0 5px rgba(0,0,0,0.2);
+    user-select: none;
+    cursor: default;
+    /* Animation */
+    animation-name: fall-and-spin;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes fall-and-spin {
+    0% {
+        transform: translateY(-50px) translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(105vh) translateX(50px) rotate(360deg);
+        opacity: 0.2;
+    }
+}
+</style>
+
+<script>
+// --- CẤU HÌNH ---
+const SNOW_CONFIG = {
+    symbol: '❄️',      
+    amount: 30,        // Số lượng hạt (để 30-50 là đẹp, nhiều quá lag)
+    minSize: 10,       
+    maxSize: 25,       
+    minSpeed: 3,       
+    maxSpeed: 8        
+};
+
+// Biến quản lý vòng lặp
+let snowInterval = null; 
+const container = document.getElementById('snow-container');
+let audioPlayer = null; // Biến lưu trình phát nhạc
+
+// --- HÀM TẠO TUYẾT (CORE) ---
+function createSnow() {
+    if (!container) return;
+
+    // Nếu nhạc đang tắt thì dừng ngay, không tạo thêm
+    if (audioPlayer && audioPlayer.paused) return;
+
+    for (let i = 0; i < SNOW_CONFIG.amount; i++) {
+        setTimeout(() => {
+            // Kiểm tra liên tục: Nếu nhạc bị Pause giữa chừng -> Dừng tạo hạt mới ngay
+            if (audioPlayer && audioPlayer.paused) return;
+
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            snowflake.textContent = SNOW_CONFIG.symbol;
+
+            // Random kích thước
+            const size = Math.random() * (SNOW_CONFIG.maxSize - SNOW_CONFIG.minSize) + SNOW_CONFIG.minSize;
+            snowflake.style.fontSize = size + 'px';
+
+            // Random vị trí
+            snowflake.style.left = Math.random() * 100 + 'vw';
+
+            // Random tốc độ
+            const duration = Math.random() * (SNOW_CONFIG.maxSpeed - SNOW_CONFIG.minSpeed) + SNOW_CONFIG.minSpeed;
+            snowflake.style.animationDuration = duration + 's';
+
+            // Random độ mờ
+            snowflake.style.opacity = Math.random() * 0.6 + 0.4;
+
+            container.appendChild(snowflake);
+
+            // Xóa sau khi rơi xong
+            setTimeout(() => {
+                if (snowflake.parentNode) snowflake.remove();
+            }, duration * 1000);
+
+        }, i * 300);
+    }
+}
+
+// --- HÀM KÍCH HOẠT ---
+function startSnow() {
+    if (!snowInterval) {
+        createSnow(); // Chạy ngay đợt đầu
+        snowInterval = setInterval(createSnow, 6000); // Lên lịch các đợt sau
+        console.log("❄️ Nhạc lên -> Tuyết rơi");
+    }
+}
+
+function stopSnow() {
+    if (snowInterval) {
+        clearInterval(snowInterval);
+        snowInterval = null;
+        console.log("⏸️ Nhạc dừng -> Tuyết ngưng");
+    }
+}
+
+// --- TỰ ĐỘNG TÌM AUDIO VÀ KẾT NỐI ---
+function connectAudio() {
+    // Tìm thẻ audio
+    audioPlayer = document.querySelector('audio');
+
+    if (audioPlayer) {
+        console.log("✅ Đã tìm thấy Audio, đang kết nối hiệu ứng...");
+
+        // Gán sự kiện
+        audioPlayer.addEventListener('play', startSnow);
+        audioPlayer.addEventListener('pause', stopSnow);
+        audioPlayer.addEventListener('ended', stopSnow);
+
+        // Kiểm tra ngay lập tức trạng thái hiện tại (nếu nhạc đang chạy sẵn)
+        if (!audioPlayer.paused) {
+            startSnow();
+        }
+    } else {
+        // Nếu chưa thấy audio (do web load chậm), thử lại sau 1 giây
+        console.log("⚠️ Chưa thấy Audio, đang tìm lại...");
+        setTimeout(connectAudio, 1000); 
+    }
+}
+
+// Chạy hàm kết nối khi trang tải xong
+window.addEventListener('load', connectAudio);
+</script>
+
+</body>
+</html>
+<!-- trigger -->
+<!-- update -->
