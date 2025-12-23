@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Tiếng Hàn Quyển 3 (Trung Cấp 3) - Nguyễn Bắc Sơn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- GIAO DIỆN MÀU CAM (Năng động / Level cao hơn) --- */
+        :root {
+            --primary-color: #d97706; /* Cam đậm */
+            --secondary-color: #f59e0b; /* Vàng cam */
+            --bg-color: #fffbeb; /* Nền kem nhẹ */
+            --card-bg: #ffffff;
+            --text-color: #78350f; /* Nâu đậm */
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%);
+            color: white;
+            padding: 2rem 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        header h1 { margin: 0; font-size: 1.8rem; font-weight: 700; }
+        header p { margin-top: 8px; opacity: 0.9; }
+
+        #category-nav {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 10px;
+            max-width: 1100px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .cat-btn {
+            background-color: white;
+            border: 1px solid #fcd34d;
+            color: var(--text-color);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .cat-btn:hover, .cat-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            padding: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        .vocab-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            cursor: pointer;
+            border: 1px solid #fde68a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .vocab-card:hover { transform: translateY(-3px); border-color: var(--secondary-color); }
+        .emoji-icon { font-size: 2.2rem; margin-bottom: 5px; }
+        .korean-word { font-family: 'Noto Sans KR', sans-serif; font-size: 1.1rem; font-weight: 700; color: #92400e; }
+        .vietnamese-word { font-size: 0.85rem; color: #9a3412; margin-top: 2px; }
+        .speaker-icon { font-size: 0.8rem; color: #d6d3d1; margin-left: auto; }
+        
+        footer { padding: 20px; color: #a8a29e; font-size: 0.8rem; border-top: 1px solid #e7e5e4; margin-top: auto; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🇰🇷 Quyển 3 (Trung Cấp 3)</h1>
+        <p>Phỏng vấn, Tính cách & Đời sống xã hội</p>
+    </header>
+
+    <nav id="category-nav"></nav>
+
+    <main>
+        <div id="card-container" class="grid-container"></div>
+    </main>
+
+    <footer>
+        <p>Dữ liệu Quyển 3 - Code bởi Nguyễn Bắc Sơn &copy; 2025</p>
+    </footer>
+
+    <script>
+        // --- DỮ LIỆU TRUNG CẤP 3 (Level 3) ---
+        const vocabularyData = {
+            "Bài 1: Kinh Nghiệm & Công Việc": [
+                { kr: "취직하다", vn: "Xin việc/Đi làm", icon: "💼" },
+                { kr: "면접을 보다", vn: "Phỏng vấn", icon: "👔" },
+                { kr: "지원하다", vn: "Nộp đơn/Ứng tuyển", icon: "📝" },
+                { kr: "이력서", vn: "Sơ yếu lý lịch", icon: "📄" },
+                { kr: "전공하다", vn: "Học chuyên ngành", icon: "🎓" },
+                { kr: "경험을 쌓다", vn: "Tích lũy kinh nghiệm", icon: "🧱" },
+                { kr: "월급", vn: "Lương tháng", icon: "💰" },
+                { kr: "보너스", vn: "Tiền thưởng", icon: "🎁" },
+                { kr: "승진하다", vn: "Thăng chức", icon: "📈" },
+                { kr: "은퇴하다", vn: "Nghỉ hưu", icon: "👴" }
+            ],
+            "Bài 2: Tính Cách (Ưu/Nhược điểm)": [
+                { kr: "성격", vn: "Tính cách", icon: "😊" },
+                { kr: "착하다", vn: "Hiền lành/Tốt bụng", icon: "😇" },
+                { kr: "활발하다", vn: "Hoạt bát/Năng động", icon: "🏃" },
+                { kr: "조용하다", vn: "Trầm tính/Ít nói", icon: "🤫" },
+                { kr: "성실하다", vn: "Thành thật", icon: "🤝" },
+                { kr: "꼼꼼하다", vn: "Cẩn thận/Tỉ mỉ", icon: "🔍" },
+                { kr: "게으르다", vn: "Lười biếng", icon: "🦥" },
+                { kr: "부지런하다", vn: "Chăm chỉ", icon: "🐝" },
+                { kr: "급하다", vn: "Nóng tính/Vội vàng", icon: "🔥" },
+                { kr: "내성적이다", vn: "Hướng nội", icon: "🏠" }
+            ],
+            "Bài 3: Tìm Nhà & Chuyển Nhà": [
+                { kr: "이사하다", vn: "Chuyển nhà", icon: "🚛" },
+                { kr: "구하다", vn: "Tìm kiếm", icon: "🔎" },
+                { kr: "계약하다", vn: "Ký hợp đồng", icon: "✍️" },
+                { kr: "보증금", vn: "Tiền đặt cọc", icon: "💵" },
+                { kr: "월세", vn: "Thuê theo tháng", icon: "🗓️" },
+                { kr: "전세", vn: "Thuê dài hạn (Jeonse)", icon: "🔑" },
+                { kr: "부동산", vn: "Bất động sản", icon: "🏘️" },
+                { kr: "집주인", vn: "Chủ nhà", icon: "👴" },
+                { kr: "환경", vn: "Môi trường sống", icon: "🌳" },
+                { kr: "짐을 싸다", vn: "Đóng gói đồ", icon: "📦" }
+            ],
+            "Bài 4: Món Ăn & Nấu Nướng": [
+                { kr: "레시피", vn: "Công thức nấu ăn", icon: "📖" },
+                { kr: "끓이다", vn: "Đun sôi (canh)", icon: "🍲" },
+                { kr: "삶다", vn: "Luộc", icon: "🥚" },
+                { kr: "튀기다", vn: "Chiên ngập dầu", icon: "🍤" },
+                { kr: "볶다", vn: "Xào/Rang", icon: "🍳" },
+                { kr: "다지다", vn: "Băm nhỏ", icon: "🔪" },
+                { kr: "간장", vn: "Xì dầu", icon: "🍶" },
+                { kr: "고추장", vn: "Tương ớt", icon: "🌶️" },
+                { kr: "냄비", vn: "Cái nồi", icon: "🥘" },
+                { kr: "프라이팬", vn: "Chảo rán", icon: "🍳" }
+            ],
+            "Bài 5: Bệnh Viện & Triệu Chứng": [
+                { kr: "증상", vn: "Triệu chứng", icon: "🤒" },
+                { kr: "소화제", vn: "Thuốc tiêu hóa", icon: "💊" },
+                { kr: "해열제", vn: "Thuốc hạ sốt", icon: "🌡️" },
+                { kr: "진통제", vn: "Thuốc giảm đau", icon: "💊" },
+                { kr: "연고", vn: "Thuốc mỡ (bôi)", icon: "🧴" },
+                { kr: "수술하다", vn: "Phẫu thuật", icon: "😷" },
+                { kr: "입원하다", vn: "Nhập viện", icon: "🏥" },
+                { kr: "퇴원하다", vn: "Xuất viện", icon: "🏠" },
+                { kr: "붓다", vn: "Sưng", icon: "🐡" },
+                { kr: "토하다", vn: "Nôn mửa", icon: "🤮" }
+            ],
+            "Bài 6: Ngân Hàng & Tài Chính": [
+                { kr: "계좌를 개설하다", vn: "Mở tài khoản", icon: "🆕" },
+                { kr: "적금", vn: "Tiền tiết kiệm định kỳ", icon: "🐖" },
+                { kr: "환율", vn: "Tỷ giá hối đoái", icon: "💱" },
+                { kr: "수수료", vn: "Phí dịch vụ", icon: "🧾" },
+                { kr: "대출하다", vn: "Vay vốn", icon: "💸" },
+                { kr: "현금인출기", vn: "Máy ATM", icon: "🏧" },
+                { kr: "서명하다", vn: "Ký tên", icon: "✒️" },
+                { kr: "비밀번호", vn: "Mật khẩu", icon: "🔒" },
+                { kr: "인터넷 뱅킹", vn: "Internet Banking", icon: "💻" }
+            ],
+            "Bài 7: Mua Sắm & Khiếu Nại": [
+                { kr: "영수증", vn: "Hóa đơn", icon: "🧾" },
+                { kr: "환불하다", vn: "Hoàn tiền", icon: "🔙" },
+                { kr: "교환하다", vn: "Đổi hàng", icon: "🔄" },
+                { kr: "불량품", vn: "Hàng lỗi", icon: "❌" },
+                { kr: "매진되다", vn: "Hết hàng/Bán hết", icon: "🚫" },
+                { kr: "품절", vn: "Hết hàng", icon: "🛒" },
+                { kr: "할인하다", vn: "Giảm giá", icon: "🏷️" },
+                { kr: "결제하다", vn: "Thanh toán", icon: "💳" },
+                { kr: "일시불", vn: "Trả thẳng (1 lần)", icon: "1️⃣" },
+                { kr: "할부", vn: "Trả góp", icon: "➗" }
+            ],
+            "Bài 8: Sự Cố & Tai Nạn": [
+                { kr: "사고가 나다", vn: "Xảy ra tai nạn", icon: "💥" },
+                { kr: "고장나다", vn: "Bị hỏng", icon: "🛠️" },
+                { kr: "멈추다", vn: "Dừng lại/Ngừng hoạt động", icon: "🛑" },
+                { kr: "깨지다", vn: "Bị vỡ", icon: "🥛" },
+                { kr: "잃어버리다", vn: "Làm mất (đồ)", icon: "❓" },
+                { kr: "도둑을 맞다", vn: "Bị trộm", icon: "🦹" },
+                { kr: "경찰에 신고하다", vn: "Báo cảnh sát", icon: "👮" },
+                { kr: "불이 나다", vn: "Xảy ra hỏa hoạn", icon: "🔥" },
+                { kr: "수리 센터", vn: "Trung tâm sửa chữa", icon: "🔧" }
+            ],
+            "Bài 9: Hẹn Hò & Mời Mọc (Nâng cao)": [
+                { kr: "약속을 정하다", vn: "Định ngày hẹn", icon: "📅" },
+                { kr: "약속을 변경하다", vn: "Đổi lịch hẹn", icon: "🔄" },
+                { kr: "연락처", vn: "Địa chỉ liên lạc", icon: "📒" },
+                { kr: "참석하다", vn: "Tham dự", icon: "🙋" },
+                { kr: "불참하다", vn: "Không tham dự", icon: "🙅" },
+                { kr: "핑계를 대다", vn: "Viện cớ", icon: "🤥" },
+                { kr: "양해를 구하다", vn: "Xin thông cảm", icon: "🙏" },
+                { kr: "안부를 묻다", vn: "Hỏi thăm sức khỏe", icon: "💌" }
+            ],
+            "Bài 10: Đời Sống Tiêu Dùng": [
+                { kr: "소비", vn: "Tiêu dùng", icon: "🛒" },
+                { kr: "절약하다", vn: "Tiết kiệm", icon: "💰" },
+                { kr: "낭비하다", vn: "Lãng phí", icon: "💸" },
+                { kr: "가계부", vn: "Sổ chi tiêu", icon: "📔" },
+                { kr: "물가", vn: "Vật giá", icon: "🏷️" },
+                { kr: "오르다", vn: "Tăng lên (giá cả)", icon: "📈" },
+                { kr: "내리다", vn: "Giảm xuống (giá cả)", icon: "📉" },
+                { kr: "저축하다", vn: "Tiết kiệm (tiền)", icon: "🏦" }
+            ],
+            "Bài 11: Văn Hóa & Lễ Tết": [
+                { kr: "명절", vn: "Ngày lễ tết", icon: "🎉" },
+                { kr: "설날", vn: "Tết Nguyên Đán", icon: "🧧" },
+                { kr: "추석", vn: "Trung thu", icon: "🌕" },
+                { kr: "세배하다", vn: "Lạy chào năm mới", icon: "🙇" },
+                { kr: "덕담을 하다", vn: "Chúc tết", icon: "🗣️" },
+                { kr: "고향에 가다", vn: "Về quê", icon: "🚌" },
+                { kr: "차례를 지내다", vn: "Cúng tổ tiên", icon: "🕯️" },
+                { kr: "전통 놀이", vn: "Trò chơi truyền thống", icon: "kites" }
+            ],
+            "Bài 12: Môi Trường & Bảo Vệ": [
+                { kr: "환경 오염", vn: "Ô nhiễm môi trường", icon: "🏭" },
+                { kr: "공기", vn: "Không khí", icon: "🌬️" },
+                { kr: "쓰레기를 줄이다", vn: "Giảm rác thải", icon: "🗑️" },
+                { kr: "분리수거하다", vn: "Phân loại rác", icon: "♻️" },
+                { kr: "재활용하다", vn: "Tái chế", icon: "🔄" },
+                { kr: "전기를 아끼다", vn: "Tiết kiệm điện", icon: "💡" },
+                { kr: "일회용품", vn: "Đồ dùng 1 lần", icon: "🥤" },
+                { kr: "보호하다", vn: "Bảo vệ", icon: "🛡️" }
+            ],
+            "Bài 13: Khoa Học & Kỹ Thuật": [
+                { kr: "기술", vn: "Kỹ thuật", icon: "⚙️" },
+                { kr: "발달하다", vn: "Phát triển", icon: "🚀" },
+                { kr: "발명하다", vn: "Phát minh", icon: "💡" },
+                { kr: "스마트폰", vn: "Điện thoại thông minh", icon: "📱" },
+                { kr: "앱 (어플)", vn: "Ứng dụng", icon: "📲" },
+                { kr: "편리하다", vn: "Tiện lợi", icon: "👍" },
+                { kr: "불편하다", vn: "Bất tiện", icon: "👎" },
+                { kr: "검색하다", vn: "Tìm kiếm (Tra cứu)", icon: "🔍" }
+            ],
+            "Bài 14: Lời Khuyên & Đề Nghị": [
+                { kr: "조언하다", vn: "Khuyên bảo", icon: "🗣️" },
+                { kr: "추천하다", vn: "Giới thiệu/Đề cử", icon: "👍" },
+                { kr: "도움을 주다", vn: "Giúp đỡ", icon: "🤝" },
+                { kr: "부탁하다", vn: "Nhờ vả", icon: "🙏" },
+                { kr: "방법", vn: "Phương pháp", icon: "💡" },
+                { kr: "해결하다", vn: "Giải quyết", icon: "✅" },
+                { kr: "상담하다", vn: "Tư vấn", icon: "🛋️" }
+            ],
+            "Bài 15: Kế Hoạch & Tương Lai": [
+                { kr: "목표를 세우다", vn: "Lập mục tiêu", icon: "🎯" },
+                { kr: "성공하다", vn: "Thành công", icon: "🏆" },
+                { kr: "실패하다", vn: "Thất bại", icon: "❌" },
+                { kr: "도전하다", vn: "Thử thách", icon: "🧗" },
+                { kr: "노력하다", vn: "Nỗ lực", icon: "💦" },
+                { kr: "포기하다", vn: "Từ bỏ", icon: "🏳️" },
+                { kr: "이루다", vn: "Đạt được", icon: "🌟" }
+            ]
+        };
+
+        const navContainer = document.getElementById('category-nav');
+        const cardContainer = document.getElementById('card-container');
+
+        function initApp() {
+            const categories = Object.keys(vocabularyData);
+            
+            categories.forEach((cat, index) => {
+                const btn = document.createElement('button');
+                btn.innerText = cat;
+                btn.classList.add('cat-btn');
+                if (index === 0) btn.classList.add('active');
+                
+                btn.onclick = () => {
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderCards(cat);
+                };
+                navContainer.appendChild(btn);
+            });
+            renderCards(categories[0]);
+        }
+
+        function renderCards(categoryName) {
+            cardContainer.innerHTML = '';
+            const list = vocabularyData[categoryName];
+
+            list.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('vocab-card');
+                card.innerHTML = `
+                    <div class="speaker-icon">🔊</div>
+                    <span class="emoji-icon">${item.icon}</span>
+                    <div class="korean-word">${item.kr}</div>
+                    <div class="vietnamese-word">${item.vn}</div>
+                `;
+                card.onclick = () => speakKorean(item.kr);
+                cardContainer.appendChild(card);
+            });
+        }
+
+        function speakKorean(text) {
+            const cleanText = text.replace(/[?.,]/g, ''); 
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); 
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.lang = 'ko-KR'; 
+                utterance.rate = 0.85; 
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
