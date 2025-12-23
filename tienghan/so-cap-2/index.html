@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Tiếng Hàn Sơ Cấp 2 (Nâng Cao) - Nguyễn Bắc Sơn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- GIAO DIỆN GIỮ NGUYÊN NHƯ SƠ CẤP 1 --- */
+        :root {
+            --primary-color: #059669; /* Đổi sang màu Xanh Lá cho Sơ cấp 2 để dễ phân biệt */
+            --secondary-color: #34d399;
+            --bg-color: #f0fdf4;
+            --card-bg: #ffffff;
+            --text-color: #064e3b;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background: linear-gradient(135deg, #047857 0%, #10b981 100%);
+            color: white;
+            padding: 2rem 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        header h1 { margin: 0; font-size: 1.8rem; font-weight: 700; }
+        header p { margin-top: 8px; opacity: 0.9; }
+
+        #category-nav {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 10px;
+            max-width: 1100px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .cat-btn {
+            background-color: white;
+            border: 1px solid #a7f3d0;
+            color: var(--text-color);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .cat-btn:hover, .cat-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            padding: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        .vocab-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            cursor: pointer;
+            border: 1px solid #d1fae5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .vocab-card:hover { transform: translateY(-3px); border-color: var(--secondary-color); }
+        .emoji-icon { font-size: 2.2rem; margin-bottom: 5px; }
+        .korean-word { font-family: 'Noto Sans KR', sans-serif; font-size: 1.1rem; font-weight: 700; color: #065f46; }
+        .vietnamese-word { font-size: 0.85rem; color: #4b5563; margin-top: 2px; }
+        .speaker-icon { font-size: 0.8rem; color: #9ca3af; margin-left: auto; }
+        
+        footer { padding: 20px; color: #6b7280; font-size: 0.8rem; border-top: 1px solid #e5e7eb; margin-top: auto; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🇰🇷 Sơ Cấp 2 - Full 15 Bài</h1>
+        <p>Giao tiếp & Đời sống hàng ngày</p>
+    </header>
+
+    <nav id="category-nav"></nav>
+
+    <main>
+        <div id="card-container" class="grid-container"></div>
+    </main>
+
+    <footer>
+        <p>Dữ liệu Sơ cấp 2 - Code bởi Nguyễn Bắc Sơn &copy; 2025</p>
+    </footer>
+
+    <script>
+        // --- DỮ LIỆU SƠ CẤP 2 (Level 2) ---
+        const vocabularyData = {
+            "Bài 1: Hẹn Hò & Gặp Gỡ": [
+                { kr: "약속하다", vn: "Hẹn", icon: "🤙" },
+                { kr: "기다리다", vn: "Chờ đợi", icon: "⏳" },
+                { kr: "만나다", vn: "Gặp gỡ", icon: "🤝" },
+                { kr: "식사하다", vn: "Dùng bữa", icon: "🍽️" },
+                { kr: "헤어지다", vn: "Chia tay", icon: "👋" },
+                { kr: "시간이 있다", vn: "Có thời gian", icon: "⌚" },
+                { kr: "바쁘다", vn: "Bận rộn", icon: "🏃" },
+                { kr: "약속을 어기다", vn: "Lỡ hẹn/Thất hứa", icon: "❌" },
+                { kr: "취소하다", vn: "Hủy bỏ", icon: "🚫" },
+                { kr: "늦다", vn: "Muộn", icon: "⏰" }
+            ],
+            "Bài 2: Mua Sắm (Quần áo)": [
+                { kr: "옷", vn: "Quần áo", icon: "👕" },
+                { kr: "바지", vn: "Quần", icon: "👖" },
+                { kr: "티셔츠", vn: "Áo phông", icon: "👕" },
+                { kr: "치마", vn: "Váy", icon: "👗" },
+                { kr: "신발", vn: "Giày", icon: "👟" },
+                { kr: "모자", vn: "Mũ", icon: "🧢" },
+                { kr: "입다", vn: "Mặc", icon: "🕴️" },
+                { kr: "신다", vn: "Đi (giày/tất)", icon: "🧦" },
+                { kr: "쓰다", vn: "Đội (mũ)", icon: "🤠" },
+                { kr: "어울리다", vn: "Hợp", icon: "✨" },
+                { kr: "유행하다", vn: "Thịnh hành/Mốt", icon: "🔥" },
+                { kr: "사이즈", vn: "Kích cỡ", icon: "📏" }
+            ],
+            "Bài 3: Giao Thông & Đi Lại": [
+                { kr: "교통", vn: "Giao thông", icon: "🚦" },
+                { kr: "갈아타다", vn: "Đổi xe/Chuyển tuyến", icon: "🔄" },
+                { kr: "막히다", vn: "Tắc đường", icon: "🚗" },
+                { kr: "걸리다", vn: "Mất (thời gian)", icon: "⏱️" },
+                { kr: "지하철역", vn: "Ga tàu điện ngầm", icon: "🚉" },
+                { kr: "정류장", vn: "Trạm xe buýt", icon: "🚏" },
+                { kr: "교통카드", vn: "Thẻ giao thông", icon: "💳" },
+                { kr: "출발하다", vn: "Xuất phát", icon: "🚩" },
+                { kr: "도착하다", vn: "Đến nơi", icon: "🏁" },
+                { kr: "빠르다", vn: "Nhanh", icon: "🚀" }
+            ],
+            "Bài 4: Bưu Điện & Ngân Hàng": [
+                { kr: "소포", vn: "Bưu kiện", icon: "📦" },
+                { kr: "택배", vn: "Chuyển phát nhanh", icon: "🚚" },
+                { kr: "통장", vn: "Sổ tài khoản", icon: "📒" },
+                { kr: "도장", vn: "Con dấu", icon: "💮" },
+                { kr: "신분증", vn: "CMND/CCCD", icon: "🆔" },
+                { kr: "입금하다", vn: "Gửi tiền vào", icon: "📥" },
+                { kr: "출금하다", vn: "Rút tiền ra", icon: "📤" },
+                { kr: "송금하다", vn: "Chuyển tiền", icon: "💸" },
+                { kr: "수수료", vn: "Phí dịch vụ", icon: "🧾" },
+                { kr: "저금하다", vn: "Tiết kiệm", icon: "🐖" }
+            ],
+            "Bài 5: Nấu Ăn": [
+                { kr: "요리하다", vn: "Nấu ăn", icon: "🍳" },
+                { kr: "재료", vn: "Nguyên liệu", icon: "🥕" },
+                { kr: "자르다", vn: "Cắt/Thái", icon: "🔪" },
+                { kr: "굽다", vn: "Nướng", icon: "🥩" },
+                { kr: "볶다", vn: "Xào", icon: "🥘" },
+                { kr: "끓이다", vn: "Đun sôi/Nấu canh", icon: "🍲" },
+                { kr: "섞다", vn: "Trộn", icon: "🥣" },
+                { kr: "싱겁다", vn: "Nhạt", icon: "💧" },
+                { kr: "짜다", vn: "Mặn", icon: "🧂" },
+                { kr: "설탕", vn: "Đường", icon: "🍬" }
+            ],
+            "Bài 6: Du Lịch": [
+                { kr: "여행", vn: "Du lịch", icon: "✈️" },
+                { kr: "해외여행", vn: "Du lịch nước ngoài", icon: "🌍" },
+                { kr: "여권", vn: "Hộ chiếu", icon: "📘" },
+                { kr: "비자", vn: "Visa", icon: "🛂" },
+                { kr: "예약하다", vn: "Đặt trước", icon: "📅" },
+                { kr: "짐을 싸다", vn: "Xếp hành lý", icon: "🧳" },
+                { kr: "관광지", vn: "Điểm tham quan", icon: "im" },
+                { kr: "기념품", vn: "Quà lưu niệm", icon: "🎁" },
+                { kr: "경치", vn: "Phong cảnh", icon: "🏞️" },
+                { kr: "숙소", vn: "Chỗ ở", icon: "🏨" }
+            ],
+            "Bài 7: Sức Khỏe": [
+                { kr: "건강", vn: "Sức khỏe", icon: "💪" },
+                { kr: "감기", vn: "Cảm cúm", icon: "😷" },
+                { kr: "열이 나다", vn: "Bị sốt", icon: "🌡️" },
+                { kr: "기침하다", vn: "Ho", icon: "🗣️" },
+                { kr: "콧물이 나다", vn: "Sổ mũi", icon: "🤧" },
+                { kr: "다치다", vn: "Bị thương", icon: "🤕" },
+                { kr: "소화가 안 되다", vn: "Khó tiêu", icon: "🤢" },
+                { kr: "진찰을 받다", vn: "Khám bệnh", icon: "🩺" },
+                { kr: "주사를 맞다", vn: "Tiêm", icon: "💉" },
+                { kr: "푹 쉬다", vn: "Nghỉ ngơi", icon: "🛌" }
+            ],
+            "Bài 8: Phép Tắc & Lễ Nghi": [
+                { kr: "예절", vn: "Lễ nghi", icon: "🙇" },
+                { kr: "인사하다", vn: "Chào hỏi", icon: "👋" },
+                { kr: "신발을 벗다", vn: "Cởi giày", icon: "👞" },
+                { kr: "자리를 양보하다", vn: "Nhường chỗ", icon: "💺" },
+                { kr: "다리를 떨다", vn: "Rung đùi (Kiêng kỵ)", icon: "🦵" },
+                { kr: "식사 예절", vn: "Phép tắc ăn uống", icon: "🥢" },
+                { kr: "존댓말", vn: "Kính ngữ", icon: "📜" },
+                { kr: "반말", vn: "Nói trống không", icon: "🗣️" }
+            ],
+            "Bài 9: Tìm Đường": [
+                { kr: "길을 묻다", vn: "Hỏi đường", icon: "🗺️" },
+                { kr: "사거리", vn: "Ngã tư", icon: "➕" },
+                { kr: "횡단보도", vn: "Vạch qua đường", icon: "🦓" },
+                { kr: "육교", vn: "Cầu vượt", icon: "🌉" },
+                { kr: "지하도", vn: "Hầm đi bộ", icon: "🚇" },
+                { kr: "쭉 가다", vn: "Đi thẳng", icon: "⬆️" },
+                { kr: "돌아가다", vn: "Quay lại", icon: "↩️" },
+                { kr: "건너다", vn: "Băng qua", icon: "🚶" }
+            ],
+            "Bài 10: Việc Nhà": [
+                { kr: "집안일", vn: "Việc nhà", icon: "🏠" },
+                { kr: "청소하다", vn: "Dọn dẹp", icon: "🧹" },
+                { kr: "청소기", vn: "Máy hút bụi", icon: "🔌" },
+                { kr: "빨래하다", vn: "Giặt giũ", icon: "👕" },
+                { kr: "설거지하다", vn: "Rửa bát", icon: "🍽️" },
+                { kr: "정리하다", vn: "Sắp xếp/Dọn", icon: "📦" },
+                { kr: "먼지를 털다", vn: "Phủi bụi", icon: "💨" },
+                { kr: "쓰레기를 버리다", vn: "Vứt rác", icon: "🗑️" },
+                { kr: "장보다", vn: "Đi chợ", icon: "🛒" }
+            ],
+            "Bài 11: Mời & Từ Chối": [
+                { kr: "초대하다", vn: "Mời", icon: "💌" },
+                { kr: "초대를 받다", vn: "Được mời", icon: "📬" },
+                { kr: "방문하다", vn: "Đến thăm", icon: "🚪" },
+                { kr: "마중 나가다", vn: "Ra đón", icon: "🙋" },
+                { kr: "준비하다", vn: "Chuẩn bị", icon: "🍱" },
+                { kr: "거절하다", vn: "Từ chối", icon: "🙅" },
+                { kr: "승낙하다", vn: "Đồng ý", icon: "🙆" },
+                { kr: "집들이", vn: "Tiệc tân gia", icon: "🏡" }
+            ],
+            "Bài 12: Cảm Xúc & Tâm Trạng": [
+                { kr: "기분", vn: "Tâm trạng", icon: "😊" },
+                { kr: "기쁘다", vn: "Vui mừng", icon: "😄" },
+                { kr: "슬프다", vn: "Buồn", icon: "😢" },
+                { kr: "행복하다", vn: "Hạnh phúc", icon: "🥰" },
+                { kr: "외롭다", vn: "Cô đơn", icon: "🍂" },
+                { kr: "화가 나다", vn: "Tức giận", icon: "😠" },
+                { kr: "걱정하다", vn: "Lo lắng", icon: "😟" },
+                { kr: "무섭다", vn: "Sợ hãi", icon: "😱" },
+                { kr: "심심하다", vn: "Buồn chán (Rảnh)", icon: "😑" },
+                { kr: "피곤하다", vn: "Mệt mỏi", icon: "😫" }
+            ],
+            "Bài 13: Giáo Dục & Tương Lai": [
+                { kr: "입학", vn: "Nhập học", icon: "🎒" },
+                { kr: "졸업", vn: "Tốt nghiệp", icon: "🎓" },
+                { kr: "전공", vn: "Chuyên ngành", icon: "📚" },
+                { kr: "성적", vn: "Thành tích/Điểm", icon: "💯" },
+                { kr: "장학금", vn: "Học bổng", icon: "💰" },
+                { kr: "유학", vn: "Du học", icon: "✈️" },
+                { kr: "취직하다", vn: "Xin việc", icon: "💼" },
+                { kr: "면접", vn: "Phỏng vấn", icon: "👔" },
+                { kr: "꿈", vn: "Ước mơ", icon: "🌟" }
+            ],
+            "Bài 14: Sự Cố & Hỏng Hóc": [
+                { kr: "고장나다", vn: "Bị hỏng", icon: "🛠️" },
+                { kr: "수리하다", vn: "Sửa chữa", icon: "🔧" },
+                { kr: "잃어버리다", vn: "Làm mất", icon: "❓" },
+                { kr: "찾다", vn: "Tìm kiếm", icon: "🔍" },
+                { kr: "두고 내리다", vn: "Bỏ quên (trên xe)", icon: "🚌" },
+                { kr: "넘어지다", vn: "Bị ngã", icon: "🤕" },
+                { kr: "부러지다", vn: "Bị gãy", icon: "🦴" },
+                { kr: "사고가 나다", vn: "Xảy ra tai nạn", icon: "💥" }
+            ],
+            "Bài 15: Thời Tiết & Môi Trường": [
+                { kr: "맑다", vn: "Trong lành", icon: "☀️" },
+                { kr: "흐리다", vn: "Âm u/Nhiều mây", icon: "☁️" },
+                { kr: "쌀쌀하다", vn: "Se lạnh", icon: "🌬️" },
+                { kr: "습하다", vn: "Ẩm ướt", icon: "💧" },
+                { kr: "태풍", vn: "Bão", icon: "🌀" },
+                { kr: "장마", vn: "Mùa mưa", icon: "☔" },
+                { kr: "환경", vn: "Môi trường", icon: "🌳" },
+                { kr: "쓰레기", vn: "Rác thải", icon: "🗑️" },
+                { kr: "보호하다", vn: "Bảo vệ", icon: "🛡️" }
+            ]
+        };
+
+        const navContainer = document.getElementById('category-nav');
+        const cardContainer = document.getElementById('card-container');
+
+        function initApp() {
+            const categories = Object.keys(vocabularyData);
+            
+            categories.forEach((cat, index) => {
+                const btn = document.createElement('button');
+                btn.innerText = cat;
+                btn.classList.add('cat-btn');
+                if (index === 0) btn.classList.add('active');
+                
+                btn.onclick = () => {
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderCards(cat);
+                };
+                navContainer.appendChild(btn);
+            });
+            renderCards(categories[0]);
+        }
+
+        function renderCards(categoryName) {
+            cardContainer.innerHTML = '';
+            const list = vocabularyData[categoryName];
+
+            list.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('vocab-card');
+                card.innerHTML = `
+                    <div class="speaker-icon">🔊</div>
+                    <span class="emoji-icon">${item.icon}</span>
+                    <div class="korean-word">${item.kr}</div>
+                    <div class="vietnamese-word">${item.vn}</div>
+                `;
+                card.onclick = () => speakKorean(item.kr);
+                cardContainer.appendChild(card);
+            });
+        }
+
+        function speakKorean(text) {
+            const cleanText = text.replace(/[?.,]/g, ''); 
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); 
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.lang = 'ko-KR'; 
+                utterance.rate = 0.85; 
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
