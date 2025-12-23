@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Tiếng Hàn Quyển 5 (Cao Cấp 5) - Nguyễn Bắc Sơn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- GIAO DIỆN MÀU ĐỎ ĐẬM (Cao Cấp / Quan Trọng) --- */
+        :root {
+            --primary-color: #be123c; /* Đỏ hồng đậm */
+            --secondary-color: #f43f5e; /* Đỏ hồng tươi */
+            --bg-color: #fff1f2; /* Nền hồng rất nhạt */
+            --card-bg: #ffffff;
+            --text-color: #881337; /* Đỏ rượu vang */
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background: linear-gradient(135deg, #9f1239 0%, #e11d48 100%);
+            color: white;
+            padding: 2rem 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        header h1 { margin: 0; font-size: 1.8rem; font-weight: 700; }
+        header p { margin-top: 8px; opacity: 0.9; }
+
+        #category-nav {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 10px;
+            max-width: 1100px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .cat-btn {
+            background-color: white;
+            border: 1px solid #fda4af;
+            color: var(--text-color);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .cat-btn:hover, .cat-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            padding: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        .vocab-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            cursor: pointer;
+            border: 1px solid #fecdd3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .vocab-card:hover { transform: translateY(-3px); border-color: var(--secondary-color); }
+        .emoji-icon { font-size: 2.2rem; margin-bottom: 5px; }
+        .korean-word { font-family: 'Noto Sans KR', sans-serif; font-size: 1.1rem; font-weight: 700; color: #be123c; }
+        .vietnamese-word { font-size: 0.85rem; color: #9f1239; margin-top: 2px; }
+        .speaker-icon { font-size: 0.8rem; color: #fb7185; margin-left: auto; }
+        
+        footer { padding: 20px; color: #e11d48; font-size: 0.8rem; border-top: 1px solid #e5e7eb; margin-top: auto; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🇰🇷 Quyển 5 (Cao Cấp 5)</h1>
+        <p>Chính trị, Kinh tế, Luật pháp & Thành ngữ</p>
+    </header>
+
+    <nav id="category-nav"></nav>
+
+    <main>
+        <div id="card-container" class="grid-container"></div>
+    </main>
+
+    <footer>
+        <p>Dữ liệu Quyển 5 - Code bởi Nguyễn Bắc Sơn &copy; 2025</p>
+    </footer>
+
+    <script>
+        // --- DỮ LIỆU CAO CẤP 5 (Level 5) ---
+        const vocabularyData = {
+            "Bài 1: Chính Trị & Xã Hội": [
+                { kr: "정치", vn: "Chính trị", icon: "🏛️" },
+                { kr: "대통령", vn: "Tổng thống", icon: "🤵" },
+                { kr: "선거", vn: "Bầu cử", icon: "🗳️" },
+                { kr: "투표하다", vn: "Bỏ phiếu", icon: "📥" },
+                { kr: "민주주의", vn: "Dân chủ", icon: "⚖️" },
+                { kr: "정부", vn: "Chính phủ", icon: "🏢" },
+                { kr: "정책", vn: "Chính sách", icon: "📜" },
+                { kr: "시위하다", vn: "Biểu tình", icon: "📢" },
+                { kr: "권리", vn: "Quyền lợi", icon: "✊" },
+                { kr: "의무", vn: "Nghĩa vụ", icon: "🛡️" }
+            ],
+            "Bài 2: Kinh Tế Vĩ Mô": [
+                { kr: "경제 성장", vn: "Tăng trưởng kinh tế", icon: "📈" },
+                { kr: "물가 상승", vn: "Vật giá leo thang", icon: "💸" },
+                { kr: "수출하다", vn: "Xuất khẩu", icon: "🚢" },
+                { kr: "수입하다", vn: "Nhập khẩu", icon: "📦" },
+                { kr: "환율", vn: "Tỷ giá", icon: "💱" },
+                { kr: "투자하다", vn: "Đầu tư", icon: "💹" },
+                { kr: "실업률", vn: "Tỷ lệ thất nghiệp", icon: "📉" },
+                { kr: "경기 침체", vn: "Suy thoái kinh tế", icon: "📉" },
+                { kr: "선진국", vn: "Nước phát triển", icon: "🏙️" },
+                { kr: "개발도상국", vn: "Nước đang phát triển", icon: "🏗️" }
+            ],
+            "Bài 3: Luật Pháp & Trật Tự": [
+                { kr: "법", vn: "Luật pháp", icon: "⚖️" },
+                { kr: "규칙을 지키다", vn: "Tuân thủ quy tắc", icon: "✅" },
+                { kr: "어기다", vn: "Vi phạm", icon: "🚫" },
+                { kr: "범죄", vn: "Tội phạm", icon: "🦹" },
+                { kr: "사기", vn: "Lừa đảo", icon: "🤥" },
+                { kr: "재판", vn: "Xét xử/Phiên tòa", icon: "🔨" },
+                { kr: "변호사", vn: "Luật sư", icon: "💼" },
+                { kr: "판사", vn: "Thẩm phán", icon: "⚖️" },
+                { kr: "처벌하다", vn: "Xử phạt", icon: "👮" },
+                { kr: "피해자", vn: "Nạn nhân", icon: "🤕" }
+            ],
+            "Bài 4: Môi Trường & Khí Hậu": [
+                { kr: "기후 변화", vn: "Biến đổi khí hậu", icon: "🌡️" },
+                { kr: "이상 기후", vn: "Khí hậu bất thường", icon: "⛈️" },
+                { kr: "대체 에너지", vn: "Năng lượng thay thế", icon: "☀️" },
+                { kr: "자원 낭비", vn: "Lãng phí tài nguyên", icon: "🚰" },
+                { kr: "생태계", vn: "Hệ sinh thái", icon: "🌿" },
+                { kr: "보존하다", vn: "Bảo tồn", icon: "🏞️" },
+                { kr: "온난화", vn: "Sự nóng lên", icon: "🔥" },
+                { kr: "재해", vn: "Thiên tai", icon: "🌪️" }
+            ],
+            "Bài 5: Tâm Lý & Cảm Xúc": [
+                { kr: "심리", vn: "Tâm lý", icon: "🧠" },
+                { kr: "우울증", vn: "Trầm cảm", icon: "☁️" },
+                { kr: "불안하다", vn: "Bất an", icon: "😰" },
+                { kr: "안도하다", vn: "An tâm/Thở phào", icon: "😌" },
+                { kr: "흥분하다", vn: "Hưng phấn/Kích động", icon: "🤩" },
+                { kr: "후회하다", vn: "Hối hận", icon: "🤦" },
+                { kr: "좌절하다", vn: "Tuyệt vọng/Nản lòng", icon: "🥀" },
+                { kr: "공감하다", vn: "Đồng cảm", icon: "🤝" }
+            ],
+            "Bài 6: Thành Ngữ 4 Chữ (사자성어)": [
+                { kr: "일석이조", vn: "Một mũi tên trúng 2 đích", icon: "🏹" },
+                { kr: "작심삼일", vn: "Quyết tâm 3 ngày", icon: "🛑" },
+                { kr: "동문서답", vn: "Hỏi đông trả lời tây", icon: "😵" },
+                { kr: "금상첨화", vn: "Thêu hoa trên gấm (Tốt hơn)", icon: "🌺" },
+                { kr: "설상가상", vn: "Họa vô đơn chí", icon: "🌩️" },
+                { kr: "고진감래", vn: "Khổ tận cam lai", icon: "🌈" },
+                { kr: "유비무환", vn: "Có chuẩn bị thì không lo", icon: "🛡️" },
+                { kr: "부전자전", vn: "Cha nào con nấy", icon: "👨‍👦" }
+            ],
+            "Bài 7: Văn Hóa & Truyền Thống": [
+                { kr: "문화 유산", vn: "Di sản văn hóa", icon: "🏯" },
+                { kr: "계승하다", vn: "Kế thừa", icon: "📜" },
+                { kr: "보존하다", vn: "Bảo tồn", icon: "🏺" },
+                { kr: "현대적", vn: "Mang tính hiện đại", icon: "🏙️" },
+                { kr: "조화", vn: "Sự hài hòa", icon: "☯️" },
+                { kr: "풍습", vn: "Phong tục", icon: "🎎" },
+                { kr: "관습", vn: "Tập quán/Thói quen", icon: "🔄" },
+                { kr: "다문화", vn: "Đa văn hóa", icon: "🌍" }
+            ],
+            "Bài 8: Khoa Học & Công Nghệ": [
+                { kr: "혁신", vn: "Sự đổi mới (Innovation)", icon: "💡" },
+                { kr: "생명 공학", vn: "Công nghệ sinh học", icon: "🧬" },
+                { kr: "유전자", vn: "Gen di truyền", icon: "🩸" },
+                { kr: "개발하다", vn: "Phát triển/Khai thác", icon: "🏗️" },
+                { kr: "실용화", vn: "Thương mại hóa/Thực dụng", icon: "🛍️" },
+                { kr: "원리", vn: "Nguyên lý", icon: "📐" },
+                { kr: "실험하다", vn: "Thí nghiệm", icon: "🧪" },
+                { kr: "분석하다", vn: "Phân tích", icon: "📊" }
+            ],
+            "Bài 9: Báo Chí & Truyền Thông": [
+                { kr: "언론", vn: "Báo chí/Ngôn luận", icon: "📰" },
+                { kr: "기사", vn: "Bài báo", icon: "🗞️" },
+                { kr: "보도하다", vn: "Đưa tin", icon: "📡" },
+                { kr: "여론", vn: "Dư luận", icon: "🗣️" },
+                { kr: "광고", vn: "Quảng cáo", icon: "📺" },
+                { kr: "특종", vn: "Tin độc quyền/Tin nóng", icon: "🔥" },
+                { kr: "인터뷰", vn: "Phỏng vấn", icon: "🎤" },
+                { kr: "생중계", vn: "Truyền hình trực tiếp", icon: "🔴" }
+            ],
+            "Bài 10: Nghề Nghiệp & Sự Nghiệp (Cao cấp)": [
+                { kr: "전문가", vn: "Chuyên gia", icon: "🎓" },
+                { kr: "경력", vn: "Kinh nghiệm làm việc", icon: "📋" },
+                { kr: "자격증", vn: "Chứng chỉ/Bằng cấp", icon: "🪪" },
+                { kr: "창업하다", vn: "Khởi nghiệp", icon: "🚀" },
+                { kr: "은퇴하다", vn: "Nghỉ hưu", icon: "👴" },
+                { kr: "적성", vn: "Năng khiếu/Sự phù hợp", icon: "🧩" },
+                { kr: "리더십", vn: "Khả năng lãnh đạo", icon: "👑" },
+                { kr: "협상하다", vn: "Đàm phán/Thương lượng", icon: "🤝" }
+            ],
+            "Bài 11: Văn Học & Nghệ Thuật": [
+                { kr: "소설", vn: "Tiểu thuyết", icon: "📖" },
+                { kr: "시", vn: "Thơ", icon: "✒️" },
+                { kr: "수필", vn: "Tùy bút", icon: "📓" },
+                { kr: "비평", vn: "Phê bình", icon: "🧐" },
+                { kr: "창작하다", vn: "Sáng tác", icon: "🎨" },
+                { kr: "반영하다", vn: "Phản ánh", icon: "🪞" },
+                { kr: "독자", vn: "Độc giả", icon: "🤓" },
+                { kr: "상징하다", vn: "Tượng trưng", icon: "🕊️" }
+            ],
+            "Bài 12: Đời Sống Xã Hội": [
+                { kr: "저출산", vn: "Tỷ lệ sinh thấp", icon: "📉" },
+                { kr: "고령화", vn: "Sự già hóa dân số", icon: "👵" },
+                { kr: "1인 가구", vn: "Hộ gia đình 1 người", icon: "👤" },
+                { kr: "빈부 격차", vn: "Khoảng cách giàu nghèo", icon: "↔️" },
+                { kr: "차별하다", vn: "Phân biệt đối xử", icon: "🚫" },
+                { kr: "평등하다", vn: "Bình đẳng", icon: "⚖️" },
+                { kr: "봉사하다", vn: "Tình nguyện", icon: "🤲" },
+                { kr: "기부하다", vn: "Quyên góp", icon: "💸" }
+            ],
+            "Bài 13: Lịch Sử": [
+                { kr: "역사", vn: "Lịch sử", icon: "📜" },
+                { kr: "시대", vn: "Thời đại", icon: "⏳" },
+                { kr: "독립", vn: "Độc lập", icon: "🇰🇷" },
+                { kr: "전쟁", vn: "Chiến tranh", icon: "⚔️" },
+                { kr: "평화", vn: "Hòa bình", icon: "🕊️" },
+                { kr: "기록하다", vn: "Ghi chép/Kỷ lục", icon: "📝" },
+                { kr: "유물", vn: "Di vật", icon: "🏺" },
+                { kr: "왕", vn: "Vua", icon: "👑" }
+            ],
+            "Bài 14: Tư Duy & Triết Lý": [
+                { kr: "관점", vn: "Quan điểm", icon: "👁️" },
+                { kr: "가치관", vn: "Giá trị quan", icon: "💎" },
+                { kr: "논리적", vn: "Tính logic", icon: "🧠" },
+                { kr: "비판적", vn: "Tính phê phán", icon: "🗣️" },
+                { kr: "객관적", vn: "Khách quan", icon: "⚖️" },
+                { kr: "주관적", vn: "Chủ quan", icon: "👤" },
+                { kr: "설득하다", vn: "Thuyết phục", icon: "🗣️" },
+                { kr: "주장하다", vn: "Chủ trương/Đòi hỏi", icon: "📢" }
+            ],
+            "Bài 15: Thành Ngữ & Tục Ngữ (Part 2)": [
+                { kr: "가는 말이 고와야 오는 말이 곱다", vn: "Lời nói chẳng mất tiền mua", icon: "🗣️" },
+                { kr: "발 없는 말이 천 리 간다", vn: "Tiếng lành đồn xa", icon: "🐎" },
+                { kr: "소 잃고 외양간 고친다", vn: "Mất bò mới lo làm chuồng", icon: "🐮" },
+                { kr: "누워서 떡 먹기", vn: "Dễ như ăn cháo", icon: "🛌" },
+                { kr: "원숭이도 나무에서 떨어진다", vn: "Nhân vô thập toàn", icon: "🐒" },
+                { kr: "시작이 반이다", vn: "Đầu xuôi đuôi lọt", icon: "🏁" }
+            ]
+        };
+
+        const navContainer = document.getElementById('category-nav');
+        const cardContainer = document.getElementById('card-container');
+
+        function initApp() {
+            const categories = Object.keys(vocabularyData);
+            
+            categories.forEach((cat, index) => {
+                const btn = document.createElement('button');
+                btn.innerText = cat;
+                btn.classList.add('cat-btn');
+                if (index === 0) btn.classList.add('active');
+                
+                btn.onclick = () => {
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderCards(cat);
+                };
+                navContainer.appendChild(btn);
+            });
+            renderCards(categories[0]);
+        }
+
+        function renderCards(categoryName) {
+            cardContainer.innerHTML = '';
+            const list = vocabularyData[categoryName];
+
+            list.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('vocab-card');
+                card.innerHTML = `
+                    <div class="speaker-icon">🔊</div>
+                    <span class="emoji-icon">${item.icon}</span>
+                    <div class="korean-word">${item.kr}</div>
+                    <div class="vietnamese-word">${item.vn}</div>
+                `;
+                card.onclick = () => speakKorean(item.kr);
+                cardContainer.appendChild(card);
+            });
+        }
+
+        function speakKorean(text) {
+            const cleanText = text.replace(/[?.,]/g, ''); 
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); 
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.lang = 'ko-KR'; 
+                utterance.rate = 0.85; 
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
