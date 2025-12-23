@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Tiếng Hàn - Nguyễn Bắc Sơn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- PHẦN GIAO DIỆN (CSS) --- */
+        :root {
+            --primary-color: #4f46e5; /* Màu tím xanh */
+            --secondary-color: #818cf8;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            color: white;
+            padding: 2rem 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        header p {
+            margin-top: 8px;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Menu danh mục */
+        #category-nav {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0 15px;
+            max-width: 1000px;
+        }
+
+        .cat-btn {
+            background-color: white;
+            border: 1px solid #d1d5db;
+            color: var(--text-color);
+            padding: 10px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .cat-btn:hover {
+            background-color: #f9fafb;
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .cat-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Lưới thẻ từ vựng */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+            padding: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        /* Thẻ Flashcard */
+        .vocab-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .vocab-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            border-color: var(--secondary-color);
+        }
+
+        .vocab-card:active {
+            transform: scale(0.96);
+            background-color: #eff6ff;
+        }
+
+        .emoji-icon {
+            font-size: 3rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .korean-word {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 4px 0;
+        }
+
+        .vietnamese-word {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        /* Icon loa */
+        .speaker-icon {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 1rem;
+            color: #d1d5db;
+        }
+
+        .vocab-card:hover .speaker-icon {
+            color: var(--primary-color);
+        }
+
+        footer {
+            padding: 20px;
+            color: #9ca3af;
+            font-size: 0.85rem;
+            background-color: #fff;
+            margin-top: auto;
+            border-top: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🇰🇷 Học Tiếng Hàn Cùng Sơn</h1>
+        <p>Chọn chủ đề và bấm vào thẻ để nghe phát âm</p>
+    </header>
+
+    <nav id="category-nav"></nav>
+
+    <main>
+        <div id="card-container" class="grid-container"></div>
+    </main>
+
+    <footer>
+        <p>Code bởi Nguyễn Bắc Sơn &copy; 2025</p>
+    </footer>
+
+    <script>
+        // --- PHẦN DỮ LIỆU VÀ XỬ LÝ (JAVASCRIPT) ---
+
+        const vocabularyData = {
+            "Quốc Gia (나라)": [
+                { kr: "한국", vn: "Hàn Quốc", icon: "🇰🇷" },
+                { kr: "베트남", vn: "Việt Nam", icon: "🇻🇳" },
+                { kr: "중국", vn: "Trung Quốc", icon: "🇨🇳" },
+                { kr: "미국", vn: "Mỹ", icon: "🇺🇸" },
+                { kr: "일본", vn: "Nhật Bản", icon: "🇯🇵" },
+                { kr: "영국", vn: "Anh", icon: "🇬🇧" },
+                { kr: "호주", vn: "Úc", icon: "🇦🇺" },
+                { kr: "독일", vn: "Đức", icon: "🇩🇪" },
+                { kr: "프랑스", vn: "Pháp", icon: "🇫🇷" },
+                { kr: "캐나다", vn: "Canada", icon: "🇨🇦" },
+                { kr: "인도네시아", vn: "Indonesia", icon: "🇮🇩" },
+                { kr: "말레이시아", vn: "Malaysia", icon: "🇲🇾" },
+                { kr: "인도", vn: "Ấn Độ", icon: "🇮🇳" },
+                { kr: "스페인", vn: "Tây Ban Nha", icon: "🇪🇸" },
+                { kr: "러시아", vn: "Nga", icon: "🇷🇺" },
+                { kr: "태국", vn: "Thái Lan", icon: "🇹🇭" }
+            ],
+            "Nghề Nghiệp 1 (직업)": [
+                { kr: "선생님 (교사)", vn: "Giáo viên", icon: "👩‍🏫" },
+                { kr: "학생", vn: "Học sinh", icon: "👨‍🎓" },
+                { kr: "의사", vn: "Bác sĩ", icon: "👨‍⚕️" },
+                { kr: "회사원", vn: "NV Văn phòng", icon: "💼" },
+                { kr: "요리사", vn: "Đầu bếp", icon: "👨‍🍳" },
+                { kr: "기자", vn: "Phóng viên", icon: "📰" },
+                { kr: "가수", vn: "Ca sĩ", icon: "🎤" },
+                { kr: "배우", vn: "Diễn viên", icon: "🎬" },
+                { kr: "군인", vn: "Quân nhân", icon: "🪖" },
+                { kr: "주부", vn: "Nội trợ", icon: "🏠" },
+                { kr: "은행원", vn: "NV Ngân hàng", icon: "🏦" },
+                { kr: "운전기사", vn: "Tài xế", icon: "🚌" },
+                { kr: "농부", vn: "Nông dân", icon: "🌾" },
+                { kr: "어부", vn: "Ngư dân", icon: "🎣" },
+                { kr: "개인 사업자", vn: "Kinh doanh nhỏ", icon: "🏪" },
+                { kr: "기술자", vn: "Kỹ sư/Kỹ thuật", icon: "⚙️" },
+                { kr: "점원", vn: "NV Cửa hàng", icon: "🛒" },
+                { kr: "통역사", vn: "Thông dịch viên", icon: "🗣️" },
+                { kr: "관광안내원", vn: "HDV Du lịch", icon: "🚩" },
+                { kr: "마케팅 직원", vn: "NV Marketing", icon: "📈" },
+                { kr: "미용사", vn: "Thợ cắt tóc", icon: "💇" },
+                { kr: "사장님", vn: "Giám đốc", icon: "🤵" },
+                { kr: "부동산중개인", vn: "Môi giới BĐS", icon: "🏘️" }
+            ],
+            "Nghề Nghiệp 2 (Mở rộng)": [
+                { kr: "간호사", vn: "Y tá", icon: "💉" },
+                { kr: "경비원", vn: "Bảo vệ", icon: "👮" },
+                { kr: "경찰관", vn: "Cảnh sát", icon: "🚓" },
+                { kr: "공무원", vn: "Công chức", icon: "🏛️" },
+                { kr: "과학자", vn: "Nhà khoa học", icon: "🧪" },
+                { kr: "교수", vn: "Giáo sư", icon: "🎓" },
+                { kr: "모델", vn: "Người mẫu", icon: "💃" },
+                { kr: "변호사", vn: "Luật sư", icon: "⚖️" },
+                { kr: "비서", vn: "Thư ký", icon: "📝" },
+                { kr: "사진사", vn: "Nhiếp ảnh gia", icon: "📸" },
+                { kr: "소방관", vn: "Lính cứu hỏa", icon: "🚒" },
+                { kr: "승무원", vn: "Tiếp viên HK", icon: "✈️" },
+                { kr: "약사", vn: "Dược sĩ", icon: "💊" },
+                { kr: "용접공", vn: "Thợ hàn", icon: "🔥" },
+                { kr: "조종사", vn: "Phi công", icon: "👨‍✈️" },
+                { kr: "프로 게이머", vn: "Game thủ", icon: "🎮" },
+                { kr: "화가", vn: "Họa sĩ", icon: "🎨" },
+                { kr: "판사", vn: "Thẩm phán", icon: "⚖️" }
+            ],
+            "Gia Đình (가족)": [
+                { kr: "할아버지", vn: "Ông nội", icon: "👴" },
+                { kr: "할머니", vn: "Bà nội", icon: "👵" },
+                { kr: "외할아버지", vn: "Ông ngoại", icon: "👴" },
+                { kr: "외할머니", vn: "Bà ngoại", icon: "👵" },
+                { kr: "부모님", vn: "Bố mẹ", icon: "👪" },
+                { kr: "아버지 (아빠)", vn: "Bố", icon: "👨" },
+                { kr: "어머니 (엄마)", vn: "Mẹ", icon: "👩" },
+                { kr: "형", vn: "Anh (em trai gọi)", icon: "👦" },
+                { kr: "오빠", vn: "Anh (em gái gọi)", icon: "👦" },
+                { kr: "누나", vn: "Chị (em trai gọi)", icon: "👧" },
+                { kr: "언니", vn: "Chị (em gái gọi)", icon: "👧" },
+                { kr: "남동생", vn: "Em trai", icon: "🧒" },
+                { kr: "여동생", vn: "Em gái", icon: "👧" },
+                { kr: "남편", vn: "Chồng", icon: "🤵" },
+                { kr: "아내", vn: "Vợ", icon: "👰" },
+                { kr: "아들", vn: "Con trai", icon: "👶" },
+                { kr: "딸", vn: "Con gái", icon: "🎀" }
+            ],
+            "Công Ty & Công Việc": [
+                { kr: "출근하다", vn: "Đi làm", icon: "🏃" },
+                { kr: "퇴근하다", vn: "Tan ca", icon: "🏠" },
+                { kr: "월급", vn: "Lương", icon: "💰" },
+                { kr: "회의", vn: "Cuộc họp", icon: "📊" },
+                { kr: "사무실", vn: "Văn phòng", icon: "🏢" },
+                { kr: "동료", vn: "Đồng nghiệp", icon: "🤝" },
+                { kr: "야근", vn: "Làm thêm giờ", icon: "🌙" },
+                { kr: "출장가다", vn: "Đi công tác", icon: "🧳" },
+                { kr: "회식", vn: "Liên hoan công ty", icon: "🍻" },
+                { kr: "면접", vn: "Phỏng vấn", icon: "👔" },
+                { kr: "계약", vn: "Hợp đồng", icon: "📝" },
+                { kr: "해고를 당하다", vn: "Bị sa thải", icon: "🚪" },
+                { kr: "작업량", vn: "Khối lượng CV", icon: "📦" }
+            ],
+            "Chào Hỏi (인사말)": [
+                { kr: "안녕하세요", vn: "Xin chào", icon: "👋" },
+                { kr: "반갑습니다", vn: "Vui được gặp", icon: "😊" },
+                { kr: "감사합니다", vn: "Cảm ơn", icon: "🙏" },
+                { kr: "죄송합니다", vn: "Xin lỗi", icon: "🙇" },
+                { kr: "안녕히 가세요", vn: "Tạm biệt (ở lại chào)", icon: "👋" },
+                { kr: "안녕히 계세요", vn: "Tạm biệt (đi chào)", icon: "🏘️" },
+                { kr: "잘 자요", vn: "Ngủ ngon", icon: "😴" },
+                { kr: "수고했어요", vn: "Vất vả rồi", icon: "👍" }
+            ]
+        };
+
+        const navContainer = document.getElementById('category-nav');
+        const cardContainer = document.getElementById('card-container');
+
+        // Khởi tạo
+        function initApp() {
+            const categories = Object.keys(vocabularyData);
+            
+            categories.forEach((cat, index) => {
+                const btn = document.createElement('button');
+                btn.innerText = cat;
+                btn.classList.add('cat-btn');
+                if (index === 0) btn.classList.add('active');
+                
+                btn.onclick = () => {
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderCards(cat);
+                };
+                navContainer.appendChild(btn);
+            });
+
+            renderCards(categories[0]);
+        }
+
+        // Hiển thị thẻ
+        function renderCards(categoryName) {
+            cardContainer.innerHTML = '';
+            const list = vocabularyData[categoryName];
+
+            list.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('vocab-card');
+                
+                card.innerHTML = `
+                    <div class="speaker-icon">🔊</div>
+                    <span class="emoji-icon">${item.icon}</span>
+                    <div class="korean-word">${item.kr}</div>
+                    <div class="vietnamese-word">${item.vn}</div>
+                `;
+
+                // Sự kiện click để đọc
+                card.onclick = () => speakKorean(item.kr);
+
+                cardContainer.appendChild(card);
+            });
+        }
+
+        // Chức năng đọc (Text-to-Speech)
+        function speakKorean(text) {
+            // Lọc bỏ phần chữ trong ngoặc đơn để máy đọc tự nhiên hơn
+            // Ví dụ: "선생님 (교사)" -> chỉ đọc "선생님"
+            const cleanText = text.split('(')[0]; 
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Dừng câu đang đọc nếu bấm liên tục
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.lang = 'ko-KR'; // Giọng Hàn Quốc
+                utterance.rate = 0.85; // Tốc độ đọc
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Trình duyệt này không hỗ trợ đọc âm thanh. Hãy thử dùng Google Chrome.");
+            }
+        }
+
+        // Chạy chương trình
+        initApp();
+    </script>
+</body>
+</html>
