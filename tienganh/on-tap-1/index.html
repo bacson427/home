@@ -3,466 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luyện Nghe Tiếng Anh - Nguyễn Bắc Sơn</title>
+    <title>Full 100 Câu Luyện Nghe Tiếng Anh</title>
     <style>
-        :root {
-            --primary: #0277bd; /* Màu xanh dương đậm */
-            --accent: #ff9800;
-            --light: #e1f5fe;
-        }
-
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f4f8; margin: 0; padding: 20px; color: #333; }
-        
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        header { text-align: center; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 30px; }
-        h1 { color: var(--primary); margin: 0; }
-        .sub-info { color: #666; font-size: 0.9em; margin-top: 5px; }
-
-        .audio-controls { margin-bottom: 15px; }
-        .btn-audio {
-            background-color: var(--primary); color: white; border: none; padding: 10px 20px;
-            border-radius: 50px; cursor: pointer; font-size: 16px; display: inline-flex; align-items: center; gap: 8px;
-            transition: 0.2s;
-        }
-        .btn-audio:hover { background-color: #01579b; transform: scale(1.05); }
-        .btn-audio:active { transform: scale(0.95); }
-        
-        .quiz-item { background: #fafafa; border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 20px; border-radius: 10px; }
-        .question-label { font-weight: bold; margin-bottom: 10px; display: block; color: #444; }
-        
-        .options label { display: block; padding: 10px; margin: 5px 0; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: 0.2s; }
-        .options label:hover { background: var(--light); border-color: var(--primary); }
+        :root { --primary: #1a237e; --secondary: #c62828; --success: #2e7d32; --bg: #f5f5f5; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        header { text-align: center; margin-bottom: 40px; border-bottom: 3px solid var(--primary); padding-bottom: 20px; }
+        h1 { color: var(--primary); margin: 0; font-size: 2.5em; }
+        .part-header { background: #e8eaf6; color: var(--primary); padding: 15px; margin: 30px 0 15px 0; border-radius: 8px; font-weight: bold; border-left: 5px solid var(--primary); }
+        .quiz-item { background: #fff; border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        .btn-audio { background: var(--primary); color: white; border: none; padding: 10px 25px; border-radius: 30px; cursor: pointer; font-size: 16px; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .btn-audio:hover { background: #303f9f; transform: scale(1.02); }
+        .btn-audio.playing { background: var(--secondary); animation: pulse 1.5s infinite; }
+        .question-text { display: block; margin: 10px 0; font-weight: 600; color: #333; }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .options label { display: block; padding: 12px; background: #fafafa; border: 1px solid #eee; border-radius: 6px; cursor: pointer; }
+        .options label:hover { background: #e3f2fd; border-color: #2196f3; }
         .options input { margin-right: 10px; }
-
-        .feedback { margin-top: 10px; padding: 10px; border-radius: 5px; display: none; font-size: 0.9em; }
-        .feedback.correct { background: #d4edda; color: #155724; }
-        .feedback.wrong { background: #f8d7da; color: #721c24; }
-
-        .controls { text-align: center; margin-top: 30px; }
-        .btn-submit { background: var(--accent); color: white; border: none; padding: 15px 40px; font-size: 18px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .btn-submit:hover { background: #f57c00; }
-
-        .score-board { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 10px 20px; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: bold; }
-        
-        /* Hiệu ứng sóng âm thanh khi nghe */
-        .playing { animation: pulse 1s infinite; background-color: #d32f2f !important; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(211, 47, 47, 0); } 100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); } }
+        .feedback { margin-top: 15px; padding: 15px; border-radius: 6px; display: none; }
+        .feedback.correct { background: #e8f5e9; color: var(--success); border: 1px solid #c8e6c9; }
+        .feedback.wrong { background: #ffebee; color: var(--secondary); border: 1px solid #ffcdd2; }
+        .controls { text-align: center; margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; }
+        .btn-submit { background: var(--success); color: white; border: none; padding: 15px 50px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .score-board { position: fixed; bottom: 30px; right: 30px; background: var(--primary); color: white; padding: 15px 25px; border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-weight: bold; z-index: 100; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(198, 40, 40, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(198, 40, 40, 0); } 100% { box-shadow: 0 0 0 0 rgba(198, 40, 40, 0); } }
+        @media (max-width: 600px) { .options { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <header>
-        <h1>LUYỆN NGHE TIẾNG ANH (LISTENING)</h1>
-        <div class="sub-info">Sinh viên: Nguyễn Bắc Sơn - Hactech | Part 1: 50 Câu</div>
-        <p style="font-size: 0.9em; color: #d32f2f;">*Lưu ý: Hãy bật loa/tai nghe. Bấm nút 🔊 để nghe câu hỏi.</p>
+    header>
+        <h1>LUYỆN NGHE 100 CÂU</h1>
+        <p>Tổng hợp: Kỹ thuật Điện & Chuyên Ngành Ngôn Ngữ</p>
     </header>
-
-    <div id="quiz-list">
-        </div>
-
-    <div class="controls">
-        <button class="btn-submit" onclick="checkAll()">NỘP BÀI (CHECK)</button>
-    </div>
+    <div id="quiz-content">Loading...</div>
+    <div class="controls"><button class="btn-submit" onclick="checkAll()">NỘP BÀI & XEM ĐIỂM</button></div>
 </div>
-
-<div class="score-board" id="score">Điểm: 0/50</div>
+<div class="score-board" id="score">Điểm: 0/100</div>
 
 <script>
-    // DỮ LIỆU CÂU HỎI NGHE (Script: Lời máy đọc - Question: Câu hỏi hiển thị)
     const questions = [
-        // --- PART 1: GREETINGS & BASIC RESPONSES (1-10) ---
-        {
-            script: "Hello, how are you today?",
-            q: "Nghe và chọn câu trả lời phù hợp:",
-            options: ["I'm fine, thanks.", "I'm looking for a job.", "It is Tuesday.", "Yes, I am."],
-            a: 0, explain: "Câu hỏi thăm sức khỏe -> Trả lời: I'm fine."
-        },
-        {
-            script: "Nice to meet you.",
-            q: "Nghe và chọn câu trả lời phù hợp:",
-            options: ["See you later.", "Nice to meet you, too.", "You're welcome.", "I am sorry."],
-            a: 1, explain: "Đáp lại lời chào gặp mặt."
-        },
-        {
-            script: "Where are you from?",
-            q: "Nghe và chọn câu trả lời phù hợp:",
-            options: ["I'm from Vietnam.", "I live in Hanoi.", "I am a student.", "I like football."],
-            a: 0, explain: "Hỏi quê quán (Where from) -> I'm from..."
-        },
-        {
-            script: "What do you do?",
-            q: "Nghe và chọn câu trả lời phù hợp:",
-            options: ["I am doing my homework.", "I am a student at Hactech.", "I am fine.", "I do it everyday."],
-            a: 1, explain: "What do you do? = Hỏi nghề nghiệp."
-        },
-        {
-            script: "Thank you very much for your help.",
-            q: "Nghe và chọn câu trả lời phù hợp:",
-            options: ["No problem.", "Yes, please.", "I don't know.", "Good bye."],
-            a: 0, explain: "Đáp lại lời cảm ơn -> No problem / You're welcome."
-        },
-        {
-            script: "Excuse me, what time is it?",
-            q: "Nghe và chọn câu trả lời phù hợp:",
-            options: ["It's 10 o'clock.", "It's expensive.", "It's on the table.", "I have no time."],
-            a: 0, explain: "Hỏi giờ -> Trả lời giờ."
-        },
-        {
-            script: "Could you open the door, please?",
-            q: "Nghe và chọn câu trả lời phù hợp:",
-            options: ["Yes, I can.", "Sure, no problem.", "I am opening.", "No, I don't."],
-            a: 1, explain: "Lời yêu cầu lịch sự -> Sure/Certainly."
-        },
-        {
-            script: "How old are you?",
-            q: "Nghe và chọn câu trả lời phù hợp:",
-            options: ["I have 18 years.", "I am 18 years old.", "I am fine.", "I am 18 years."],
-            a: 1, explain: "Cấu trúc tuổi: I am ... years old."
-        },
-        {
-            script: "Is this your pen?",
-            q: "Nghe và chọn câu trả lời phù hợp:",
-            options: ["Yes, it is.", "Yes, I do.", "No, I don't.", "Yes, it's mine pen."],
-            a: 0, explain: "Câu hỏi Yes/No với To be -> Yes, it is."
-        },
-        {
-            script: "Good bye. See you tomorrow.",
-            q: "Nghe và chọn câu trả lời phù hợp:",
-            options: ["Hello.", "Good morning.", "See you.", "Thank you."],
-            a: 2, explain: "Chào tạm biệt."
-        },
+        // --- PART 1: GREETINGS ---
+        { header: "PART 1: GIAO TIẾP CƠ BẢN", script: "Hello, how are you today?", q: "Chọn câu trả lời:", options: ["I'm fine.", "I'm looking for a job.", "It is Tuesday.", "Yes, I am."], a: 0, explain: "Hỏi sức khỏe." },
+        { script: "Nice to meet you.", q: "Chọn câu trả lời:", options: ["See you later.", "Nice to meet you, too.", "You're welcome.", "Sorry."], a: 1, explain: "Đáp lời chào." },
+        { script: "Where are you from?", q: "Chọn câu trả lời:", options: ["Vietnam.", "Hanoi.", "A student.", "Football."], a: 0, explain: "Hỏi quê quán." },
+        { script: "What do you do?", q: "Chọn câu trả lời:", options: ["Homework.", "I am a student.", "I am fine.", "Everyday."], a: 1, explain: "Hỏi nghề nghiệp." },
+        { script: "Thank you very much.", q: "Chọn câu trả lời:", options: ["No problem.", "Yes, please.", "I don't know.", "Good bye."], a: 0, explain: "Đáp lời cảm ơn." },
+        { script: "What time is it?", q: "Chọn câu trả lời:", options: ["10 o'clock.", "Expensive.", "On the table.", "No time."], a: 0, explain: "Hỏi giờ." },
+        { script: "Could you open the door?", q: "Chọn câu trả lời:", options: ["Yes, I can.", "Sure.", "Opening.", "No."], a: 1, explain: "Yêu cầu lịch sự." },
+        { script: "How old are you?", q: "Chọn câu trả lời:", options: ["18 years.", "18 years old.", "Fine.", "18."], a: 1, explain: "Hỏi tuổi." },
+        { script: "Is this your pen?", q: "Chọn câu trả lời:", options: ["Yes, it is.", "Yes, I do.", "No, don't.", "Mine."], a: 0, explain: "Câu hỏi To be." },
+        { script: "Good bye.", q: "Chọn câu trả lời:", options: ["Hello.", "Morning.", "See you.", "Thanks."], a: 2, explain: "Tạm biệt." },
 
-        // --- PART 2: NUMBERS & TECHNICAL SPECS (11-20) ---
-        {
-            script: "The voltage is two hundred and twenty volts.",
-            q: "Bạn đã nghe thấy thông số nào?",
-            options: ["110 V", "220 V", "12 V", "24 V"],
-            a: 1, explain: "Two hundred and twenty = 220."
-        },
-        {
-            script: "Please meet me at room three zero five.",
-            q: "Số phòng được nhắc đến là?",
-            options: ["305", "315", "350", "503"],
-            a: 0, explain: "Three zero five = 305."
-        },
-        {
-            script: "The cable is fifty meters long.",
-            q: "Chiều dài của dây cáp là bao nhiêu?",
-            options: ["15 meters", "50 meters", "55 meters", "5 meters"],
-            a: 1, explain: "Fifty = 50 (Phân biệt với Fifteen - 15)."
-        },
-        {
-            script: "My phone number is 0987 654 321.",
-            q: "Số điện thoại bạn nghe được là?",
-            options: ["0987 645 321", "0987 654 321", "0978 654 321", "0987 654 123"],
-            a: 1, explain: "Kiểm tra kỹ năng nghe chuỗi số."
-        },
-        {
-            script: "The resistor value is one thousand ohms.",
-            q: "Giá trị điện trở là?",
-            options: ["100 Ω", "1000 Ω", "10,000 Ω", "10 Ω"],
-            a: 1, explain: "One thousand = 1000."
-        },
-        {
-            script: "It happened in nineteen ninety-five.",
-            q: "Năm nào được nhắc đến?",
-            options: ["1959", "1995", "1905", "2005"],
-            a: 1, explain: "Nineteen ninety-five = 1995."
-        },
-        {
-            script: "The temperature is thirty degrees Celsius.",
-            q: "Nhiệt độ là bao nhiêu?",
-            options: ["13°C", "30°C", "33°C", "3°C"],
-            a: 1, explain: "Thirty = 30."
-        },
-        {
-            script: "You need to wait for forty-five minutes.",
-            q: "Thời gian chờ là bao lâu?",
-            options: ["4 to 5 minutes", "45 minutes", "54 minutes", "4 or 5 minutes"],
-            a: 1, explain: "Forty-five = 45."
-        },
-        {
-            script: "The width is 1 point 5 centimeters.",
-            q: "Kích thước bạn nghe được là?",
-            options: ["1.5 cm", "15 cm", "105 cm", "5.1 cm"],
-            a: 0, explain: "One point five = 1.5."
-        },
-        {
-            script: "There are twelve students in the lab.",
-            q: "Có bao nhiêu sinh viên?",
-            options: ["12", "20", "21", "11"],
-            a: 0, explain: "Twelve = 12."
-        },
+        // --- PART 2: NUMBERS ---
+        { header: "PART 2: SỐ & THÔNG SỐ", script: "The voltage is 220 volts.", q: "Thông số:", options: ["110 V", "220 V", "12 V", "24 V"], a: 1, explain: "220 V" },
+        { script: "Room 305.", q: "Số phòng:", options: ["305", "315", "350", "503"], a: 0, explain: "305" },
+        { script: "Fifty meters long.", q: "Chiều dài:", options: ["15 m", "50 m", "55 m", "5 m"], a: 1, explain: "50 m" },
+        { script: "Phone 0987 654 321.", q: "SĐT:", options: ["...645...", "...654...", "...978...", "...123"], a: 1, explain: "Nghe chuỗi số." },
+        { script: "1000 ohms.", q: "Điện trở:", options: ["100", "1000", "10000", "10"], a: 1, explain: "1000" },
+        { script: "Year 1995.", q: "Năm:", options: ["1959", "1995", "1905", "2005"], a: 1, explain: "1995" },
+        { script: "30 degrees Celsius.", q: "Nhiệt độ:", options: ["13", "30", "33", "3"], a: 1, explain: "30" },
+        { script: "45 minutes.", q: "Thời gian:", options: ["4-5", "45", "54", "45s"], a: 1, explain: "45 mins" },
+        { script: "1.5 cm.", q: "Kích thước:", options: ["1.5", "15", "105", "5.1"], a: 0, explain: "1.5" },
+        { script: "Twelve students.", q: "Số lượng:", options: ["12", "20", "21", "11"], a: 0, explain: "12" },
 
-        // --- PART 3: ELECTRICAL TOOLS & ACTIONS (21-30) ---
-        {
-            script: "Pass me the screwdriver, please.",
-            q: "Người nói đang cần dụng cụ gì?",
-            options: ["Cái búa (Hammer)", "Cái kìm (Pliers)", "Tua vít (Screwdriver)", "Máy khoan (Drill)"],
-            a: 2, explain: "Screwdriver = Tua vít."
-        },
-        {
-            script: "Do not touch the live wire.",
-            q: "Người nói cảnh báo điều gì?",
-            options: ["Không chạm vào dây nóng/có điện.", "Không cắt dây.", "Không nối dây.", "Không mua dây."],
-            a: 0, explain: "Live wire = Dây pha/Dây có điện."
-        },
-        {
-            script: "The bulb is burnt out.",
-            q: "Tình trạng của bóng đèn là gì?",
-            options: ["Đèn đang sáng.", "Đèn bị cháy.", "Đèn chưa tắt.", "Đèn mới."],
-            a: 1, explain: "Burnt out = Bị cháy."
-        },
-        {
-            script: "You need to unplug the device first.",
-            q: "Hành động cần làm trước tiên là gì?",
-            options: ["Bật máy.", "Cắm điện.", "Rút phích cắm.", "Sửa máy."],
-            a: 2, explain: "Unplug = Rút phích cắm."
-        },
-        {
-            script: "Use the pliers to cut the wire.",
-            q: "Dùng dụng cụ gì để cắt dây?",
-            options: ["Kìm", "Dao", "Kéo", "Cưa"],
-            a: 0, explain: "Pliers = Kìm."
-        },
-        {
-            script: "Wear safety gloves before working.",
-            q: "Yêu cầu an toàn là gì?",
-            options: ["Đội mũ bảo hiểm.", "Đeo găng tay bảo hộ.", "Đi giày bảo hộ.", "Đeo kính."],
-            a: 1, explain: "Safety gloves = Găng tay bảo hộ."
-        },
-        {
-            script: "The switch is on the wall.",
-            q: "Công tắc nằm ở đâu?",
-            options: ["Trên bàn.", "Trên tường.", "Trên trần nhà.", "Dưới sàn."],
-            a: 1, explain: "On the wall = Trên tường."
-        },
-        {
-            script: "Check the battery level.",
-            q: "Người nói yêu cầu kiểm tra cái gì?",
-            options: ["Dây điện.", "Pin/Ắc quy.", "Bóng đèn.", "Mô tơ."],
-            a: 1, explain: "Battery = Pin/Ắc quy."
-        },
-        {
-            script: "The motor is running very fast.",
-            q: "Mô tơ đang hoạt động như thế nào?",
-            options: ["Rất chậm.", "Rất ồn.", "Rất nhanh.", "Không chạy."],
-            a: 2, explain: "Fast = Nhanh."
-        },
-        {
-            script: "Connect the red wire to the positive terminal.",
-            q: "Dây màu đỏ nối vào đâu?",
-            options: ["Cực âm.", "Cực dương.", "Dây đất.", "Vỏ máy."],
-            a: 1, explain: "Positive terminal = Cực dương (+)."
-        },
+        // --- PART 3: ELECTRICAL TOOLS ---
+        { header: "PART 3: DỤNG CỤ ĐIỆN", script: "Pass me the screwdriver.", q: "Dụng cụ gì?", options: ["Búa", "Kìm", "Tua vít", "Khoan"], a: 2, explain: "Screwdriver" },
+        { script: "Don't touch the live wire.", q: "Cảnh báo?", options: ["Dây có điện", "Cắt dây", "Nối dây", "Mua dây"], a: 0, explain: "Live wire" },
+        { script: "Bulb is burnt out.", q: "Tình trạng?", options: ["Sáng", "Cháy", "Tắt", "Mới"], a: 1, explain: "Burnt out" },
+        { script: "Unplug the device.", q: "Làm gì?", options: ["Bật", "Cắm", "Rút phích", "Sửa"], a: 2, explain: "Unplug" },
+        { script: "Use pliers to cut.", q: "Dùng gì?", options: ["Kìm", "Dao", "Kéo", "Cưa"], a: 0, explain: "Pliers" },
+        { script: "Wear safety gloves.", q: "An toàn?", options: ["Mũ", "Găng tay", "Giày", "Kính"], a: 1, explain: "Gloves" },
+        { script: "Switch is on the wall.", q: "Ở đâu?", options: ["Bàn", "Tường", "Trần", "Sàn"], a: 1, explain: "Wall" },
+        { script: "Check battery.", q: "Kiểm tra?", options: ["Dây", "Pin", "Đèn", "Mô tơ"], a: 1, explain: "Battery" },
+        { script: "Motor runs fast.", q: "Chạy thế nào?", options: ["Chậm", "Ồn", "Nhanh", "Không chạy"], a: 2, explain: "Fast" },
+        { script: "Connect red wire to positive.", q: "Nối cực nào?", options: ["Âm", "Dương", "Đất", "Vỏ"], a: 1, explain: "Positive (+)" },
 
-        // --- PART 4: DAILY CONVERSATIONS (31-40) ---
-        {
-            script: "Why were you late for school?",
-            q: "Chọn câu trả lời phù hợp:",
-            options: ["Because I missed the bus.", "Because I am hungry.", "Yes, I was.", "At 7 o'clock."],
-            a: 0, explain: "Hỏi lý do (Why) -> Trả lời Because..."
-        },
-        {
-            script: "How far is it from here to Hactech?",
-            q: "Chọn câu trả lời phù hợp:",
-            options: ["About 2 kilometers.", "2 hours.", "It is nice.", "By bus."],
-            a: 0, explain: "Hỏi khoảng cách (How far)."
-        },
-        {
-            script: "What is your favorite subject?",
-            q: "Chọn câu trả lời phù hợp:",
-            options: ["I like English.", "I hate Math.", "My favorite subject is English.", "I am studying."],
-            a: 2, explain: "Hỏi môn học yêu thích."
-        },
-        {
-            script: "Can I borrow your pen?",
-            q: "Chọn câu trả lời phù hợp:",
-            options: ["Yes, here you are.", "No, thank you.", "I don't like it.", "Yes, I can."],
-            a: 0, explain: "Mượn đồ -> Đồng ý cho mượn."
-        },
-        {
-            script: "What did you do yesterday?",
-            q: "Chọn câu trả lời phù hợp:",
-            options: ["I will go to school.", "I played football.", "I am sleeping.", "I play football."],
-            a: 1, explain: "Hỏi quá khứ -> Trả lời quá khứ (Played)."
-        },
-        {
-            script: "Do you like listening to music?",
-            q: "Chọn câu trả lời phù hợp:",
-            options: ["Yes, I do.", "Yes, I am.", "No, I'm not.", "Yes, I like."],
-            a: 0, explain: "Hỏi Do you... -> Yes, I do."
-        },
-        {
-            script: "Who is that man?",
-            q: "Chọn câu trả lời phù hợp:",
-            options: ["He is my father.", "It is a pen.", "He is tall.", "I don't know her."],
-            a: 0, explain: "Hỏi người (Who)."
-        },
-        {
-            script: "When is your birthday?",
-            q: "Chọn câu trả lời phù hợp:",
-            options: ["In Hanoi.", "On November 1st.", "I am 18.", "Happy birthday."],
-            a: 1, explain: "Hỏi thời gian (When)."
-        },
-        {
-            script: "Have you ever been to Ho Chi Minh City?",
-            q: "Chọn câu trả lời phù hợp:",
-            options: ["Yes, I have.", "Yes, I did.", "No, I don't.", "Yes, I was."],
-            a: 0, explain: "Thì HT Hoàn thành (Have you...) -> Yes, I have."
-        },
-        {
-            script: "I am hungry.",
-            q: "Chọn câu phản hồi phù hợp:",
-            options: ["Let's go to the cinema.", "Let's get something to eat.", "You should sleep.", "Me neither."],
-            a: 1, explain: "Đói -> Rủ đi ăn."
-        },
+        // --- PART 4: CONVERSATION ---
+        { header: "PART 4: HỘI THOẠI", script: "Why late?", q: "Trả lời:", options: ["Missed bus.", "Hungry.", "Yes.", "7 PM."], a: 0, explain: "Lý do." },
+        { script: "How far to Hactech?", q: "Trả lời:", options: ["2 km.", "2 hours.", "Nice.", "Bus."], a: 0, explain: "Khoảng cách." },
+        { script: "Favorite subject?", q: "Trả lời:", options: ["English.", "Math.", "History.", "Studying."], a: 0, explain: "Môn học." },
+        { script: "Borrow pen?", q: "Trả lời:", options: ["Here you are.", "No.", "Don't like.", "Can."], a: 0, explain: "Cho mượn." },
+        { script: "What did you do yesterday?", q: "Trả lời:", options: ["Go school.", "Played football.", "Sleeping.", "Play."], a: 1, explain: "Quá khứ." },
+        { script: "Like music?", q: "Trả lời:", options: ["Yes, I do.", "Yes, am.", "No.", "Like."], a: 0, explain: "Sở thích." },
+        { script: "Who is that?", q: "Trả lời:", options: ["My father.", "Pen.", "Tall.", "Don't know."], a: 0, explain: "Người." },
+        { script: "When birthday?", q: "Trả lời:", options: ["Hanoi.", "Nov 1st.", "18.", "Happy."], a: 1, explain: "Ngày tháng." },
+        { script: "Been to HCM City?", q: "Trả lời:", options: ["Yes, I have.", "Yes, did.", "No.", "Was."], a: 0, explain: "Kinh nghiệm." },
+        { script: "I am hungry.", q: "Phản hồi:", options: ["Cinema.", "Let's eat.", "Sleep.", "Me."], a: 1, explain: "Rủ đi ăn." },
 
-        // --- PART 5: TRUE OR FALSE / LOGIC (41-50) ---
-        {
-            script: "The sun rises in the West.",
-            q: "Câu bạn vừa nghe đúng hay sai?",
-            options: ["True (Đúng)", "False (Sai)"],
-            a: 1, explain: "Sai. Mặt trời mọc đằng Đông (East)."
-        },
-        {
-            script: "Water boils at 100 degrees Celsius.",
-            q: "Câu bạn vừa nghe đúng hay sai?",
-            options: ["True (Đúng)", "False (Sai)"],
-            a: 0, explain: "Đúng. Nước sôi ở 100 độ C."
-        },
-        {
-            script: "A triangle has four sides.",
-            q: "Câu bạn vừa nghe đúng hay sai?",
-            options: ["True (Đúng)", "False (Sai)"],
-            a: 1, explain: "Sai. Tam giác (Triangle) chỉ có 3 cạnh."
-        },
-        {
-            script: "Rubber is a good conductor of electricity.",
-            q: "Câu bạn vừa nghe đúng hay sai? (Kỹ thuật)",
-            options: ["True (Đúng)", "False (Sai)"],
-            a: 1, explain: "Sai. Cao su là chất cách điện (Insulator)."
-        },
-        {
-            script: "Hanoi is the capital of Vietnam.",
-            q: "Câu bạn vừa nghe đúng hay sai?",
-            options: ["True (Đúng)", "False (Sai)"],
-            a: 0, explain: "Đúng."
-        },
-        {
-            script: "There are seven days in a week.",
-            q: "Câu bạn vừa nghe đúng hay sai?",
-            options: ["True (Đúng)", "False (Sai)"],
-            a: 0, explain: "Đúng."
-        },
-        {
-            script: "If you touch a live wire, you might get an electric shock.",
-            q: "Câu bạn vừa nghe đúng hay sai?",
-            options: ["True (Đúng)", "False (Sai)"],
-            a: 0, explain: "Đúng. Chạm dây có điện sẽ bị giật."
-        },
-        {
-            script: "A car has two wheels.",
-            q: "Câu bạn vừa nghe đúng hay sai?",
-            options: ["True (Đúng)", "False (Sai)"],
-            a: 1, explain: "Sai. Xe hơi thường có 4 bánh."
-        },
-        {
-            script: "You use a multimeter to measure voltage.",
-            q: "Câu bạn vừa nghe đúng hay sai?",
-            options: ["True (Đúng)", "False (Sai)"],
-            a: 0, explain: "Đúng. Đồng hồ vạn năng đo được điện áp."
-        },
-        {
-            script: "English is not spoken in the world.",
-            q: "Câu bạn vừa nghe đúng hay sai?",
-            options: ["True (Đúng)", "False (Sai)"],
-            a: 1, explain: "Sai. Tiếng Anh rất phổ biến."
-        }
+        // --- PART 5: TRUE/FALSE ---
+        { header: "PART 5: ĐÚNG/SAI", script: "Sun rises in West.", q: "Đúng hay Sai?", options: ["True", "False"], a: 1, explain: "Sai. Mọc đằng Đông." },
+        { script: "Water boils at 100°C.", q: "Đúng hay Sai?", options: ["True", "False"], a: 0, explain: "Đúng." },
+        { script: "Triangle has 4 sides.", q: "Đúng hay Sai?", options: ["True", "False"], a: 1, explain: "Sai. 3 cạnh." },
+        { script: "Rubber conducts electricity.", q: "Đúng hay Sai?", options: ["True", "False"], a: 1, explain: "Sai. Cao su cách điện." },
+        { script: "Hanoi is capital.", q: "Đúng hay Sai?", options: ["True", "False"], a: 0, explain: "Đúng." },
+        { script: "7 days a week.", q: "Đúng hay Sai?", options: ["True", "False"], a: 0, explain: "Đúng." },
+        { script: "Live wire shocks you.", q: "Đúng hay Sai?", options: ["True", "False"], a: 0, explain: "Đúng." },
+        { script: "Car has 2 wheels.", q: "Đúng hay Sai?", options: ["True", "False"], a: 1, explain: "Sai. 4 bánh." },
+        { script: "Multimeter measures voltage.", q: "Đúng hay Sai?", options: ["True", "False"], a: 0, explain: "Đúng." },
+        { script: "English not spoken.", q: "Đúng hay Sai?", options: ["True", "False"], a: 1, explain: "Sai." },
+        // --- PART 6: PHONETICS ---
+        { header: "PART 6: NGỮ ÂM", script: "Sheep on the hill.", q: "Nghe từ nào?", options: ["Ship", "Sheep", "Sheet", "Cheap"], a: 1, explain: "Sheep (Cừu)" },
+        { script: "Hurt leg badly.", q: "Nghe từ nào?", options: ["Badly", "Bed", "Dad", "Bat"], a: 0, explain: "Badly" },
+        { script: "Buy a pan.", q: "Nghe từ nào?", options: ["Pen", "Pan", "Pin", "Pain"], a: 1, explain: "Pan (Chảo)" },
+        { script: "Fill this form.", q: "Nghe từ nào?", options: ["Feel", "Fill", "Fail", "Fall"], a: 1, explain: "Fill (Điền)" },
+        { script: "Weather hot.", q: "Nghe từ nào?", options: ["Hat", "Hot", "Hut", "Heart"], a: 1, explain: "Hot" },
+        { script: "Searching keys.", q: "Nghe từ nào?", options: ["Kiss", "Keys", "Kids", "Case"], a: 1, explain: "Keys" },
+        { script: "Walk in park.", q: "Nghe từ nào?", options: ["Work", "Walk", "Wake", "Wash"], a: 1, explain: "Walk (Đi bộ)" },
+        { script: "Full moon.", q: "Nghe từ nào?", options: ["Full", "Fool", "Fall", "Fill"], a: 0, explain: "Full" },
+        { script: "Sit on seat.", q: "Nghĩa là?", options: ["Ghế", "Ngồi xuống", "Hát", "Tìm"], a: 0, explain: "Seat (Ghế)" },
+        { script: "Price low.", q: "Nghe từ nào?", options: ["Law", "Low", "Slow", "Flow"], a: 1, explain: "Low" },
+
+        // --- PART 7: IDIOMS ---
+        { header: "PART 7: THÀNH NGỮ", script: "Break a leg!", q: "Nghĩa là?", options: ["May mắn", "Gãy chân", "Cẩn thận", "Thôi"], a: 0, explain: "Chúc may mắn" },
+        { script: "Raining cats and dogs.", q: "Nghĩa là?", options: ["Động vật", "Mưa to", "Nắng", "Tuyết"], a: 1, explain: "Mưa to" },
+        { script: "Flying colors.", q: "Nghĩa là?", options: ["Xuất sắc", "Vừa đủ", "Trượt", "Màu sắc"], a: 0, explain: "Điểm cao" },
+        { script: "Judge book by cover.", q: "Nghĩa là?", options: ["Mua sách", "Đánh giá vẻ ngoài", "Sách xấu", "Đọc"], a: 1, explain: "Trông mặt bắt hình dong" },
+        { script: "Under the weather.", q: "Nghĩa là?", options: ["Vui", "Mưa", "Mệt/Ốm", "Giận"], a: 2, explain: "Bị ốm" },
+        { script: "Cost arm and leg.", q: "Nghĩa là?", options: ["Rẻ", "Đắt", "Nguy hiểm", "Nặng"], a: 1, explain: "Rất đắt" },
+        { script: "Keep chin up.", q: "Nghĩa là?", options: ["Lạc quan", "Thể dục", "Nhìn xuống", "Im lặng"], a: 0, explain: "Tự tin lên" },
+        { script: "Cat out of bag.", q: "Nghĩa là?", options: ["Thả mèo", "Lộ bí mật", "Mua túi", "Nói dối"], a: 1, explain: "Lộ bí mật" },
+        { script: "Piece of cake.", q: "Nghĩa là?", options: ["Bánh", "Dễ", "Khó", "Ăn"], a: 1, explain: "Rất dễ" },
+        { script: "Once in blue moon.", q: "Nghĩa là?", options: ["Thường xuyên", "Hiếm khi", "Hàng ngày", "Trăng"], a: 1, explain: "Hiếm khi" },
+
+        // --- PART 8: VOCABULARY ---
+        { header: "PART 8: TỪ VỰNG CHUYÊN NGÀNH", script: "Studies stars.", q: "Nghề gì?", options: ["Astronaut", "Astronomer", "Artist", "Actor"], a: 1, explain: "Nhà thiên văn" },
+        { script: "Story of life.", q: "Sách gì?", options: ["Autobiography", "Biography", "Novel", "Fiction"], a: 1, explain: "Tiểu sử" },
+        { script: "Make smaller.", q: "Động từ?", options: ["Increase", "Reduce", "Produce", "Induce"], a: 1, explain: "Reduce (Giảm)" },
+        { script: "Extremely big.", q: "Từ nào?", options: ["Tiny", "Gigantic", "Small", "Micro"], a: 1, explain: "Gigantic (Khổng lồ)" },
+        { script: "Ashamed or shy.", q: "Cảm xúc?", options: ["Confidence", "Embarrassment", "Happiness", "Excitement"], a: 1, explain: "Xấu hổ" },
+        { script: "Postpone event.", q: "Cụm từ?", options: ["Call off", "Put off", "Take off", "Go off"], a: 1, explain: "Hoãn lại" },
+        { script: "Eats no meat.", q: "Ai?", options: ["Vegetarian", "Vet", "Veteran", "Car"], a: 0, explain: "Người ăn chay" },
+        { script: "Group musicians.", q: "Nhóm gì?", options: ["Band", "Orchestra", "Choir", "Audience"], a: 1, explain: "Dàn nhạc" },
+        { script: "Study living things.", q: "Môn gì?", options: ["Biology", "Geology", "Physics", "Chemistry"], a: 0, explain: "Sinh học" },
+        { script: "Unwilling work.", q: "Tính cách?", options: ["Hard-working", "Lazy", "Active", "Energetic"], a: 1, explain: "Lười" },
+
+        // --- PART 9: SITUATIONS ---
+        { header: "PART 9: NGỮ CẢNH", script: "Book table for two.", q: "Ở đâu?", options: ["Restaurant", "Library", "Hospital", "School"], a: 0, explain: "Nhà hàng" },
+        { script: "Flight boarding.", q: "Ở đâu?", options: ["Station", "Airport", "Bus stop", "Taxi"], a: 1, explain: "Sân bay" },
+        { script: "Sore throat.", q: "Gặp ai?", options: ["Teacher", "Doctor", "Mechanic", "Police"], a: 1, explain: "Bác sĩ" },
+        { script: "Film boring.", q: "Nhận xét?", options: ["Hay", "Chán", "Hài", "Ngắn"], a: 1, explain: "Chán" },
+        { script: "Fitting room.", q: "Ở đâu?", options: ["Clothing store", "Bookstore", "Bakery", "Pharmacy"], a: 0, explain: "Shop quần áo" },
+        { script: "Steak rare.", q: "Vấn đề?", options: ["Đắt", "Sống", "Mặn", "Chậm"], a: 1, explain: "Thịt chưa chín" },
+        { script: "Pity couldn't come.", q: "Cảm xúc?", options: ["Vui", "Tiếc", "Giận", "Sợ"], a: 1, explain: "Tiếc nuối" },
+        { script: "Way to post office?", q: "Làm gì?", options: ["Xin tiền", "Hỏi đường", "Hỏi giờ", "Xin phép"], a: 1, explain: "Hỏi đường" },
+        { script: "Apologize breaking vase.", q: "Mục đích?", options: ["Cảm ơn", "Xin lỗi", "Mời", "Cảnh báo"], a: 1, explain: "Xin lỗi" },
+        { script: "Why don't we go cinema?", q: "Mục đích?", options: ["Gợi ý", "Hỏi tin", "Phàn nàn", "Chào"], a: 0, explain: "Gợi ý" },
+
+        // --- PART 10: LINGUISTICS ---
+        { header: "PART 10: NGÔN NGỮ HỌC", script: "Shakespeare wrote Romeo Juliet.", q: "Đúng/Sai?", options: ["True", "False"], a: 0, explain: "Đúng" },
+        { script: "Noun describes action.", q: "Đúng/Sai?", options: ["True", "False"], a: 1, explain: "Sai (Verb)" },
+        { script: "Past of go is goed.", q: "Đúng/Sai?", options: ["True", "False"], a: 1, explain: "Sai (Went)" },
+        { script: "5 vowels.", q: "Đúng/Sai?", options: ["True", "False"], a: 0, explain: "Đúng" },
+        { script: "London capital UK.", q: "Đúng/Sai?", options: ["True", "False"], a: 0, explain: "Đúng" },
+        { script: "Synonyms opposite.", q: "Đúng/Sai?", options: ["True", "False"], a: 1, explain: "Sai (Đồng nghĩa)" },
+        { script: "Unpleasant has prefix.", q: "Đúng/Sai?", options: ["True", "False"], a: 0, explain: "Đúng (Un-)" },
+        { script: "Adjective after noun.", q: "Đúng/Sai?", options: ["True", "False"], a: 1, explain: "Sai (Trước N)" },
+        { script: "Statue Liberty in LA.", q: "Đúng/Sai?", options: ["True", "False"], a: 1, explain: "Sai (NY)" },
+        { script: "Pronunciation how say.", q: "Đúng/Sai?", options: ["True", "False"], a: 0, explain: "Đúng" }
     ];
 
     function renderQuiz() {
-        const list = document.getElementById('quiz-list');
+        const container = document.getElementById('quiz-content');
         let html = '';
         questions.forEach((item, index) => {
+            if (item.header) html += `<div class="part-header">${item.header}</div>`;
             let optionsHtml = '';
             item.options.forEach((opt, i) => {
                 optionsHtml += `<label><input type="radio" name="q${index}" value="${i}"> ${opt}</label>`;
             });
-
-            html += `
-            <div class="quiz-item" id="item-${index}">
-                <div class="audio-controls">
-                    <button class="btn-audio" onclick="playAudio('${item.script.replace(/'/g, "\\'")}', this)">
-                        🔊 NGHE CÂU HỎI ${index + 1}
-                    </button>
-                </div>
-                <span class="question-label">${item.q}</span>
-                <div class="options">${optionsHtml}</div>
-                <div class="feedback" id="fb-${index}"></div>
+            html += `<div class="quiz-item" id="item-${index}">
+                <button class="btn-audio" onclick="playAudio('${item.script.replace(/'/g, "\\'")}', this)">🔊 NGHE CÂU ${index + 1}</button>
+                <span class="question-text">${item.q}</span><div class="options">${optionsHtml}</div><div class="feedback" id="fb-${index}"></div>
             </div>`;
         });
-        list.innerHTML = html;
+        container.innerHTML = html;
         document.getElementById('score').innerText = `Điểm: 0/${questions.length}`;
     }
 
     function playAudio(text, btn) {
-        // Hủy các audio đang đọc dở
         window.speechSynthesis.cancel();
-
+        document.querySelectorAll('.btn-audio').forEach(b => {
+            b.classList.remove('playing');
+            if(b.innerText.includes('ĐANG')) b.innerText = b.innerText.replace('ĐANG ĐỌC...', 'NGHE');
+        });
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US'; // Giọng Mỹ (có thể đổi thành en-GB cho giọng Anh)
-        utterance.rate = 0.9; // Tốc độ đọc (0.1 - 10), 0.9 là vừa phải
-        utterance.pitch = 1;
-
-        // Hiệu ứng nút bấm
+        utterance.lang = 'en-US';
+        utterance.rate = 0.85;
         btn.classList.add('playing');
-        btn.innerText = "🔊 ĐANG ĐỌC...";
-        
-        utterance.onend = function() {
-            btn.classList.remove('playing');
-            btn.innerText = `🔊 NGHE LẠI CÂU HỎI`;
-        };
-
+        let orgText = btn.innerText;
+        btn.innerText = `🔊 ĐANG ĐỌC...`;
+        utterance.onend = function() { btn.classList.remove('playing'); btn.innerText = orgText; };
         window.speechSynthesis.speak(utterance);
     }
 
     function checkAll() {
         let score = 0;
-        let answered = 0;
         questions.forEach((q, index) => {
             const selected = document.querySelector(`input[name="q${index}"]:checked`);
             const fb = document.getElementById(`fb-${index}`);
             const item = document.getElementById(`item-${index}`);
-
             if (selected) {
-                answered++;
                 if (parseInt(selected.value) === q.a) {
                     score++;
                     fb.className = "feedback correct";
-                    fb.innerHTML = `✅ Chính xác! <br><i>"${q.script}"</i><br>➡ ${q.explain}`;
-                    item.style.borderLeft = "5px solid #28a745";
+                    fb.innerHTML = `✅ Chính xác! "${q.script}"`;
+                    item.style.borderLeft = "5px solid #2e7d32";
                 } else {
                     fb.className = "feedback wrong";
-                    fb.innerHTML = `❌ Sai rồi. <br>🔊 Nội dung nghe: <b>"${q.script}"</b><br>👉 Đáp án đúng: ${q.options[q.a]}<br>➡ ${q.explain}`;
-                    item.style.borderLeft = "5px solid #dc3545";
+                    fb.innerHTML = `❌ Sai. Nghe: "${q.script}" -> ${q.options[q.a]}`;
+                    item.style.borderLeft = "5px solid #c62828";
                 }
                 fb.style.display = "block";
             } else {
-                fb.className = "feedback wrong";
-                fb.innerHTML = "⚠️ Bạn chưa chọn đáp án.";
-                fb.style.display = "block";
+                item.style.borderLeft = "5px solid orange";
             }
         });
-        document.getElementById('sc ore').innerText = `Điểm: ${score}/$ {questions.length}`;
-if(answered === questions.length) alert(`Kết quả: $ {score}/${questions.length}`);
-
-// Render khi tải trang 
-renderQuiz();
-
+        document.getElementById('score').innerText = `Điểm: ${score}/${questions.length}`;
+        alert(`Kết quả: ${score}/${questions.length}`);
+    }
+    renderQuiz();
 </script>
-
 </body>
- </html>
+</html>
