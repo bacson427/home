@@ -3,226 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full 100 Câu Luyện Nghe Tiếng Anh</title>
+    <title>Hactech Advanced Listening Exam (Full 40 Questions)</title>
     <style>
-        :root { --primary: #1a237e; --secondary: #c62828; --success: #2e7d32; --bg: #f5f5f5; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; line-height: 1.6; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
-        header { text-align: center; margin-bottom: 40px; border-bottom: 3px solid var(--primary); padding-bottom: 20px; }
-        h1 { color: var(--primary); margin: 0; font-size: 2.5em; }
-        .part-header { background: #e8eaf6; color: var(--primary); padding: 15px; margin: 30px 0 15px 0; border-radius: 8px; font-weight: bold; border-left: 5px solid var(--primary); }
-        .quiz-item { background: #fff; border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
-        .btn-audio { background: var(--primary); color: white; border: none; padding: 10px 25px; border-radius: 30px; cursor: pointer; font-size: 16px; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .btn-audio:hover { background: #303f9f; transform: scale(1.02); }
-        .btn-audio.playing { background: var(--secondary); animation: pulse 1.5s infinite; }
-        .question-text { display: block; margin: 10px 0; font-weight: 600; color: #333; }
-        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .options label { display: block; padding: 12px; background: #fafafa; border: 1px solid #eee; border-radius: 6px; cursor: pointer; }
-        .options label:hover { background: #e3f2fd; border-color: #2196f3; }
+        :root { --header: #1e272e; --sidebar: #d2dae2; --accent: #0fbcf9; --danger: #ff5e57; --success: #0be881; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; background: #f1f2f6; overflow: hidden; }
+        
+        /* Sidebar */
+        .sidebar { width: 280px; background: var(--sidebar); border-right: 1px solid #ccc; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; }
+        .timer-display { background: var(--danger); color: white; padding: 15px; text-align: center; font-size: 1.8rem; font-weight: bold; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 0 #d63031; }
+        .grid-qs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+        .q-dot { width: 100%; aspect-ratio: 1; background: white; border: 1px solid #aaa; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: 4px; transition: 0.2s; }
+        .q-dot:hover { background: var(--accent); color: white; }
+        .q-dot.done { background: #808e9b; color: white; border-color: #808e9b; }
+        .q-dot.right { background: var(--success); color: white; border-color: var(--success); }
+        .q-dot.wrong { background: var(--danger); color: white; border-color: var(--danger); }
+
+        /* Main */
+        .main { flex: 1; display: flex; flex-direction: column; height: 100vh; }
+        .top-bar { background: var(--header); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .content-area { flex: 1; overflow-y: auto; padding: 40px; scroll-behavior: smooth; }
+        .container { max-width: 900px; margin: 0 auto; padding-bottom: 50px; }
+
+        /* Exam Blocks */
+        .section-header { font-size: 1.4rem; font-weight: bold; color: #3c40c6; margin-top: 40px; margin-bottom: 10px; border-bottom: 3px solid #3c40c6; padding-bottom: 5px; }
+        .desc-text { color: #57606f; font-style: italic; margin-bottom: 20px; }
+        
+        .audio-box { background: #fff; padding: 15px; border-radius: 50px; display: flex; align-items: center; gap: 15px; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #dcdde1; }
+        .play-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--accent); color: white; border: none; cursor: pointer; font-size: 1.5rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .play-btn:hover { transform: scale(1.1); background: #3c40c6; }
+        .play-btn.playing { background: var(--danger); animation: pulse 1s infinite; }
+        
+        .q-card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; border-left: 5px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .q-title { font-weight: 600; margin-bottom: 12px; font-size: 1.05rem; }
+        .options label { display: block; padding: 10px; border: 1px solid #f1f2f6; margin-bottom: 5px; cursor: pointer; border-radius: 4px; transition: 0.2s; }
+        .options label:hover { background: #f7f1e3; border-color: #d1ccc0; }
         .options input { margin-right: 10px; }
-        .feedback { margin-top: 15px; padding: 15px; border-radius: 6px; display: none; }
-        .feedback.correct { background: #e8f5e9; color: var(--success); border: 1px solid #c8e6c9; }
-        .feedback.wrong { background: #ffebee; color: var(--secondary); border: 1px solid #ffcdd2; }
-        .controls { text-align: center; margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; }
-        .btn-submit { background: var(--success); color: white; border: none; padding: 15px 50px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .score-board { position: fixed; bottom: 30px; right: 30px; background: var(--primary); color: white; padding: 15px 25px; border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-weight: bold; z-index: 100; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(198, 40, 40, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(198, 40, 40, 0); } 100% { box-shadow: 0 0 0 0 rgba(198, 40, 40, 0); } }
-        @media (max-width: 600px) { .options { grid-template-columns: 1fr; } }
+
+        /* Transcript */
+        .script-reveal { margin-top: 15px; padding: 15px; background: #fff4e6; border: 1px solid #ffeaa7; border-radius: 6px; display: none; font-size: 0.95rem; line-height: 1.5; color: #d35400; }
+        
+        .footer { background: white; padding: 15px 30px; border-top: 1px solid #ddd; text-align: right; }
+        .btn-finish { background: var(--success); color: white; padding: 12px 40px; border: none; border-radius: 5px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
+        .btn-finish:hover { background: #05c46b; }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 94, 87, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 94, 87, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 94, 87, 0); } }
     </style>
 </head>
 <body>
-<div class="container">
-    header>
-        <h1>LUYỆN NGHE 100 CÂU</h1>
-        <p>Tổng hợp: Kỹ thuật Điện & Chuyên Ngành Ngôn Ngữ</p>
-    </header>
-    <div id="quiz-content">Loading...</div>
-    <div class="controls"><button class="btn-submit" onclick="checkAll()">NỘP BÀI & XEM ĐIỂM</button></div>
+
+<div class="sidebar">
+    <div class="timer-display" id="timer">60:00</div>
+    <div style="margin-bottom:10px; font-weight:bold; color:#57606f">Question Map</div>
+    <div class="grid-qs" id="map"></div>
 </div>
-<div class="score-board" id="score">Điểm: 0/100</div>
+
+<div class="main">
+    <div class="top-bar">
+        <h1>ADVANCED LISTENING EXAM (PRO)</h1>
+        <div>Candidate: <b>Nguyen Bac Son</b></div>
+    </div>
+    <div class="content-area">
+        <div class="container" id="examContainer">
+            </div>
+    </div>
+    <div class="footer">
+        <button class="btn-finish" onclick="finishExam()">NỘP BÀI (SUBMIT)</button>
+    </div>
+</div>
 
 <script>
-    const questions = [
-        // --- PART 1: GREETINGS ---
-        { header: "PART 1: GIAO TIẾP CƠ BẢN", script: "Hello, how are you today?", q: "Chọn câu trả lời:", options: ["I'm fine.", "I'm looking for a job.", "It is Tuesday.", "Yes, I am."], a: 0, explain: "Hỏi sức khỏe." },
-        { script: "Nice to meet you.", q: "Chọn câu trả lời:", options: ["See you later.", "Nice to meet you, too.", "You're welcome.", "Sorry."], a: 1, explain: "Đáp lời chào." },
-        { script: "Where are you from?", q: "Chọn câu trả lời:", options: ["Vietnam.", "Hanoi.", "A student.", "Football."], a: 0, explain: "Hỏi quê quán." },
-        { script: "What do you do?", q: "Chọn câu trả lời:", options: ["Homework.", "I am a student.", "I am fine.", "Everyday."], a: 1, explain: "Hỏi nghề nghiệp." },
-        { script: "Thank you very much.", q: "Chọn câu trả lời:", options: ["No problem.", "Yes, please.", "I don't know.", "Good bye."], a: 0, explain: "Đáp lời cảm ơn." },
-        { script: "What time is it?", q: "Chọn câu trả lời:", options: ["10 o'clock.", "Expensive.", "On the table.", "No time."], a: 0, explain: "Hỏi giờ." },
-        { script: "Could you open the door?", q: "Chọn câu trả lời:", options: ["Yes, I can.", "Sure.", "Opening.", "No."], a: 1, explain: "Yêu cầu lịch sự." },
-        { script: "How old are you?", q: "Chọn câu trả lời:", options: ["18 years.", "18 years old.", "Fine.", "18."], a: 1, explain: "Hỏi tuổi." },
-        { script: "Is this your pen?", q: "Chọn câu trả lời:", options: ["Yes, it is.", "Yes, I do.", "No, don't.", "Mine."], a: 0, explain: "Câu hỏi To be." },
-        { script: "Good bye.", q: "Chọn câu trả lời:", options: ["Hello.", "Morning.", "See you.", "Thanks."], a: 2, explain: "Tạm biệt." },
+// --- PART 1 OF DATA ---
+const part1Data = [
+    // --- PART 1: PHOTOGRAPHS (1-10) ---
+    {
+        section: "PART 1: PHOTOGRAPHS (10 Questions)",
+        desc: "Imagine the picture based on the audio description and choose the correct statement.",
+        questions: [
+            { id: 1, s: "A. The electrician is climbing the utility pole. B. He is digging a hole in the ground. C. The wires are being cut by pliers. D. He is driving a maintenance truck.", q: "Q1: Look at the mental picture.", ans: 0, expl: "Keywords: 'electrician', 'climbing', 'utility pole'." },
+            { id: 2, s: "A. The meeting room is empty. B. A presentation is being given on the screen. C. The employees are having lunch. D. They are shaking hands outside.", q: "Q2: Look at the mental picture.", ans: 1, expl: "Keywords: 'presentation', 'screen'." },
+            { id: 3, s: "A. The machinery is being operated by a robot. B. Some boxes are stacked on the shelf. C. The conveyor belt has stopped moving. D. A technician is inspecting the control panel.", q: "Q3: Look at the mental picture.", ans: 3, expl: "Keywords: 'technician', 'inspecting', 'control panel'." },
+            { id: 4, s: "A. She is putting on safety glasses. B. She is typing on a keyboard. C. She is holding a test tube. D. She is cleaning the microscope.", q: "Q4: Look at the mental picture.", ans: 2, expl: "Keywords: 'holding', 'test tube' (Lab context)." },
+            { id: 5, s: "A. Traffic is heavy on the highway. B. The bridge is under construction. C. Cars are parked in the garage. D. Pedestrians are crossing the street.", q: "Q5: Look at the mental picture.", ans: 1, expl: "Keywords: 'bridge', 'under construction'." },
+            { id: 6, s: "A. The man is welding a metal pipe. B. He is painting the wall. C. He is reading a newspaper. D. He is buying some tools.", q: "Q6: Look at the mental picture.", ans: 0, expl: "Keywords: 'welding', 'metal pipe'." },
+            { id: 7, s: "A. The airplane is taking off. B. Passengers are boarding the bus. C. Luggage is being loaded onto the cart. D. The pilot is waving goodbye.", q: "Q7: Look at the mental picture.", ans: 2, expl: "Keywords: 'Luggage', 'loaded'." },
+            { id: 8, s: "A. Some documents are scattered on the desk. B. The computer screen is broken. C. A man is signing a contract. D. The office lights are turned off.", q: "Q8: Look at the mental picture.", ans: 2, expl: "Keywords: 'signing', 'contract'." },
+            { id: 9, s: "A. They are assembling a circuit board. B. They are playing video games. C. They are watching TV. D. They are soldering a large pipe.", q: "Q9: Look at the mental picture.", ans: 0, expl: "Keywords: 'assembling', 'circuit board'." },
+            { id: 10, s: "A. The store is closed for renovation. B. A customer is paying at the counter. C. The shelves are empty. D. The cashier is sleeping.", q: "Q10: Look at the mental picture.", ans: 1, expl: "Keywords: 'paying', 'counter'." }
+        ]
+    },
+    // --- PART 2: QUESTION & RESPONSE (11-20) ---
+    {
+        section: "PART 2: QUESTION & RESPONSE (10 Questions)",
+        desc: "Listen to the question and select the best response. (Hard Mode: Indirect Answers)",
+        questions: [
+            { id: 11, s: "Q: When will the new transformers arrive? ... A. By truck. ... B. I'm not sure, ask the supply manager. ... C. Yes, they are new.", q: "Q11: Mark your answer.", ans: 1, expl: "Indirect answer. Không trả lời thời gian cụ thể mà bảo đi hỏi người khác." },
+            { id: 12, s: "Q: Who left the laboratory door open? ... A. It was open when I got here. ... B. To let some air in. ... C. Mr. Wilson has the key.", q: "Q12: Mark your answer.", ans: 0, expl: "Phủ định trách nhiệm gián tiếp." },
+            { id: 13, s: "Q: Why hasn't the report been finished yet? ... A. It's very interesting. ... B. Because the printer broke down. ... C. I reported it yesterday.", q: "Q13: Mark your answer.", ans: 1, expl: "Lý do: Printer broke down." },
+            { id: 14, s: "Q: Would you prefer coffee or tea? ... A. Neither, I'll have some water. ... B. Yes, please. ... C. It's too hot.", q: "Q14: Mark your answer.", ans: 0, expl: "Lựa chọn thứ 3 (Neither)." },
+            { id: 15, s: "Q: How do I operate this multimeter? ... A. It measures voltage. ... B. Check the user manual on page 5. ... C. It's brand new.", q: "Q15: Mark your answer.", ans: 1, expl: "Hướng dẫn gián tiếp: Check manual." },
+            { id: 16, s: "Q: Has the safety inspection started? ... A. It's safety first. ... B. No, the inspector is late. ... C. I have inspected it.", q: "Q16: Mark your answer.", ans: 1, expl: "Yes/No question -> No + Reason." },
+            { id: 17, s: "Q: Where can I find the spare parts? ... A. In the warehouse, aisle 4. ... B. It is a spare part. ... C. To fix the machine.", q: "Q17: Mark your answer.", ans: 0, expl: "Chỉ địa điểm cụ thể." },
+            { id: 18, s: "Q: Didn't you go to the seminar yesterday? ... A. Yes, I learned a lot. ... B. It was at 9 AM. ... C. No, I went there.", q: "Q18: Mark your answer.", ans: 0, expl: "Câu hỏi phủ định (Didn't you). Trả lời Yes nghĩa là Có đi." },
+            { id: 19, s: "Q: What is the estimated cost for the repair? ... A. About two hours. ... B. At least $500. ... C. It's very expensive.", q: "Q19: Mark your answer.", ans: 1, expl: "Hỏi giá (Cost) -> Số tiền." },
+            { id: 20, s: "Q: Are you going to the Hactech workshop? ... A. I'm afraid I have a meeting. ... B. It's a great workshop. ... C. Yes, I am working.", q: "Q20: Mark your answer.", ans: 0, expl: "Từ chối khéo (I have a meeting)." }
+        ]
+    }
+];
+</script>
+<script>
+// --- PART 2 OF DATA ---
+const part2Data = [
+    // --- PART 3: CONVERSATIONS (21-30) ---
+    {
+        section: "PART 3: CONVERSATIONS (10 Questions)",
+        desc: "Listen to the conversation and answer the questions.",
+        groupAudio: true, // Audio chung cho cả nhóm
+        script: "Man: Hey, have you seen the new blueprints for the wiring project?\nWoman: No, I haven't. I thought they were still being reviewed by the chief engineer.\nMan: Well, he approved them this morning. We need to start the installation by Wednesday.\nWoman: That's tight! I'll call the team and arrange a meeting this afternoon.",
+        questions: [
+            { id: 21, q: "What are the speakers discussing?", options: ["A budget plan", "Project blueprints", "A holiday party", "New computers"], ans: 1, expl: "Keyword: 'blueprints for the wiring project'." },
+            { id: 22, q: "Who approved the plans?", options: ["The woman", "The client", "The chief engineer", "The architect"], ans: 2, expl: "Man says: 'he (chief engineer) approved them'." },
+            { id: 23, q: "What will happen this afternoon?", options: ["Installation starts", "A meeting", "Blueprint review", "Project finish"], ans: 1, expl: "Woman says: 'arrange a meeting this afternoon'." }
+        ]
+    },
+    {
+        groupAudio: true,
+        script: "Woman: Excuse me, I bought this electric drill here yesterday, but it doesn't work properly.\nMan: I'm sorry to hear that. Does it not turn on at all?\nWoman: It turns on, but it makes a strange grinding noise and smells like burning plastic.\nMan: It sounds like a motor issue. Since you bought it yesterday, I can exchange it for a new one immediately.",
+        questions: [
+            { id: 24, q: "Where is this conversation taking place?", options: ["At a repair shop", "At a hardware store", "At a construction site", "In a factory"], ans: 1, expl: "Context: Buying and exchanging a tool." },
+            { id: 25, q: "What is the problem with the drill?", options: ["It won't turn on", "It is too heavy", "It makes noise and smells bad", "It is the wrong color"], ans: 2, expl: "Woman says: 'strange grinding noise and smells'." },
+            { id: 26, q: "What does the man offer to do?", options: ["Refund the money", "Repair it", "Exchange it", "Call the manager"], ans: 2, expl: "Man says: 'exchange it for a new one'." }
+        ]
+    },
+    {
+        groupAudio: true,
+        script: "Man: Do you know if the bus to the industrial park stops here?\nWoman: No, the 501 bus stop has been moved to Main Street due to the road construction.\nMan: Oh no, I'm going to be late for my shift at the factory. Is it far?\nWoman: It's about a 10-minute walk. If you hurry, you might catch the 8:15 bus.",
+        questions: [
+            { id: 27, q: "Where does the man want to go?", options: ["To the city center", "To the industrial park", "To Main Street", "To the hospital"], ans: 1, expl: "Man asks about bus to 'industrial park'." },
+            { id: 28, q: "Why was the bus stop moved?", options: ["Road construction", "Traffic jam", "Accident", "Holiday parade"], ans: 0, expl: "Keyword: 'due to road construction'." },
+            { id: 29, q: "How long is the walk to the new stop?", options: ["5 minutes", "10 minutes", "15 minutes", "20 minutes"], ans: 1, expl: "Keyword: '10-minute walk'." },
+            { id: 30, q: "What time is the next bus?", options: ["8:00", "8:10", "8:15", "8:30"], ans: 2, expl: "Keyword: '8:15 bus'." }
+        ]
+    },
+    // --- PART 4: SHORT TALKS (31-40) ---
+    {
+        section: "PART 4: SHORT TALKS (10 Questions)",
+        desc: "Listen to the talk/announcement and answer the questions.",
+        groupAudio: true,
+        script: "Attention everyone. This is a reminder that the annual fire safety drill will take place tomorrow at 10 AM. When you hear the alarm, please stop all work immediately. Do not use the elevators. Proceed calmly to the nearest emergency exit and gather at the assembly point in the north parking lot. Attendance will be taken by your supervisors.",
+        questions: [
+            { id: 31, q: "What is the announcement about?", options: ["A holiday party", "A fire safety drill", "A new elevator", "A parking lot closure"], ans: 1, expl: "Keyword: 'fire safety drill'." },
+            { id: 32, q: "When will the event happen?", options: ["Today at 10 AM", "Tomorrow at 10 AM", "Next week", "In the afternoon"], ans: 1, expl: "Keyword: 'tomorrow at 10 AM'." },
+            { id: 33, q: "Where should employees gather?", options: ["In the lobby", "In the cafeteria", "In the north parking lot", "In the basement"], ans: 2, expl: "Keyword: 'north parking lot'." }
+        ]
+    },
+    {
+        groupAudio: true,
+        script: "Welcome to the Museum of Technology. Today, we are opening a new exhibit called 'The Future of Energy'. In this exhibit, you will see models of advanced solar panels, wind turbines, and nuclear fusion reactors. We also have an interactive section where you can try generating electricity yourself using a hand-crank generator. The tour starts in 5 minutes.",
+        questions: [
+            { id: 34, q: "Where is the speaker?", options: ["At a school", "At a museum", "At a power plant", "At a store"], ans: 1, expl: "Keyword: 'Museum of Technology'." },
+            { id: 35, q: "What is the name of the new exhibit?", options: ["History of Cars", "The Future of Energy", "Space Exploration", "Digital World"], ans: 1, expl: "Keyword: 'The Future of Energy'." },
+            { id: 36, q: "What can visitors do in the interactive section?", options: ["Buy souvenirs", "Watch a movie", "Generate electricity", "Eat lunch"], ans: 2, expl: "Keyword: 'generating electricity yourself'." },
+            { id: 37, q: "When does the tour start?", options: ["In 5 minutes", "In 10 minutes", "In 1 hour", "Tomorrow"], ans: 0, expl: "Keyword: 'starts in 5 minutes'." }
+        ]
+    },
+    {
+        groupAudio: true,
+        script: "This is a traffic update for the morning commute. Heavy congestion is reported on the King's Bridge due to a stalled truck in the middle lane. Police are on the scene, but delays are expected to last for at least an hour. We recommend taking the Tunnel Route or using public transportation today to avoid being late.",
+        questions: [
+            { id: 38, q: "What is causing the traffic jam?", options: ["Road maintenance", "A stalled truck", "Bad weather", "A protest"], ans: 1, expl: "Keyword: 'stalled truck'." },
+            { id: 39, q: "How long are delays expected to last?", options: ["10 minutes", "30 minutes", "At least an hour", "All day"], ans: 2, expl: "Keyword: 'at least an hour'." },
+            { id: 40, q: "What does the speaker suggest?", options: ["Waiting in the car", "Going home", "Taking the Tunnel Route", "Driving faster"], ans: 2, expl: "Keyword: 'recommend taking the Tunnel Route'." }
+        ]
+    }
+];
 
-        // --- PART 2: NUMBERS ---
-        { header: "PART 2: SỐ & THÔNG SỐ", script: "The voltage is 220 volts.", q: "Thông số:", options: ["110 V", "220 V", "12 V", "24 V"], a: 1, explain: "220 V" },
-        { script: "Room 305.", q: "Số phòng:", options: ["305", "315", "350", "503"], a: 0, explain: "305" },
-        { script: "Fifty meters long.", q: "Chiều dài:", options: ["15 m", "50 m", "55 m", "5 m"], a: 1, explain: "50 m" },
-        { script: "Phone 0987 654 321.", q: "SĐT:", options: ["...645...", "...654...", "...978...", "...123"], a: 1, explain: "Nghe chuỗi số." },
-        { script: "1000 ohms.", q: "Điện trở:", options: ["100", "1000", "10000", "10"], a: 1, explain: "1000" },
-        { script: "Year 1995.", q: "Năm:", options: ["1959", "1995", "1905", "2005"], a: 1, explain: "1995" },
-        { script: "30 degrees Celsius.", q: "Nhiệt độ:", options: ["13", "30", "33", "3"], a: 1, explain: "30" },
-        { script: "45 minutes.", q: "Thời gian:", options: ["4-5", "45", "54", "45s"], a: 1, explain: "45 mins" },
-        { script: "1.5 cm.", q: "Kích thước:", options: ["1.5", "15", "105", "5.1"], a: 0, explain: "1.5" },
-        { script: "Twelve students.", q: "Số lượng:", options: ["12", "20", "21", "11"], a: 0, explain: "12" },
+// --- MAIN LOGIC ---
+let allData = [...part1Data, ...part2Data];
+let timer;
+let timeLeft = 60 * 60; // 60 minutes
+let synth = window.speechSynthesis;
+let isSubmitted = false;
 
-        // --- PART 3: ELECTRICAL TOOLS ---
-        { header: "PART 3: DỤNG CỤ ĐIỆN", script: "Pass me the screwdriver.", q: "Dụng cụ gì?", options: ["Búa", "Kìm", "Tua vít", "Khoan"], a: 2, explain: "Screwdriver" },
-        { script: "Don't touch the live wire.", q: "Cảnh báo?", options: ["Dây có điện", "Cắt dây", "Nối dây", "Mua dây"], a: 0, explain: "Live wire" },
-        { script: "Bulb is burnt out.", q: "Tình trạng?", options: ["Sáng", "Cháy", "Tắt", "Mới"], a: 1, explain: "Burnt out" },
-        { script: "Unplug the device.", q: "Làm gì?", options: ["Bật", "Cắm", "Rút phích", "Sửa"], a: 2, explain: "Unplug" },
-        { script: "Use pliers to cut.", q: "Dùng gì?", options: ["Kìm", "Dao", "Kéo", "Cưa"], a: 0, explain: "Pliers" },
-        { script: "Wear safety gloves.", q: "An toàn?", options: ["Mũ", "Găng tay", "Giày", "Kính"], a: 1, explain: "Gloves" },
-        { script: "Switch is on the wall.", q: "Ở đâu?", options: ["Bàn", "Tường", "Trần", "Sàn"], a: 1, explain: "Wall" },
-        { script: "Check battery.", q: "Kiểm tra?", options: ["Dây", "Pin", "Đèn", "Mô tơ"], a: 1, explain: "Battery" },
-        { script: "Motor runs fast.", q: "Chạy thế nào?", options: ["Chậm", "Ồn", "Nhanh", "Không chạy"], a: 2, explain: "Fast" },
-        { script: "Connect red wire to positive.", q: "Nối cực nào?", options: ["Âm", "Dương", "Đất", "Vỏ"], a: 1, explain: "Positive (+)" },
-
-        // --- PART 4: CONVERSATION ---
-        { header: "PART 4: HỘI THOẠI", script: "Why late?", q: "Trả lời:", options: ["Missed bus.", "Hungry.", "Yes.", "7 PM."], a: 0, explain: "Lý do." },
-        { script: "How far to Hactech?", q: "Trả lời:", options: ["2 km.", "2 hours.", "Nice.", "Bus."], a: 0, explain: "Khoảng cách." },
-        { script: "Favorite subject?", q: "Trả lời:", options: ["English.", "Math.", "History.", "Studying."], a: 0, explain: "Môn học." },
-        { script: "Borrow pen?", q: "Trả lời:", options: ["Here you are.", "No.", "Don't like.", "Can."], a: 0, explain: "Cho mượn." },
-        { script: "What did you do yesterday?", q: "Trả lời:", options: ["Go school.", "Played football.", "Sleeping.", "Play."], a: 1, explain: "Quá khứ." },
-        { script: "Like music?", q: "Trả lời:", options: ["Yes, I do.", "Yes, am.", "No.", "Like."], a: 0, explain: "Sở thích." },
-        { script: "Who is that?", q: "Trả lời:", options: ["My father.", "Pen.", "Tall.", "Don't know."], a: 0, explain: "Người." },
-        { script: "When birthday?", q: "Trả lời:", options: ["Hanoi.", "Nov 1st.", "18.", "Happy."], a: 1, explain: "Ngày tháng." },
-        { script: "Been to HCM City?", q: "Trả lời:", options: ["Yes, I have.", "Yes, did.", "No.", "Was."], a: 0, explain: "Kinh nghiệm." },
-        { script: "I am hungry.", q: "Phản hồi:", options: ["Cinema.", "Let's eat.", "Sleep.", "Me."], a: 1, explain: "Rủ đi ăn." },
-
-        // --- PART 5: TRUE/FALSE ---
-        { header: "PART 5: ĐÚNG/SAI", script: "Sun rises in West.", q: "Đúng hay Sai?", options: ["True", "False"], a: 1, explain: "Sai. Mọc đằng Đông." },
-        { script: "Water boils at 100°C.", q: "Đúng hay Sai?", options: ["True", "False"], a: 0, explain: "Đúng." },
-        { script: "Triangle has 4 sides.", q: "Đúng hay Sai?", options: ["True", "False"], a: 1, explain: "Sai. 3 cạnh." },
-        { script: "Rubber conducts electricity.", q: "Đúng hay Sai?", options: ["True", "False"], a: 1, explain: "Sai. Cao su cách điện." },
-        { script: "Hanoi is capital.", q: "Đúng hay Sai?", options: ["True", "False"], a: 0, explain: "Đúng." },
-        { script: "7 days a week.", q: "Đúng hay Sai?", options: ["True", "False"], a: 0, explain: "Đúng." },
-        { script: "Live wire shocks you.", q: "Đúng hay Sai?", options: ["True", "False"], a: 0, explain: "Đúng." },
-        { script: "Car has 2 wheels.", q: "Đúng hay Sai?", options: ["True", "False"], a: 1, explain: "Sai. 4 bánh." },
-        { script: "Multimeter measures voltage.", q: "Đúng hay Sai?", options: ["True", "False"], a: 0, explain: "Đúng." },
-        { script: "English not spoken.", q: "Đúng hay Sai?", options: ["True", "False"], a: 1, explain: "Sai." },
-        // --- PART 6: PHONETICS ---
-        { header: "PART 6: NGỮ ÂM", script: "Sheep on the hill.", q: "Nghe từ nào?", options: ["Ship", "Sheep", "Sheet", "Cheap"], a: 1, explain: "Sheep (Cừu)" },
-        { script: "Hurt leg badly.", q: "Nghe từ nào?", options: ["Badly", "Bed", "Dad", "Bat"], a: 0, explain: "Badly" },
-        { script: "Buy a pan.", q: "Nghe từ nào?", options: ["Pen", "Pan", "Pin", "Pain"], a: 1, explain: "Pan (Chảo)" },
-        { script: "Fill this form.", q: "Nghe từ nào?", options: ["Feel", "Fill", "Fail", "Fall"], a: 1, explain: "Fill (Điền)" },
-        { script: "Weather hot.", q: "Nghe từ nào?", options: ["Hat", "Hot", "Hut", "Heart"], a: 1, explain: "Hot" },
-        { script: "Searching keys.", q: "Nghe từ nào?", options: ["Kiss", "Keys", "Kids", "Case"], a: 1, explain: "Keys" },
-        { script: "Walk in park.", q: "Nghe từ nào?", options: ["Work", "Walk", "Wake", "Wash"], a: 1, explain: "Walk (Đi bộ)" },
-        { script: "Full moon.", q: "Nghe từ nào?", options: ["Full", "Fool", "Fall", "Fill"], a: 0, explain: "Full" },
-        { script: "Sit on seat.", q: "Nghĩa là?", options: ["Ghế", "Ngồi xuống", "Hát", "Tìm"], a: 0, explain: "Seat (Ghế)" },
-        { script: "Price low.", q: "Nghe từ nào?", options: ["Law", "Low", "Slow", "Flow"], a: 1, explain: "Low" },
-
-        // --- PART 7: IDIOMS ---
-        { header: "PART 7: THÀNH NGỮ", script: "Break a leg!", q: "Nghĩa là?", options: ["May mắn", "Gãy chân", "Cẩn thận", "Thôi"], a: 0, explain: "Chúc may mắn" },
-        { script: "Raining cats and dogs.", q: "Nghĩa là?", options: ["Động vật", "Mưa to", "Nắng", "Tuyết"], a: 1, explain: "Mưa to" },
-        { script: "Flying colors.", q: "Nghĩa là?", options: ["Xuất sắc", "Vừa đủ", "Trượt", "Màu sắc"], a: 0, explain: "Điểm cao" },
-        { script: "Judge book by cover.", q: "Nghĩa là?", options: ["Mua sách", "Đánh giá vẻ ngoài", "Sách xấu", "Đọc"], a: 1, explain: "Trông mặt bắt hình dong" },
-        { script: "Under the weather.", q: "Nghĩa là?", options: ["Vui", "Mưa", "Mệt/Ốm", "Giận"], a: 2, explain: "Bị ốm" },
-        { script: "Cost arm and leg.", q: "Nghĩa là?", options: ["Rẻ", "Đắt", "Nguy hiểm", "Nặng"], a: 1, explain: "Rất đắt" },
-        { script: "Keep chin up.", q: "Nghĩa là?", options: ["Lạc quan", "Thể dục", "Nhìn xuống", "Im lặng"], a: 0, explain: "Tự tin lên" },
-        { script: "Cat out of bag.", q: "Nghĩa là?", options: ["Thả mèo", "Lộ bí mật", "Mua túi", "Nói dối"], a: 1, explain: "Lộ bí mật" },
-        { script: "Piece of cake.", q: "Nghĩa là?", options: ["Bánh", "Dễ", "Khó", "Ăn"], a: 1, explain: "Rất dễ" },
-        { script: "Once in blue moon.", q: "Nghĩa là?", options: ["Thường xuyên", "Hiếm khi", "Hàng ngày", "Trăng"], a: 1, explain: "Hiếm khi" },
-
-        // --- PART 8: VOCABULARY ---
-        { header: "PART 8: TỪ VỰNG CHUYÊN NGÀNH", script: "Studies stars.", q: "Nghề gì?", options: ["Astronaut", "Astronomer", "Artist", "Actor"], a: 1, explain: "Nhà thiên văn" },
-        { script: "Story of life.", q: "Sách gì?", options: ["Autobiography", "Biography", "Novel", "Fiction"], a: 1, explain: "Tiểu sử" },
-        { script: "Make smaller.", q: "Động từ?", options: ["Increase", "Reduce", "Produce", "Induce"], a: 1, explain: "Reduce (Giảm)" },
-        { script: "Extremely big.", q: "Từ nào?", options: ["Tiny", "Gigantic", "Small", "Micro"], a: 1, explain: "Gigantic (Khổng lồ)" },
-        { script: "Ashamed or shy.", q: "Cảm xúc?", options: ["Confidence", "Embarrassment", "Happiness", "Excitement"], a: 1, explain: "Xấu hổ" },
-        { script: "Postpone event.", q: "Cụm từ?", options: ["Call off", "Put off", "Take off", "Go off"], a: 1, explain: "Hoãn lại" },
-        { script: "Eats no meat.", q: "Ai?", options: ["Vegetarian", "Vet", "Veteran", "Car"], a: 0, explain: "Người ăn chay" },
-        { script: "Group musicians.", q: "Nhóm gì?", options: ["Band", "Orchestra", "Choir", "Audience"], a: 1, explain: "Dàn nhạc" },
-        { script: "Study living things.", q: "Môn gì?", options: ["Biology", "Geology", "Physics", "Chemistry"], a: 0, explain: "Sinh học" },
-        { script: "Unwilling work.", q: "Tính cách?", options: ["Hard-working", "Lazy", "Active", "Energetic"], a: 1, explain: "Lười" },
-
-        // --- PART 9: SITUATIONS ---
-        { header: "PART 9: NGỮ CẢNH", script: "Book table for two.", q: "Ở đâu?", options: ["Restaurant", "Library", "Hospital", "School"], a: 0, explain: "Nhà hàng" },
-        { script: "Flight boarding.", q: "Ở đâu?", options: ["Station", "Airport", "Bus stop", "Taxi"], a: 1, explain: "Sân bay" },
-        { script: "Sore throat.", q: "Gặp ai?", options: ["Teacher", "Doctor", "Mechanic", "Police"], a: 1, explain: "Bác sĩ" },
-        { script: "Film boring.", q: "Nhận xét?", options: ["Hay", "Chán", "Hài", "Ngắn"], a: 1, explain: "Chán" },
-        { script: "Fitting room.", q: "Ở đâu?", options: ["Clothing store", "Bookstore", "Bakery", "Pharmacy"], a: 0, explain: "Shop quần áo" },
-        { script: "Steak rare.", q: "Vấn đề?", options: ["Đắt", "Sống", "Mặn", "Chậm"], a: 1, explain: "Thịt chưa chín" },
-        { script: "Pity couldn't come.", q: "Cảm xúc?", options: ["Vui", "Tiếc", "Giận", "Sợ"], a: 1, explain: "Tiếc nuối" },
-        { script: "Way to post office?", q: "Làm gì?", options: ["Xin tiền", "Hỏi đường", "Hỏi giờ", "Xin phép"], a: 1, explain: "Hỏi đường" },
-        { script: "Apologize breaking vase.", q: "Mục đích?", options: ["Cảm ơn", "Xin lỗi", "Mời", "Cảnh báo"], a: 1, explain: "Xin lỗi" },
-        { script: "Why don't we go cinema?", q: "Mục đích?", options: ["Gợi ý", "Hỏi tin", "Phàn nàn", "Chào"], a: 0, explain: "Gợi ý" },
-
-        // --- PART 10: LINGUISTICS ---
-        { header: "PART 10: NGÔN NGỮ HỌC", script: "Shakespeare wrote Romeo Juliet.", q: "Đúng/Sai?", options: ["True", "False"], a: 0, explain: "Đúng" },
-        { script: "Noun describes action.", q: "Đúng/Sai?", options: ["True", "False"], a: 1, explain: "Sai (Verb)" },
-        { script: "Past of go is goed.", q: "Đúng/Sai?", options: ["True", "False"], a: 1, explain: "Sai (Went)" },
-        { script: "5 vowels.", q: "Đúng/Sai?", options: ["True", "False"], a: 0, explain: "Đúng" },
-        { script: "London capital UK.", q: "Đúng/Sai?", options: ["True", "False"], a: 0, explain: "Đúng" },
-        { script: "Synonyms opposite.", q: "Đúng/Sai?", options: ["True", "False"], a: 1, explain: "Sai (Đồng nghĩa)" },
-        { script: "Unpleasant has prefix.", q: "Đúng/Sai?", options: ["True", "False"], a: 0, explain: "Đúng (Un-)" },
-        { script: "Adjective after noun.", q: "Đúng/Sai?", options: ["True", "False"], a: 1, explain: "Sai (Trước N)" },
-        { script: "Statue Liberty in LA.", q: "Đúng/Sai?", options: ["True", "False"], a: 1, explain: "Sai (NY)" },
-        { script: "Pronunciation how say.", q: "Đúng/Sai?", options: ["True", "False"], a: 0, explain: "Đúng" }
-    ];
-
-    function renderQuiz() {
-        const container = document.getElementById('quiz-content');
-        let html = '';
-        questions.forEach((item, index) => {
-            if (item.header) html += `<div class="part-header">${item.header}</div>`;
-            let optionsHtml = '';
-            item.options.forEach((opt, i) => {
-                optionsHtml += `<label><input type="radio" name="q${index}" value="${i}"> ${opt}</label>`;
-            });
-            html += `<div class="quiz-item" id="item-${index}">
-                <button class="btn-audio" onclick="playAudio('${item.script.replace(/'/g, "\\'")}', this)">🔊 NGHE CÂU ${index + 1}</button>
-                <span class="question-text">${item.q}</span><div class="options">${optionsHtml}</div><div class="feedback" id="fb-${index}"></div>
-            </div>`;
-        });
-        container.innerHTML = html;
-        document.getElementById('score').innerText = `Điểm: 0/${questions.length}`;
+function init() {
+    // Render Map
+    const map = document.getElementById('map');
+    for(let i=1; i<=40; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'q-dot';
+        dot.id = `dot-${i}`;
+        dot.innerText = i;
+        dot.onclick = () => {
+            document.getElementById(`q-${i}`).scrollIntoView({behavior: "smooth", block: "center"});
+        };
+        map.appendChild(dot);
     }
 
-    function playAudio(text, btn) {
-        window.speechSynthesis.cancel();
-        document.querySelectorAll('.btn-audio').forEach(b => {
-            b.classList.remove('playing');
-            if(b.innerText.includes('ĐANG')) b.innerText = b.innerText.replace('ĐANG ĐỌC...', 'NGHE');
+    // Render Content
+    const container = document.getElementById('examContainer');
+    allData.forEach(block => {
+        // Render Header for Section
+        if(block.section) {
+            container.innerHTML += `<div class="section-header">${block.section}</div><div class="desc-text">${block.desc}</div>`;
+        }
+        
+        // Render Audio Player (Shared or Individual)
+        let audioScript = block.script || ""; 
+        if (!block.groupAudio && block.questions) {
+            // For Part 1, 2 where each question has audio inside logic but not displayed
+             // Logic handles inside loop
+        } else {
+             // For Part 3, 4
+             container.innerHTML += `
+                <div class="audio-box">
+                    <button class="play-btn" onclick="playAudio('${audioScript.replace(/\n/g, ' ').replace(/'/g, "\\'")}', this)">▶</button>
+                    <span style="font-weight:600; color:#555">LISTEN TO AUDIO CLIP</span>
+                </div>
+             `;
+        }
+
+        // Render Questions
+        block.questions.forEach(q => {
+             let scriptForSingle = "";
+             if(block.section.includes("PART 1") || block.section.includes("PART 2")) {
+                 scriptForSingle = `
+                    <div class="audio-box" style="margin-top:10px; padding:10px; border-radius:10px; width:fit-content;">
+                        <button class="play-btn" style="width:40px; height:40px; font-size:1rem" onclick="playAudio('${q.s.replace(/'/g, "\\'")}', this)">▶</button>
+                        <span style="font-size:0.9rem; margin-left:10px;">Question ${q.id} Audio</span>
+                    </div>
+                 `;
+             }
+
+             let optionsHtml = "";
+             q.options.forEach((opt, idx) => {
+                 optionsHtml += `<label><input type="radio" name="ans-${q.id}" value="${idx}" onchange="markDot(${q.id})"> ${opt}</label>`;
+             });
+
+             container.innerHTML += `
+                <div class="q-card" id="q-${q.id}">
+                    ${scriptForSingle}
+                    <div class="q-title">${q.q}</div>
+                    <div class="options">${optionsHtml}</div>
+                    <div class="script-reveal" id="reveal-${q.id}">
+                        <b>Script:</b> "${q.s || block.script || "See group script"}" <br>
+                        <b>Giải thích:</b> ${q.expl} <br>
+                        <b>Đáp án đúng:</b> ${q.options[q.ans]}
+                    </div>
+                </div>
+             `;
         });
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.85;
-        btn.classList.add('playing');
-        let orgText = btn.innerText;
-        btn.innerText = `🔊 ĐANG ĐỌC...`;
-        utterance.onend = function() { btn.classList.remove('playing'); btn.innerText = orgText; };
-        window.speechSynthesis.speak(utterance);
+    });
+
+    startTimer();
+}
+
+function playAudio(text, btn) {
+    if(isSubmitted) return; // Hard mode: No replay after submit (optional)
+    synth.cancel();
+    document.querySelectorAll('.play-btn').forEach(b => { b.classList.remove('playing'); b.innerText = "▶"; });
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 1.05; // Slightly faster for advanced
+    
+    btn.classList.add('playing');
+    btn.innerText = "🔊";
+    
+    utterance.onend = () => {
+        btn.classList.remove('playing');
+        btn.innerText = "▶";
+    };
+    synth.speak(utterance);
+}
+
+function markDot(id) {
+    document.getElementById(`dot-${id}`).classList.add('done');
+}
+
+function startTimer() {
+    timer = setInterval(() => {
+        if(timeLeft <= 0) {
+            finishExam();
+            return;
+        }
+        timeLeft--;
+        let m = Math.floor(timeLeft / 60);
+        let s = timeLeft % 60;
+        document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+    }, 1000);
+}
+
+function finishExam() {
+    if(isSubmitted) return;
+    if(!confirm("Bạn có chắc chắn muốn nộp bài?")) return;
+    
+    isSubmitted = true;
+    clearInterval(timer);
+    synth.cancel();
+
+    let score = 0;
+    
+    // Check Part 1 & 2
+    part1Data.forEach(p => p.questions.forEach(checkQ));
+    // Check Part 3 & 4
+    part2Data.forEach(p => p.questions.forEach(checkQ));
+
+    function checkQ(q) {
+        const sel = document.querySelector(`input[name="ans-${q.id}"]:checked`);
+        const dot = document.getElementById(`dot-${q.id}`);
+        const reveal = document.getElementById(`reveal-${q.id}`);
+        const card = document.getElementById(`q-${q.id}`);
+        
+        reveal.style.display = 'block';
+
+        if (sel && parseInt(sel.value) === q.ans) {
+            score++;
+            dot.className = "q-dot right";
+            card.style.borderLeftColor = "#0be881";
+        } else {
+            dot.className = "q-dot wrong";
+            card.style.borderLeftColor = "#ff5e57";
+        }
     }
 
-    function checkAll() {
-        let score = 0;
-        questions.forEach((q, index) => {
-            const selected = document.querySelector(`input[name="q${index}"]:checked`);
-            const fb = document.getElementById(`fb-${index}`);
-            const item = document.getElementById(`item-${index}`);
-            if (selected) {
-                if (parseInt(selected.value) === q.a) {
-                    score++;
-                    fb.className = "feedback correct";
-                    fb.innerHTML = `✅ Chính xác! "${q.script}"`;
-                    item.style.borderLeft = "5px solid #2e7d32";
-                } else {
-                    fb.className = "feedback wrong";
-                    fb.innerHTML = `❌ Sai. Nghe: "${q.script}" -> ${q.options[q.a]}`;
-                    item.style.borderLeft = "5px solid #c62828";
-                }
-                fb.style.display = "block";
-            } else {
-                item.style.borderLeft = "5px solid orange";
-            }
-        });
-        document.getElementById('score').innerText = `Điểm: ${score}/${questions.length}`;
-        alert(`Kết quả: ${score}/${questions.length}`);
-    }
-    renderQuiz();
+    alert(`KẾT QUẢ CỦA BẠN: ${score}/40\nKiểm tra lại đáp án và giải thích bên dưới.`);
+    window.scrollTo(0,0);
+}
+
+// Chạy khởi tạo
+init();
+
 </script>
 </body>
 </html>
