@@ -3,334 +3,397 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đề Thi Tiếng Anh dành riêng cho Trương Thị Dương</title>
+    <title>Advanced Listening Exam - Hactech</title>
     <style>
-        :root { --header: #1e272e; --sidebar: #d2dae2; --accent: #0fbcf9; --danger: #ff5e57; --success: #0be881; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; background: #f1f2f6; overflow: hidden; }
-        
-        /* Sidebar */
-        .sidebar { width: 280px; background: var(--sidebar); border-right: 1px solid #ccc; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; }
-        .timer-display { background: var(--danger); color: white; padding: 15px; text-align: center; font-size: 1.8rem; font-weight: bold; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 0 #d63031; }
-        .grid-qs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-        .q-dot { width: 100%; aspect-ratio: 1; background: white; border: 1px solid #aaa; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: 4px; transition: 0.2s; }
-        .q-dot:hover { background: var(--accent); color: white; }
-        .q-dot.done { background: #808e9b; color: white; border-color: #808e9b; }
-        .q-dot.right { background: var(--success); color: white; border-color: var(--success); }
-        .q-dot.wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        :root {
+            --primary: #4834d4;       /* Màu chủ đạo (Xanh tím hiện đại) */
+            --secondary: #686de0;
+            --bg-color: #f1f2f6;      /* Màu nền dịu mắt */
+            --sidebar-bg: #ffffff;
+            --text-color: #2f3542;
+            --success: #6ab04c;
+            --danger: #eb4d4b;
+            --accent: #f0932b;
+        }
 
-        /* Main */
-        .main { flex: 1; display: flex; flex-direction: column; height: 100vh; }
-        .top-bar { background: var(--header); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .content-area { flex: 1; overflow-y: auto; padding: 40px; scroll-behavior: smooth; }
-        .container { max-width: 900px; margin: 0 auto; padding-bottom: 50px; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; display: flex; height: 100vh; background-color: var(--bg-color); color: var(--text-color); overflow: hidden; }
 
-        /* Exam Blocks */
-        .section-header { font-size: 1.4rem; font-weight: bold; color: #3c40c6; margin-top: 40px; margin-bottom: 10px; border-bottom: 3px solid #3c40c6; padding-bottom: 5px; }
-        .desc-text { color: #57606f; font-style: italic; margin-bottom: 20px; }
+        /* --- SIDEBAR (Bên trái) --- */
+        .sidebar {
+            width: 280px; background: var(--sidebar-bg); border-right: 1px solid #dfe4ea;
+            display: flex; flex-direction: column; padding: 20px; box-shadow: 2px 0 10px rgba(0,0,0,0.02); z-index: 10;
+        }
         
-        .audio-box { background: #fff; padding: 15px; border-radius: 50px; display: flex; align-items: center; gap: 15px; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #dcdde1; }
-        .play-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--accent); color: white; border: none; cursor: pointer; font-size: 1.5rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .play-btn:hover { transform: scale(1.1); background: #3c40c6; }
-        .play-btn.playing { background: var(--danger); animation: pulse 1s infinite; }
-        
-        .q-card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; border-left: 5px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .q-title { font-weight: 600; margin-bottom: 12px; font-size: 1.05rem; }
-        .options label { display: block; padding: 10px; border: 1px solid #f1f2f6; margin-bottom: 5px; cursor: pointer; border-radius: 4px; transition: 0.2s; }
-        .options label:hover { background: #f7f1e3; border-color: #d1ccc0; }
-        .options input { margin-right: 10px; }
+        .timer-box {
+            background: linear-gradient(135deg, var(--danger), #ff7979); color: white;
+            padding: 15px; border-radius: 12px; text-align: center; font-size: 2rem; font-weight: 800;
+            margin-bottom: 25px; box-shadow: 0 4px 15px rgba(235, 77, 75, 0.3); letter-spacing: 1px;
+        }
 
-        /* Transcript */
-        .script-reveal { margin-top: 15px; padding: 15px; background: #fff4e6; border: 1px solid #ffeaa7; border-radius: 6px; display: none; font-size: 0.95rem; line-height: 1.5; color: #d35400; }
+        .map-title { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #a4b0be; margin-bottom: 10px; font-weight: bold; }
         
-        .footer { background: white; padding: 15px 30px; border-top: 1px solid #ddd; text-align: right; }
-        .btn-finish { background: var(--success); color: white; padding: 12px 40px; border: none; border-radius: 5px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
-        .btn-finish:hover { background: #05c46b; }
+        .question-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; padding-right: 5px;
+        }
+        .q-node {
+            aspect-ratio: 1; border: 1px solid #ced6e0; border-radius: 8px; background: #f1f2f6;
+            display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+        }
+        .q-node:hover { transform: translateY(-2px); border-color: var(--primary); color: var(--primary); }
+        .q-node.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .q-node.correct { background: var(--success); color: white; border-color: var(--success); }
+        .q-node.wrong { background: var(--danger); color: white; border-color: var(--danger); }
 
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 94, 87, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 94, 87, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 94, 87, 0); } }
+        /* --- MAIN CONTENT (Bên phải) --- */
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; position: relative; }
+
+        /* Header */
+        .top-header {
+            background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #dfe4ea;
+        }
+        .exam-title { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
+        .candidate-info { font-size: 1rem; color: #57606f; background: #f1f2f6; padding: 8px 15px; border-radius: 20px; }
+
+        /* Scroll Area */
+        .exam-content { flex: 1; overflow-y: auto; padding: 40px; scroll-behavior: smooth; }
+        .exam-paper { max-width: 850px; margin: 0 auto; padding-bottom: 60px; }
+
+        /* Section Styling */
+        .part-divider {
+            margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--primary);
+        }
+        .part-name { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+        .part-desc { color: #747d8c; margin-top: 5px; font-style: italic; }
+
+        /* Question Card */
+        .q-card {
+            background: white; border-radius: 12px; padding: 25px; margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03); border: 1px solid #f1f2f6; position: relative; transition: 0.3s;
+        }
+        .q-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
+
+        /* Audio Player Button */
+        .audio-btn {
+            background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 30px;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem;
+            transition: 0.2s; outline: none; margin-bottom: 15px;
+        }
+        .audio-btn:hover { background: var(--secondary); box-shadow: 0 4px 10px rgba(72, 52, 212, 0.3); }
+        .audio-btn.playing { background: var(--danger); animation: pulse 1.5s infinite; }
+
+        .q-text { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; line-height: 1.5; color: #2f3542; }
+
+        /* Options */
+        .opt-label {
+            display: block; padding: 12px 15px; margin-bottom: 8px; border: 2px solid #f1f2f6; border-radius: 8px;
+            cursor: pointer; transition: 0.2s; font-size: 0.95rem;
+        }
+        .opt-label:hover { border-color: var(--secondary); background: #f7f1e3; }
+        .opt-label input { margin-right: 12px; transform: scale(1.2); }
+
+        /* Result & Copyright */
+        .result-box {
+            display: none; margin-top: 15px; padding: 15px; background: #fff4e6; border-radius: 8px;
+            border-left: 5px solid var(--accent); color: #d35400; font-size: 0.9rem; line-height: 1.6;
+        }
+
+        .footer-controls {
+            background: white; padding: 15px 30px; border-top: 1px solid #dfe4ea; display: flex; justify-content: space-between; align-items: center;
+        }
+        .copyright { font-size: 0.85rem; color: #a4b0be; font-weight: 500; }
+        .btn-submit {
+            background: var(--success); color: white; border: none; padding: 12px 35px; border-radius: 8px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(106, 176, 76, 0.4); transition: 0.2s;
+        }
+        .btn-submit:hover { background: #55963e; transform: translateY(-2px); }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(235, 77, 75, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(235, 77, 75, 0); } 100% { box-shadow: 0 0 0 0 rgba(235, 77, 75, 0); } }
+
+        /* Scrollbar đẹp */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f2f6; }
+        ::-webkit-scrollbar-thumb { background: #ced6e0; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a4b0be; }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <div class="timer-display" id="timer">60:00</div>
-    <div style="margin-bottom:10px; font-weight:bold; color:#57606f">Question Map</div>
-    <div class="grid-qs" id="map"></div>
+    <div class="timer-box" id="timer">60:00</div>
+    <div class="map-title">Question Map</div>
+    <div class="question-grid" id="qMap">
+        </div>
 </div>
 
-<div class="main">
-    <div class="top-bar">
-        <h1>ADVANCED LISTENING EXAM (PRO)</h1>
-        <div>Candidate: <b>Truong Thi Duong</b></div>
+<div class="main-wrapper">
+    <div class="top-header">
+        <div class="exam-title">LISTENING TEST (HARD MODE)</div>
+        <div class="candidate-info">Thí sinh: <b>Trương Thị Dương</b></div>
     </div>
-    <div class="content-area">
-        <div class="container" id="examContainer">
+
+    <div class="exam-content">
+        <div class="exam-paper" id="paper">
             </div>
     </div>
-    <div class="footer">
-        <button class="btn-finish" onclick="finishExam()">NỘP BÀI (SUBMIT)</button>
+
+    <div class="footer-controls">
+        <div class="copyright">© Bản quyền thuộc về Nguyễn Bắc Sơn</div>
+        <button class="btn-submit" onclick="submitExam()">NỘP BÀI (SUBMIT)</button>
     </div>
 </div>
-
 <script>
-// --- PART 1 OF DATA ---
-const part1Data = [
-    // --- PART 1: PHOTOGRAPHS (1-10) ---
-    {
-        section: "PART 1: PHOTOGRAPHS (10 Questions)",
-        desc: "Imagine the picture based on the audio description and choose the correct statement.",
-        questions: [
-            { id: 1, s: "A. The electrician is climbing the utility pole. B. He is digging a hole in the ground. C. The wires are being cut by pliers. D. He is driving a maintenance truck.", q: "Q1: Look at the mental picture.", ans: 0, expl: "Keywords: 'electrician', 'climbing', 'utility pole'." },
-            { id: 2, s: "A. The meeting room is empty. B. A presentation is being given on the screen. C. The employees are having lunch. D. They are shaking hands outside.", q: "Q2: Look at the mental picture.", ans: 1, expl: "Keywords: 'presentation', 'screen'." },
-            { id: 3, s: "A. The machinery is being operated by a robot. B. Some boxes are stacked on the shelf. C. The conveyor belt has stopped moving. D. A technician is inspecting the control panel.", q: "Q3: Look at the mental picture.", ans: 3, expl: "Keywords: 'technician', 'inspecting', 'control panel'." },
-            { id: 4, s: "A. She is putting on safety glasses. B. She is typing on a keyboard. C. She is holding a test tube. D. She is cleaning the microscope.", q: "Q4: Look at the mental picture.", ans: 2, expl: "Keywords: 'holding', 'test tube' (Lab context)." },
-            { id: 5, s: "A. Traffic is heavy on the highway. B. The bridge is under construction. C. Cars are parked in the garage. D. Pedestrians are crossing the street.", q: "Q5: Look at the mental picture.", ans: 1, expl: "Keywords: 'bridge', 'under construction'." },
-            { id: 6, s: "A. The man is welding a metal pipe. B. He is painting the wall. C. He is reading a newspaper. D. He is buying some tools.", q: "Q6: Look at the mental picture.", ans: 0, expl: "Keywords: 'welding', 'metal pipe'." },
-            { id: 7, s: "A. The airplane is taking off. B. Passengers are boarding the bus. C. Luggage is being loaded onto the cart. D. The pilot is waving goodbye.", q: "Q7: Look at the mental picture.", ans: 2, expl: "Keywords: 'Luggage', 'loaded'." },
-            { id: 8, s: "A. Some documents are scattered on the desk. B. The computer screen is broken. C. A man is signing a contract. D. The office lights are turned off.", q: "Q8: Look at the mental picture.", ans: 2, expl: "Keywords: 'signing', 'contract'." },
-            { id: 9, s: "A. They are assembling a circuit board. B. They are playing video games. C. They are watching TV. D. They are soldering a large pipe.", q: "Q9: Look at the mental picture.", ans: 0, expl: "Keywords: 'assembling', 'circuit board'." },
-            { id: 10, s: "A. The store is closed for renovation. B. A customer is paying at the counter. C. The shelves are empty. D. The cashier is sleeping.", q: "Q10: Look at the mental picture.", ans: 1, expl: "Keywords: 'paying', 'counter'." }
-        ]
-    },
-    // --- PART 2: QUESTION & RESPONSE (11-20) ---
-    {
-        section: "PART 2: QUESTION & RESPONSE (10 Questions)",
-        desc: "Listen to the question and select the best response. (Hard Mode: Indirect Answers)",
-        questions: [
-            { id: 11, s: "Q: When will the new transformers arrive? ... A. By truck. ... B. I'm not sure, ask the supply manager. ... C. Yes, they are new.", q: "Q11: Mark your answer.", ans: 1, expl: "Indirect answer. Không trả lời thời gian cụ thể mà bảo đi hỏi người khác." },
-            { id: 12, s: "Q: Who left the laboratory door open? ... A. It was open when I got here. ... B. To let some air in. ... C. Mr. Wilson has the key.", q: "Q12: Mark your answer.", ans: 0, expl: "Phủ định trách nhiệm gián tiếp." },
-            { id: 13, s: "Q: Why hasn't the report been finished yet? ... A. It's very interesting. ... B. Because the printer broke down. ... C. I reported it yesterday.", q: "Q13: Mark your answer.", ans: 1, expl: "Lý do: Printer broke down." },
-            { id: 14, s: "Q: Would you prefer coffee or tea? ... A. Neither, I'll have some water. ... B. Yes, please. ... C. It's too hot.", q: "Q14: Mark your answer.", ans: 0, expl: "Lựa chọn thứ 3 (Neither)." },
-            { id: 15, s: "Q: How do I operate this multimeter? ... A. It measures voltage. ... B. Check the user manual on page 5. ... C. It's brand new.", q: "Q15: Mark your answer.", ans: 1, expl: "Hướng dẫn gián tiếp: Check manual." },
-            { id: 16, s: "Q: Has the safety inspection started? ... A. It's safety first. ... B. No, the inspector is late. ... C. I have inspected it.", q: "Q16: Mark your answer.", ans: 1, expl: "Yes/No question -> No + Reason." },
-            { id: 17, s: "Q: Where can I find the spare parts? ... A. In the warehouse, aisle 4. ... B. It is a spare part. ... C. To fix the machine.", q: "Q17: Mark your answer.", ans: 0, expl: "Chỉ địa điểm cụ thể." },
-            { id: 18, s: "Q: Didn't you go to the seminar yesterday? ... A. Yes, I learned a lot. ... B. It was at 9 AM. ... C. No, I went there.", q: "Q18: Mark your answer.", ans: 0, expl: "Câu hỏi phủ định (Didn't you). Trả lời Yes nghĩa là Có đi." },
-            { id: 19, s: "Q: What is the estimated cost for the repair? ... A. About two hours. ... B. At least $500. ... C. It's very expensive.", q: "Q19: Mark your answer.", ans: 1, expl: "Hỏi giá (Cost) -> Số tiền." },
-            { id: 20, s: "Q: Are you going to the Hactech workshop? ... A. I'm afraid I have a meeting. ... B. It's a great workshop. ... C. Yes, I am working.", q: "Q20: Mark your answer.", ans: 0, expl: "Từ chối khéo (I have a meeting)." }
-        ]
-    }
-];
-</script>
-<script>
-// --- PART 2 OF DATA ---
-const part2Data = [
-    // --- PART 3: CONVERSATIONS (21-30) ---
-    {
-        section: "PART 3: CONVERSATIONS (10 Questions)",
-        desc: "Listen to the conversation and answer the questions.",
-        groupAudio: true, // Audio chung cho cả nhóm
-        script: "Man: Hey, have you seen the new blueprints for the wiring project?\nWoman: No, I haven't. I thought they were still being reviewed by the chief engineer.\nMan: Well, he approved them this morning. We need to start the installation by Wednesday.\nWoman: That's tight! I'll call the team and arrange a meeting this afternoon.",
-        questions: [
-            { id: 21, q: "What are the speakers discussing?", options: ["A budget plan", "Project blueprints", "A holiday party", "New computers"], ans: 1, expl: "Keyword: 'blueprints for the wiring project'." },
-            { id: 22, q: "Who approved the plans?", options: ["The woman", "The client", "The chief engineer", "The architect"], ans: 2, expl: "Man says: 'he (chief engineer) approved them'." },
-            { id: 23, q: "What will happen this afternoon?", options: ["Installation starts", "A meeting", "Blueprint review", "Project finish"], ans: 1, expl: "Woman says: 'arrange a meeting this afternoon'." }
-        ]
-    },
-    {
-        groupAudio: true,
-        script: "Woman: Excuse me, I bought this electric drill here yesterday, but it doesn't work properly.\nMan: I'm sorry to hear that. Does it not turn on at all?\nWoman: It turns on, but it makes a strange grinding noise and smells like burning plastic.\nMan: It sounds like a motor issue. Since you bought it yesterday, I can exchange it for a new one immediately.",
-        questions: [
-            { id: 24, q: "Where is this conversation taking place?", options: ["At a repair shop", "At a hardware store", "At a construction site", "In a factory"], ans: 1, expl: "Context: Buying and exchanging a tool." },
-            { id: 25, q: "What is the problem with the drill?", options: ["It won't turn on", "It is too heavy", "It makes noise and smells bad", "It is the wrong color"], ans: 2, expl: "Woman says: 'strange grinding noise and smells'." },
-            { id: 26, q: "What does the man offer to do?", options: ["Refund the money", "Repair it", "Exchange it", "Call the manager"], ans: 2, expl: "Man says: 'exchange it for a new one'." }
-        ]
-    },
-    {
-        groupAudio: true,
-        script: "Man: Do you know if the bus to the industrial park stops here?\nWoman: No, the 501 bus stop has been moved to Main Street due to the road construction.\nMan: Oh no, I'm going to be late for my shift at the factory. Is it far?\nWoman: It's about a 10-minute walk. If you hurry, you might catch the 8:15 bus.",
-        questions: [
-            { id: 27, q: "Where does the man want to go?", options: ["To the city center", "To the industrial park", "To Main Street", "To the hospital"], ans: 1, expl: "Man asks about bus to 'industrial park'." },
-            { id: 28, q: "Why was the bus stop moved?", options: ["Road construction", "Traffic jam", "Accident", "Holiday parade"], ans: 0, expl: "Keyword: 'due to road construction'." },
-            { id: 29, q: "How long is the walk to the new stop?", options: ["5 minutes", "10 minutes", "15 minutes", "20 minutes"], ans: 1, expl: "Keyword: '10-minute walk'." },
-            { id: 30, q: "What time is the next bus?", options: ["8:00", "8:10", "8:15", "8:30"], ans: 2, expl: "Keyword: '8:15 bus'." }
-        ]
-    },
-    // --- PART 4: SHORT TALKS (31-40) ---
-    {
-        section: "PART 4: SHORT TALKS (10 Questions)",
-        desc: "Listen to the talk/announcement and answer the questions.",
-        groupAudio: true,
-        script: "Attention everyone. This is a reminder that the annual fire safety drill will take place tomorrow at 10 AM. When you hear the alarm, please stop all work immediately. Do not use the elevators. Proceed calmly to the nearest emergency exit and gather at the assembly point in the north parking lot. Attendance will be taken by your supervisors.",
-        questions: [
-            { id: 31, q: "What is the announcement about?", options: ["A holiday party", "A fire safety drill", "A new elevator", "A parking lot closure"], ans: 1, expl: "Keyword: 'fire safety drill'." },
-            { id: 32, q: "When will the event happen?", options: ["Today at 10 AM", "Tomorrow at 10 AM", "Next week", "In the afternoon"], ans: 1, expl: "Keyword: 'tomorrow at 10 AM'." },
-            { id: 33, q: "Where should employees gather?", options: ["In the lobby", "In the cafeteria", "In the north parking lot", "In the basement"], ans: 2, expl: "Keyword: 'north parking lot'." }
-        ]
-    },
-    {
-        groupAudio: true,
-        script: "Welcome to the Museum of Technology. Today, we are opening a new exhibit called 'The Future of Energy'. In this exhibit, you will see models of advanced solar panels, wind turbines, and nuclear fusion reactors. We also have an interactive section where you can try generating electricity yourself using a hand-crank generator. The tour starts in 5 minutes.",
-        questions: [
-            { id: 34, q: "Where is the speaker?", options: ["At a school", "At a museum", "At a power plant", "At a store"], ans: 1, expl: "Keyword: 'Museum of Technology'." },
-            { id: 35, q: "What is the name of the new exhibit?", options: ["History of Cars", "The Future of Energy", "Space Exploration", "Digital World"], ans: 1, expl: "Keyword: 'The Future of Energy'." },
-            { id: 36, q: "What can visitors do in the interactive section?", options: ["Buy souvenirs", "Watch a movie", "Generate electricity", "Eat lunch"], ans: 2, expl: "Keyword: 'generating electricity yourself'." },
-            { id: 37, q: "When does the tour start?", options: ["In 5 minutes", "In 10 minutes", "In 1 hour", "Tomorrow"], ans: 0, expl: "Keyword: 'starts in 5 minutes'." }
-        ]
-    },
-    {
-        groupAudio: true,
-        script: "This is a traffic update for the morning commute. Heavy congestion is reported on the King's Bridge due to a stalled truck in the middle lane. Police are on the scene, but delays are expected to last for at least an hour. We recommend taking the Tunnel Route or using public transportation today to avoid being late.",
-        questions: [
-            { id: 38, q: "What is causing the traffic jam?", options: ["Road maintenance", "A stalled truck", "Bad weather", "A protest"], ans: 1, expl: "Keyword: 'stalled truck'." },
-            { id: 39, q: "How long are delays expected to last?", options: ["10 minutes", "30 minutes", "At least an hour", "All day"], ans: 2, expl: "Keyword: 'at least an hour'." },
-            { id: 40, q: "What does the speaker suggest?", options: ["Waiting in the car", "Going home", "Taking the Tunnel Route", "Driving faster"], ans: 2, expl: "Keyword: 'recommend taking the Tunnel Route'." }
-        ]
-    }
-];
-
-// --- MAIN LOGIC ---
-let allData = [...part1Data, ...part2Data];
-let timer;
-let timeLeft = 60 * 60; // 60 minutes
-let synth = window.speechSynthesis;
-let isSubmitted = false;
-
-function init() {
-    // Render Map
-    const map = document.getElementById('map');
-    for(let i=1; i<=40; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'q-dot';
-        dot.id = `dot-${i}`;
-        dot.innerText = i;
-        dot.onclick = () => {
-            document.getElementById(`q-${i}`).scrollIntoView({behavior: "smooth", block: "center"});
-        };
-        map.appendChild(dot);
-    }
-
-    // Render Content
-    const container = document.getElementById('examContainer');
-    allData.forEach(block => {
-        // Render Header for Section
-        if(block.section) {
-            container.innerHTML += `<div class="section-header">${block.section}</div><div class="desc-text">${block.desc}</div>`;
+    // --- DỮ LIỆU ĐỀ THI (40 CÂU - 4 PHẦN) ---
+    const examData = [
+        // PART 1
+        {
+            title: "PART 1: PHOTOGRAPHS",
+            desc: "Listen and select the sentence that best describes the mental image.",
+            qs: [
+                { id: 1, text: "Q1: Look at the picture description.", script: "A. The electrician is climbing a pole. B. He is digging a hole. C. He is driving a truck. D. He is eating lunch.", ans: 0, expl: "Keywords: 'electrician', 'climbing', 'pole'." },
+                { id: 2, text: "Q2: Look at the picture description.", script: "A. The lab is empty. B. She is looking through a microscope. C. They are washing equipment. D. The chemicals are spilled.", ans: 1, expl: "Keywords: 'looking through', 'microscope'." },
+                { id: 3, text: "Q3: Look at the picture description.", script: "A. Traffic is heavy. B. The bridge is broken. C. Pedestrians are waiting. D. A police officer is directing traffic.", ans: 0, expl: "Keywords: 'Traffic', 'heavy'." },
+                { id: 4, text: "Q4: Look at the picture description.", script: "A. He is soldering a wire. B. He is painting a wall. C. He is reading a book. D. He is typing on a laptop.", ans: 0, expl: "Keywords: 'soldering', 'wire'." },
+                { id: 5, text: "Q5: Look at the picture description.", script: "A. The meeting has started. B. The room is dark. C. The projector is off. D. Everyone is standing.", ans: 0, expl: "Keywords: 'meeting', 'started'." },
+                { id: 6, text: "Q6: Look at the picture description.", script: "A. Boxes are stacked on the shelf. B. The forklift is moving. C. The warehouse is closed. D. A worker is sleeping.", ans: 0, expl: "Keywords: 'Boxes', 'stacked'." },
+                { id: 7, text: "Q7: Look at the picture description.", script: "A. The plane is taking off. B. Passengers are boarding. C. The pilot is waving. D. Luggage is lost.", ans: 1, expl: "Keywords: 'Passengers', 'boarding'." },
+                { id: 8, text: "Q8: Look at the picture description.", script: "A. She is signing a document. B. She is making coffee. C. She is talking on the phone. D. She is leaving the office.", ans: 0, expl: "Keywords: 'signing', 'document'." },
+                { id: 9, text: "Q9: Look at the picture description.", script: "A. The solar panels are on the roof. B. It is raining heavily. C. The wind turbine is broken. D. The sun is setting.", ans: 0, expl: "Keywords: 'solar panels', 'roof'." },
+                { id: 10, text: "Q10: Look at the picture description.", script: "A. They are shaking hands. B. They are arguing. C. They are running. D. They are eating.", ans: 0, expl: "Keywords: 'shaking hands'." }
+            ]
+        },
+        // PART 2
+        {
+            title: "PART 2: QUESTION & RESPONSE",
+            desc: "Listen to the question and choose the best response.",
+            qs: [
+                { id: 11, text: "Q11: Mark your answer.", script: "When will the report be ready? ... A. Yes, it is. ... B. By 2 PM today. ... C. It's too long.", ans: 1, expl: "Hỏi 'When' -> Trả lời thời gian." },
+                { id: 12, text: "Q12: Mark your answer.", script: "Who is the new manager? ... A. Mr. Smith. ... B. In the office. ... C. Since yesterday.", ans: 0, expl: "Hỏi 'Who' -> Tên người." },
+                { id: 13, text: "Q13: Mark your answer.", script: "Where did you put the file? ... A. On your desk. ... B. To read it. ... C. It's a blue file.", ans: 0, expl: "Hỏi 'Where' -> Địa điểm." },
+                { id: 14, text: "Q14: Mark your answer.", script: "Why is the machine off? ... A. It's broken. ... B. At 5 o'clock. ... C. Yes, turn it on.", ans: 0, expl: "Hỏi 'Why' -> Lý do (Broken)." },
+                { id: 15, text: "Q15: Mark your answer.", script: "How much is this tool? ... A. It's heavy. ... B. 50 dollars. ... C. Use it carefully.", ans: 1, expl: "Hỏi 'How much' -> Giá tiền." },
+                { id: 16, text: "Q16: Mark your answer.", script: "Did you call the client? ... A. No, I forgot. ... B. He is nice. ... C. The phone is here.", ans: 0, expl: "Yes/No question -> No + Explanation." },
+                { id: 17, text: "Q17: Mark your answer.", script: "Would you like coffee or tea? ... A. Yes, please. ... B. Neither, just water. ... C. It is hot.", ans: 1, expl: "Choice question -> Neither." },
+                { id: 18, text: "Q18: Mark your answer.", script: "How long is the meeting? ... A. About an hour. ... B. In room 302. ... C. With the boss.", ans: 0, expl: "Hỏi 'How long' -> Khoảng thời gian." },
+                { id: 19, text: "Q19: Mark your answer.", script: "Is there a pharmacy nearby? ... A. Yes, across the street. ... B. No, I am sick. ... C. Buy some medicine.", ans: 0, expl: "Hỏi địa điểm -> Yes + Location." },
+                { id: 20, text: "Q20: Mark your answer.", script: "Don't you like this color? ... A. Yes, it's nice. ... B. No, it's red. ... C. I paint it.", ans: 0, expl: "Negative question. Yes = I like it." }
+            ]
+        },
+        // PART 3
+        {
+            title: "PART 3: CONVERSATIONS",
+            desc: "Listen to the dialogue and answer the questions.",
+            group: true,
+            script: "Man: Do you know when the safety inspection starts?\nWoman: I think it's scheduled for next Monday.\nMan: Oh, I thought it was today. We need to prepare the lab.\nWoman: Don't worry, we have the whole weekend to clean up.",
+            qs: [
+                { id: 21, text: "What are they discussing?", script: "", ans: 1, opts: ["A party", "Safety inspection", "New equipment", "Lunch"], expl: "Keyword: 'safety inspection'." },
+                { id: 22, text: "When is the event?", script: "", ans: 1, opts: ["Today", "Next Monday", "Tomorrow", "Last week"], expl: "Woman says: 'next Monday'." },
+                { id: 23, text: "What will they do this weekend?", script: "", ans: 0, opts: ["Clean up", "Sleep", "Work overtime", "Travel"], expl: "Woman says: 'weekend to clean up'." }
+            ]
+        },
+        {
+            group: true,
+            script: "Woman: Excuse me, I bought this drill yesterday but it stopped working.\nMan: I'm sorry. Do you have the receipt?\nWoman: Yes, here it is. Can I get a refund?\nMan: Since you bought it yesterday, we can exchange it for a new one.",
+            qs: [
+                { id: 24, text: "Where is the conversation?", script: "", ans: 1, opts: ["At a bank", "At a store", "At home", "At school"], expl: "Context: Buying and returning items." },
+                { id: 25, text: "What is the problem?", script: "", ans: 2, opts: ["Lost receipt", "Too expensive", "Drill stopped working", "Wrong color"], expl: "Woman says: 'stopped working'." },
+                { id: 26, text: "What does the man offer?", script: "", ans: 2, opts: ["Refund", "Repair", "Exchange", "Nothing"], expl: "Man says: 'exchange it for a new one'." }
+            ]
+        },
+        {
+            group: true,
+            script: "Man: I'm going to the cafeteria. Do you want anything?\nWoman: I'd love a coffee, but I have to finish this report by 2 PM.\nMan: I can bring it back for you. Black or with sugar?\nWoman: Thanks! Just black, please.",
+            qs: [
+                { id: 27, text: "Where is the man going?", script: "", ans: 0, opts: ["Cafeteria", "Library", "Gym", "Home"], expl: "Man says: 'going to the cafeteria'." },
+                { id: 28, text: "Why can't the woman go?", script: "", ans: 1, opts: ["She is sick", "She is busy", "She has no money", "She is dieting"], expl: "Woman says: 'finish this report'." },
+                { id: 29, text: "What does she want?", script: "", ans: 0, opts: ["Black coffee", "Tea", "Sandwich", "Water"], expl: "Woman says: 'Just black'." },
+                { id: 30, text: "When is her deadline?", script: "", ans: 1, opts: ["1 PM", "2 PM", "3 PM", "4 PM"], expl: "Woman says: 'by 2 PM'." }
+            ]
+        },
+        // PART 4
+        {
+            title: "PART 4: SHORT TALKS",
+            desc: "Listen to the announcement/talk and answer.",
+            group: true,
+            script: "Attention passengers. Flight VN123 to Tokyo is delayed due to bad weather. The new departure time is 8:30 PM. Please wait in the departure lounge. We apologize for the inconvenience and will provide free meal vouchers at the counter.",
+            qs: [
+                { id: 31, text: "Where is this announcement?", script: "", ans: 1, opts: ["Train station", "Airport", "Bus stop", "Taxi"], expl: "Keyword: 'Flight VN123'." },
+                { id: 32, text: "Why is the flight delayed?", script: "", ans: 2, opts: ["Engine trouble", "Strike", "Bad weather", "No pilot"], expl: "Keyword: 'due to bad weather'." },
+                { id: 33, text: "What is offered to passengers?", script: "", ans: 0, opts: ["Meal vouchers", "Hotel room", "Money", "Free ticket"], expl: "Keyword: 'free meal vouchers'." }
+            ]
+        },
+        {
+            group: true,
+            script: "Welcome to Hactech factory. Today you will see how we manufacture electric motors. Please wear your safety helmets at all times. The tour takes about 45 minutes. If you have questions, please ask the guide at the end.",
+            qs: [
+                { id: 34, text: "Who is the audience?", script: "", ans: 1, opts: ["Students", "Visitors/Tourists", "Doctors", "Pilots"], expl: "Context: Factory tour." },
+                { id: 35, text: "What must they wear?", script: "", ans: 1, opts: ["Gloves", "Safety helmets", "Boots", "Masks"], expl: "Keyword: 'safety helmets'." },
+                { id: 36, text: "How long is the tour?", script: "", ans: 2, opts: ["30 mins", "1 hour", "45 mins", "2 hours"], expl: "Keyword: '45 minutes'." },
+                { id: 37, text: "When can they ask questions?", script: "", ans: 0, opts: ["At the end", "During the tour", "Before the tour", "Never"], expl: "Keyword: 'at the end'." }
+            ]
+        },
+        {
+            group: true,
+            script: "This is a weather warning. A heavy storm is approaching the coast. Residents are advised to stay indoors and secure loose objects. Strong winds and heavy rain are expected tonight. The storm will pass by tomorrow morning.",
+            qs: [
+                { id: 38, text: "What is the report about?", script: "", ans: 0, opts: ["A storm", "Traffic", "Sports", "Economy"], expl: "Keyword: 'heavy storm'." },
+                { id: 39, text: "What should people do?", script: "", ans: 1, opts: ["Go out", "Stay indoors", "Go swimming", "Drive"], expl: "Keyword: 'stay indoors'." },
+                { id: 40, text: "When will it end?", script: "", ans: 0, opts: ["Tomorrow morning", "Tonight", "Next week", "Now"], expl: "Keyword: 'pass by tomorrow morning'." }
+            ]
         }
-        
-        // Render Audio Player (Shared or Individual)
-        let audioScript = block.script || ""; 
-        if (!block.groupAudio && block.questions) {
-            // For Part 1, 2 where each question has audio inside logic but not displayed
-             // Logic handles inside loop
-        } else {
-             // For Part 3, 4
-             container.innerHTML += `
-                <div class="audio-box">
-                    <button class="play-btn" onclick="playAudio('${audioScript.replace(/\n/g, ' ').replace(/'/g, "\\'")}', this)">▶</button>
-                    <span style="font-weight:600; color:#555">LISTEN TO AUDIO CLIP</span>
-                </div>
-             `;
+    ];
+
+    // --- LOGIC XỬ LÝ ---
+    let timerInterval;
+    let timeLeft = 3600; // 60 phút
+    let isSubmitted = false;
+
+    // Khởi tạo
+    function init() {
+        const paper = document.getElementById('paper');
+        const map = document.getElementById('qMap');
+
+        // Render Map
+        for (let i = 1; i <= 40; i++) {
+            const node = document.createElement('div');
+            node.className = 'q-node';
+            node.innerText = i;
+            node.id = `map-${i}`;
+            node.onclick = () => document.getElementById(`q-${i}`).scrollIntoView({behavior: 'smooth', block: 'center'});
+            map.appendChild(node);
         }
 
         // Render Questions
-        block.questions.forEach(q => {
-             let scriptForSingle = "";
-             if(block.section.includes("PART 1") || block.section.includes("PART 2")) {
-                 scriptForSingle = `
-                    <div class="audio-box" style="margin-top:10px; padding:10px; border-radius:10px; width:fit-content;">
-                        <button class="play-btn" style="width:40px; height:40px; font-size:1rem" onclick="playAudio('${q.s.replace(/'/g, "\\'")}', this)">▶</button>
-                        <span style="font-size:0.9rem; margin-left:10px;">Question ${q.id} Audio</span>
-                    </div>
-                 `;
-             }
+        examData.forEach(part => {
+            // Divider
+            const div = document.createElement('div');
+            div.innerHTML = `<div class="part-divider"><div class="part-name">${part.title}</div><div class="part-desc">${part.desc}</div></div>`;
+            paper.appendChild(div);
 
-             let optionsHtml = "";
-             q.options.forEach((opt, idx) => {
-                 optionsHtml += `<label><input type="radio" name="ans-${q.id}" value="${idx}" onchange="markDot(${q.id})"> ${opt}</label>`;
-             });
+            // Audio chung cho Part 3, 4
+            if (part.group) {
+                const groupAudio = document.createElement('div');
+                groupAudio.innerHTML = `<button class="audio-btn" onclick="speak('${part.script.replace(/\n/g, ' ').replace(/'/g, "\\'")}', this)">🔊 NGHE ĐOẠN HỘI THOẠI (GROUP)</button>`;
+                paper.appendChild(groupAudio);
+            }
 
-             container.innerHTML += `
-                <div class="q-card" id="q-${q.id}">
-                    ${scriptForSingle}
-                    <div class="q-title">${q.q}</div>
+            // Render từng câu
+            part.qs.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'q-card';
+                card.id = `q-${q.id}`;
+
+                // Audio riêng cho Part 1, 2
+                let audioBtn = '';
+                if (!part.group) {
+                    audioBtn = `<button class="audio-btn" onclick="speak('${q.script.replace(/'/g, "\\'")}', this)">🔊 NGHE CÂU HỎI ${q.id}</button>`;
+                }
+
+                // Options (Part 1,2 mặc định A,B,C,D nếu ko có opts riêng)
+                let optionsHtml = '';
+                const opts = q.opts || ["A", "B", "C", "D"]; // Mặc định ABCD cho Part 1,2
+                opts.forEach((opt, idx) => {
+                    optionsHtml += `<label class="opt-label"><input type="radio" name="ans-${q.id}" value="${idx}" onchange="markMap(${q.id})"> ${opt}</label>`;
+                });
+
+                card.innerHTML = `
+                    ${audioBtn}
+                    <div class="q-text">${q.text}</div>
                     <div class="options">${optionsHtml}</div>
-                    <div class="script-reveal" id="reveal-${q.id}">
-                        <b>Script:</b> "${q.s || block.script || "See group script"}" <br>
+                    <div class="result-box" id="res-${q.id}">
+                        <b>Script:</b> "${part.group ? part.script : q.script}" <br>
                         <b>Giải thích:</b> ${q.expl} <br>
-                        <b>Đáp án đúng:</b> ${q.options[q.ans]}
+                        <b>Đáp án đúng:</b> ${opts[q.ans]}
                     </div>
-                </div>
-             `;
+                `;
+                paper.appendChild(card);
+            });
         });
-    });
 
-    startTimer();
-}
-
-function playAudio(text, btn) {
-    if(isSubmitted) return; // Hard mode: No replay after submit (optional)
-    synth.cancel();
-    document.querySelectorAll('.play-btn').forEach(b => { b.classList.remove('playing'); b.innerText = "▶"; });
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
-    utterance.rate = 1.05; // Slightly faster for advanced
-    
-    btn.classList.add('playing');
-    btn.innerText = "🔊";
-    
-    utterance.onend = () => {
-        btn.classList.remove('playing');
-        btn.innerText = "▶";
-    };
-    synth.speak(utterance);
-}
-
-function markDot(id) {
-    document.getElementById(`dot-${id}`).classList.add('done');
-}
-
-function startTimer() {
-    timer = setInterval(() => {
-        if(timeLeft <= 0) {
-            finishExam();
-            return;
-        }
-        timeLeft--;
-        let m = Math.floor(timeLeft / 60);
-        let s = timeLeft % 60;
-        document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
-    }, 1000);
-}
-
-function finishExam() {
-    if(isSubmitted) return;
-    if(!confirm("Bạn có chắc chắn muốn nộp bài?")) return;
-    
-    isSubmitted = true;
-    clearInterval(timer);
-    synth.cancel();
-
-    let score = 0;
-    
-    // Check Part 1 & 2
-    part1Data.forEach(p => p.questions.forEach(checkQ));
-    // Check Part 3 & 4
-    part2Data.forEach(p => p.questions.forEach(checkQ));
-
-    function checkQ(q) {
-        const sel = document.querySelector(`input[name="ans-${q.id}"]:checked`);
-        const dot = document.getElementById(`dot-${q.id}`);
-        const reveal = document.getElementById(`reveal-${q.id}`);
-        const card = document.getElementById(`q-${q.id}`);
-        
-        reveal.style.display = 'block';
-
-        if (sel && parseInt(sel.value) === q.ans) {
-            score++;
-            dot.className = "q-dot right";
-            card.style.borderLeftColor = "#0be881";
-        } else {
-            dot.className = "q-dot wrong";
-            card.style.borderLeftColor = "#ff5e57";
-        }
+        startTimer();
     }
 
-    alert(`KẾT QUẢ CỦA BẠN: ${score}/40\nKiểm tra lại đáp án và giải thích bên dưới.`);
-    window.scrollTo(0,0);
-}
+    function speak(text, btn) {
+        if (isSubmitted) return;
+        window.speechSynthesis.cancel();
+        
+        // Reset buttons
+        document.querySelectorAll('.audio-btn').forEach(b => {
+            b.classList.remove('playing');
+            if(b.innerText.includes('ĐANG')) b.innerText = b.innerText.replace('ĐANG ĐỌC...', 'NGHE');
+        });
 
-// Chạy khởi tạo
-init();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 1.0; 
+        
+        btn.classList.add('playing');
+        let orgText = btn.innerText;
+        btn.innerText = "🔊 ĐANG ĐỌC...";
+        
+        utterance.onend = () => {
+            btn.classList.remove('playing');
+            btn.innerText = orgText;
+        };
+        
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function markMap(id) {
+        document.getElementById(`map-${id}`).classList.add('active');
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            if (timeLeft <= 0) {
+                finishExam();
+                return;
+            }
+            timeLeft--;
+            const m = Math.floor(timeLeft / 60);
+            const s = timeLeft % 60;
+            document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' + s : s}`;
+        }, 1000);
+    }
+
+    function submitExam() {
+        if (isSubmitted) return;
+        if (!confirm("Bạn có chắc chắn muốn nộp bài?")) return;
+        
+        isSubmitted = true;
+        clearInterval(timerInterval);
+        window.speechSynthesis.cancel();
+
+        let score = 0;
+        let total = 40;
+
+        examData.forEach(part => {
+            part.qs.forEach(q => {
+                const selected = document.querySelector(`input[name="ans-${q.id}"]:checked`);
+                const mapNode = document.getElementById(`map-${q.id}`);
+                const resBox = document.getElementById(`res-${q.id}`);
+                const card = document.getElementById(`q-${q.id}`);
+
+                resBox.style.display = 'block';
+
+                if (selected && parseInt(selected.value) === q.ans) {
+                    score++;
+                    mapNode.className = 'q-node correct';
+                    card.style.borderLeft = '5px solid #6ab04c';
+                } else {
+                    mapNode.className = 'q-node wrong';
+                    card.style.borderLeft = '5px solid #eb4d4b';
+                }
+            });
+        });
+
+        alert(`KẾT QUẢ CỦA TRƯƠNG THỊ DƯƠNG: ${score}/${total}\n\nXem chi tiết giải thích bên dưới từng câu.`);
+        window.scrollTo(0,0);
+    }
+
+    // Run
+    init();
 
 </script>
 </body>
