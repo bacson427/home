@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Tay Từ Vựng FULL PDF - Nguyễn Bắc Sơn</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; padding: 10px; text-align: center; }
+        h1 { color: #d35400; margin-bottom: 5px; }
+        .subtitle { color: #555; font-size: 14px; margin-bottom: 20px; }
+        
+        select {
+            width: 100%; max-width: 400px; padding: 15px; font-size: 16px;
+            border-radius: 10px; border: 2px solid #d35400; margin-bottom: 20px;
+            font-weight: bold; background: white;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            width: 100%; max-width: 400px; height: 300px; margin: 0 auto 20px;
+        }
+
+        .card {
+            width: 100%; height: 100%; position: relative;
+            transform-style: preserve-3d; transition: transform 0.6s;
+            cursor: pointer; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-radius: 15px;
+        }
+
+        .card.flipped { transform: rotateY(180deg); }
+
+        .front, .back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; border-radius: 15px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        .front { background: white; color: #333; }
+        .back { background: #d35400; color: white; transform: rotateY(180deg); }
+
+        .word { font-size: 36px; font-weight: bold; margin-bottom: 10px; }
+        .meaning { font-size: 24px; font-weight: bold; }
+        .index { position: absolute; top: 10px; left: 10px; font-size: 12px; color: #888; }
+        
+        .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+        button {
+            padding: 12px 20px; border: none; border-radius: 8px;
+            font-size: 16px; cursor: pointer; font-weight: bold;
+        }
+        .btn-nav { background: #e0e0e0; color: #333; }
+        .btn-speak { background: #2ecc71; color: white; }
+    </style>
+</head>
+<body>
+
+    <h1>TỪ VỰNG TOPIK 1 (FULL)</h1>
+    <p class="subtitle">Dữ liệu gốc từ PDF | Dành cho: Nguyễn Bắc Sơn (Hactech)</p>
+
+    <select id="topicSelect" onchange="changeTopic()">
+        <option value="all">📚 Tất cả (Hơn 300 từ)</option>
+        <option value="Gia đình">👨‍👩‍👧‍👦 Gia đình (가족)</option>
+        <option value="Thời gian">⏰ Thời gian (시간)</option>
+        <option value="Mua sắm">🛍️ Mua sắm (쇼핑)</option>
+        <option value="Công việc">💼 Công việc (직업)</option>
+        <option value="Thời tiết">🌦️ Thời tiết (날씨)</option>
+        <option value="Học tập">📖 Học tập (공부)</option>
+        <option value="Giao thông">🚌 Giao thông (교통)</option>
+        <option value="Ẩm thực">🍜 Ẩm thực (음식)</option>
+        <option value="Sức khỏe">🏥 Sức khỏe (건강)</option>
+        <option value="Công nghệ">💻 Công nghệ (기술)</option>
+        <option value="Xã hội">⚖️ Xã hội (사회)</option>
+        <option value="Khoa học">🔬 Khoa học (과학)</option>
+        <option value="Cảm xúc">😊 Cảm xúc (감정)</option>
+        <option value="Môi trường">🌳 Môi trường (환경)</option>
+        <option value="Văn hóa">🎎 Văn hóa (문화)</option>
+        <option value="Kinh tế">💰 Kinh tế (경제)</option>
+        <option value="Môi trường toàn cầu">🌏 MT Toàn cầu (지구 환경)</option>
+        <option value="Tâm lý học">🧠 Tâm lý học (심리학)</option>
+        <option value="Công nghiệp">🏭 Công nghiệp (산업)</option>
+    </select>
+
+    <div class="card-container">
+        <div class="card" onclick="flipCard()">
+            <div class="front">
+                <div class="index" id="cardIndex">#1</div>
+                <div class="word" id="cardKorean" style="color: #d35400;">가족</div>
+                <div style="font-size: 14px; color: #666;">(Chạm để xem nghĩa)</div>
+            </div>
+            <div class="back">
+                <div class="meaning" id="cardVietnamese">Gia đình</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-nav" onclick="prevCard()">⬅️ Trước</button>
+        <button class="btn-speak" onclick="speak()">🔊 Đọc</button>
+        <button class="btn-nav" onclick="nextCard()">Sau ➡️</button>
+    </div>
+    
+    <p id="counter" style="color: #666; font-size: 14px; margin-top: 15px;">1 / 370</p>
+
+    <script>
+        // DỮ LIỆU PHẦN 1
+        const dataPart1 = {
+            "Gia đình": [
+                {k:"가족", v:"Gia đình"}, {k:"부모님", v:"Cha mẹ"}, {k:"아버지", v:"Bố"}, {k:"어머니", v:"Mẹ"}, 
+                {k:"할아버지", v:"Ông"}, {k:"할머니", v:"Bà"}, {k:"남편", v:"Chồng"}, {k:"아내", v:"Vợ"}, 
+                {k:"형", v:"Anh trai (nam gọi)"}, {k:"오빠", v:"Anh trai (nữ gọi)"}, {k:"누나", v:"Chị gái (nam gọi)"}, {k:"언니", v:"Chị gái (nữ gọi)"}, 
+                {k:"동생", v:"Em"}, {k:"아들", v:"Con trai"}, {k:"딸", v:"Con gái"}, {k:"삼촌", v:"Chú"}, 
+                {k:"이모", v:"Dì"}, {k:"사촌", v:"Anh em họ"}, {k:"조카", v:"Cháu"}, {k:"가족사진", v:"Ảnh gia đình"}, 
+                {k:"형제", v:"Anh chị em"}, {k:"자녀", v:"Con cái"}, {k:"이혼", v:"Ly hôn"}, {k:"결혼", v:"Kết hôn"}, 
+                {k:"기혼", v:"Đã kết hôn"}, {k:"미혼", v:"Chưa kết hôn"}, {k:"손자", v:"Cháu trai"}, {k:"손녀", v:"Cháu gái"}, 
+                {k:"시부모님", v:"Bố mẹ chồng"}, {k:"장인어른", v:"Bố vợ"}, {k:"장모님", v:"Mẹ vợ"}, {k:"양부모", v:"Bố mẹ nuôi"}, 
+                {k:"입양", v:"Nhận con nuôi"}, {k:"자매", v:"Chị em gái"}, {k:"고모", v:"Cô"}, {k:"조부모", v:"Ông bà"}, 
+                {k:"며느리", v:"Con dâu"}, {k:"사위", v:"Con rể"}, {k:"외삼촌", v:"Cậu"}, {k:"외숙모", v:"Mợ"}
+            ],
+            "Thời gian": [
+                {k:"시간", v:"Thời gian"}, {k:"오늘", v:"Hôm nay"}, {k:"내일", v:"Ngày mai"}, {k:"어제", v:"Hôm qua"}, 
+                {k:"오전", v:"Buổi sáng"}, {k:"오후", v:"Buổi chiều"}, {k:"일주일", v:"Một tuần"}, {k:"주말", v:"Cuối tuần"}, 
+                {k:"달", v:"Tháng"}, {k:"년", v:"Năm"}, {k:"월요일", v:"Thứ hai"}, {k:"화요일", v:"Thứ ba"}, 
+                {k:"수요일", v:"Thứ tư"}, {k:"목요일", v:"Thứ năm"}, {k:"금요일", v:"Thứ sáu"}, {k:"토요일", v:"Thứ bảy"}, 
+                {k:"일요일", v:"Chủ nhật"}, {k:"초", v:"Giây"}, {k:"분", v:"Phút"}, {k:"시간표", v:"Thời gian biểu"}, 
+                {k:"순간", v:"Khoảnh khắc"}, {k:"이번 주", v:"Tuần này"}, {k:"다음 주", v:"Tuần sau"}, {k:"저번 주", v:"Tuần trước"}, 
+                {k:"미래", v:"Tương lai"}, {k:"과거", v:"Quá khứ"}, {k:"현재", v:"Hiện tại"}, {k:"평일", v:"Ngày trong tuần"}, 
+                {k:"새벽", v:"Bình minh"}, {k:"야간", v:"Ban đêm"}, {k:"휴일", v:"Ngày nghỉ"}, {k:"초반", v:"Đầu (tháng/năm)"}, 
+                {k:"중반", v:"Giữa (tháng/năm)"}, {k:"후반", v:"Cuối (tháng/năm)"}, {k:"방학", v:"Kỳ nghỉ học"}, {k:"공휴일", v:"Ngày lễ"}, 
+                {k:"여름 방학", v:"Kỳ nghỉ hè"}, {k:"겨울 방학", v:"Kỳ nghỉ đông"}, {k:"연휴", v:"Kỳ nghỉ dài"}, {k:"하루", v:"Một ngày"}
+            ],
+            "Mua sắm": [
+                {k:"가게", v:"Cửa hàng"}, {k:"시장", v:"Chợ"}, {k:"백화점", v:"TTTM"}, {k:"할인", v:"Giảm giá"}, 
+                {k:"가격", v:"Giá cả"}, {k:"돈", v:"Tiền"}, {k:"현금", v:"Tiền mặt"}, {k:"카드", v:"Thẻ"}, 
+                {k:"지불하다", v:"Thanh toán"}, {k:"계산하다", v:"Tính tiền"}, {k:"쇼핑하다", v:"Mua sắm"}, {k:"물건", v:"Hàng hóa"}, 
+                {k:"옷", v:"Quần áo"}, {k:"바지", v:"Quần"}, {k:"치마", v:"Váy"}, {k:"신발", v:"Giày dép"}, 
+                {k:"가방", v:"Túi xách"}, {k:"액세서리", v:"Phụ kiện"}, {k:"색깔", v:"Màu sắc"}, {k:"사이즈", v:"Kích cỡ"}, 
+                {k:"온라인 쇼핑", v:"Mua sắm online"}, {k:"배달", v:"Giao hàng"}, {k:"주문하다", v:"Đặt hàng"}, {k:"환불하다", v:"Hoàn tiền"}, 
+                {k:"교환하다", v:"Đổi hàng"}, {k:"시식", v:"Nếm thử"}, {k:"새 제품", v:"Sản phẩm mới"}, {k:"중고", v:"Đồ cũ"}, 
+                {k:"영수증", v:"Hóa đơn"}, {k:"구매", v:"Mua"}, {k:"쇼핑카트", v:"Xe đẩy"}, {k:"포장", v:"Đóng gói"}, 
+                {k:"할인쿠폰", v:"Phiếu giảm giá"}, {k:"세일", v:"Sale"}, {k:"쇼핑몰", v:"Trung tâm thương mại"}, {k:"적립금", v:"Tiền tích điểm"}, 
+                {k:"계산대", v:"Quầy tính tiền"}, {k:"바코드", v:"Mã vạch"}, {k:"진열장", v:"Tủ trưng bày"}, {k:"상품", v:"Sản phẩm"}
+            ],
+            "Công việc": [
+                {k:"직업", v:"Nghề nghiệp"}, {k:"회사", v:"Công ty"}, {k:"회사원", v:"Nhân viên cty"}, {k:"의사", v:"Bác sĩ"}, 
+                {k:"간호사", v:"Y tá"}, {k:"교사", v:"Giáo viên"}, {k:"경찰관", v:"Cảnh sát"}, {k:"소방관", v:"Lính cứu hỏa"}, 
+                {k:"변호사", v:"Luật sư"}, {k:"요리사", v:"Đầu bếp"}, {k:"기자", v:"Phóng viên"}, {k:"공무원", v:"Công chức"}, 
+                {k:"운전사", v:"Tài xế"}, {k:"기술자", v:"Kỹ sư"}, {k:"농부", v:"Nông dân"}, {k:"비서", v:"Thư ký"}, 
+                {k:"경리", v:"Kế toán"}, {k:"관리자", v:"Quản lý"}, {k:"취업", v:"Xin việc"}, {k:"직장 동료", v:"Đồng nghiệp"}, 
+                {k:"근무하다", v:"Làm việc"}, {k:"일자리", v:"Công việc"}, {k:"퇴사하다", v:"Nghỉ việc"}, {k:"입사하다", v:"Vào công ty"}, 
+                {k:"승진하다", v:"Thăng chức"}, {k:"월급", v:"Lương tháng"}, {k:"급여", v:"Lương bổng"}, {k:"직무", v:"Nhiệm vụ"}, 
+                {k:"야근", v:"Làm thêm giờ"}, {k:"회의", v:"Cuộc họp"}, {k:"프로젝트", v:"Dự án"}, {k:"계약서", v:"Hợp đồng"}, 
+                {k:"채용", v:"Tuyển dụng"}, {k:"면접", v:"Phỏng vấn"}, {k:"회사 생활", v:"Đời sống cty"}, {k:"근로자", v:"Người lao động"}, 
+                {k:"사장", v:"Giám đốc"}, {k:"부장", v:"Trưởng phòng"}, {k:"팀장", v:"Trưởng nhóm"}, {k:"인사부", v:"Phòng nhân sự"}
+            ],
+            "Thời tiết": [
+                {k:"날씨", v:"Thời tiết"}, {k:"맑다", v:"Trời nắng"}, {k:"흐리다", v:"Trời âm u"}, {k:"비", v:"Mưa"}, 
+                {k:"눈", v:"Tuyết"}, {k:"바람", v:"Gió"}, {k:"더운", v:"Nóng"}, {k:"추운", v:"Lạnh"}, 
+                {k:"따뜻한", v:"Ấm áp"}, {k:"쌀쌀한", v:"Se lạnh"}, {k:"기온", v:"Nhiệt độ"}, {k:"계절", v:"Mùa"}, 
+                {k:"봄", v:"Mùa xuân"}, {k:"여름", v:"Mùa hè"}, {k:"가을", v:"Mùa thu"}, {k:"겨울", v:"Mùa đông"}, 
+                {k:"폭풍", v:"Bão"}, {k:"태풍", v:"Bão lớn"}, {k:"습기", v:"Độ ẩm"}, {k:"무더위", v:"Nóng bức"}, 
+                {k:"건조하다", v:"Khô ráo"}, {k:"습하다", v:"Ẩm ướt"}, {k:"홍수", v:"Lũ lụt"}, {k:"가뭄", v:"Hạn hán"}, 
+                {k:"얼다", v:"Đóng băng"}, {k:"녹다", v:"Tan chảy"}, {k:"우박", v:"Mưa đá"}, {k:"구름", v:"Mây"}, 
+                {k:"무지개", v:"Cầu vồng"}, {k:"번개", v:"Sấm sét"}, {k:"폭우", v:"Mưa lớn"}, {k:"소나기", v:"Mưa rào"}, 
+                {k:"날씨 예보", v:"Dự báo thời tiết"}, {k:"바람이 불다", v:"Gió thổi"}, {k:"기후", v:"Khí hậu"}, {k:"천둥", v:"Sấm"}, 
+                {k:"온도", v:"Nhiệt độ"}, {k:"체감 온도", v:"Nhiệt độ cảm nhận"}, {k:"일기", v:"Nhật ký TT"}, {k:"일교차", v:"Chênh lệch nhiệt độ"}
+            ],
+            "Học tập": [
+                {k:"공부하다", v:"Học tập"}, {k:"시험", v:"Kỳ thi"}, {k:"숙제", v:"Bài tập"}, {k:"교과서", v:"Sách giáo khoa"}, 
+                {k:"학원", v:"Học thêm"}, {k:"수업", v:"Tiết học"}, {k:"교실", v:"Lớp học"}, {k:"학습", v:"Việc học"}, 
+                {k:"지식", v:"Kiến thức"}, {k:"복습하다", v:"Ôn tập"}, {k:"예습하다", v:"Chuẩn bị bài"}, {k:"질문", v:"Câu hỏi"}, 
+                {k:"답변하다", v:"Trả lời"}, {k:"성적", v:"Thành tích"}, {k:"동아리", v:"CLB"}, {k:"장학금", v:"Học bổng"}, 
+                {k:"학기", v:"Học kỳ"}, {k:"교사", v:"Giáo viên"}, {k:"학우", v:"Bạn học"}, {k:"학점", v:"Điểm số"}
+            ],
+            "Giao thông": [
+                {k:"버스", v:"Xe buýt"}, {k:"택시", v:"Taxi"}, {k:"지하철", v:"Tàu điện ngầm"}, {k:"자전거", v:"Xe đạp"}, 
+                {k:"자동차", v:"Ô tô"}, {k:"기차", v:"Tàu hỏa"}, {k:"비행기", v:"Máy bay"}, {k:"배", v:"Tàu thủy"}, 
+                {k:"출발하다", v:"Khởi hành"}, {k:"도착하다", v:"Đến nơi"}, {k:"정류장", v:"Trạm dừng"}, {k:"교통사고", v:"Tai nạn"}, 
+                {k:"교통비", v:"Phí đi lại"}, {k:"신호등", v:"Đèn giao thông"}, {k:"차선", v:"Làn đường"}, {k:"도로", v:"Đường phố"}, 
+                {k:"횡단보도", v:"Vạch qua đường"}, {k:"주차장", v:"Bãi đậu xe"}, {k:"운전면허증", v:"Bằng lái xe"}
+            ],
+            "Ẩm thực": [
+                {k:"음식", v:"Thức ăn"}, {k:"요리하다", v:"Nấu ăn"}, {k:"식당", v:"Nhà hàng"}, {k:"메뉴", v:"Thực đơn"}, 
+                {k:"밥", v:"Cơm"}, {k:"국", v:"Canh"}, {k:"김치", v:"Kim chi"}, {k:"고기", v:"Thịt"}, 
+                {k:"생선", v:"Cá"}, {k:"과일", v:"Trái cây"}, {k:"야채", v:"Rau"}, {k:"채소", v:"Rau xanh"}, 
+                {k:"반찬", v:"Món phụ"}, {k:"소스", v:"Nước sốt"}, {k:"음료수", v:"Đồ uống"}, {k:"물", v:"Nước"}, 
+                {k:"숟가락", v:"Thìa"}, {k:"젓가락", v:"Đũa"}, {k:"그릇", v:"Bát"}, {k:"접시", v:"Đĩa"}, 
+                {k:"간식", v:"Đồ ăn nhẹ"}, {k:"아침 식사", v:"Bữa sáng"}, {k:"점심 식사", v:"Bữa trưa"}, {k:"저녁 식사", v:"Bữa tối"}, 
+                {k:"배달", v:"Giao đồ ăn"}, {k:"주문하다", v:"Đặt món"}, {k:"계산하다", v:"Tính tiền"}, {k:"맛있다", v:"Ngon"}, 
+                {k:"맛없다", v:"Không ngon"}, {k:"매운", v:"Cay"}
+            ],
+            "Sức khỏe": [
+                {k:"건강", v:"Sức khỏe"}, {k:"병원", v:"Bệnh viện"}, {k:"약", v:"Thuốc"}, {k:"의사", v:"Bác sĩ"}, 
+                {k:"간호사", v:"Y tá"}, {k:"치료", v:"Điều trị"}, {k:"진료", v:"Khám bệnh"}, {k:"진단", v:"Chẩn đoán"}, 
+                {k:"예방주사", v:"Tiêm phòng"}, {k:"감기", v:"Cảm cúm"}, {k:"열", v:"Sốt"}, {k:"기침", v:"Ho"}, 
+                {k:"두통", v:"Đau đầu"}, {k:"배탈", v:"Đau bụng"}, {k:"아프다", v:"Đau/Ốm"}, {k:"다치다", v:"Bị thương"}, 
+                {k:"피곤하다", v:"Mệt mỏi"}, {k:"수술", v:"Phẫu thuật"}, {k:"회복하다", v:"Hồi phục"}, {k:"응급실", v:"Phòng cấp cứu"}
+            ]
+        };
+        // DỮ LIỆU PHẦN 2
+        const dataPart2 = {
+            "Công nghệ": [
+                {k:"인터넷", v:"Internet"}, {k:"컴퓨터", v:"Máy tính"}, {k:"스마트폰", v:"Smartphone"}, {k:"앱", v:"Ứng dụng"}, 
+                {k:"다운로드", v:"Tải xuống"}, {k:"업로드", v:"Tải lên"}, {k:"웹사이트", v:"Website"}, {k:"비밀번호", v:"Mật khẩu"}, 
+                {k:"이메일", v:"Email"}, {k:"메시지", v:"Tin nhắn"}, {k:"소프트웨어", v:"Phần mềm"}, {k:"하드웨어", v:"Phần cứng"}, 
+                {k:"게임", v:"Game"}, {k:"파일", v:"File"}, {k:"저장하다", v:"Lưu trữ"}, {k:"삭제하다", v:"Xóa"}, 
+                {k:"검색하다", v:"Tìm kiếm"}, {k:"로그인", v:"Đăng nhập"}, {k:"로그아웃", v:"Đăng xuất"}, {k:"프린터", v:"Máy in"},
+                {k:"인공지능", v:"AI"}, {k:"로봇", v:"Robot"}, {k:"바이러스", v:"Virus"}, {k:"백신", v:"Vắc xin"}, 
+                {k:"생명", v:"Sự sống"}, {k:"에너지", v:"Năng lượng"}
+            ],
+            "Xã hội": [
+                {k:"사회", v:"Xã hội"}, {k:"경제", v:"Kinh tế"}, {k:"정치", v:"Chính trị"}, {k:"법", v:"Luật pháp"}, 
+                {k:"민주주의", v:"Dân chủ"}, {k:"선거", v:"Bầu cử"}, {k:"정부", v:"Chính phủ"}, {k:"대통령", v:"Tổng thống"}, 
+                {k:"의회", v:"Quốc hội"}, {k:"법률", v:"Luật lệ"}, {k:"인권", v:"Nhân quyền"}, {k:"범죄", v:"Tội phạm"}, 
+                {k:"경찰", v:"Cảnh sát"}, {k:"법원", v:"Tòa án"}, {k:"판사", v:"Thẩm phán"}, {k:"변호사", v:"Luật sư"}, 
+                {k:"증거", v:"Bằng chứng"}, {k:"재판", v:"Phiên tòa"}, {k:"선진국", v:"Nước phát triển"}, {k:"개발도상국", v:"Nước đang PT"}
+            ],
+            "Khoa học": [
+                {k:"과학", v:"Khoa học"}, {k:"물리학", v:"Vật lý"}, {k:"화학", v:"Hóa học"}, {k:"생물학", v:"Sinh học"}, 
+                {k:"지구과학", v:"Địa chất học"}, {k:"천문학", v:"Thiên văn"}, {k:"실험", v:"Thí nghiệm"}, {k:"연구", v:"Nghiên cứu"}, 
+                {k:"발견하다", v:"Khám phá"}, {k:"이론", v:"Lý thuyết"}, {k:"기술", v:"Công nghệ"}, {k:"혁신", v:"Đổi mới"}, 
+                {k:"발명", v:"Phát minh"}, {k:"우주", v:"Vũ trụ"}
+            ],
+            "Cảm xúc": [
+                {k:"행복하다", v:"Hạnh phúc"}, {k:"슬프다", v:"Buồn"}, {k:"기쁘다", v:"Vui mừng"}, {k:"화나다", v:"Tức giận"}, 
+                {k:"우울하다", v:"U uất"}, {k:"놀라다", v:"Ngạc nhiên"}, {k:"사랑하다", v:"Yêu"}, {k:"미워하다", v:"Ghét"}, 
+                {k:"불안하다", v:"Bất an"}, {k:"걱정하다", v:"Lo lắng"}, {k:"창피하다", v:"Xấu hổ"}, {k:"외롭다", v:"Cô đơn"}, 
+                {k:"지루하다", v:"Chán"}, {k:"부끄럽다", v:"Ngại ngùng"}, {k:"설레다", v:"Hồi hộp"}, {k:"짜증나다", v:"Bực bội"}, 
+                {k:"만족하다", v:"Hài lòng"}, {k:"두렵다", v:"Sợ hãi"}, {k:"고맙다", v:"Cảm ơn"}, {k:"신나다", v:"Hào hứng"}
+            ],
+            "Môi trường": [
+                {k:"환경", v:"Môi trường"}, {k:"오염", v:"Ô nhiễm"}, {k:"쓰레기", v:"Rác thải"}, {k:"재활용", v:"Tái chế"}, 
+                {k:"공기", v:"Không khí"}, {k:"물", v:"Nước"}, {k:"숲", v:"Rừng"}, {k:"나무", v:"Cây"}, 
+                {k:"동물", v:"Động vật"}, {k:"지구", v:"Trái đất"}, {k:"온난화", v:"Nóng lên TC"}, {k:"해양", v:"Đại dương"}, 
+                {k:"기후변화", v:"Biến đổi khí hậu"}, {k:"에너지", v:"Năng lượng"}, {k:"전기", v:"Điện"}, {k:"태양열", v:"NL mặt trời"}, 
+                {k:"풍력", v:"NL gió"}, {k:"천연자원", v:"Tài nguyên TN"}, {k:"보호하다", v:"Bảo vệ"}, {k:"절약하다", v:"Tiết kiệm"}
+            ],
+            "Văn hóa": [
+                {k:"문화", v:"Văn hóa"}, {k:"전통", v:"Truyền thống"}, {k:"역사", v:"Lịch sử"}, {k:"예술", v:"Nghệ thuật"}, 
+                {k:"문학", v:"Văn học"}, {k:"철학", v:"Triết học"}, {k:"종교", v:"Tôn giáo"}, {k:"예술가", v:"Nghệ sĩ"}, 
+                {k:"공연", v:"Biểu diễn"}, {k:"전시회", v:"Triển lãm"}, {k:"문명", v:"Văn minh"}, {k:"민족", v:"Dân tộc"}, 
+                {k:"전통 의상", v:"Trang phục TT"}, {k:"의식", v:"Nghi thức"}, {k:"신앙", v:"Tín ngưỡng"}, {k:"신화", v:"Thần thoại"}, 
+                {k:"축제", v:"Lễ hội"}, {k:"그림", v:"Tranh vẽ"}, {k:"조각", v:"Điêu khắc"}, {k:"공예", v:"Thủ công"}
+            ],
+            "Kinh tế": [
+                {k:"경제", v:"Kinh tế"}, {k:"무역", v:"Thương mại"}, {k:"수출", v:"Xuất khẩu"}, {k:"수입", v:"Nhập khẩu"}, 
+                {k:"금융", v:"Tài chính"}, {k:"투자", v:"Đầu tư"}, {k:"주식", v:"Cổ phiếu"}, {k:"채권", v:"Trái phiếu"}, 
+                {k:"부동산", v:"Bất động sản"}, {k:"대출", v:"Vay vốn"}, {k:"이자", v:"Lãi suất"}, {k:"환율", v:"Tỷ giá"}, 
+                {k:"경기", v:"Tình hình KT"}, {k:"경제 성장", v:"Tăng trưởng KT"}, {k:"인플레이션", v:"Lạm phát"}, {k:"실업", v:"Thất nghiệp"}, 
+                {k:"고용", v:"Việc làm"}, {k:"기업", v:"Doanh nghiệp"}, {k:"자산", v:"Tài sản"}, {k:"손실", v:"Tổn thất"}
+            ],
+            "Môi trường toàn cầu": [
+                {k:"환경보호", v:"Bảo vệ MT"}, {k:"기후 변화", v:"Biến đổi KH"}, {k:"지구 온난화", v:"Nóng lên TC"}, {k:"오존층", v:"Tầng Ozone"}, 
+                {k:"해양 오염", v:"Ô nhiễm biển"}, {k:"대기 오염", v:"Ô nhiễm KK"}, {k:"산림 벌채", v:"Phá rừng"}, {k:"멸종 위기", v:"Nguy cơ tuyệt chủng"}, 
+                {k:"재생 에너지", v:"NL tái tạo"}, {k:"에너지 절약", v:"Tiết kiệm NL"}, {k:"온실가스", v:"Khí nhà kính"}, {k:"쓰레기 처리", v:"Xử lý rác"}, 
+                {k:"자원 고갈", v:"Cạn kiệt TN"}, {k:"환경 규제", v:"Quy định MT"}, {k:"재활용", v:"Tái chế"}, {k:"일회용", v:"Đồ dùng 1 lần"}, 
+                {k:"탄소 배출", v:"Thải Carbon"}, {k:"생태계", v:"Hệ sinh thái"}, {k:"물 부족", v:"Thiếu nước"}, {k:"식량 위기", v:"Khủng hoảng LT"}
+            ],
+            "Tâm lý học": [
+                {k:"심리학", v:"Tâm lý học"}, {k:"정신", v:"Tinh thần"}, {k:"감정", v:"Cảm xúc"}, {k:"스트레스", v:"Stress"}, 
+                {k:"우울증", v:"Trầm cảm"}, {k:"불안", v:"Lo lắng"}, {k:"자존감", v:"Lòng tự trọng"}, {k:"성격", v:"Tính cách"}, 
+                {k:"욕구", v:"Nhu cầu"}, {k:"인지", v:"Nhận thức"}, {k:"학습", v:"Học tập"}, {k:"기억력", v:"Trí nhớ"}, 
+                {k:"의식", v:"Ý thức"}, {k:"무의식", v:"Vô thức"}, {k:"자아", v:"Cái tôi"}, {k:"동기", v:"Động lực"}, 
+                {k:"공감", v:"Đồng cảm"}, {k:"상담", v:"Tư vấn"}, {k:"자기계발", v:"PT bản thân"}, {k:"트라우마", v:"Sang chấn"}
+            ],
+            "Công nghiệp": [
+                {k:"산업", v:"Công nghiệp"}, {k:"제조업", v:"Sản xuất"}, {k:"농업", v:"Nông nghiệp"}, {k:"광업", v:"Khai thác mỏ"}, 
+                {k:"에너지 산업", v:"CN Năng lượng"}, {k:"첨단 기술", v:"Công nghệ cao"}, {k:"기계", v:"Máy móc"}, {k:"공장", v:"Nhà máy"}, 
+                {k:"생산", v:"Sản xuất"}, {k:"수요", v:"Nhu cầu"}, {k:"공급", v:"Cung cấp"}, {k:"자원", v:"Tài nguyên"}, 
+                {k:"노동력", v:"Lực lượng LĐ"}, {k:"혁신", v:"Đổi mới"}, {k:"자동화", v:"Tự động hóa"}, {k:"로봇 공학", v:"Kỹ thuật Robot"}, 
+                {k:"물류", v:"Logistics"}, {k:"운송", v:"Vận tải"}, {k:"건설", v:"Xây dựng"}, {k:"자본", v:"Vốn"}
+            ]
+        };
+
+        // GỘP 2 PHẦN DỮ LIỆU LẠI
+        const fullDatabase = Object.assign({}, dataPart1, dataPart2);
+
+        let currentList = [];
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function loadTopic(topic) {
+            if (topic === 'all') {
+                currentList = [];
+                Object.values(fullDatabase).forEach(arr => currentList.push(...arr));
+            } else {
+                currentList = fullDatabase[topic];
+            }
+            currentIndex = 0;
+            updateCard();
+        }
+
+        function changeTopic() {
+            const topic = document.getElementById('topicSelect').value;
+            loadTopic(topic);
+        }
+
+        function updateCard() {
+            const card = document.querySelector('.card');
+            card.classList.remove('flipped');
+            isFlipped = false;
+
+            const item = currentList[currentIndex];
+            document.getElementById('cardKorean').innerText = item.k;
+            document.getElementById('cardVietnamese').innerText = item.v;
+            document.getElementById('cardIndex').innerText = `#${currentIndex + 1}`;
+            document.getElementById('counter').innerText = `${currentIndex + 1} / ${currentList.length}`;
+        }
+
+        function flipCard() {
+            const card = document.querySelector('.card');
+            isFlipped = !isFlipped;
+            card.classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % currentList.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + currentList.length) % currentList.length;
+            updateCard();
+        }
+
+        function speak() {
+            const text = currentList[currentIndex].k;
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'ko-KR';
+            utter.rate = 0.8;
+            window.speechSynthesis.speak(utter);
+        }
+
+        // Khởi động
+        loadTopic('all');
+    </script>
+</body>
+</html>
