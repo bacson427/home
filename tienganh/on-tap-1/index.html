@@ -3,377 +3,466 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ôn Thi Tiếng Anh - Nguyễn Bắc Sơn (Hactech)</title>
+    <title>Luyện Nghe Tiếng Anh - Nguyễn Bắc Sơn</title>
     <style>
         :root {
-            --primary: #b71c1c; /* Màu đỏ Bách Khoa */
-            --secondary: #263238;
-            --light: #f5f7fa;
-            --success: #2e7d32;
-            --error: #c62828;
-            --warning: #ff8f00;
+            --primary: #0277bd; /* Màu xanh dương đậm */
+            --accent: #ff9800;
+            --light: #e1f5fe;
         }
 
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #eceff1;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        /* HEADER */
-        header {
-            background: linear-gradient(135deg, var(--primary), #8e0000);
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        header h1 { margin: 0; font-size: 2.2rem; text-transform: uppercase; letter-spacing: 1px; }
-        header p { margin: 10px 0 0; opacity: 0.9; font-size: 1.1rem; }
-
-        /* CONTAINER */
-        .container {
-            max-width: 1000px;
-            margin: -30px auto 40px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            padding: 30px;
-            position: relative;
-            z-index: 10;
-        }
-
-        /* STUDENT INFO CARD */
-        .info-card {
-            background: #fff8e1;
-            border-left: 5px solid var(--warning);
-            padding: 15px 20px;
-            margin-bottom: 30px;
-            border-radius: 4px;
-            font-size: 0.95rem;
-        }
-
-        /* TABS */
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid #e0e0e0;
-            margin-bottom: 25px;
-        }
-
-        .tab-btn {
-            padding: 15px 30px;
-            background: none;
-            border: none;
-            font-size: 16px;
-            font-weight: 600;
-            color: #78909c;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .tab-btn:hover { color: var(--primary); background: #fafafa; }
-        .tab-btn.active { color: var(--primary); }
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: var(--primary);
-        }
-
-        .tab-content { display: none; animation: fadeIn 0.4s ease; }
-        .tab-content.active { display: block; }
-
-        /* THEORY TABLES */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        th, td { padding: 12px 15px; border-bottom: 1px solid #eee; text-align: left; }
-        th { background-color: var(--secondary); color: white; font-weight: 500; }
-        tr:nth-child(even) { background-color: #fcfcfc; }
-        tr:hover { background-color: #f1f1f1; }
-
-        /* QUIZ STYLES */
-        .quiz-item {
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            transition: transform 0.2s;
-        }
-        .quiz-item:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-
-        .question-text { font-weight: 700; color: var(--primary); font-size: 1.1rem; margin-bottom: 15px; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f4f8; margin: 0; padding: 20px; color: #333; }
         
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
-
-        .option-label {
-            display: block;
-            padding: 10px 15px;
-            background: #f5f5f5;
-            border-radius: 6px;
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: all 0.2s;
-        }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
-        .option-label:hover { background: #e0e0e0; }
-        .option-label input { margin-right: 10px; }
+        header { text-align: center; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 30px; }
+        h1 { color: var(--primary); margin: 0; }
+        .sub-info { color: #666; font-size: 0.9em; margin-top: 5px; }
 
-        /* FEEDBACK & RESULTS */
-        .feedback {
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 6px;
-            display: none;
-            font-size: 0.95rem;
+        .audio-controls { margin-bottom: 15px; }
+        .btn-audio {
+            background-color: var(--primary); color: white; border: none; padding: 10px 20px;
+            border-radius: 50px; cursor: pointer; font-size: 16px; display: inline-flex; align-items: center; gap: 8px;
+            transition: 0.2s;
         }
-        .feedback.correct { background: #e8f5e9; color: var(--success); border: 1px solid #c8e6c9; }
-        .feedback.wrong { background: #ffebee; color: var(--error); border: 1px solid #ffcdd2; }
+        .btn-audio:hover { background-color: #01579b; transform: scale(1.05); }
+        .btn-audio:active { transform: scale(0.95); }
         
-        .explain-text { display: block; margin-top: 5px; font-style: italic; color: #546e7a; font-size: 0.9rem; }
+        .quiz-item { background: #fafafa; border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 20px; border-radius: 10px; }
+        .question-label { font-weight: bold; margin-bottom: 10px; display: block; color: #444; }
+        
+        .options label { display: block; padding: 10px; margin: 5px 0; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+        .options label:hover { background: var(--light); border-color: var(--primary); }
+        .options input { margin-right: 10px; }
 
-        /* FOOTER ACTIONS */
-        .actions { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; }
-        
-        .btn {
-            padding: 14px 40px;
-            border: none;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        
-        .btn-submit { background: var(--primary); color: white; }
-        .btn-submit:hover { background: #8e0000; transform: translateY(-2px); }
-        
-        .btn-reset { background: #78909c; color: white; margin-left: 15px; }
-        .btn-reset:hover { background: #546e7a; }
+        .feedback { margin-top: 10px; padding: 10px; border-radius: 5px; display: none; font-size: 0.9em; }
+        .feedback.correct { background: #d4edda; color: #155724; }
+        .feedback.wrong { background: #f8d7da; color: #721c24; }
 
-        /* FLOATING SCORE */
-        .score-float {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--secondary);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            font-weight: bold;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .score-circle {
-            width: 10px; height: 10px; background: #00e676; border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
+        .controls { text-align: center; margin-top: 30px; }
+        .btn-submit { background: var(--accent); color: white; border: none; padding: 15px 40px; font-size: 18px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-submit:hover { background: #f57c00; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(0, 230, 118, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); } }
+        .score-board { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 10px 20px; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: bold; }
+        
+        /* Hiệu ứng sóng âm thanh khi nghe */
+        .playing { animation: pulse 1s infinite; background-color: #d32f2f !important; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(211, 47, 47, 0); } 100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); } }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>ÔN TẬP 13 THÌ TIẾNG ANH</h1>
-    <p>Hệ thống trắc nghiệm & Lý thuyết tổng hợp</p>
-</header>
-
 <div class="container">
-    <div class="info-card">
-        <strong>👤 Sinh viên:</strong> Nguyễn Bắc Sơn (2007) - Điện Công Nghiệp<br>
-        <strong>🏫 Trường:</strong> Cao đẳng nghề Bách Khoa Hà Nội (Hactech)<br>
-        <strong>🎯 Mục tiêu:</strong> Luyện tập 1000 câu trắc nghiệm (Phiên bản tích hợp 100 câu đầu tiên).
-    </div>
+    <header>
+        <h1>LUYỆN NGHE TIẾNG ANH (LISTENING)</h1>
+        <div class="sub-info">Sinh viên: Nguyễn Bắc Sơn - Hactech | Part 1: 50 Câu</div>
+        <p style="font-size: 0.9em; color: #d32f2f;">*Lưu ý: Hãy bật loa/tai nghe. Bấm nút 🔊 để nghe câu hỏi.</p>
+    </header>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('theory')">📚 LÝ THUYẾT CỐT LÕI</button>
-        <button class="tab-btn" onclick="switchTab('practice')">✍️ LUYỆN TẬP (100 CÂU)</button>
-    </div>
-
-    <div id="theory" class="tab-content active">
-        <h3>1. NHÓM HIỆN TẠI (PRESENT)</h3>
-        <table>
-            <thead><tr><th width="20%">Thì</th><th>Công thức</th><th>Dấu hiệu nhận biết</th></tr></thead>
-            <tbody>
-                <tr><td>HT Đơn</td><td>S + V(s/es)</td><td>always, usually, often, every day, sự thật hiển nhiên.</td></tr>
-                <tr><td>HT Tiếp diễn</td><td>S + am/is/are + V-ing</td><td>now, at the moment, Look!, Listen!, Be quiet!</td></tr>
-                <tr><td>HT Hoàn thành</td><td>S + have/has + V3/ed</td><td>just, already, yet, recently, since, for, never, ever.</td></tr>
-                <tr><td>HTHT Tiếp diễn</td><td>S + have/has + been + V-ing</td><td>all day, for + khoảng tgian (nhấn mạnh tính liên tục).</td></tr>
-            </tbody>
-        </table>
-
-        <h3>2. NHÓM QUÁ KHỨ (PAST)</h3>
-        <table>
-            <thead><tr><th width="20%">Thì</th><th>Công thức</th><th>Dấu hiệu nhận biết</th></tr></thead>
-            <tbody>
-                <tr><td>QK Đơn</td><td>S + V2/ed</td><td>yesterday, ago, last week/year, in 2007.</td></tr>
-                <tr><td>QK Tiếp diễn</td><td>S + was/were + V-ing</td><td>at this time yesterday, when/while (hành động xen vào).</td></tr>
-                <tr><td>QK Hoàn thành</td><td>S + had + V3/ed</td><td>by the time, before, after (xảy ra trước 1 hđ QK khác).</td></tr>
-            </tbody>
-        </table>
-
-        <h3>3. NHÓM TƯƠNG LAI (FUTURE)</h3>
-        <table>
-            <thead><tr><th width="20%">Thì</th><th>Công thức</th><th>Dấu hiệu nhận biết</th></tr></thead>
-            <tbody>
-                <tr><td>TL Đơn</td><td>S + will + V(nt)</td><td>tomorrow, next..., think, promise, hope.</td></tr>
-                <tr><td>TL Gần</td><td>S + be + going to + V(nt)</td><td>Kế hoạch có sẵn, bằng chứng cụ thể (mây đen).</td></tr>
-                <tr><td>TL Tiếp diễn</td><td>S + will + be + V-ing</td><td>at this time tomorrow.</td></tr>
-                <tr><td>TL Hoàn thành</td><td>S + will + have + V3/ed</td><td>by the end of..., by 2030.</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div id="practice" class="tab-content">
-        <div id="quiz-container">Loading questions...</div>
-        
-        <div class="actions">
-            <button class="btn btn-submit" onclick="checkAllAnswers()">✅ NỘP BÀI</button>
-            <button class="btn btn-reset" onclick="resetQuiz()">🔄 LÀM LẠI</button>
+    <div id="quiz-list">
         </div>
+
+    <div class="controls">
+        <button class="btn-submit" onclick="checkAll()">NỘP BÀI (CHECK)</button>
     </div>
 </div>
 
-<div class="score-float" id="scoreDisplay"><div class="score-circle"></div> Điểm: 0/100</div>
+<div class="score-board" id="score">Điểm: 0/50</div>
 
 <script>
-    // DỮ LIỆU CÂU HỎI (100 CÂU FULL)
+    // DỮ LIỆU CÂU HỎI NGHE (Script: Lời máy đọc - Question: Câu hỏi hiển thị)
     const questions = [
-        // --- 1-10: Cơ bản ---
-        { q: "Listen! Someone _______ at the door.", options: ["knock", "knocks", "is knocking", "knocked"], a: 2, explain: "Listen! -> HT Tiếp diễn." },
-        { q: "They _______ a new bridge last year.", options: ["build", "built", "have built", "are building"], a: 1, explain: "Last year -> QK Đơn." },
-        { q: "I _______ my homework yet.", options: ["didn't do", "haven't done", "don't do", "wasn't doing"], a: 1, explain: "Yet (phủ định) -> HT Hoàn thành." },
-        { q: "Water _______ at 100 degrees Celsius.", options: ["boil", "boils", "is boiling", "boiled"], a: 1, explain: "Sự thật hiển nhiên -> HT Đơn." },
-        { q: "While I _______ TV, the lights went out.", options: ["watched", "was watching", "watch", "have watched"], a: 1, explain: "Hành động đang xảy ra bị cắt ngang -> QK Tiếp diễn." },
-        { q: "By the time she got to the station, the train _______.", options: ["left", "has left", "had left", "leaves"], a: 2, explain: "Xảy ra trước mốc trong QK -> QK Hoàn thành." },
-        { q: "Look at those clouds! It _______.", options: ["will rain", "is going to rain", "rains", "rained"], a: 1, explain: "Dự đoán có căn cứ -> TL Gần." },
-        { q: "I _______ English for 5 years now.", options: ["learn", "am learning", "have been learning", "learned"], a: 2, explain: "For + khoảng thời gian (nhấn mạnh liên tục) -> HTHT Tiếp diễn." },
-        { q: "Christopher Columbus _______ America in 1492.", options: ["discover", "has discovered", "discovered", "had discovered"], a: 2, explain: "Năm lịch sử -> QK Đơn." },
-        { q: "Unless you _______ hard, you won't pass.", options: ["study", "studied", "will study", "studying"], a: 0, explain: "Câu điều kiện loại 1 (Vế If/Unless chia HT Đơn)." },
+        // --- PART 1: GREETINGS & BASIC RESPONSES (1-10) ---
+        {
+            script: "Hello, how are you today?",
+            q: "Nghe và chọn câu trả lời phù hợp:",
+            options: ["I'm fine, thanks.", "I'm looking for a job.", "It is Tuesday.", "Yes, I am."],
+            a: 0, explain: "Câu hỏi thăm sức khỏe -> Trả lời: I'm fine."
+        },
+        {
+            script: "Nice to meet you.",
+            q: "Nghe và chọn câu trả lời phù hợp:",
+            options: ["See you later.", "Nice to meet you, too.", "You're welcome.", "I am sorry."],
+            a: 1, explain: "Đáp lại lời chào gặp mặt."
+        },
+        {
+            script: "Where are you from?",
+            q: "Nghe và chọn câu trả lời phù hợp:",
+            options: ["I'm from Vietnam.", "I live in Hanoi.", "I am a student.", "I like football."],
+            a: 0, explain: "Hỏi quê quán (Where from) -> I'm from..."
+        },
+        {
+            script: "What do you do?",
+            q: "Nghe và chọn câu trả lời phù hợp:",
+            options: ["I am doing my homework.", "I am a student at Hactech.", "I am fine.", "I do it everyday."],
+            a: 1, explain: "What do you do? = Hỏi nghề nghiệp."
+        },
+        {
+            script: "Thank you very much for your help.",
+            q: "Nghe và chọn câu trả lời phù hợp:",
+            options: ["No problem.", "Yes, please.", "I don't know.", "Good bye."],
+            a: 0, explain: "Đáp lại lời cảm ơn -> No problem / You're welcome."
+        },
+        {
+            script: "Excuse me, what time is it?",
+            q: "Nghe và chọn câu trả lời phù hợp:",
+            options: ["It's 10 o'clock.", "It's expensive.", "It's on the table.", "I have no time."],
+            a: 0, explain: "Hỏi giờ -> Trả lời giờ."
+        },
+        {
+            script: "Could you open the door, please?",
+            q: "Nghe và chọn câu trả lời phù hợp:",
+            options: ["Yes, I can.", "Sure, no problem.", "I am opening.", "No, I don't."],
+            a: 1, explain: "Lời yêu cầu lịch sự -> Sure/Certainly."
+        },
+        {
+            script: "How old are you?",
+            q: "Nghe và chọn câu trả lời phù hợp:",
+            options: ["I have 18 years.", "I am 18 years old.", "I am fine.", "I am 18 years."],
+            a: 1, explain: "Cấu trúc tuổi: I am ... years old."
+        },
+        {
+            script: "Is this your pen?",
+            q: "Nghe và chọn câu trả lời phù hợp:",
+            options: ["Yes, it is.", "Yes, I do.", "No, I don't.", "Yes, it's mine pen."],
+            a: 0, explain: "Câu hỏi Yes/No với To be -> Yes, it is."
+        },
+        {
+            script: "Good bye. See you tomorrow.",
+            q: "Nghe và chọn câu trả lời phù hợp:",
+            options: ["Hello.", "Good morning.", "See you.", "Thank you."],
+            a: 2, explain: "Chào tạm biệt."
+        },
 
-        // --- 11-20: Phân biệt thì ---
-        { q: "He _______ usually drink beer, but today he is drinking wine.", options: ["doesn't", "isn't", "didn't", "don't"], a: 0, explain: "Thói quen (usually) -> HT Đơn." },
-        { q: "When I arrived, Tom _______ on the phone.", options: ["talked", "was talking", "had talked", "has talked"], a: 1, explain: "Đang xảy ra tại 1 thời điểm trong QK -> QK Tiếp diễn." },
-        { q: "By next June, I _______ here for 10 years.", options: ["will work", "will have worked", "am working", "work"], a: 1, explain: "By + mốc tương lai -> TL Hoàn thành." },
-        { q: "At this time tomorrow, we _______ over the ocean.", options: ["will fly", "will be flying", "are flying", "fly"], a: 1, explain: "Giờ cụ thể tương lai -> TL Tiếp diễn." },
-        { q: "The generator _______ automatically when power fails.", options: ["starts", "is starting", "started", "has started"], a: 0, explain: "Nguyên lý kỹ thuật -> HT Đơn." },
-        { q: "We _______ the system before we installed it.", options: ["check", "checked", "had checked", "have checked"], a: 2, explain: "Trước 1 hành động QK -> QK Hoàn thành." },
-        { q: "I _______ on this project for 3 months.", options: ["work", "am working", "have been working", "worked"], a: 2, explain: "Nhấn mạnh quá trình -> HTHT Tiếp diễn." },
-        { q: "Don't call me at 7pm. I _______ dinner.", options: ["will have", "will be having", "have", "had"], a: 1, explain: "Đang làm gì tại giờ cụ thể TL -> TL Tiếp diễn." },
-        { q: "If I _______ a bird, I would fly.", options: ["am", "was", "were", "have been"], a: 2, explain: "Điều kiện loại 2 (giả định) -> Were." },
-        { q: "Where _______ you yesterday?", options: ["are", "were", "was", "have been"], a: 1, explain: "Yesterday -> QK Đơn (To be)." },
+        // --- PART 2: NUMBERS & TECHNICAL SPECS (11-20) ---
+        {
+            script: "The voltage is two hundred and twenty volts.",
+            q: "Bạn đã nghe thấy thông số nào?",
+            options: ["110 V", "220 V", "12 V", "24 V"],
+            a: 1, explain: "Two hundred and twenty = 220."
+        },
+        {
+            script: "Please meet me at room three zero five.",
+            q: "Số phòng được nhắc đến là?",
+            options: ["305", "315", "350", "503"],
+            a: 0, explain: "Three zero five = 305."
+        },
+        {
+            script: "The cable is fifty meters long.",
+            q: "Chiều dài của dây cáp là bao nhiêu?",
+            options: ["15 meters", "50 meters", "55 meters", "5 meters"],
+            a: 1, explain: "Fifty = 50 (Phân biệt với Fifteen - 15)."
+        },
+        {
+            script: "My phone number is 0987 654 321.",
+            q: "Số điện thoại bạn nghe được là?",
+            options: ["0987 645 321", "0987 654 321", "0978 654 321", "0987 654 123"],
+            a: 1, explain: "Kiểm tra kỹ năng nghe chuỗi số."
+        },
+        {
+            script: "The resistor value is one thousand ohms.",
+            q: "Giá trị điện trở là?",
+            options: ["100 Ω", "1000 Ω", "10,000 Ω", "10 Ω"],
+            a: 1, explain: "One thousand = 1000."
+        },
+        {
+            script: "It happened in nineteen ninety-five.",
+            q: "Năm nào được nhắc đến?",
+            options: ["1959", "1995", "1905", "2005"],
+            a: 1, explain: "Nineteen ninety-five = 1995."
+        },
+        {
+            script: "The temperature is thirty degrees Celsius.",
+            q: "Nhiệt độ là bao nhiêu?",
+            options: ["13°C", "30°C", "33°C", "3°C"],
+            a: 1, explain: "Thirty = 30."
+        },
+        {
+            script: "You need to wait for forty-five minutes.",
+            q: "Thời gian chờ là bao lâu?",
+            options: ["4 to 5 minutes", "45 minutes", "54 minutes", "4 or 5 minutes"],
+            a: 1, explain: "Forty-five = 45."
+        },
+        {
+            script: "The width is 1 point 5 centimeters.",
+            q: "Kích thước bạn nghe được là?",
+            options: ["1.5 cm", "15 cm", "105 cm", "5.1 cm"],
+            a: 0, explain: "One point five = 1.5."
+        },
+        {
+            script: "There are twelve students in the lab.",
+            q: "Có bao nhiêu sinh viên?",
+            options: ["12", "20", "21", "11"],
+            a: 0, explain: "Twelve = 12."
+        },
 
-        // --- 21-30: Kỹ thuật & Đời sống ---
-        { q: "The motor _______ continuously for 24 hours.", options: ["run", "runs", "is running", "has been running"], a: 3, explain: "Nhấn mạnh tính liên tục đến hiện tại -> HTHTTD." },
-        { q: "Safety helmets must be _______ on site.", options: ["wear", "wears", "worn", "wearing"], a: 2, explain: "Bị động (Must be V3)." },
-        { q: "I promise I _______ fix this circuit.", options: ["will", "am going to", "am", "have"], a: 0, explain: "Lời hứa (Promise) -> Will." },
-        { q: "My father _______ smoking 2 years ago.", options: ["stop", "stopped", "has stopped", "stops"], a: 1, explain: "Ago -> QK Đơn." },
-        { q: "How long _______ you _______ for Hactech?", options: ["do/work", "have/worked", "did/work", "are/working"], a: 1, explain: "How long -> HT Hoàn thành." },
-        { q: "Look! The bus _______.", options: ["come", "comes", "is coming", "came"], a: 2, explain: "Look! -> HT Tiếp diễn." },
-        { q: "I _______ my key. I can't find it.", options: ["lose", "lost", "have lost", "am losing"], a: 2, explain: "Hậu quả hiện tại -> HT Hoàn thành." },
-        { q: "Last night, I _______ a book when you called.", options: ["read", "was reading", "am reading", "have read"], a: 1, explain: "Đang làm thì bị xen vào -> QK Tiếp diễn." },
-        { q: "The sun _______ in the East.", options: ["rise", "rises", "rose", "is rising"], a: 1, explain: "Chân lý -> HT Đơn." },
-        { q: "I wish I _______ rich.", options: ["am", "will be", "were", "been"], a: 2, explain: "Câu ước loại 2 -> Were." },
+        // --- PART 3: ELECTRICAL TOOLS & ACTIONS (21-30) ---
+        {
+            script: "Pass me the screwdriver, please.",
+            q: "Người nói đang cần dụng cụ gì?",
+            options: ["Cái búa (Hammer)", "Cái kìm (Pliers)", "Tua vít (Screwdriver)", "Máy khoan (Drill)"],
+            a: 2, explain: "Screwdriver = Tua vít."
+        },
+        {
+            script: "Do not touch the live wire.",
+            q: "Người nói cảnh báo điều gì?",
+            options: ["Không chạm vào dây nóng/có điện.", "Không cắt dây.", "Không nối dây.", "Không mua dây."],
+            a: 0, explain: "Live wire = Dây pha/Dây có điện."
+        },
+        {
+            script: "The bulb is burnt out.",
+            q: "Tình trạng của bóng đèn là gì?",
+            options: ["Đèn đang sáng.", "Đèn bị cháy.", "Đèn chưa tắt.", "Đèn mới."],
+            a: 1, explain: "Burnt out = Bị cháy."
+        },
+        {
+            script: "You need to unplug the device first.",
+            q: "Hành động cần làm trước tiên là gì?",
+            options: ["Bật máy.", "Cắm điện.", "Rút phích cắm.", "Sửa máy."],
+            a: 2, explain: "Unplug = Rút phích cắm."
+        },
+        {
+            script: "Use the pliers to cut the wire.",
+            q: "Dùng dụng cụ gì để cắt dây?",
+            options: ["Kìm", "Dao", "Kéo", "Cưa"],
+            a: 0, explain: "Pliers = Kìm."
+        },
+        {
+            script: "Wear safety gloves before working.",
+            q: "Yêu cầu an toàn là gì?",
+            options: ["Đội mũ bảo hiểm.", "Đeo găng tay bảo hộ.", "Đi giày bảo hộ.", "Đeo kính."],
+            a: 1, explain: "Safety gloves = Găng tay bảo hộ."
+        },
+        {
+            script: "The switch is on the wall.",
+            q: "Công tắc nằm ở đâu?",
+            options: ["Trên bàn.", "Trên tường.", "Trên trần nhà.", "Dưới sàn."],
+            a: 1, explain: "On the wall = Trên tường."
+        },
+        {
+            script: "Check the battery level.",
+            q: "Người nói yêu cầu kiểm tra cái gì?",
+            options: ["Dây điện.", "Pin/Ắc quy.", "Bóng đèn.", "Mô tơ."],
+            a: 1, explain: "Battery = Pin/Ắc quy."
+        },
+        {
+            script: "The motor is running very fast.",
+            q: "Mô tơ đang hoạt động như thế nào?",
+            options: ["Rất chậm.", "Rất ồn.", "Rất nhanh.", "Không chạy."],
+            a: 2, explain: "Fast = Nhanh."
+        },
+        {
+            script: "Connect the red wire to the positive terminal.",
+            q: "Dây màu đỏ nối vào đâu?",
+            options: ["Cực âm.", "Cực dương.", "Dây đất.", "Vỏ máy."],
+            a: 1, explain: "Positive terminal = Cực dương (+)."
+        },
 
-        // --- 31-40: Mix ---
-        { q: "Everything _______ ready.", options: ["is", "are", "were", "have been"], a: 0, explain: "Everything số ít -> Is." },
-        { q: "Nobody _______ seen him.", options: ["has", "have", "is", "was"], a: 0, explain: "Nobody số ít -> Has." },
-        { q: "This is the first time I _______ sushi.", options: ["eat", "ate", "have eaten", "eating"], a: 2, explain: "This is the first time -> HT Hoàn thành." },
-        { q: "He denies _______ the glass.", options: ["break", "breaking", "to break", "broken"], a: 1, explain: "Deny + Ving." },
-        { q: "Are you used to _______ up early?", options: ["get", "getting", "got", "to get"], a: 1, explain: "Be used to + Ving." },
-        { q: "When we got there, the film _______.", options: ["started", "had started", "starts", "has started"], a: 1, explain: "Phim chiếu trước khi đến -> QKHT." },
-        { q: "Oil _______ on water.", options: ["float", "floats", "is floating", "floated"], a: 1, explain: "Vật lý -> HT Đơn." },
-        { q: "My car _______ down yesterday.", options: ["break", "broke", "broken", "has broken"], a: 1, explain: "QK Đơn." },
-        { q: "I _______ to New York 3 times this year.", options: ["go", "went", "have been", "was"], a: 2, explain: "Lặp lại chưa kết thúc -> HTHT." },
-        { q: "When I saw him, he _______ a black suit.", options: ["wore", "was wearing", "wears", "has worn"], a: 1, explain: "Mô tả trong QK -> QK Tiếp diễn." },
+        // --- PART 4: DAILY CONVERSATIONS (31-40) ---
+        {
+            script: "Why were you late for school?",
+            q: "Chọn câu trả lời phù hợp:",
+            options: ["Because I missed the bus.", "Because I am hungry.", "Yes, I was.", "At 7 o'clock."],
+            a: 0, explain: "Hỏi lý do (Why) -> Trả lời Because..."
+        },
+        {
+            script: "How far is it from here to Hactech?",
+            q: "Chọn câu trả lời phù hợp:",
+            options: ["About 2 kilometers.", "2 hours.", "It is nice.", "By bus."],
+            a: 0, explain: "Hỏi khoảng cách (How far)."
+        },
+        {
+            script: "What is your favorite subject?",
+            q: "Chọn câu trả lời phù hợp:",
+            options: ["I like English.", "I hate Math.", "My favorite subject is English.", "I am studying."],
+            a: 2, explain: "Hỏi môn học yêu thích."
+        },
+        {
+            script: "Can I borrow your pen?",
+            q: "Chọn câu trả lời phù hợp:",
+            options: ["Yes, here you are.", "No, thank you.", "I don't like it.", "Yes, I can."],
+            a: 0, explain: "Mượn đồ -> Đồng ý cho mượn."
+        },
+        {
+            script: "What did you do yesterday?",
+            q: "Chọn câu trả lời phù hợp:",
+            options: ["I will go to school.", "I played football.", "I am sleeping.", "I play football."],
+            a: 1, explain: "Hỏi quá khứ -> Trả lời quá khứ (Played)."
+        },
+        {
+            script: "Do you like listening to music?",
+            q: "Chọn câu trả lời phù hợp:",
+            options: ["Yes, I do.", "Yes, I am.", "No, I'm not.", "Yes, I like."],
+            a: 0, explain: "Hỏi Do you... -> Yes, I do."
+        },
+        {
+            script: "Who is that man?",
+            q: "Chọn câu trả lời phù hợp:",
+            options: ["He is my father.", "It is a pen.", "He is tall.", "I don't know her."],
+            a: 0, explain: "Hỏi người (Who)."
+        },
+        {
+            script: "When is your birthday?",
+            q: "Chọn câu trả lời phù hợp:",
+            options: ["In Hanoi.", "On November 1st.", "I am 18.", "Happy birthday."],
+            a: 1, explain: "Hỏi thời gian (When)."
+        },
+        {
+            script: "Have you ever been to Ho Chi Minh City?",
+            q: "Chọn câu trả lời phù hợp:",
+            options: ["Yes, I have.", "Yes, I did.", "No, I don't.", "Yes, I was."],
+            a: 0, explain: "Thì HT Hoàn thành (Have you...) -> Yes, I have."
+        },
+        {
+            script: "I am hungry.",
+            q: "Chọn câu phản hồi phù hợp:",
+            options: ["Let's go to the cinema.", "Let's get something to eat.", "You should sleep.", "Me neither."],
+            a: 1, explain: "Đói -> Rủ đi ăn."
+        },
 
-        // --- 41-50: Thêm ---
-        { q: "She _______ usually drive to work.", options: ["doesn't", "don't", "isn't", "didn't"], a: 0, explain: "HT Đơn phủ định." },
-        { q: "Listen to the birds! They _______.", options: ["sing", "are singing", "sang", "have sung"], a: 1, explain: "Listen -> HTTD." },
-        { q: "Nothing _______ done since yesterday.", options: ["is", "was", "has been", "had been"], a: 2, explain: "Bị động HTHT." },
-        { q: "How often _______ you go to the dentist?", options: ["do", "are", "have", "did"], a: 0, explain: "How often -> HT Đơn." },
-        { q: "Be careful! The floor _______ wet.", options: ["is", "was", "will be", "has been"], a: 0, explain: "Cảnh báo hiện tại -> HT Đơn." },
-        { q: "By 2030, robots _______ many jobs.", options: ["replace", "will replace", "will have replaced", "replaced"], a: 2, explain: "By + TL -> TLHT." },
-        { q: "The technicians _______ the server now.", options: ["maintain", "are maintaining", "maintained", "have maintained"], a: 1, explain: "Now -> HTTD." },
-        { q: "If you freeze water, it _______ ice.", options: ["becomes", "became", "will become", "has become"], a: 0, explain: "Điều kiện loại 0 (Sự thật)." },
-        { q: "Who _______ this song?", options: ["writes", "wrote", "has written", "writing"], a: 1, explain: "Tác giả (đã xong) -> QK Đơn." },
-        { q: "It _______ usually rain here.", options: ["doesn't", "don't", "isn't", "didn't"], a: 0, explain: "Khí hậu -> HT Đơn." },
+        // --- PART 5: TRUE OR FALSE / LOGIC (41-50) ---
+        {
+            script: "The sun rises in the West.",
+            q: "Câu bạn vừa nghe đúng hay sai?",
+            options: ["True (Đúng)", "False (Sai)"],
+            a: 1, explain: "Sai. Mặt trời mọc đằng Đông (East)."
+        },
+        {
+            script: "Water boils at 100 degrees Celsius.",
+            q: "Câu bạn vừa nghe đúng hay sai?",
+            options: ["True (Đúng)", "False (Sai)"],
+            a: 0, explain: "Đúng. Nước sôi ở 100 độ C."
+        },
+        {
+            script: "A triangle has four sides.",
+            q: "Câu bạn vừa nghe đúng hay sai?",
+            options: ["True (Đúng)", "False (Sai)"],
+            a: 1, explain: "Sai. Tam giác (Triangle) chỉ có 3 cạnh."
+        },
+        {
+            script: "Rubber is a good conductor of electricity.",
+            q: "Câu bạn vừa nghe đúng hay sai? (Kỹ thuật)",
+            options: ["True (Đúng)", "False (Sai)"],
+            a: 1, explain: "Sai. Cao su là chất cách điện (Insulator)."
+        },
+        {
+            script: "Hanoi is the capital of Vietnam.",
+            q: "Câu bạn vừa nghe đúng hay sai?",
+            options: ["True (Đúng)", "False (Sai)"],
+            a: 0, explain: "Đúng."
+        },
+        {
+            script: "There are seven days in a week.",
+            q: "Câu bạn vừa nghe đúng hay sai?",
+            options: ["True (Đúng)", "False (Sai)"],
+            a: 0, explain: "Đúng."
+        },
+        {
+            script: "If you touch a live wire, you might get an electric shock.",
+            q: "Câu bạn vừa nghe đúng hay sai?",
+            options: ["True (Đúng)", "False (Sai)"],
+            a: 0, explain: "Đúng. Chạm dây có điện sẽ bị giật."
+        },
+        {
+            script: "A car has two wheels.",
+            q: "Câu bạn vừa nghe đúng hay sai?",
+            options: ["True (Đúng)", "False (Sai)"],
+            a: 1, explain: "Sai. Xe hơi thường có 4 bánh."
+        },
+        {
+            script: "You use a multimeter to measure voltage.",
+            q: "Câu bạn vừa nghe đúng hay sai?",
+            options: ["True (Đúng)", "False (Sai)"],
+            a: 0, explain: "Đúng. Đồng hồ vạn năng đo được điện áp."
+        },
+        {
+            script: "English is not spoken in the world.",
+            q: "Câu bạn vừa nghe đúng hay sai?",
+            options: ["True (Đúng)", "False (Sai)"],
+            a: 1, explain: "Sai. Tiếng Anh rất phổ biến."
+        }
+    ];
 
-        // --- 51-60: Nâng cao một chút ---
-        { q: "I would rather you _______ home now.", options: ["go", "went", "gone", "going"], a: 1, explain: "Would rather + S + V2/ed (muốn ai làm gì ở hiện tại)." },
-        { q: "It's high time we _______ home.", options: ["go", "went", "have gone", "will go"], a: 1, explain: "It's high time + S + V2/ed." },
-        { q: "By the time you receive this, I _______.", options: ["will leave", "have left", "will have left", "left"], a: 2, explain: "By the time (TL) -> TLHT." },
-        { q: "Hardly had I arrived when the phone _______.", options: ["rang", "rings", "had rung", "has rung"], a: 0, explain: "Cấu trúc Đảo ngữ: Hardly... when + QKĐ." },
-        { q: "No sooner had he left than it _______ to rain.", options: ["start", "started", "had started", "starts"], a: 1, explain: "No sooner... than + QKĐ." },
-        { q: "I will call you as soon as I _______ there.", options: ["arrive", "will arrive", "arrived", "am arriving"], a: 0, explain: "Mệnh đề trạng ngữ chỉ thời gian (tương lai) dùng HT Đơn." },
-        { q: "Neither Tom nor his friends _______ going.", options: ["is", "are", "was", "has"], a: 1, explain: "Neither... nor chia theo chủ ngữ 2 (friends -> số nhiều)." },
-        { q: "Ten dollars _______ a big sum of money.", options: ["is", "are", "were", "have been"], a: 0, explain: "Tiền bạc, thời gian luôn chia số ít." },
-        { q: "The number of students _______ increasing.", options: ["is", "are", "were", "have"], a: 0, explain: "The number of -> Số ít." },
-        { q: "A number of students _______ playing.", options: ["is", "are", "was", "has"], a: 1, explain: "A number of -> Số nhiều." },
+    function renderQuiz() {
+        const list = document.getElementById('quiz-list');
+        let html = '';
+        questions.forEach((item, index) => {
+            let optionsHtml = '';
+            item.options.forEach((opt, i) => {
+                optionsHtml += `<label><input type="radio" name="q${index}" value="${i}"> ${opt}</label>`;
+            });
 
-            // --- BẮT ĐẦU TỪ CÂU 61 ĐẾN HẾT ---
+            html += `
+            <div class="quiz-item" id="item-${index}">
+                <div class="audio-controls">
+                    <button class="btn-audio" onclick="playAudio('${item.script.replace(/'/g, "\\'")}', this)">
+                        🔊 NGHE CÂU HỎI ${index + 1}
+                    </button>
+                </div>
+                <span class="question-label">${item.q}</span>
+                <div class="options">${optionsHtml}</div>
+                <div class="feedback" id="fb-${index}"></div>
+            </div>`;
+        });
+        list.innerHTML = html;
+        document.getElementById('score').innerText = `Điểm: 0/${questions.length}`;
+    }
 
-    // --- 61-70: Thực hành Cấu trúc câu ---
-    { q: "He asked me where I _______.", options: ["live", "lived", "living", "am living"], a: 1, explain: "Câu gián tiếp lùi thì (HTĐ -> QKĐ)." },
-    { q: "She said she _______ to Paris the following week.", options: ["will go", "would go", "went", "goes"], a: 1, explain: "Câu gián tiếp: Will -> Would." },
-    { q: "If I had known, I _______ you.", options: ["would help", "will help", "would have helped", "helped"], a: 2, explain: "Câu điều kiện loại 3 (QK) -> Would have V3." },
-    { q: "Without your help, I _______ failed.", options: ["would", "will", "would have", "had"], a: 2, explain: "Câu điều kiện ẩn (Without = If it hadn't been for) -> Loại 3." },
-    { q: "The house _______ built in 1990.", options: ["is", "was", "has been", "had been"], a: 1, explain: "Bị động QK Đơn (in 1990)." },
-    { q: "Using a computer _______ simple.", options: ["is", "are", "were", "have"], a: 0, explain: "Danh động từ (V-ing) làm chủ ngữ -> Chia số ít." },
-    { q: "My keys _______ nowhere to be found.", options: ["is", "are", "was", "has"], a: 1, explain: "Keys (số nhiều) -> Are." },
-    { q: "Mathematics _______ my favorite subject.", options: ["is", "are", "were", "have"], a: 0, explain: "Môn học có 's' vẫn là số ít." },
-    { q: "Jeans _______ always popular.", options: ["is", "are", "was", "has"], a: 1, explain: "Quần áo 2 ống (Jeans, Pants) -> Số nhiều." },
-    { q: "Cattle _______ grazing in the field.", options: ["is", "are", "was", "has"], a: 1, explain: "Cattle (gia súc) luôn là danh từ số nhiều -> Are." },
+    function playAudio(text, btn) {
+        // Hủy các audio đang đọc dở
+        window.speechSynthesis.cancel();
 
-    // --- 71-80: Từ vựng & Ngữ cảnh (V-ing / To V) ---
-    { q: "It's no use _______ him.", options: ["advise", "to advise", "advising", "advised"], a: 2, explain: "Cấu trúc: It's no use + Ving (Vô ích khi làm gì)." },
-    { q: "He suggested _______ for a walk.", options: ["go", "to go", "going", "went"], a: 2, explain: "Suggest + Ving (Gợi ý làm gì)." },
-    { q: "Would you mind _______ the door?", options: ["open", "opening", "to open", "opened"], a: 1, explain: "Would you mind + Ving (Bạn có phiền...)." },
-    { q: "I stopped _______ to buy some water.", options: ["run", "running", "to run", "ran"], a: 1, explain: "Stop + Ving: Dừng việc đang làm. (Dừng chạy để mua nước)." },
-    { q: "Remember _______ the door before leaving.", options: ["lock", "locking", "to lock", "locked"], a: 2, explain: "Remember + To V: Nhớ phải làm việc gì (chưa làm)." },
-    { q: "I regret _______ you that you failed.", options: ["tell", "telling", "to tell", "told"], a: 2, explain: "Regret + To V: Lấy làm tiếc phải thông báo." },
-    { q: "Try _______ this button.", options: ["press", "pressing", "to press", "pressed"], a: 1, explain: "Try + Ving: Thử làm gì (xem kết quả ra sao)." },
-    { q: "The baby needs _______.", options: ["feed", "to feed", "feeding", "fed"], a: 2, explain: "Need + Ving (nghĩa bị động): Cần được làm gì." },
-    { q: "Let's _______ out for dinner.", options: ["go", "going", "to go", "went"], a: 0, explain: "Let's + V nguyên thể." },
-    { q: "How about _______ to the cinema?", options: ["go", "going", "to go", "went"], a: 1, explain: "How about + Ving." },
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US'; // Giọng Mỹ (có thể đổi thành en-GB cho giọng Anh)
+        utterance.rate = 0.9; // Tốc độ đọc (0.1 - 10), 0.9 là vừa phải
+        utterance.pitch = 1;
 
-    // --- 81-90: Trạng từ & Giới từ đi kèm ---
-    { q: "He is interested _______ learning English.", options: ["in", "on", "at", "about"], a: 0, explain: "Cụm từ: Interested in (Quan tâm đến)." },
-    { q: "She is good _______ math.", options: ["in", "on", "at", "about"], a: 2, explain: "Good at (Giỏi về cái gì)." },
-    { q: "I am afraid _______ dogs.", options: ["of", "on", "at", "about"], a: 0, explain: "Afraid of (Sợ cái gì)." },
-    { q: "He gave _______ smoking.", options: ["in", "up", "on", "at"], a: 1, explain: "Phrasal verb: Give up (từ bỏ)." },
-    { q: "Turn _______ the light, it's dark.", options: ["on", "off", "in", "up"], a: 0, explain: "Turn on (Bật lên)." },
-    { q: "Look _______ the baby while I am away.", options: ["at", "for", "after", "up"], a: 2, explain: "Look after (chăm sóc/trông nom)." },
-    { q: "I am looking forward _______ you.", options: ["see", "to see", "seeing", "to seeing"], a: 3, explain: "Look forward to + Ving (Mong chờ)." },
-    { q: "He is famous _______ his songs.", options: ["for", "with", "about", "in"], a: 0, explain: "Famous for (Nổi tiếng vì...)." },
-    { q: "This book differs _______ that one.", options: ["from", "with", "to", "in"], a: 0, explain: "Differ from (Khác với)." },
-    { q: "It depends _______ you.", options: ["in", "on", "at", "of"], a: 1, explain: "Depend on (Phụ thuộc vào)." },
+        // Hiệu ứng nút bấm
+        btn.classList.add('playing');
+        btn.innerText = "🔊 ĐANG ĐỌC...";
+        
+        utterance.onend = function() {
+            btn.classList.remove('playing');
+            btn.innerText = `🔊 NGHE LẠI CÂU HỎI`;
+        };
 
-    // --- 91-100: Về đích (Đảo ngữ & Đặc biệt) ---
-    { q: "I saw him _______ the street.", options: ["cross", "crossed", "crossing", "to cross"], a: 0, explain: "See + O + V(nt): Thấy toàn bộ hành động (từ đầu đến cuối)." },
-    { q: "I saw him _______ the street when I passed.", options: ["cross", "crossed", "crossing", "to cross"], a: 2, explain: "See + O + Ving: Thấy một phần hành động (đang xảy ra)." },
-    { q: "Make him _______.", options: ["study", "studying", "to study", "studied"], a: 0, explain: "Cấu trúc: Make + O + V(nt) (Bắt ai làm gì)." },
-    { q: "Let him _______.", options: ["go", "going", "to go", "gone"], a: 0, explain: "Cấu trúc: Let + O + V(nt) (Để ai làm gì)." },
-    { q: "Had I known, I _______ come.", options: ["would", "will", "would have", "had"], a: 2, explain: "Đảo ngữ câu điều kiện loại 3 (Bỏ If, đảo Had lên đầu)." },
-    { q: "Only when he arrived _______ I sleep.", options: ["did", "do", "had", "would"], a: 0, explain: "Only when + Mệnh đề + Trợ động từ đảo ngữ (Did I sleep)." },
-    { q: "Not only _______ beautiful but she is also smart.", options: ["she is", "is she", "does she", "she does"], a: 1, explain: "Not only + Đảo ngữ (Is she)." },
-    { q: "Rarely _______ he go out.", options: ["does", "do", "is", "has"], a: 0, explain: "Rarely (hiếm khi) đứng đầu câu -> Đảo ngữ HT Đơn (mượn Does)." },
-    { q: "Never _______ I seen such a mess.", options: ["did", "do", "have", "had"], a: 2, explain: "Never + HT Hoàn thành đảo ngữ (Have I seen)." },
-    { q: "Here _______ the bus!", options: ["come", "comes", "is coming", "came"], a: 1, explain: "Đảo ngữ với Here/There -> Chia HT Đơn (Comes)." }
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function checkAll() {
+        let score = 0;
+        let answered = 0;
+        questions.forEach((q, index) => {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            const fb = document.getElementById(`fb-${index}`);
+            const item = document.getElementById(`item-${index}`);
+
+            if (selected) {
+                answered++;
+                if (parseInt(selected.value) === q.a) {
+                    score++;
+                    fb.className = "feedback correct";
+                    fb.innerHTML = `✅ Chính xác! <br><i>"${q.script}"</i><br>➡ ${q.explain}`;
+                    item.style.borderLeft = "5px solid #28a745";
+                } else {
+                    fb.className = "feedback wrong";
+                    fb.innerHTML = `❌ Sai rồi. <br>🔊 Nội dung nghe: <b>"${q.script}"</b><br>👉 Đáp án đúng: ${q.options[q.a]}<br>➡ ${q.explain}`;
+                    item.style.borderLeft = "5px solid #dc3545";
+                }
+                fb.style.display = "block";
+            } else {
+                fb.className = "feedback wrong";
+                fb.innerHTML = "⚠️ Bạn chưa chọn đáp án.";
+                fb.style.display = "block";
+            }
+        });
+        document.getElementById('sc ore').innerText = `Điểm: ${score}/$ {questions.length}`;
+if(answered === questions.length) alert(`Kết quả: $ {score}/${questions.length}`);
+
+// Render khi tải trang 
+renderQuiz();
+
 </script>
+
 </body>
-</html
+ </html>
