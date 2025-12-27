@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation Gap Filling - Hactech Edition</title>
+    <style>
+        :root {
+            --primary: #2b5876;
+            --secondary: #4e4376;
+            --accent: #ff6b6b;
+            --bg: #f4f7f6;
+            --text: #2d3436;
+            --success: #00b894;
+            --wrong: #d63031;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; padding: 20px; box-shadow: 2px 0 10px rgba(0,0,0,0.05); z-index: 10;
+        }
+        .score-box {
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;
+            padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px;
+        }
+        .score-title { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
+        .score-num { font-size: 2.5rem; font-weight: bold; }
+        
+        .nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; padding-right: 5px; }
+        .nav-item {
+            aspect-ratio: 1; border: 1px solid #dfe6e9; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 0.85rem; font-weight: 600; background: #fff; transition: 0.2s;
+        }
+        .nav-item:hover { border-color: var(--secondary); color: var(--secondary); transform: translateY(-2px); }
+        .nav-item.correct { background: var(--success); color: white; border-color: var(--success); }
+        .nav-item.wrong { background: var(--wrong); color: white; border-color: var(--wrong); }
+
+        /* Main Content */
+        .main { flex: 1; display: flex; flex-direction: column; height: 100vh; }
+        .header {
+            background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd;
+        }
+        .exam-name { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
+        .candidate { background: #dfe6e9; padding: 5px 15px; border-radius: 20px; color: #636e72; font-weight: 600; }
+
+        .content-area { flex: 1; overflow-y: auto; padding: 40px; scroll-behavior: smooth; }
+        .paper { max-width: 900px; margin: 0 auto; padding-bottom: 60px; }
+
+        /* Conversation Card */
+        .conv-card {
+            background: white; border-radius: 12px; padding: 30px; margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--secondary);
+        }
+        .conv-title { font-size: 1.3rem; font-weight: bold; color: var(--secondary); margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .conv-desc { font-style: italic; color: #636e72; margin-bottom: 20px; }
+
+        .audio-controls { display: flex; gap: 10px; margin-bottom: 20px; background: #f8f9fa; padding: 10px; border-radius: 8px; }
+        .btn-play {
+            border: none; background: var(--primary); color: white; padding: 8px 16px; border-radius: 20px;
+            cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px; transition: 0.2s;
+        }
+        .btn-play:hover { background: var(--secondary); }
+        .btn-play.playing { background: var(--accent); animation: pulse 1s infinite; }
+
+        /* Dialogue Lines */
+        .line { margin-bottom: 15px; display: flex; gap: 15px; align-items: baseline; }
+        .speaker { font-weight: bold; min-width: 80px; text-align: right; color: var(--primary); }
+        .text { flex: 1; font-size: 1.1rem; line-height: 1.8; }
+        
+        /* Input Gap */
+        .gap-input {
+            border: none; border-bottom: 2px solid #b2bec3; width: 120px; text-align: center;
+            font-size: 1.1rem; color: var(--secondary); font-weight: bold; padding: 0 5px; transition: 0.3s;
+            background: rgba(0,0,0,0.02);
+        }
+        .gap-input:focus { outline: none; border-bottom-color: var(--accent); background: white; }
+        .gap-input.correct { border-bottom-color: var(--success); color: var(--success); }
+        .gap-input.wrong { border-bottom-color: var(--wrong); color: var(--wrong); }
+
+        .reveal-answer { font-size: 0.9rem; color: var(--wrong); display: none; margin-left: 5px; font-weight: bold; }
+
+        /* Footer */
+        .footer { background: white; padding: 20px; text-align: right; border-top: 1px solid #ddd; }
+        .btn-submit {
+            background: var(--success); color: white; border: none; padding: 12px 40px; border-radius: 8px;
+            font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 184, 148, 0.4);
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 184, 148, 0.5); }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="score-box">
+        <div class="score-title">Tiến độ</div>
+        <div class="score-num" id="scoreDisplay">0/50</div>
+    </div>
+    <div style="margin-bottom: 10px; color: #636e72; font-weight: bold;">Question Map</div>
+    <div class="nav-grid" id="navGrid"></div>
+</div>
+
+<div class="main">
+    <div class="header">
+        <div class="exam-name">LISTENING: CONVERSATION FILLING</div>
+        <div class="candidate">Thí sinh: <b>Trương Thị Dương</b></div>
+    </div>
+    <div class="content-area">
+        <div class="paper" id="paper">
+            </div>
+    </div>
+    <div class="footer">
+        <button class="btn-submit" onclick="submitExam()">NỘP BÀI (CHECK ALL)</button>
+    </div>
+</div>
+<script>
+    // --- DỮ LIỆU: 10 ĐOẠN HỘI THOẠI (50 CÂU) ---
+    const conversations = [
+        {
+            topic: "Topic 1: Project Meeting (Academic/Work)",
+            desc: "A group is discussing a new project deadline.",
+            id: "C1",
+            lines: [
+                { s: "Sarah", t: "Okay everyone, we need to finalize the project [schedule].", g: "schedule", q: 1 },
+                { s: "Tom", t: "I agree. When is the final [deadline]?", g: "deadline", q: 2 },
+                { s: "Sarah", t: "It is next Friday. Do we have enough [time]?", g: "time", q: 3 },
+                { s: "Mike", t: "I think so, but we need to work [hard].", g: "hard", q: 4 },
+                { s: "Sarah", t: "Great. Let's meet again tomorrow [morning].", g: "morning", q: 5 }
+            ]
+        },
+        {
+            topic: "Topic 2: Electrical Repair (Technical)",
+            desc: "Two technicians are fixing a machine.",
+            id: "C2",
+            lines: [
+                { s: "Tech A", t: "The motor is not running. Did you check the [fuse]?", g: "fuse", q: 6 },
+                { s: "Tech B", t: "Yes, I did. It looks [blown].", g: "blown", q: 7 },
+                { s: "Tech A", t: "Okay, replace it with a 10 [amp] one.", g: "amp", q: 8 },
+                { s: "Tech B", t: "Should I turn off the main [switch] first?", g: "switch", q: 9 },
+                { s: "Tech A", t: "Absolutely. Safety is our top [priority].", g: "priority", q: 10 }
+            ]
+        },
+        {
+            topic: "Topic 3: At the Airport (Travel)",
+            desc: "Checking in for a flight.",
+            id: "C3",
+            lines: [
+                { s: "Agent", t: "Good morning. May I see your [passport], please?", g: "passport", q: 11 },
+                { s: "You", t: "Here you go. I am flying to [London].", g: "London", q: 12 },
+                { s: "Agent", t: "Do you have any bags to [check] in?", g: "check", q: 13 },
+                { s: "You", t: "Yes, just this one [suitcase].", g: "suitcase", q: 14 },
+                { s: "Agent", t: "Here is your boarding [pass]. Gate 5.", g: "pass", q: 15 }
+            ]
+        },
+        {
+            topic: "Topic 4: Job Interview (Career)",
+            desc: "An interview for an internship.",
+            id: "C4",
+            lines: [
+                { s: "Manager", t: "Tell me about your [experience] in this field.", g: "experience", q: 16 },
+                { s: "Candidate", t: "I have worked as an [intern] for 6 months.", g: "intern", q: 17 },
+                { s: "Manager", t: "What are your [strengths]?", g: "strengths", q: 18 },
+                { s: "Candidate", t: "I am a fast [learner] and good at teamwork.", g: "learner", q: 19 },
+                { s: "Manager", t: "Do you have any [questions] for us?", g: "questions", q: 20 }
+            ]
+        },
+        {
+            topic: "Topic 5: Shopping for Clothes (Daily Life)",
+            desc: "Buying a new shirt.",
+            id: "C5",
+            lines: [
+                { s: "Customer", t: "Excuse me, do you have this shirt in [medium] size?", g: "medium", q: 21 },
+                { s: "Clerk", t: "Let me check. Yes, here is a blue [one].", g: "one", q: 22 },
+                { s: "Customer", t: "Can I try it [on]?", g: "on", q: 23 },
+                { s: "Clerk", t: "Sure. The fitting [room] is over there.", g: "room", q: 24 },
+                { s: "Customer", t: "It fits perfectly. I will [take] it.", g: "take", q: 25 }
+            ]
+        },
+        {
+            topic: "Topic 6: Restaurant (Social)",
+            desc: "Ordering dinner.",
+            id: "C6",
+            lines: [
+                { s: "Waiter", t: "Are you ready to [order]?", g: "order", q: 26 },
+                { s: "Guest 1", t: "Yes, I'd like the chicken [salad], please.", g: "salad", q: 27 },
+                { s: "Waiter", t: "And for you, sir? What would you [like]?", g: "like", q: 28 },
+                { s: "Guest 2", t: "I will have the steak, medium [rare].", g: "rare", q: 29 },
+                { s: "Waiter", t: "Would you like anything to [drink]?", g: "drink", q: 30 }
+            ]
+        },
+        {
+            topic: "Topic 7: Medical Appointment (Health)",
+            desc: "Talking to a doctor.",
+            id: "C7",
+            lines: [
+                { s: "Doctor", t: "What seems to be the [problem]?", g: "problem", q: 31 },
+                { s: "Patient", t: "I have a bad [headache] and a fever.", g: "headache", q: 32 },
+                { s: "Doctor", t: "How long have you had these [symptoms]?", g: "symptoms", q: 33 },
+                { s: "Patient", t: "Since [yesterday] morning.", g: "yesterday", q: 34 },
+                { s: "Doctor", t: "I will write you a [prescription].", g: "prescription", q: 35 }
+            ]
+        },
+        {
+            topic: "Topic 8: Asking Directions (General)",
+            desc: "Lost in the city.",
+            id: "C8",
+            lines: [
+                { s: "Tourist", t: "Excuse me, where is the nearest [bank]?", g: "bank", q: 36 },
+                { s: "Local", t: "Go straight, then turn [left] at the corner.", g: "left", q: 37 },
+                { s: "Tourist", t: "Is it far from [here]?", g: "here", q: 38 },
+                { s: "Local", t: "No, it's about 5 minutes on [foot].", g: "foot", q: 39 },
+                { s: "Tourist", t: "Thank you for your [help].", g: "help", q: 40 }
+            ]
+        },
+        {
+            topic: "Topic 9: Library (Academic)",
+            desc: "Borrowing books.",
+            id: "C9",
+            lines: [
+                { s: "Student", t: "I am looking for a book on [history].", g: "history", q: 41 },
+                { s: "Librarian", t: "Those books are on the second [floor].", g: "floor", q: 42 },
+                { s: "Student", t: "How many books can I [borrow] at once?", g: "borrow", q: 43 },
+                { s: "Librarian", t: "You can take up to [five] books.", g: "five", q: 44 },
+                { s: "Student", t: "When is the due [date]?", g: "date", q: 45 }
+            ]
+        },
+        {
+            topic: "Topic 10: Phone Call (Business)",
+            desc: "Leaving a message.",
+            id: "C10",
+            lines: [
+                { s: "A", t: "Hello, could I [speak] to Mr. John?", g: "speak", q: 46 },
+                { s: "B", t: "I'm sorry, he is in a [meeting] right now.", g: "meeting", q: 47 },
+                { s: "A", t: "Can I leave a [message]?", g: "message", q: 48 },
+                { s: "B", t: "Certainly. What is your [name]?", g: "name", q: 49 },
+                { s: "A", t: "Tell him Alice called about the [contract].", g: "contract", q: 50 }
+            ]
+        }
+    ];
+
+    // --- LOGIC XỬ LÝ ---
+    const paper = document.getElementById('paper');
+    const navGrid = document.getElementById('navGrid');
+    let isSubmitted = false;
+
+    function init() {
+        // Tạo Nav Grid
+        for(let i=1; i<=50; i++) {
+            const div = document.createElement('div');
+            div.className = 'nav-item'; div.id = `nav-${i}`; div.innerText = i;
+            div.onclick = () => document.getElementById(`line-${i}`).scrollIntoView({behavior: 'smooth', block: 'center'});
+            navGrid.appendChild(div);
+        }
+
+        // Tạo Cards
+        conversations.forEach(conv => {
+            const card = document.createElement('div');
+            card.className = 'conv-card';
+            
+            // Xây dựng đoạn hội thoại đầy đủ để máy đọc
+            let fullText = "";
+            conv.lines.forEach(l => fullText += `${l.s} says: ${l.t.replace('[', '').replace(']', '')}. `);
+
+            // Render Header
+            card.innerHTML = `
+                <div class="conv-title">
+                    ${conv.topic}
+                    <div style="font-size:0.9rem; color:#b2bec3;">5 Câu</div>
+                </div>
+                <div class="conv-desc">${conv.desc}</div>
+                <div class="audio-controls">
+                    <button class="btn-play" onclick="speak('${fullText.replace(/'/g, "\\'")}', this)">
+                        🔊 NGHE HỘI THOẠI
+                    </button>
+                    <small style="align-self:center; color:#666;">(Nghe và điền từ vào ô trống)</small>
+                </div>
+            `;
+
+            // Render Lines
+            conv.lines.forEach(line => {
+                const lineDiv = document.createElement('div');
+                lineDiv.className = 'line';
+                lineDiv.id = `line-${line.q}`;
+                
+                // Tạo câu có ô input
+                const parts = line.t.split('[');
+                const preText = parts[0];
+                const rest = parts[1].split(']');
+                const answer = rest[0];
+                const postText = rest[1];
+
+                lineDiv.innerHTML = `
+                    <div class="speaker">${line.s}:</div>
+                    <div class="text">
+                        ${preText}
+                        <input type="text" class="gap-input" id="in-${line.q}" autocomplete="off" oninput="markNav(${line.q})">
+                        <span class="reveal-answer" id="ans-${line.q}">(${answer})</span>
+                        ${postText}
+                    </div>
+                `;
+                card.appendChild(lineDiv);
+            });
+
+            paper.appendChild(card);
+        });
+    }
+
+    function speak(text, btn) {
+        window.speechSynthesis.cancel();
+        document.querySelectorAll('.btn-play').forEach(b => {
+             b.classList.remove('playing'); 
+             b.innerText = "🔊 NGHE HỘI THOẠI";
+        });
+        
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'en-US';
+        u.rate = 0.9; // Tốc độ vừa phải
+        
+        btn.classList.add('playing');
+        btn.innerText = "🔊 ĐANG ĐỌC...";
+        
+        u.onend = () => {
+            btn.classList.remove('playing');
+            btn.innerText = "🔊 NGHE HỘI THOẠI";
+        };
+        
+        window.speechSynthesis.speak(u);
+    }
+
+    function markNav(id) {
+        document.getElementById(`nav-${id}`).style.borderColor = '#2b5876';
+        document.getElementById(`nav-${id}`).style.color = '#2b5876';
+    }
+
+    function submitExam() {
+        if(isSubmitted) return;
+        if(!confirm("Bạn có chắc chắn muốn nộp bài?")) return;
+        
+        isSubmitted = true;
+        window.speechSynthesis.cancel();
+        let score = 0;
+
+        conversations.forEach(conv => {
+            conv.lines.forEach(line => {
+                const input = document.getElementById(`in-${line.q}`);
+                const userVal = input.value.trim().toLowerCase();
+                const correctVal = line.g.toLowerCase();
+                const nav = document.getElementById(`nav-${line.q}`);
+                const reveal = document.getElementById(`ans-${line.q}`);
+
+                reveal.style.display = 'inline';
+
+                if(userVal === correctVal) {
+                    score++;
+                    input.className = 'gap-input correct';
+                    nav.className = 'nav-item correct';
+                } else {
+                    input.className = 'gap-input wrong';
+                    nav.className = 'nav-item wrong';
+                }
+            });
+        });
+
+        document.getElementById('scoreDisplay').innerText = `${score}/50`;
+        alert(`KẾT QUẢ CỦA TRƯƠNG THỊ DƯƠNG: ${score}/50`);
+        window.scrollTo(0,0);
+    }
+
+    init();
+</script>
+</body>
+</html>
