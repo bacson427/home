@@ -32,29 +32,30 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-/* Lớp phủ chứa tim - Đảm bảo nằm trên cùng */
-#heart-overlay {
+/* Khung chứa hiệu ứng - Đè lên mọi thứ */
+#tinh-yeu-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none; /* BẮT BUỘC: Để bấm được nút bên dưới */
-    z-index: 2147483647; /* Số to nhất có thể để đè lên mọi thứ */
+    pointer-events: none; /* QUAN TRỌNG: Để bấm xuyên qua */
+    z-index: 999999; /* Số cực to để nổi lên trên cùng */
     overflow: hidden;
 }
 
-/* Viên tim rơi */
-.heart-drop {
+/* Kiểu dáng tim */
+.heart-item {
     position: absolute;
-    top: -50px; /* Bắt đầu từ trên trời */
-    font-size: 24px;
+    top: -10vh;
+    font-size: 25px;
     opacity: 0.9;
-    user-select: none; /* Không cho bôi đen */
+    /* Hiệu ứng bóng đổ nhẹ cho nổi bật trên nền tối */
+    text-shadow: 0 0 5px rgba(255, 105, 180, 0.7); 
 }
 
-/* Chuyển động rơi */
-@keyframes fallDown {
+/* Chuyển động rơi và xoay */
+@keyframes heartFall {
     0% { transform: translateY(0) rotate(0deg); opacity: 1; }
     100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
 }
@@ -2096,63 +2097,59 @@ document.addEventListener('click', function(e) {
  
   
 (function() {
-    // === CẤU HÌNH ===
-    // Danh sách icon muốn rơi
-    const ICONS = ['❤️', '❣️', '❤️‍🔥', '💗', '💕', '😍']; 
-    
-    // Tạo khung chứa nếu chưa có
-    let container = document.getElementById('heart-overlay');
+    console.log("Hệ thống hiệu ứng Tình Yêu đã khởi động...");
+
+    // Cấu hình
+    const ICONS = ['❤️', '❣️', '❤️‍🔥', '💗', '💕', '😍'];
+    let container = document.getElementById('tinh-yeu-overlay');
+
+    // 1. Tạo khung chứa nếu chưa có (đề phòng quên copy HTML)
     if (!container) {
         container = document.createElement('div');
-        container.id = 'heart-overlay';
+        container.id = 'tinh-yeu-overlay';
         document.body.appendChild(container);
     }
 
-    // Hàm sinh ra 1 trái tim
+    // 2. Hàm sinh ra tim
     function spawnHeart() {
         const heart = document.createElement('div');
-        heart.classList.add('heart-drop');
+        heart.classList.add('heart-item');
         heart.innerText = ICONS[Math.floor(Math.random() * ICONS.length)];
         
-        // Random vị trí trái/phải (0% - 100% màn hình)
+        // Random vị trí ngang
         heart.style.left = Math.random() * 100 + 'vw';
         
-        // Random kích thước (15px - 30px)
-        const size = Math.random() * 15 + 15;
-        heart.style.fontSize = size + 'px';
+        // Random kích thước (To nhỏ khác nhau)
+        heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
 
-        // Random thời gian rơi (2s - 5s) => tạo cảm giác nhanh chậm tự nhiên
-        const duration = Math.random() * 3 + 2;
-        heart.style.animation = `fallDown ${duration}s linear forwards`;
-        
+        // Random tốc độ rơi (2s đến 5s)
+        const duration = Math.random() * 3 + 2; 
+        heart.style.animation = `heartFall ${duration}s linear forwards`;
+
         container.appendChild(heart);
 
-        // Xóa tim sau khi rơi xong để không lag máy
-        setTimeout(() => {
-            heart.remove();
-        }, duration * 1000);
+        // Xóa ngay sau khi rơi xong để không lag máy
+        setTimeout(() => heart.remove(), duration * 1000);
     }
 
-    // === CƠ CHẾ KIỂM TRA LIÊN TỤC ===
-    // Cứ 100ms (0.1 giây) sẽ kiểm tra xem nhạc có đang hát không
+    // 3. CƠ CHẾ RADAR: Quét liên tục tìm nhạc
+    // Code này không cần sự kiện, nó tự kiểm tra mỗi 200ms
     setInterval(() => {
         // Tìm thẻ audio bất kỳ trên trang
         const audio = document.querySelector('audio');
-        
+
         if (audio) {
-            // Nếu tìm thấy audio VÀ audio không bị pause (đang hát)
-            if (!audio.paused && !audio.ended) {
-                // Tỷ lệ sinh tim: 30% cơ hội sinh tim mỗi lần quét
-                // Muốn nhiều tim hơn thì tăng số 0.3 lên (max 1.0)
-                if (Math.random() < 0.3) {
+            // Kiểm tra: Nếu nhạc KHÔNG Pause (tức là đang hát) VÀ chưa kết thúc
+            if (!audio.paused && !audio.ended && audio.currentTime > 0) {
+                // Tỉ lệ rớt tim: 30% mỗi lần quét (để không bị dày quá)
+                if (Math.random() < 0.4) {
                     spawnHeart();
                 }
             }
         }
-    }, 100);
-
+    }, 200); // 200ms quét 1 lần
 })();
-                            
+             
     </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
