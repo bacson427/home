@@ -2066,8 +2066,117 @@ document.addEventListener('click', function(e) {
 
 
 
+ 
+   (function() {
+    // ID của thẻ audio bạn vừa dán ở bước 1
+    const PLAYER_ID = 'bs-player'; 
+    const EMOJIS = ['❤️', '❣️', '❤️‍🔥', '💗', '💕'];
+
+    // Tạo container chứa hiệu ứng (tự động thêm vào body)
+    let overlay = document.getElementById('bs-heart-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'bs-heart-overlay';
+        document.body.appendChild(overlay);
+    }
+
+    let audioCtx, analyser, source;
+    let isRunning = false;
+    let animFrame;
+
+    function initAudio(audioEl) {
+        if (!audioCtx) {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 256;
+                
+                source = audioCtx.createMediaElementSource(audioEl);
+                source.connect(analyser);
+                analyser.connect(audioCtx.destination);
+            } catch (e) {
+                console.log("Lỗi AudioContext (thường do CORS hoặc đã kết nối):", e);
+            }
+        }
+    }
+
+    function createHeart(vol) {
+        const heart = document.createElement('div');
+        heart.classList.add('bs-heart');
+        heart.innerText = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
         
-            
+        // Random vị trí ngang
+        heart.style.left = Math.random() * 100 + 'vw';
+        // Random kích thước
+        heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+
+        // TÍNH TỐC ĐỘ: Vol càng to (max ~255) -> Thời gian rơi càng ngắn
+        // Nhạc to (200): rơi trong 2s. Nhạc nhỏ (50): rơi trong 7s.
+        let duration = 7 - (vol / 255) * 5; 
+        if (duration < 2) duration = 2; // Giới hạn nhanh nhất
+        
+        heart.style.animation = `bsFall ${duration}s linear forwards`;
+        overlay.appendChild(heart);
+
+        // Xóa tim sau khi rơi xong
+        setTimeout(() => heart.remove(), duration * 1000);
+    }
+
+    function loop() {
+        if (!isRunning || !analyser) return;
+
+        const data = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(data);
+
+        // Tính độ to trung bình
+        let sum = 0;
+        for(let i=0; i<data.length; i++) sum += data[i];
+        let avgVol = sum / data.length;
+
+        // Logic sinh tim: Nhạc càng to, ngưỡng sinh càng thấp -> sinh nhiều
+        let threshold = 0.97; // Mặc định rất khó sinh
+        if (avgVol > 20) threshold = 0.92;
+        if (avgVol > 50) threshold = 0.85;
+        if (avgVol > 100) threshold = 0.7;
+        if (avgVol > 150) threshold = 0.5;
+
+        if (Math.random() > threshold) {
+            createHeart(avgVol);
+        }
+
+        animFrame = requestAnimationFrame(loop);
+    }
+
+    // Gắn sự kiện
+    window.addEventListener('DOMContentLoaded', () => {
+        const audioEl = document.getElementById(PLAYER_ID);
+        if (!audioEl) return;
+
+        audioEl.addEventListener('play', () => {
+            initAudio(audioEl);
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            isRunning = true;
+            loop();
+        });
+
+        const stop = () => {
+            isRunning = false;
+            cancelAnimationFrame(animFrame);
+            // Hiệu ứng tan biến
+            const allHearts = document.querySelectorAll('.bs-heart');
+            allHearts.forEach(h => {
+                h.style.transition = 'opacity 1s';
+                h.style.opacity = 0;
+                setTimeout(()=>h.remove(), 1000);
+            });
+        };
+
+        audioEl.addEventListener('pause', stop);
+        audioEl.addEventListener('ended', stop);
+    });
+})();
+
     </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
@@ -2094,145 +2203,33 @@ document.addEventListener('click', function(e) {
 <div id="snow-container"></div>
 
 <style>
-#snow-container {
+/* Container phủ lên toàn màn hình để chứa hiệu ứng */
+#heart-rain-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none; /* Click xuyên qua tuyết */
-    z-index: 9999;
+    pointer-events: none; /* QUAN TRỌNG: Để click xuyên qua hiệu ứng xuống web dưới */
+    z-index: 9999; /* Đảm bảo nằm trên cùng */
+    overflow: hidden;
 }
 
-.snowflake {
+/* Style cho trái tim */
+.heart-item {
     position: absolute;
-    color: white; 
-    text-shadow: 0 0 5px rgba(0,0,0,0.2);
-    user-select: none;
-    cursor: default;
-    /* Animation */
-    animation-name: fall-and-spin;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
+    top: -50px;
+    font-size: 24px;
+    opacity: 0.9;
+    will-change: transform, opacity; /* Tối ưu hiệu năng */
 }
 
-@keyframes fall-and-spin {
-    0% {
-        transform: translateY(-50px) translateX(0) rotate(0deg);
-        opacity: 0;
-    }
-    10% {
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(105vh) translateX(50px) rotate(360deg);
-        opacity: 0.2;
-    }
+/* Animation rơi */
+@keyframes heartFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
 }
 </style>
-
-<script>
-// --- CẤU HÌNH ---
-const SNOW_CONFIG = {
-    symbol: '♥️❣️❤️‍🔥',      
-    amount: 30,       
-    minSize: 10,       
-    maxSize: 25,       
-    minSpeed: 3,       
-    maxSpeed: 8        
-};
-
-// Biến quản lý vòng lặp
-let snowInterval = null; 
-const container = document.getElementById('snow-container');
-let audioPlayer = null; // Biến lưu trình phát nhạc
-
-// --- HÀM TẠO TUYẾT (CORE) ---
-function createSnow() {
-    if (!container) return;
-    
-    // Nếu nhạc đang tắt thì dừng ngay, không tạo thêm
-    if (audioPlayer && audioPlayer.paused) return;
-
-    for (let i = 0; i < SNOW_CONFIG.amount; i++) {
-        setTimeout(() => {
-            // Kiểm tra liên tục: Nếu nhạc bị Pause giữa chừng -> Dừng tạo hạt mới ngay
-            if (audioPlayer && audioPlayer.paused) return;
-
-            const snowflake = document.createElement('div');
-            snowflake.className = 'snowflake';
-            snowflake.textContent = SNOW_CONFIG.symbol;
-            
-            // Random kích thước
-            const size = Math.random() * (SNOW_CONFIG.maxSize - SNOW_CONFIG.minSize) + SNOW_CONFIG.minSize;
-            snowflake.style.fontSize = size + 'px';
-            
-            // Random vị trí
-            snowflake.style.left = Math.random() * 100 + 'vw';
-            
-            // Random tốc độ
-            const duration = Math.random() * (SNOW_CONFIG.maxSpeed - SNOW_CONFIG.minSpeed) + SNOW_CONFIG.minSpeed;
-            snowflake.style.animationDuration = duration + 's';
-            
-            // Random độ mờ
-            snowflake.style.opacity = Math.random() * 0.6 + 0.4;
-            
-            container.appendChild(snowflake);
-            
-            // Xóa sau khi rơi xong
-            setTimeout(() => {
-                if (snowflake.parentNode) snowflake.remove();
-            }, duration * 1000);
-            
-        }, i * 300);
-    }
-}
-
-// --- HÀM KÍCH HOẠT ---
-function startSnow() {
-    if (!snowInterval) {
-        createSnow(); // Chạy ngay đợt đầu
-        snowInterval = setInterval(createSnow, 6000); // Lên lịch các đợt sau
-        console.log("❄️ Nhạc lên -> Tuyết rơi");
-    }
-}
-
-function stopSnow() {
-    if (snowInterval) {
-        clearInterval(snowInterval);
-        snowInterval = null;
-        console.log("⏸️ Nhạc dừng -> Tuyết ngưng");
-    }
-}
-
-// --- TỰ ĐỘNG TÌM AUDIO VÀ KẾT NỐI ---
-function connectAudio() {
-    // Tìm thẻ audio
-    audioPlayer = document.querySelector('audio');
-    
-    if (audioPlayer) {
-        console.log("✅ Đã tìm thấy Audio, đang kết nối hiệu ứng...");
-        
-        // Gán sự kiện
-        audioPlayer.addEventListener('play', startSnow);
-        audioPlayer.addEventListener('pause', stopSnow);
-        audioPlayer.addEventListener('ended', stopSnow);
-        
-        // Kiểm tra ngay lập tức trạng thái hiện tại (nếu nhạc đang chạy sẵn)
-        if (!audioPlayer.paused) {
-            startSnow();
-        }
-    } else {
-        // Nếu chưa thấy audio (do web load chậm), thử lại sau 1 giây
-        console.log("⚠️ Chưa thấy Audio, đang tìm lại...");
-        setTimeout(connectAudio, 1000); 
-    }
-}
-
-// Chạy hàm kết nối khi trang tải xong
-window.addEventListener('load', connectAudio);
-</script>
-
 </body>
 </html>
 <!-- trigger -->
