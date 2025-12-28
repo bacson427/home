@@ -1992,7 +1992,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', function() {
   const audio = document.querySelector('.music-player');
   const musicSection = document.querySelector('.music-section');
-  const emojis = ['💗', '🫀', '💕', '💟'];
+  const emojis = ['💗', '💘', '💕', '💖'];
   let emojiInterval = null;
   let emojiCount = 0;
   const MAX_EMOJIS = 4;
@@ -2067,116 +2067,122 @@ document.addEventListener('click', function(e) {
 
 
  
-   (function() {
-    // ID của thẻ audio bạn vừa dán ở bước 1
-    const PLAYER_ID = 'bs-player'; 
-    const EMOJIS = ['❤️', '❣️', '❤️‍🔥', '💗', '💕'];
-
-    // Tạo container chứa hiệu ứng (tự động thêm vào body)
-    let overlay = document.getElementById('bs-heart-overlay');
+  
+(function() {
+    // 1. Tự động tạo lớp phủ hiệu ứng nếu chưa có
+    let overlay = document.getElementById('effect-overlay');
     if (!overlay) {
         overlay = document.createElement('div');
-        overlay.id = 'bs-heart-overlay';
+        overlay.id = 'effect-overlay';
         document.body.appendChild(overlay);
     }
 
+    const EMOJIS = ['❤️', '❣️', '❤️‍🔥', '💗', '💕'];
     let audioCtx, analyser, source;
     let isRunning = false;
     let animFrame;
 
-    function initAudio(audioEl) {
-        if (!audioCtx) {
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContext();
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 256;
-                
-                source = audioCtx.createMediaElementSource(audioEl);
-                source.connect(analyser);
-                analyser.connect(audioCtx.destination);
-            } catch (e) {
-                console.log("Lỗi AudioContext (thường do CORS hoặc đã kết nối):", e);
-            }
-        }
-    }
-
-    function createHeart(vol) {
+    // 2. Hàm tạo trái tim
+    function spawnHeart(intensity) {
         const heart = document.createElement('div');
-        heart.classList.add('bs-heart');
+        heart.classList.add('falling-heart');
         heart.innerText = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
         
-        // Random vị trí ngang
+        // Vị trí ngẫu nhiên
         heart.style.left = Math.random() * 100 + 'vw';
-        // Random kích thước
+        // Kích thước ngẫu nhiên
         heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
 
-        // TÍNH TỐC ĐỘ: Vol càng to (max ~255) -> Thời gian rơi càng ngắn
-        // Nhạc to (200): rơi trong 2s. Nhạc nhỏ (50): rơi trong 7s.
-        let duration = 7 - (vol / 255) * 5; 
-        if (duration < 2) duration = 2; // Giới hạn nhanh nhất
+        // LOGIC THEO NHẠC:
+        // Intensity (độ to) càng cao -> Duration (thời gian rơi) càng ngắn
+        let duration = 6 - (intensity / 255) * 5; 
+        if (duration < 1.5) duration = 1.5; // Nhanh nhất là 1.5s
         
-        heart.style.animation = `bsFall ${duration}s linear forwards`;
+        heart.style.animation = `dropHeart ${duration}s linear forwards`;
         overlay.appendChild(heart);
 
-        // Xóa tim sau khi rơi xong
+        // Tự xóa sau khi rơi xong để nhẹ máy
         setTimeout(() => heart.remove(), duration * 1000);
     }
 
-    function loop() {
+    // 3. Vòng lặp phân tích nhạc
+    function visualizerLoop() {
         if (!isRunning || !analyser) return;
 
         const data = new Uint8Array(analyser.frequencyBinCount);
         analyser.getByteFrequencyData(data);
 
-        // Tính độ to trung bình
+        // Tính độ to trung bình của nhạc hiện tại
         let sum = 0;
         for(let i=0; i<data.length; i++) sum += data[i];
-        let avgVol = sum / data.length;
+        let volume = sum / data.length;
 
-        // Logic sinh tim: Nhạc càng to, ngưỡng sinh càng thấp -> sinh nhiều
-        let threshold = 0.97; // Mặc định rất khó sinh
-        if (avgVol > 20) threshold = 0.92;
-        if (avgVol > 50) threshold = 0.85;
-        if (avgVol > 100) threshold = 0.7;
-        if (avgVol > 150) threshold = 0.5;
+        // Ngưỡng sinh tim: Nhạc càng to càng dễ sinh tim
+        let threshold = 0.98; // Mặc định khó sinh
+        if (volume > 20) threshold = 0.92;
+        if (volume > 50) threshold = 0.85; // Nhạc vừa
+        if (volume > 100) threshold = 0.70; // Nhạc to
+        if (volume > 150) threshold = 0.50; // Cao trào
 
         if (Math.random() > threshold) {
-            createHeart(avgVol);
+            spawnHeart(volume);
         }
 
-        animFrame = requestAnimationFrame(loop);
+        animFrame = requestAnimationFrame(visualizerLoop);
     }
 
-    // Gắn sự kiện
-    window.addEventListener('DOMContentLoaded', () => {
-        const audioEl = document.getElementById(PLAYER_ID);
-        if (!audioEl) return;
+    // 4. KẾT NỐI VỚI AUDIO CÓ SẴN CỦA BẠN
+    // Tìm thẻ audio đang có trên web (cái trong ảnh)
+    const existingAudio = document.querySelector('audio');
 
-        audioEl.addEventListener('play', () => {
-            initAudio(audioEl);
-            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    if (existingAudio) {
+        // Cấp quyền CrossOrigin để JS đọc được sóng nhạc
+        if (!existingAudio.crossOrigin) {
+            existingAudio.crossOrigin = "anonymous";
+        }
+
+        // Bắt sự kiện PLAY
+        existingAudio.addEventListener('play', () => {
+            // Khởi tạo AudioContext 1 lần duy nhất
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 256;
+                
+                try {
+                    source = audioCtx.createMediaElementSource(existingAudio);
+                    source.connect(analyser);
+                    analyser.connect(audioCtx.destination);
+                } catch(e) {
+                    console.log("Đã kết nối audio rồi hoặc lỗi CORS:", e);
+                }
+            }
+            
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             isRunning = true;
-            loop();
+            visualizerLoop();
         });
 
-        const stop = () => {
+        // Bắt sự kiện PAUSE hoặc ENDED
+        const stopEffect = () => {
             isRunning = false;
             cancelAnimationFrame(animFrame);
-            // Hiệu ứng tan biến
-            const allHearts = document.querySelectorAll('.bs-heart');
-            allHearts.forEach(h => {
+            // Làm mờ tim đang rơi rồi xóa
+            document.querySelectorAll('.falling-heart').forEach(h => {
                 h.style.transition = 'opacity 1s';
                 h.style.opacity = 0;
-                setTimeout(()=>h.remove(), 1000);
+                setTimeout(()=> h.remove(), 1000);
             });
         };
 
-        audioEl.addEventListener('pause', stop);
-        audioEl.addEventListener('ended', stop);
-    });
-})();
+        existingAudio.addEventListener('pause', stopEffect);
+        existingAudio.addEventListener('ended', stopEffect);
+    } else {
+        console.warn("Không tìm thấy thẻ <audio> nào trên trang web!");
+    }
 
+})();
     </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
@@ -2203,29 +2209,29 @@ document.addEventListener('click', function(e) {
 <div id="snow-container"></div>
 
 <style>
-/* Container phủ lên toàn màn hình để chứa hiệu ứng */
-#heart-rain-overlay {
+/* Lớp phủ chứa hiệu ứng mưa tim - Đảm bảo đè lên trên tất cả nhưng không chặn bấm nút */
+#effect-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none; /* QUAN TRỌNG: Để click xuyên qua hiệu ứng xuống web dưới */
-    z-index: 9999; /* Đảm bảo nằm trên cùng */
+    pointer-events: none; /* QUAN TRỌNG: Để bạn vẫn bấm được nút Play/Pause bên dưới */
+    z-index: 99999;
     overflow: hidden;
 }
 
-/* Style cho trái tim */
-.heart-item {
+/* Style cho từng trái tim */
+.falling-heart {
     position: absolute;
     top: -50px;
-    font-size: 24px;
+    font-size: 20px;
     opacity: 0.9;
-    will-change: transform, opacity; /* Tối ưu hiệu năng */
+    will-change: transform, opacity;
 }
 
-/* Animation rơi */
-@keyframes heartFall {
+/* Hiệu ứng rơi xoay vòng */
+@keyframes dropHeart {
     0% { transform: translateY(0) rotate(0deg); opacity: 1; }
     100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
 }
