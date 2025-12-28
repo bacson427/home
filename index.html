@@ -32,6 +32,33 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
+/* Lớp phủ chứa tim - Nằm trên cùng nhưng click xuyên qua được */
+#heart-rain-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Quan trọng: để không chặn nút bấm */
+    z-index: 99999;
+    overflow: hidden;
+}
+
+/* Style trái tim */
+.falling-heart {
+    position: absolute;
+    top: -50px;
+    font-size: 20px;
+    opacity: 0.9;
+    will-change: transform, opacity;
+}
+
+/* Hiệu ứng rơi */
+@keyframes heartDrop {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
         
         
         
@@ -2069,120 +2096,100 @@ document.addEventListener('click', function(e) {
  
   
 (function() {
-    // 1. Tự động tạo lớp phủ hiệu ứng nếu chưa có
-    let overlay = document.getElementById('effect-overlay');
+    // === CẤU HÌNH ===
+    const EMOJIS = ['❤️', '❣️', '❤️‍🔥', '💗', '💕'];
+    const SPAWN_RATE = 100; // Tốc độ sinh tim (ms) - Số càng nhỏ tim càng dày
+
+    // Tạo lớp phủ nếu chưa có
+    let overlay = document.getElementById('heart-rain-overlay');
     if (!overlay) {
         overlay = document.createElement('div');
-        overlay.id = 'effect-overlay';
+        overlay.id = 'heart-rain-overlay';
         document.body.appendChild(overlay);
     }
 
-    const EMOJIS = ['❤️', '❣️', '❤️‍🔥', '💗', '💕'];
-    let audioCtx, analyser, source;
-    let isRunning = false;
-    let animFrame;
+    let rainInterval;
 
-    // 2. Hàm tạo trái tim
-    function spawnHeart(intensity) {
+    // Hàm tạo 1 trái tim
+    function createHeart() {
         const heart = document.createElement('div');
         heart.classList.add('falling-heart');
         heart.innerText = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
         
         // Vị trí ngẫu nhiên
         heart.style.left = Math.random() * 100 + 'vw';
-        // Kích thước ngẫu nhiên
-        heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
-
-        // LOGIC THEO NHẠC:
-        // Intensity (độ to) càng cao -> Duration (thời gian rơi) càng ngắn
-        let duration = 6 - (intensity / 255) * 5; 
-        if (duration < 1.5) duration = 1.5; // Nhanh nhất là 1.5s
         
-        heart.style.animation = `dropHeart ${duration}s linear forwards`;
+        // Kích thước ngẫu nhiên (15px - 35px)
+        const size = Math.random() * 20 + 15;
+        heart.style.fontSize = size + 'px';
+
+        // Tốc độ rơi ngẫu nhiên (giả lập nhạc to nhỏ)
+        // Rơi từ 2s đến 5s
+        const duration = Math.random() * 3 + 2; 
+        
+        heart.style.animation = `heartDrop ${duration}s linear forwards`;
         overlay.appendChild(heart);
 
-        // Tự xóa sau khi rơi xong để nhẹ máy
+        // Xóa tim sau khi rơi xong
         setTimeout(() => heart.remove(), duration * 1000);
     }
 
-    // 3. Vòng lặp phân tích nhạc
-    function visualizerLoop() {
-        if (!isRunning || !analyser) return;
-
-        const data = new Uint8Array(analyser.frequencyBinCount);
-        analyser.getByteFrequencyData(data);
-
-        // Tính độ to trung bình của nhạc hiện tại
-        let sum = 0;
-        for(let i=0; i<data.length; i++) sum += data[i];
-        let volume = sum / data.length;
-
-        // Ngưỡng sinh tim: Nhạc càng to càng dễ sinh tim
-        let threshold = 0.98; // Mặc định khó sinh
-        if (volume > 20) threshold = 0.92;
-        if (volume > 50) threshold = 0.85; // Nhạc vừa
-        if (volume > 100) threshold = 0.70; // Nhạc to
-        if (volume > 150) threshold = 0.50; // Cao trào
-
-        if (Math.random() > threshold) {
-            spawnHeart(volume);
-        }
-
-        animFrame = requestAnimationFrame(visualizerLoop);
+    // Hàm bắt đầu mưa
+    function startRain() {
+        if (rainInterval) clearInterval(rainInterval);
+        // Cứ 1 khoảng thời gian lại sinh tim
+        rainInterval = setInterval(createHeart, SPAWN_RATE);
     }
 
-    // 4. KẾT NỐI VỚI AUDIO CÓ SẴN CỦA BẠN
-    // Tìm thẻ audio đang có trên web (cái trong ảnh)
-    const existingAudio = document.querySelector('audio');
-
-    if (existingAudio) {
-        // Cấp quyền CrossOrigin để JS đọc được sóng nhạc
-        if (!existingAudio.crossOrigin) {
-            existingAudio.crossOrigin = "anonymous";
-        }
-
-        // Bắt sự kiện PLAY
-        existingAudio.addEventListener('play', () => {
-            // Khởi tạo AudioContext 1 lần duy nhất
-            if (!audioCtx) {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContext();
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 256;
-                
-                try {
-                    source = audioCtx.createMediaElementSource(existingAudio);
-                    source.connect(analyser);
-                    analyser.connect(audioCtx.destination);
-                } catch(e) {
-                    console.log("Đã kết nối audio rồi hoặc lỗi CORS:", e);
-                }
-            }
-            
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            isRunning = true;
-            visualizerLoop();
+    // Hàm dừng mưa
+    function stopRain() {
+        if (rainInterval) clearInterval(rainInterval);
+        rainInterval = null;
+        
+        // Hiệu ứng tan biến các tim đang rơi
+        const hearts = document.querySelectorAll('.falling-heart');
+        hearts.forEach(h => {
+            h.style.transition = 'opacity 0.5s';
+            h.style.opacity = 0;
+            setTimeout(() => h.remove(), 500);
         });
+    }
 
-        // Bắt sự kiện PAUSE hoặc ENDED
-        const stopEffect = () => {
-            isRunning = false;
-            cancelAnimationFrame(animFrame);
-            // Làm mờ tim đang rơi rồi xóa
-            document.querySelectorAll('.falling-heart').forEach(h => {
-                h.style.transition = 'opacity 1s';
-                h.style.opacity = 0;
-                setTimeout(()=> h.remove(), 1000);
+    // === TỰ ĐỘNG TÌM AUDIO VÀ GẮN SỰ KIỆN ===
+    function attachToAudio() {
+        const audio = document.querySelector('audio');
+        if (audio) {
+            console.log("Đã tìm thấy Audio, gắn hiệu ứng...");
+            
+            // Nếu nhạc đang chạy sẵn thì mưa luôn
+            if (!audio.paused) {
+                startRain();
+            }
+
+            // Gắn sự kiện
+            audio.addEventListener('play', startRain);
+            audio.addEventListener('pause', stopRain);
+            audio.addEventListener('ended', stopRain);
+            audio.addEventListener('seeking', stopRain); // Khi tua nhạc thì tạm dừng mưa
+            audio.addEventListener('seeked', () => {     // Tua xong nếu đang play thì mưa tiếp
+                 if(!audio.paused) startRain();
             });
-        };
+        } else {
+            console.log("Chưa thấy thẻ Audio, đang thử lại...");
+            // Nếu chưa load xong web thì thử lại sau 1s
+            setTimeout(attachToAudio, 1000);
+        }
+    }
 
-        existingAudio.addEventListener('pause', stopEffect);
-        existingAudio.addEventListener('ended', stopEffect);
+    // Chạy hàm tìm audio khi web tải xong
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attachToAudio);
     } else {
-        console.warn("Không tìm thấy thẻ <audio> nào trên trang web!");
+        attachToAudio();
     }
 
 })();
+
     </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
@@ -2201,41 +2208,6 @@ document.addEventListener('click', function(e) {
 <a href="https://nguyenbacson.io.vn/hacker">Nguyen Bac Son - Decoding</a>
 </div>
 </div>
-
-
-
-
-
-<div id="snow-container"></div>
-
-<style>
-/* Lớp phủ chứa hiệu ứng mưa tim - Đảm bảo đè lên trên tất cả nhưng không chặn bấm nút */
-#effect-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none; /* QUAN TRỌNG: Để bạn vẫn bấm được nút Play/Pause bên dưới */
-    z-index: 99999;
-    overflow: hidden;
-}
-
-/* Style cho từng trái tim */
-.falling-heart {
-    position: absolute;
-    top: -50px;
-    font-size: 20px;
-    opacity: 0.9;
-    will-change: transform, opacity;
-}
-
-/* Hiệu ứng rơi xoay vòng */
-@keyframes dropHeart {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-}
-</style>
 </body>
 </html>
 <!-- trigger -->
