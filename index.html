@@ -32,35 +32,34 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-/* Khung chứa hiệu ứng - Đè lên mọi thứ */
-#tinh-yeu-overlay {
+/* Container chứa hiệu ứng - Luôn nổi trên cùng */
+#hieu-ung-mua-tim {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none; /* QUAN TRỌNG: Để bấm xuyên qua */
-    z-index: 999999; /* Số cực to để nổi lên trên cùng */
+    pointer-events: none; /* QUAN TRỌNG: Giúp bạn bấm xuyên qua để chỉnh nhạc */
+    z-index: 2147483647; /* Số lớp cao nhất có thể */
     overflow: hidden;
 }
 
-/* Kiểu dáng tim */
-.heart-item {
+/* Style viên tim */
+.heart-element {
     position: absolute;
-    top: -10vh;
-    font-size: 25px;
+    top: -50px;
+    font-size: 24px;
     opacity: 0.9;
-    /* Hiệu ứng bóng đổ nhẹ cho nổi bật trên nền tối */
-    text-shadow: 0 0 5px rgba(255, 105, 180, 0.7); 
+    will-change: transform;
 }
 
-/* Chuyển động rơi và xoay */
-@keyframes heartFall {
+/* Hiệu ứng rơi */
+@keyframes fallDown {
     0% { transform: translateY(0) rotate(0deg); opacity: 1; }
     100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
 }
 
-      
+
         
         
                 
@@ -2097,59 +2096,84 @@ document.addEventListener('click', function(e) {
  
   
 (function() {
-    console.log("Hệ thống hiệu ứng Tình Yêu đã khởi động...");
-
-    // Cấu hình
+    // --- CẤU HÌNH ---
     const ICONS = ['❤️', '❣️', '❤️‍🔥', '💗', '💕', '😍'];
-    let container = document.getElementById('tinh-yeu-overlay');
-
-    // 1. Tạo khung chứa nếu chưa có (đề phòng quên copy HTML)
+    
+    // 1. Tạo khung hiển thị (Tự động thêm vào web, không cần sửa HTML)
+    let container = document.getElementById('hieu-ung-mua-tim');
     if (!container) {
         container = document.createElement('div');
-        container.id = 'tinh-yeu-overlay';
+        container.id = 'hieu-ung-mua-tim';
         document.body.appendChild(container);
     }
 
-    // 2. Hàm sinh ra tim
+    let rainInterval = null;
+
+    // 2. Hàm tạo 1 viên tim
     function spawnHeart() {
         const heart = document.createElement('div');
-        heart.classList.add('heart-item');
+        heart.classList.add('heart-element');
         heart.innerText = ICONS[Math.floor(Math.random() * ICONS.length)];
         
-        // Random vị trí ngang
+        // Vị trí ngẫu nhiên
         heart.style.left = Math.random() * 100 + 'vw';
         
-        // Random kích thước (To nhỏ khác nhau)
+        // Kích thước ngẫu nhiên (cho tự nhiên)
         heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
 
-        // Random tốc độ rơi (2s đến 5s)
-        const duration = Math.random() * 3 + 2; 
-        heart.style.animation = `heartFall ${duration}s linear forwards`;
-
+        // Tốc độ rơi: Random từ 1.5s (nhanh) đến 4s (chậm)
+        // Tạo cảm giác nhịp điệu mà không cần phân tích nhạc (đỡ lỗi)
+        const duration = Math.random() * 2.5 + 1.5; 
+        
+        heart.style.animation = `fallDown ${duration}s linear forwards`;
         container.appendChild(heart);
 
-        // Xóa ngay sau khi rơi xong để không lag máy
+        // Xóa sau khi rơi xong
         setTimeout(() => heart.remove(), duration * 1000);
     }
 
-    // 3. CƠ CHẾ RADAR: Quét liên tục tìm nhạc
-    // Code này không cần sự kiện, nó tự kiểm tra mỗi 200ms
-    setInterval(() => {
-        // Tìm thẻ audio bất kỳ trên trang
-        const audio = document.querySelector('audio');
+    // 3. Hàm bật mưa
+    function startRain() {
+        if (!rainInterval) {
+            // Cứ 100ms tạo 1 tim
+            rainInterval = setInterval(spawnHeart, 100);
+        }
+    }
 
+    // 4. Hàm tắt mưa
+    function stopRain() {
+        if (rainInterval) {
+            clearInterval(rainInterval);
+            rainInterval = null;
+        }
+        // Xóa sạch tim cũ
+        const hearts = document.querySelectorAll('.heart-element');
+        hearts.forEach(h => h.remove());
+    }
+
+    // 5. CƠ CHẾ QUÉT TÌM AUDIO (Quan trọng nhất)
+    // Cứ 1 giây quét 1 lần xem web đã tải xong thẻ Audio chưa
+    const scanner = setInterval(() => {
+        const audio = document.querySelector('audio');
+        
         if (audio) {
-            // Kiểm tra: Nếu nhạc KHÔNG Pause (tức là đang hát) VÀ chưa kết thúc
-            if (!audio.paused && !audio.ended && audio.currentTime > 0) {
-                // Tỉ lệ rớt tim: 30% mỗi lần quét (để không bị dày quá)
-                if (Math.random() < 0.4) {
-                    spawnHeart();
-                }
+            console.log("Đã tìm thấy trình phát nhạc! Đang gắn hiệu ứng...");
+            clearInterval(scanner); // Tìm thấy rồi thì dừng quét
+
+            // Gắn sự kiện
+            audio.addEventListener('play', startRain);
+            audio.addEventListener('pause', stopRain);
+            audio.addEventListener('ended', stopRain);
+
+            // Kiểm tra ngay lập tức: Nếu nhạc đang chạy sẵn thì mưa luôn
+            if (!audio.paused && !audio.ended) {
+                startRain();
             }
         }
-    }, 200); // 200ms quét 1 lần
+    }, 1000);
+
 })();
-             
+
     </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
