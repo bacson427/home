@@ -32,34 +32,34 @@
 
     <!-- THÊM THẺ STYLE Ở ĐÂY -->
     <style>
-/* Lớp phủ chứa tim - Nằm trên cùng nhưng click xuyên qua được */
-#heart-rain-overlay {
+/* Lớp phủ chứa tim - Đảm bảo nằm trên cùng */
+#heart-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none; /* Quan trọng: để không chặn nút bấm */
-    z-index: 99999;
+    pointer-events: none; /* BẮT BUỘC: Để bấm được nút bên dưới */
+    z-index: 2147483647; /* Số to nhất có thể để đè lên mọi thứ */
     overflow: hidden;
 }
 
-/* Style trái tim */
-.falling-heart {
+/* Viên tim rơi */
+.heart-drop {
     position: absolute;
-    top: -50px;
-    font-size: 20px;
+    top: -50px; /* Bắt đầu từ trên trời */
+    font-size: 24px;
     opacity: 0.9;
-    will-change: transform, opacity;
+    user-select: none; /* Không cho bôi đen */
 }
 
-/* Hiệu ứng rơi */
-@keyframes heartDrop {
+/* Chuyển động rơi */
+@keyframes fallDown {
     0% { transform: translateY(0) rotate(0deg); opacity: 1; }
     100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
 }
 
-        
+      
         
         
                 
@@ -2097,99 +2097,62 @@ document.addEventListener('click', function(e) {
   
 (function() {
     // === CẤU HÌNH ===
-    const EMOJIS = ['❤️', '❣️', '❤️‍🔥', '💗', '💕'];
-    const SPAWN_RATE = 100; // Tốc độ sinh tim (ms) - Số càng nhỏ tim càng dày
-
-    // Tạo lớp phủ nếu chưa có
-    let overlay = document.getElementById('heart-rain-overlay');
-    if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.id = 'heart-rain-overlay';
-        document.body.appendChild(overlay);
+    // Danh sách icon muốn rơi
+    const ICONS = ['❤️', '❣️', '❤️‍🔥', '💗', '💕', '😍']; 
+    
+    // Tạo khung chứa nếu chưa có
+    let container = document.getElementById('heart-overlay');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'heart-overlay';
+        document.body.appendChild(container);
     }
 
-    let rainInterval;
-
-    // Hàm tạo 1 trái tim
-    function createHeart() {
+    // Hàm sinh ra 1 trái tim
+    function spawnHeart() {
         const heart = document.createElement('div');
-        heart.classList.add('falling-heart');
-        heart.innerText = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+        heart.classList.add('heart-drop');
+        heart.innerText = ICONS[Math.floor(Math.random() * ICONS.length)];
         
-        // Vị trí ngẫu nhiên
+        // Random vị trí trái/phải (0% - 100% màn hình)
         heart.style.left = Math.random() * 100 + 'vw';
         
-        // Kích thước ngẫu nhiên (15px - 35px)
-        const size = Math.random() * 20 + 15;
+        // Random kích thước (15px - 30px)
+        const size = Math.random() * 15 + 15;
         heart.style.fontSize = size + 'px';
 
-        // Tốc độ rơi ngẫu nhiên (giả lập nhạc to nhỏ)
-        // Rơi từ 2s đến 5s
-        const duration = Math.random() * 3 + 2; 
+        // Random thời gian rơi (2s - 5s) => tạo cảm giác nhanh chậm tự nhiên
+        const duration = Math.random() * 3 + 2;
+        heart.style.animation = `fallDown ${duration}s linear forwards`;
         
-        heart.style.animation = `heartDrop ${duration}s linear forwards`;
-        overlay.appendChild(heart);
+        container.appendChild(heart);
 
-        // Xóa tim sau khi rơi xong
-        setTimeout(() => heart.remove(), duration * 1000);
+        // Xóa tim sau khi rơi xong để không lag máy
+        setTimeout(() => {
+            heart.remove();
+        }, duration * 1000);
     }
 
-    // Hàm bắt đầu mưa
-    function startRain() {
-        if (rainInterval) clearInterval(rainInterval);
-        // Cứ 1 khoảng thời gian lại sinh tim
-        rainInterval = setInterval(createHeart, SPAWN_RATE);
-    }
-
-    // Hàm dừng mưa
-    function stopRain() {
-        if (rainInterval) clearInterval(rainInterval);
-        rainInterval = null;
-        
-        // Hiệu ứng tan biến các tim đang rơi
-        const hearts = document.querySelectorAll('.falling-heart');
-        hearts.forEach(h => {
-            h.style.transition = 'opacity 0.5s';
-            h.style.opacity = 0;
-            setTimeout(() => h.remove(), 500);
-        });
-    }
-
-    // === TỰ ĐỘNG TÌM AUDIO VÀ GẮN SỰ KIỆN ===
-    function attachToAudio() {
+    // === CƠ CHẾ KIỂM TRA LIÊN TỤC ===
+    // Cứ 100ms (0.1 giây) sẽ kiểm tra xem nhạc có đang hát không
+    setInterval(() => {
+        // Tìm thẻ audio bất kỳ trên trang
         const audio = document.querySelector('audio');
+        
         if (audio) {
-            console.log("Đã tìm thấy Audio, gắn hiệu ứng...");
-            
-            // Nếu nhạc đang chạy sẵn thì mưa luôn
-            if (!audio.paused) {
-                startRain();
+            // Nếu tìm thấy audio VÀ audio không bị pause (đang hát)
+            if (!audio.paused && !audio.ended) {
+                // Tỷ lệ sinh tim: 30% cơ hội sinh tim mỗi lần quét
+                // Muốn nhiều tim hơn thì tăng số 0.3 lên (max 1.0)
+                if (Math.random() < 0.3) {
+                    spawnHeart();
+                }
             }
-
-            // Gắn sự kiện
-            audio.addEventListener('play', startRain);
-            audio.addEventListener('pause', stopRain);
-            audio.addEventListener('ended', stopRain);
-            audio.addEventListener('seeking', stopRain); // Khi tua nhạc thì tạm dừng mưa
-            audio.addEventListener('seeked', () => {     // Tua xong nếu đang play thì mưa tiếp
-                 if(!audio.paused) startRain();
-            });
-        } else {
-            console.log("Chưa thấy thẻ Audio, đang thử lại...");
-            // Nếu chưa load xong web thì thử lại sau 1s
-            setTimeout(attachToAudio, 1000);
         }
-    }
-
-    // Chạy hàm tìm audio khi web tải xong
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', attachToAudio);
-    } else {
-        attachToAudio();
-    }
+    }, 100);
 
 })();
-
+                            
     </script>
 <div class="hamburger-menu" id="hamburgerMenu">
     <span></span>
