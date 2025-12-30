@@ -11,20 +11,30 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
         
         body {
-            /* Background gradient nhẹ nhàng */
-            background: linear-gradient(300deg, #ff9a9e, #fad0c4, #fad0c4, #a18cd1);
-            background-size: 200% 200%;
-            animation: gradientBG 15s ease infinite; 
+            /* --- NỀN ĐỘNG TÌNH YÊU MỚI (TỐI ƯU) --- */
+            /* Sử dụng dải màu ấm áp: Cam đào -> Hồng -> Tím đỏ */
+            background: linear-gradient(-45deg, #ff9a44, #fc6076, #833471);
+            /* Tăng kích thước background để chuyển động mượt hơn */
+            background-size: 300% 300%; 
+            /* Chuyển động rất chậm (20s) để tiết kiệm pin và nhìn chill hơn */
+            animation: gradientBG 20s ease infinite;
+            
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
             font-family: 'Quicksand', sans-serif; overflow: hidden; position: relative;
+            /* Mẹo nhỏ để kích hoạt tăng tốc phần cứng trên một số thiết bị */
+            transform: translateZ(0);
         }
         
-        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes gradientBG { 
+            0% { background-position: 0% 50%; } 
+            50% { background-position: 100% 50%; } 
+            100% { background-position: 0% 50%; } 
+        }
 
         .container {
             text-align: center; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px);
-            padding: 40px 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 40px 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
             max-width: 500px; width: 90%; border: 2px solid rgba(255, 255, 255, 0.95);
             animation: float 6s ease-in-out infinite; position: relative; z-index: 10;
             will-change: transform;
@@ -61,20 +71,12 @@
         .copyright { margin-top: 20px; font-size: 0.85rem; color: #888; font-weight: 600; letter-spacing: 0.5px; }
         .copyright span { color: #e74c3c; }
 
-        /* --- SỬA CSS DÒNG GỢI Ý CHO NỔI BẬT HƠN --- */
+        /* CSS DÒNG GỢI Ý NỔI BẬT */
         .hint { 
-            margin-top: 10px; 
-            font-size: 0.9rem; /* To hơn chút */
-            color: #d63031; /* Màu đỏ nổi bật */
-            font-weight: bold; /* In đậm */
-            animation: pulseText 2s infinite; /* Hiệu ứng nhấp nháy nhẹ */
+            margin-top: 10px; font-size: 0.9rem; color: #d63031; 
+            font-weight: bold; animation: pulseText 2s infinite; 
         }
-        
-        @keyframes pulseText {
-            0% { opacity: 0.7; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.05); }
-            100% { opacity: 0.7; transform: scale(1); }
-        }
+        @keyframes pulseText { 0% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.7; transform: scale(1); } }
 
         /* Các keyframes khác */
         @keyframes titleColor { 0% { color: #d63031; } 100% { color: #e84393; } }
@@ -109,7 +111,7 @@
             Trình duyệt của bạn không hỗ trợ phát nhạc.
         </audio>
 
-        <p class="copyright">Bản quyền ©2026 thuộc về Nguyễn Bắc Sơn<span>❣️</span></p>
+        <p class="copyright">Bản quyền ©2026 thuộc về Nguyễn Bắc Sơn</p>
         
         <p class="hint">( Nhấp 2 lần vào màn hình )</p>
     </div>
@@ -143,7 +145,8 @@
             const heart = document.createElement('div');
             heart.classList.add('music-heart');
             const icons = ['🌷', '🥀', '🌺', '💐', '🌹'];
-            heart.innerText = icons[Math.floor(Math.random() * icons.length)];
+            
+         heart.innerText = icons[Math.floor(Math.random() * icons.length)];
             heart.style.left = Math.random() * 100 + 'vw';
             const size = Math.random() * 20 + 20;
             heart.style.fontSize = size + 'px';
@@ -177,7 +180,7 @@
 
         function createClickHeart(x, y) {
             const heart = document.createElement('div');
-            heart.innerText = '🖤 Miss you 🤍'; 
+            heart.innerText = '🤍 Miss You 🖤; 
             heart.className = 'click-heart';
             heart.style.left = x + 'px';
             heart.style.top = y + 'px';
