@@ -2,20 +2,21 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Gửi người yêu dấu</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- PHẦN GIAO DIỆN (CSS) --- */
+        /* --- GIAO DIỆN CHÍNH (Giữ nguyên cho đẹp) --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         body {
-            /* Màu nền gradient hồng tím lãng mạn */
             background: linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%);
             height: 100vh;
             display: flex;
@@ -23,12 +24,13 @@
             align-items: center;
             font-family: 'Quicksand', sans-serif;
             overflow: hidden;
+            position: relative;
         }
 
         .container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.6); /* Nền kính trong suốt */
-            backdrop-filter: blur(10px); /* Hiệu ứng làm mờ phía sau */
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
             padding: 40px 30px;
             border-radius: 25px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.15);
@@ -36,17 +38,17 @@
             width: 90%;
             border: 2px solid rgba(255, 255, 255, 0.8);
             animation: float 6s ease-in-out infinite;
-            position: relative; /* Để căn chỉnh các thành phần con */
+            position: relative;
+            z-index: 10;
         }
 
-        /* Hiệu ứng khung trôi nhẹ */
         @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
 
-        .heart {
+        .heart-icon {
             font-size: 60px;
             color: #ff4757;
             animation: heartbeat 1.5s infinite;
@@ -103,7 +105,6 @@
             border-radius: 20px;
         }
 
-        /* Thanh nhạc */
         audio {
             width: 100%;
             height: 40px;
@@ -112,7 +113,6 @@
             opacity: 0.9;
         }
 
-        /* Dòng bản quyền */
         .copyright {
             margin-top: 20px;
             font-size: 0.85rem;
@@ -121,8 +121,34 @@
             letter-spacing: 0.5px;
         }
         
-        .copyright span {
-            color: #e74c3c; /* Màu đỏ cho trái tim nhỏ */
+        .copyright span { color: #e74c3c; }
+
+        /* --- HIỆU ỨNG TIM (Đã tối ưu nhẹ hơn) --- */
+        .click-heart {
+            position: absolute;
+            font-size: 30px;
+            pointer-events: none;
+            animation: flyUpClick 1s ease-out forwards;
+            z-index: 100;
+        }
+
+        @keyframes flyUpClick {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -150px) scale(1.5); opacity: 0; }
+        }
+
+        .music-heart {
+            position: fixed;
+            bottom: -50px;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatUpMusic linear forwards;
+            opacity: 0.8;
+        }
+
+        @keyframes floatUpMusic {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
 
         @keyframes heartbeat {
@@ -133,7 +159,6 @@
             70% { transform: scale(1); }
         }
 
-        /* Responsive */
         @media (max-width: 480px) {
             h1 { font-size: 2.2rem; }
             .time-box { min-width: 60px; padding: 8px; }
@@ -145,7 +170,7 @@
 <body>
 
     <div class="container">
-        <div class="heart">❤️</div>
+        <div class="heart-icon">❤️</div>
         <h1>Chúng mình đã bên nhau</h1>
         
         <div id="clock">
@@ -178,16 +203,14 @@
     </div>
 
     <script>
-        /* --- PHẦN XỬ LÝ THỜI GIAN (JS) --- */
-        
-        // Ngày bắt đầu: 24/12/2025 lúc 10:05
+        /* --- 1. XỬ LÝ THỜI GIAN --- */
         const startDate = new Date("2025-12-24T10:05:00").getTime();
 
         function updateCounter() {
             const now = new Date().getTime();
             const distance = now - startDate;
-
-            if (distance < 0) return; // Chưa đến ngày thì không chạy
+            
+            if (distance < 0) return;
 
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -199,17 +222,79 @@
             document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
             document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
         }
-
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        // Xử lý tự động phát nhạc khi chạm vào màn hình
-        document.body.addEventListener('click', function() {
-            var audio = document.getElementById('myAudio');
-            if(audio.paused) {
-                audio.play();
+        /* --- 2. XỬ LÝ BÓNG BAY TIM (ĐÃ TỐI ƯU CHỐNG LAG) --- */
+        const audio = document.getElementById('myAudio');
+        let heartInterval;
+
+        function createMusicHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('music-heart');
+            
+            const icons = ['❤️', '💗', '💕', '💞', '💓'];
+            heart.innerText = icons[Math.floor(Math.random() * icons.length)];
+            
+            heart.style.left = Math.random() * 100 + 'vw';
+            
+            const size = Math.random() * 20 + 20; // Tim nhỏ hơn chút cho đỡ rối
+            heart.style.fontSize = size + 'px';
+            
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's'; // Bay 3-6s
+            
+            document.body.appendChild(heart);
+
+            // Xóa nhanh sau 6s để không đầy RAM
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+
+        audio.onplay = function() {
+            if (!heartInterval) {
+                // QUAN TRỌNG: Tăng thời gian lên 800ms (gần 1 giây) mới ra 1 tim
+                // Giúp điện thoại yếu vẫn chạy mượt
+                heartInterval = setInterval(createMusicHeart, 800);
             }
+        };
+
+        audio.onpause = function() {
+            clearInterval(heartInterval);
+            heartInterval = null;
+        };
+
+        document.body.addEventListener('click', function() {
+            if(audio.paused) audio.play();
         }, { once: true });
+
+
+        /* --- 3. XỬ LÝ DOUBLE CLICK (GIỮ NGUYÊN) --- */
+        document.addEventListener('dblclick', function(e) {
+            createClickHeart(e.pageX, e.pageY);
+        });
+
+        let lastTap = 0;
+        document.addEventListener('touchend', function(e) {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (tapLength < 500 && tapLength > 0) {
+                const touch = e.changedTouches[0];
+                createClickHeart(touch.pageX, touch.pageY);
+                e.preventDefault();
+            }
+            lastTap = currentTime;
+        });
+
+        function createClickHeart(x, y) {
+            const heart = document.createElement('div');
+            heart.innerText = '💗';
+            heart.className = 'click-heart';
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 1000);
+        }
     </script>
 </body>
 </html>
