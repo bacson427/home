@@ -36,6 +36,7 @@
             width: 90%;
             border: 2px solid rgba(255, 255, 255, 0.8);
             animation: float 6s ease-in-out infinite;
+            position: relative; /* Để căn chỉnh các thành phần con */
         }
 
         /* Hiệu ứng khung trôi nhẹ */
@@ -72,7 +73,7 @@
             background: #ffffff;
             padding: 10px;
             border-radius: 15px;
-            min-width: 70px; /* Độ rộng tối thiểu */
+            min-width: 70px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
@@ -102,13 +103,26 @@
             border-radius: 20px;
         }
 
-        /* Thanh nhạc đẹp hơn */
+        /* Thanh nhạc */
         audio {
             width: 100%;
             height: 40px;
             margin-top: 10px;
             border-radius: 20px;
             opacity: 0.9;
+        }
+
+        /* Dòng bản quyền */
+        .copyright {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #888;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .copyright span {
+            color: #e74c3c; /* Màu đỏ cho trái tim nhỏ */
         }
 
         @keyframes heartbeat {
@@ -119,7 +133,7 @@
             70% { transform: scale(1); }
         }
 
-        /* Responsive cho điện thoại */
+        /* Responsive */
         @media (max-width: 480px) {
             h1 { font-size: 2.2rem; }
             .time-box { min-width: 60px; padding: 8px; }
@@ -159,6 +173,8 @@
             <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mpeg">
             Trình duyệt của bạn không hỗ trợ phát nhạc.
         </audio>
+
+        <p class="copyright">@ Bản quyền thuộc riêng về Cậu <span>♥️</span></p>
     </div>
 
     <script>
@@ -187,7 +203,7 @@
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        // Xử lý tự động phát nhạc khi chạm vào màn hình (fix lỗi iPhone chặn autoplay)
+        // Xử lý tự động phát nhạc khi chạm vào màn hình
         document.body.addEventListener('click', function() {
             var audio = document.getElementById('myAudio');
             if(audio.paused) {
