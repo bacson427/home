@@ -7,23 +7,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- TỐI ƯU HÓA GIAO DIỆN --- */
+        /* --- CSS TỐI ƯU --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
         
         body {
-            /* --- NỀN ĐỘNG TÌNH YÊU MỚI (TỐI ƯU) --- */
-            /* Sử dụng dải màu ấm áp: Cam đào -> Hồng -> Tím đỏ */
+            /* Nền động màu tình yêu (Cam -> Hồng -> Tím) */
             background: linear-gradient(-45deg, #ff9a44, #fc6076, #833471);
-            /* Tăng kích thước background để chuyển động mượt hơn */
             background-size: 300% 300%; 
-            /* Chuyển động rất chậm (20s) để tiết kiệm pin và nhìn chill hơn */
-            animation: gradientBG 20s ease infinite;
-            
+            animation: gradientBG 20s ease infinite; 
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
             font-family: 'Quicksand', sans-serif; overflow: hidden; position: relative;
-            /* Mẹo nhỏ để kích hoạt tăng tốc phần cứng trên một số thiết bị */
-            transform: translateZ(0);
         }
         
         @keyframes gradientBG { 
@@ -42,7 +36,7 @@
         
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
-        .heart-icon { font-size: 60px; color: #2ecc71; animation: heartbeat 1.5s infinite; margin-bottom: 10px; text-shadow: 0 0 15px rgba(46, 204, 113, 0.4); }
+        .heart-icon { font-size: 60px; color: #e74c3c; animation: heartbeat 1.5s infinite; margin-bottom: 10px; text-shadow: 0 0 15px rgba(231, 76, 60, 0.4); }
         
         h1 { font-family: 'Dancing Script', cursive; font-size: 2.8rem; margin-bottom: 20px; color: #d63031; line-height: 1.2; animation: titleColor 8s infinite alternate; }
 
@@ -52,7 +46,6 @@
         .time-box span { font-size: 1.8rem; font-weight: 800; color: #e84393; display: block; }
         .time-box p { font-size: 0.9rem; color: #636e72; font-weight: 600; margin-top: 5px; text-transform: uppercase; }
 
-        /* Style ngày tháng đổi màu chậm */
         .date-start { 
             font-size: 1.2rem; font-weight: 800; 
             background: rgba(255, 255, 255, 0.8); 
@@ -71,14 +64,13 @@
         .copyright { margin-top: 20px; font-size: 0.85rem; color: #888; font-weight: 600; letter-spacing: 0.5px; }
         .copyright span { color: #e74c3c; }
 
-        /* CSS DÒNG GỢI Ý NỔI BẬT */
+        /* Dòng hướng dẫn nổi bật */
         .hint { 
             margin-top: 10px; font-size: 0.9rem; color: #d63031; 
             font-weight: bold; animation: pulseText 2s infinite; 
         }
         @keyframes pulseText { 0% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.7; transform: scale(1); } }
 
-        /* Các keyframes khác */
         @keyframes titleColor { 0% { color: #d63031; } 100% { color: #e84393; } }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
         @keyframes heartbeat { 0% { transform: scale(1); } 14% { transform: scale(1.2); } 28% { transform: scale(1); } 42% { transform: scale(1.2); } 70% { transform: scale(1); } }
@@ -94,7 +86,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="heart-icon">🫀</div>
+        <div class="heart-icon">❤️</div>
         <h1>Chúng mình đã quen nhau</h1>
 
         <div id="clock">
@@ -111,25 +103,34 @@
             Trình duyệt của bạn không hỗ trợ phát nhạc.
         </audio>
 
-        <p class="copyright">Bản quyền ©2026 thuộc về Nguyễn Bắc Sơn</p>
+        <p class="copyright">Bản quyền ©2026 thuộc về Nguyễn Bắc Sơn<span>🤳</span></p>
         
         <p class="hint">( Nhấp 2 lần vào màn hình )</p>
     </div>
 
     <script>
-        const startDate = new Date("2025-12-24T10:50:00").getTime();
+        /* --- CẤU HÌNH NGÀY (An toàn tuyệt đối) --- */
+        // Cú pháp: new Date(Năm, Tháng - 1, Ngày, Giờ, Phút)
+        // Tháng 12 thì điền số 11 (vì máy tính đếm từ 0)
+        const startDate = new Date(2025, 11, 24, 10, 50, 0).getTime();
 
         function updateCounter() {
             const now = new Date().getTime();
             const distance = now - startDate;
+            
             if (distance < 0) {
                  document.getElementById("days").innerText = "00";
+                 document.getElementById("hours").innerText = "00";
+                 document.getElementById("minutes").innerText = "00";
+                 document.getElementById("seconds").innerText = "00";
                  return;
             }
+
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
             document.getElementById("days").innerText = days;
             document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
             document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
@@ -138,15 +139,15 @@
         setInterval(updateCounter, 1000);
         updateCounter();
 
+        /* --- CÁC TÍNH NĂNG KHÁC (GIỮ NGUYÊN) --- */
         const audio = document.getElementById('myAudio');
         let heartInterval;
         
         function createMusicHeart() {
             const heart = document.createElement('div');
             heart.classList.add('music-heart');
-            const icons = ['🌷', '🥀', '🌺', '💐', '🌹'];
-            
-         heart.innerText = icons[Math.floor(Math.random() * icons.length)];
+            const icons = ['❤️', '💗', '💕', '🌹', '✨'];
+            heart.innerText = icons[Math.floor(Math.random() * icons.length)];
             heart.style.left = Math.random() * 100 + 'vw';
             const size = Math.random() * 20 + 20;
             heart.style.fontSize = size + 'px';
@@ -180,7 +181,7 @@
 
         function createClickHeart(x, y) {
             const heart = document.createElement('div');
-            heart.innerText = '🤍 Miss You 🖤; 
+            heart.innerText = 'Yêu Cậu 🐷'; 
             heart.className = 'click-heart';
             heart.style.left = x + 'px';
             heart.style.top = y + 'px';
