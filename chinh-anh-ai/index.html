@@ -3,64 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Photo Editor - Gemini Tech</title>
+    <title>AI Photo Editor (Fix Lỗi)</title>
     <style>
         body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #f0f2f5; }
         .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #333; }
+        h1 { text-align: center; color: #333; margin-bottom: 10px; }
         .controls { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-        input, button { padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
-        button { background: #007bff; color: white; border: none; cursor: pointer; }
+        input[type="text"], input[type="password"] { padding: 10px; border: 1px solid #ddd; border-radius: 4px; flex: 1; }
+        button { padding: 10px 15px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
         button:hover { background: #0056b3; }
         button.secondary { background: #6c757d; }
-        #preview-container { text-align: center; margin: 20px 0; min-height: 200px; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; }
+        button.download { background: #28a745; }
+        
+        #preview-container { text-align: center; margin: 20px 0; min-height: 200px; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
         canvas { max-width: 100%; height: auto; }
-        #response-area { background: #e9ecef; padding: 15px; border-radius: 4px; margin-top: 20px; white-space: pre-wrap; }
-        .hidden { display: none; }
+        
+        #response-area { background: #e9ecef; padding: 15px; border-radius: 4px; margin-top: 20px; white-space: pre-wrap; font-size: 14px; line-height: 1.5; }
+        .hidden { display: none !important; }
+        .error { color: red; background: #ffe6e6; border: 1px solid red; padding: 10px; margin-top: 10px; border-radius: 4px; }
     </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
 </head>
 <body>
 
 <div class="container">
-    <h1>Công cụ Chỉnh Ảnh & AI Gemini</h1>
+    <h1>Chỉnh Ảnh & AI (Bản Fix)</h1>
 
-    <div class="controls" style="background: #e3f2fd; padding: 15px; border-radius: 4px;">
-        <input type="password" id="apiKey" placeholder="Dán Gemini API Key của bạn vào đây" style="flex: 1;">
-        <small style="display:block; width: 100%; color: #666; margin-top:5px;">Code chạy trên GitHub Pages (Client-side) nên bạn cần tự nhập Key để bảo mật.</small>
+    <div class="controls" style="background: #e3f2fd; padding: 15px; border-radius: 4px; display: block;">
+        <label style="font-weight: bold; display: block; margin-bottom: 5px;">Bước 1: Nhập Gemini API Key</label>
+        <div style="display: flex; gap: 5px;">
+            <input type="password" id="apiKey" placeholder="Dán Key bắt đầu bằng AIza... vào đây">
+            <button onclick="saveKey()" style="background: #17a2b8;">Lưu Key</button>
+        </div>
+        <small style="color: #666; margin-top: 5px; display: block;">Key sẽ được lưu vào trình duyệt của bạn để dùng cho lần sau.</small>
     </div>
 
     <div class="controls">
         <input type="file" id="imageInput" accept="image/*">
+    </div>
+    
+    <div class="controls">
         <button onclick="applyFilter('grayscale')" class="secondary">Đen trắng</button>
-        <button onclick="applyFilter('sepia')" class="secondary">Màu cũ (Sepia)</button>
+        <button onclick="applyFilter('sepia')" class="secondary">Màu cũ</button>
         <button onclick="resetImage()" class="secondary">Gốc</button>
+        <button onclick="downloadImage()" class="download">Tải Ảnh Về</button>
     </div>
 
     <div id="preview-container">
-        <span id="placeholder-text">Chưa có ảnh nào được chọn</span>
+        <span id="placeholder-text">Chọn ảnh để bắt đầu</span>
         <canvas id="photoCanvas" class="hidden"></canvas>
     </div>
 
     <div class="controls">
-        <input type="text" id="aiPrompt" placeholder="Nhập yêu cầu cho AI (VD: Nhận xét bố cục ảnh này)" style="flex: 1;">
+        <input type="text" id="aiPrompt" placeholder="VD: Mô tả bức ảnh này, Dịch chữ trong ảnh..." value="Mô tả bức ảnh này bằng tiếng Việt">
         <button onclick="askGemini()">Gửi cho Gemini</button>
     </div>
     
     <div id="response-area" class="hidden">
-        <strong>Gemini trả lời:</strong> <br>
-        <span id="gemini-response">...</span>
+        <strong>Kết quả:</strong> <br>
+        <div id="gemini-response">...</div>
     </div>
+    
+    <div id="error-log" class="hidden error"></div>
 </div>
 
 <script type="module">
-    // Sử dụng Google Generative AI SDK qua CDN
-    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+    import { GoogleGenerativeAI } from "@google/generative-ai";
 
     let originalImage = null;
     const canvas = document.getElementById('photoCanvas');
     const ctx = canvas.getContext('2d');
 
-    // 1. Xử lý tải ảnh lên
+    // Tự động điền Key nếu đã lưu từ trước
+    window.onload = () => {
+        const savedKey = localStorage.getItem('gemini_api_key');
+        if (savedKey) {
+            document.getElementById('apiKey').value = savedKey;
+        }
+    }
+
+    // Hàm lưu Key vào bộ nhớ trình duyệt
+    window.saveKey = () => {
+        const key = document.getElementById('apiKey').value.trim(); // QUAN TRỌNG: Cắt khoảng trắng
+        if (!key.startsWith("AIza")) {
+            alert("Key có vẻ không đúng! Phải bắt đầu bằng 'AIza'.");
+            return;
+        }
+        localStorage.setItem('gemini_api_key', key);
+        alert("Đã lưu Key thành công! Giờ bạn có thể dùng.");
+    }
+
+    // Xử lý tải ảnh
     document.getElementById('imageInput').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -72,21 +111,21 @@
                 canvas.width = img.width;
                 canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
-                originalImage = img; // Lưu ảnh gốc để reset
+                originalImage = img;
                 
                 document.getElementById('placeholder-text').classList.add('hidden');
                 canvas.classList.remove('hidden');
+                // Xóa log lỗi cũ nếu có
+                document.getElementById('error-log').classList.add('hidden');
             }
             img.src = event.target.result;
         }
         reader.readAsDataURL(file);
     });
 
-    // 2. Các bộ lọc chỉnh ảnh cơ bản (Client-side)
+    // Các bộ lọc
     window.applyFilter = (type) => {
-        if (!originalImage) return alert("Vui lòng chọn ảnh trước!");
-        
-        // Vẽ lại ảnh gốc trước khi áp dụng filter
+        if (!originalImage) return alert("Chưa chọn ảnh!");
         ctx.drawImage(originalImage, 0, 0);
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
@@ -109,27 +148,41 @@
         if (originalImage) ctx.drawImage(originalImage, 0, 0);
     }
 
-    // 3. Hàm gọi Gemini API
+    window.downloadImage = () => {
+        if (!originalImage) return alert("Chưa có ảnh!");
+        const link = document.createElement('a');
+        link.download = 'anh-da-chinh-sua.png';
+        link.href = canvas.toDataURL("image/png", 1.0);
+        link.click();
+    }
+
+    // GỌI API GEMINI (Đã fix lỗi khoảng trắng)
     window.askGemini = async () => {
-        const apiKey = document.getElementById('apiKey').value;
-        const prompt = document.getElementById('aiPrompt').value;
-        
+        // 1. Lấy key và CẮT KHOẢNG TRẮNG thừa
+        const rawKey = document.getElementById('apiKey').value;
+        const apiKey = rawKey.trim(); 
+
         if (!apiKey) return alert("Vui lòng nhập API Key!");
-        if (!originalImage) return alert("Vui lòng chọn ảnh!");
+        if (!originalImage) return alert("Vui lòng chọn ảnh trước!");
 
         const responseArea = document.getElementById('response-area');
         const responseText = document.getElementById('gemini-response');
+        const errorLog = document.getElementById('error-log');
         
         responseArea.classList.remove('hidden');
-        responseText.innerText = "Đang suy nghĩ...";
+        errorLog.classList.add('hidden'); // Ẩn lỗi cũ
+        responseText.innerText = "Đang kết nối tới Gemini...";
 
         try {
-            // Khởi tạo SDK
+            // Khởi tạo model
             const genAI = new GoogleGenerativeAI(apiKey);
+            // Dùng model 1.5 Flash cho nhanh và miễn phí
             const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-            // Chuyển ảnh từ Canvas sang Base64 để gửi đi
-            const base64Data = canvas.toDataURL("image/jpeg").split(',')[1];
+            const prompt = document.getElementById('aiPrompt').value || "Mô tả ảnh này";
+
+            // Lấy dữ liệu ảnh Base64
+            const base64Data = canvas.toDataURL("image/jpeg", 0.8).split(',')[1];
             
             const imagePart = {
                 inlineData: {
@@ -146,7 +199,10 @@
 
         } catch (error) {
             console.error(error);
-            responseText.innerText = "Lỗi: " + error.message;
+            responseArea.classList.add('hidden');
+            errorLog.classList.remove('hidden');
+            // Hiển thị lỗi rõ ràng ra màn hình
+            errorLog.innerHTML = `<strong>CÓ LỖI XẢY RA:</strong><br>${error.message}<br><br><em>Mẹo: Kiểm tra lại API Key xem có đúng là Key của 'Google AI Studio' không.</em>`;
         }
     }
 </script>
