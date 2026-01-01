@@ -9,9 +9,9 @@
     <style>
         /* --- CSS TỐI ƯU --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
-        
+
         body {
-            /* Nền động màu tình yêu (Cam -> Hồng -> Tím) */
+            /* Nền động màu tình yêu */
             background: linear-gradient(-45deg, #ff9a44, #fc6076, #833471);
             background-size: 300% 300%; 
             animation: gradientBG 20s ease infinite; 
@@ -19,7 +19,7 @@
             display: flex; justify-content: center; align-items: center;
             font-family: 'Quicksand', sans-serif; overflow: hidden; position: relative;
         }
-        
+
         @keyframes gradientBG { 
             0% { background-position: 0% 50%; } 
             50% { background-position: 100% 50%; } 
@@ -32,16 +32,18 @@
             max-width: 500px; width: 90%; border: 2px solid rgba(255, 255, 255, 0.95);
             animation: float 6s ease-in-out infinite; position: relative; z-index: 10;
             will-change: transform;
+            /* Thêm transition cho viền để đổi màu mượt khi lên cấp */
+            transition: box-shadow 1s ease, border-color 1s ease;
         }
-        
+
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
         .heart-icon { font-size: 60px; color: #e74c3c; animation: heartbeat 1.5s infinite; margin-bottom: 10px; text-shadow: 0 0 15px rgba(231, 76, 60, 0.4); }
-        
+
         h1 { font-family: 'Dancing Script', cursive; font-size: 2.8rem; margin-bottom: 20px; color: #d63031; line-height: 1.2; animation: titleColor 8s infinite alternate; }
 
-        #clock { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; }
-        
+        #clock { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+
         .time-box { background: #ffffff; padding: 10px; border-radius: 15px; min-width: 68px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); animation: breathe 4s infinite ease-in-out; }
         .time-box span { font-size: 1.8rem; font-weight: 800; color: #e84393; display: block; }
         .time-box p { font-size: 0.9rem; color: #636e72; font-weight: 600; margin-top: 5px; text-transform: uppercase; }
@@ -59,12 +61,56 @@
             60% { color: #6c5ce7; } 80% { color: #0984e3; } 100% { color: #ff7675; }
         }
 
-        audio { width: 100%; height: 40px; margin-top: 10px; border-radius: 20px; opacity: 0.9; }
+        /* --- CSS CHO NGỌN LỬA (STREAK) --- */
+        .fire-container {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
         
+        .fire-icon {
+            font-size: 35px;
+            /* Hiệu ứng lửa cháy phập phù */
+            animation: burn 0.5s infinite alternate;
+            transition: filter 1s ease, text-shadow 1s ease;
+        }
+
+        .streak-text {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #d63031;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        /* Các cấp độ màu lửa */
+        /* Cấp 1: Cam vàng (Mặc định) */
+        .fire-lvl-1 { 
+            filter: drop-shadow(0 0 5px #f1c40f); 
+            color: #e67e22; 
+        }
+        /* Cấp 2: Đỏ rực */
+        .fire-lvl-2 { 
+            filter: drop-shadow(0 0 8px #c0392b); 
+            color: #e74c3c; 
+        }
+        /* Cấp 3: Xanh tím (Lửa nhiệt độ cao nhất) */
+        .fire-lvl-3 { 
+            filter: drop-shadow(0 0 10px #8e44ad); 
+            color: #3498db; 
+        }
+
+        @keyframes burn {
+            0% { transform: scale(1) rotate(-2deg); opacity: 0.9; }
+            100% { transform: scale(1.15) rotate(2deg); opacity: 1; }
+        }
+
+        audio { width: 100%; height: 40px; margin-top: 10px; border-radius: 20px; opacity: 0.9; }
+
         .copyright { margin-top: 20px; font-size: 0.85rem; color: #888; font-weight: 600; letter-spacing: 0.5px; }
         .copyright span { color: #e74c3c; }
 
-        /* Dòng hướng dẫn nổi bật */
         .hint { 
             margin-top: 10px; font-size: 0.9rem; color: #d63031; 
             font-weight: bold; animation: pulseText 2s infinite; 
@@ -74,19 +120,20 @@
         @keyframes titleColor { 0% { color: #d63031; } 100% { color: #e84393; } }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
         @keyframes heartbeat { 0% { transform: scale(1); } 14% { transform: scale(1.2); } 28% { transform: scale(1); } 42% { transform: scale(1.2); } 70% { transform: scale(1); } }
-        
+
         .click-heart { position: absolute; font-size: 20px; white-space: nowrap; font-weight: bold; color: #d63031; pointer-events: none; animation: flyUpClick 1.5s ease-out forwards; z-index: 100; text-shadow: 0 0 5px rgba(255,255,255,0.9); }
         @keyframes flyUpClick { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -150px) scale(1.5); opacity: 0; } }
-        
+
         .music-heart { position: fixed; bottom: -50px; pointer-events: none; z-index: 1; animation: floatUpMusic linear forwards; opacity: 0.8; will-change: transform, opacity; }
         @keyframes floatUpMusic { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; } }
-        
+
         @media (max-width: 480px) { h1 { font-size: 2.2rem; } .time-box { min-width: 60px; padding: 8px; } .time-box span { font-size: 1.5rem; } .container { padding: 30px 20px; } }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="mainBox">
         <div class="heart-icon">🫀</div>
+        
         <h1>Chúng mình đã quen nhau</h1>
 
         <div id="clock">
@@ -94,6 +141,11 @@
             <div class="time-box"> <span id="hours">00</span> <p>Giờ</p> </div>
             <div class="time-box"> <span id="minutes">00</span> <p>Phút</p> </div>
             <div class="time-box"> <span id="seconds">00</span> <p>Giây</p> </div>
+        </div>
+
+        <div class="fire-container">
+            <div id="fireIcon" class="fire-icon">🔥</div>
+            <div id="fireText" class="streak-text">Giữ lửa!</div>
         </div>
 
         <p class="date-start">10:50 - 24/12/2025</p>
@@ -104,25 +156,25 @@
         </audio>
 
         <p class="copyright">Có Thể Hay Không <> 可不可以</p>
-        
+
         <p class="hint">( Nhấp 2 lần vào màn hình )</p>
     </div>
 
     <script>
-        /* --- CẤU HÌNH NGÀY (An toàn tuyệt đối) --- */
-        // Cú pháp: new Date(Năm, Tháng - 1, Ngày, Giờ, Phút)
-        // Tháng 12 thì điền số 11 (vì máy tính đếm từ 0)
+        /* --- NGÀY: 24/12/2025 --- */
         const startDate = new Date(2025, 11, 24, 10, 50, 0).getTime();
 
         function updateCounter() {
             const now = new Date().getTime();
             const distance = now - startDate;
-            
+
             if (distance < 0) {
+                 // Nếu chưa đến ngày thì set 0 hết
                  document.getElementById("days").innerText = "00";
                  document.getElementById("hours").innerText = "00";
                  document.getElementById("minutes").innerText = "00";
                  document.getElementById("seconds").innerText = "00";
+                 updateFireLevel(0); // Lửa tắt hoặc level 0
                  return;
             }
 
@@ -135,14 +187,50 @@
             document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
             document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
             document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
+
+            // Cập nhật màu lửa dựa trên số ngày
+            updateFireLevel(days);
         }
+
+        /* --- HÀM ĐỔI MÀU LỬA THEO MỐC --- */
+        function updateFireLevel(dayCount) {
+            const fire = document.getElementById('fireIcon');
+            const text = document.getElementById('fireText');
+            const box = document.getElementById('mainBox');
+            
+            // Xóa các class cũ
+            fire.classList.remove('fire-lvl-1', 'fire-lvl-2', 'fire-lvl-3');
+
+            if (dayCount < 30) {
+                // Mốc 1: Dưới 1 tháng -> Màu Cam
+                fire.classList.add('fire-lvl-1');
+                text.innerText = "Giữ lửa! 🔥";
+                text.style.color = "#e67e22";
+            } 
+            else if (dayCount < 100) {
+                // Mốc 2: Dưới 100 ngày -> Màu Đỏ
+                fire.classList.add('fire-lvl-2');
+                text.innerText = "Cháy rực rỡ! 🔥";
+                text.style.color = "#c0392b";
+                // Viền khung cũng đổi màu theo
+                box.style.border = "2px solid rgba(231, 76, 60, 0.8)";
+            } 
+            else {
+                // Mốc 3: Trên 100 ngày -> Màu Xanh (Lửa xanh là nóng nhất)
+                fire.classList.add('fire-lvl-3');
+                text.innerText = "Tình yêu bất diệt! 💎";
+                text.style.color = "#2980b9";
+                box.style.border = "2px solid rgba(52, 152, 219, 0.8)";
+            }
+        }
+
         setInterval(updateCounter, 1000);
         updateCounter();
 
         /* --- CÁC TÍNH NĂNG KHÁC (GIỮ NGUYÊN) --- */
         const audio = document.getElementById('myAudio');
         let heartInterval;
-        
+
         function createMusicHeart() {
             const heart = document.createElement('div');
             heart.classList.add('music-heart');
@@ -162,11 +250,11 @@
             }
         };
         audio.onpause = function() { clearInterval(heartInterval); heartInterval = null; };
-        
+
         document.body.addEventListener('click', function() { if(audio.paused) audio.play(); }, { once: true });
 
         document.addEventListener('dblclick', function(e) { createClickHeart(e.pageX, e.pageY); });
-        
+
         let lastTap = 0;
         document.addEventListener('touchend', function(e) {
             const currentTime = new Date().getTime();
