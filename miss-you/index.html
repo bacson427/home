@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS CƠ BẢN --- */
+        /* --- CSS TỐI ƯU --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
 
         body {
@@ -41,51 +41,62 @@
 
         #clock { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
 
-        /* QUAN TRỌNG: position: relative để tim bay ra từ trong ô này */
+        /* Ô THỜI GIAN */
         .time-box { 
             position: relative; 
             background: #ffffff; padding: 8px; border-radius: 12px; min-width: 65px; 
             box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
-            /* overflow: hidden; -> Bỏ dòng này để tim bay hẳn ra ngoài cho đẹp */
         }
         
         .time-box span { font-size: 1.6rem; font-weight: 800; color: #e84393; display: block; position: relative; z-index: 2; }
         .time-box p { font-size: 0.8rem; color: #636e72; font-weight: 600; margin-top: 5px; text-transform: uppercase; position: relative; z-index: 2; }
 
-        /* --- CSS CHO TIM BAY TỪ TRONG Ô --- */
+        /* --- CẢI TIẾN HIỆU ỨNG 1: TIM BAY LƯỢN LỜ --- */
         .box-heart {
             position: absolute;
             left: 50%;
-            bottom: 20%; /* Xuất phát từ giữa ô */
+            bottom: 10px;
             transform: translateX(-50%);
             pointer-events: none;
-            z-index: 1; /* Nằm dưới số */
-            animation: popUpAndFly 1.2s ease-out forwards;
+            z-index: 1; /* Bay sau số */
+            opacity: 0;
+            /* Animation dùng biến --tx và --rot (random bằng JS) để bay ngẫu nhiên */
+            animation: floatBubble 1.5s ease-out forwards;
         }
 
-        @keyframes popUpAndFly {
+        @keyframes floatBubble {
             0% {
-                bottom: 20%;
+                bottom: 10px;
                 opacity: 0;
-                transform: translateX(-50%) scale(0.5);
+                transform: translateX(-50%) scale(0.3) rotate(0deg);
             }
-            20% {
+            30% {
                 opacity: 1;
-                transform: translateX(-50%) scale(1.2);
+                transform: translateX(calc(-50% + var(--tx))) scale(1.2) rotate(var(--rot));
             }
             100% {
-                bottom: 150%; /* Bay lên cao hẳn ra ngoài ô */
+                bottom: 150%; /* Bay cao quá đầu ô */
                 opacity: 0;
-                transform: translateX(-50%) scale(1);
+                transform: translateX(calc(-50% + var(--tx) * 1.5)) scale(0.8) rotate(calc(var(--rot) * 2));
             }
         }
 
-        /* Màu sắc tim từng loại */
-        .heart-s { font-size: 20px; color: #ff7675; } /* Giây */
-        .heart-m { font-size: 30px; color: #d63031; font-weight: bold; } /* Phút */
-        .heart-h { font-size: 40px; color: #a29bfe; font-weight: bold; } /* Giờ */
-        .heart-d { font-size: 50px; color: #e17055; font-weight: bold; text-shadow: 0 0 5px #ff7675; } /* Ngày */
+        /* Màu sắc tim */
+        .heart-s { font-size: 22px; color: #ff7675; } 
+        .heart-m { font-size: 32px; color: #d63031; font-weight: bold; } 
+        .heart-h { font-size: 42px; color: #a29bfe; font-weight: bold; } 
+        .heart-d { font-size: 52px; color: #e17055; font-weight: bold; text-shadow: 0 0 5px #ff7675; }
 
+        /* --- HIỆU ỨNG 2: HOA BAY TỪ ĐÁY (Giữ nguyên) --- */
+        .music-heart { 
+            position: fixed; bottom: -50px; pointer-events: none; z-index: 1; 
+            animation: floatUpMusic linear forwards; opacity: 0.8; 
+            will-change: transform, opacity; 
+        }
+        @keyframes floatUpMusic { 
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; } 
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; } 
+        }
 
         .date-start { 
             font-size: 1.1rem; font-weight: 800; 
@@ -105,10 +116,7 @@
         .copyright { margin-top: 15px; font-size: 0.8rem; color: #888; font-weight: 600; }
         .copyright span { color: #e74c3c; }
 
-        .hint { 
-            margin-top: 8px; font-size: 0.85rem; color: #d63031; 
-            font-weight: bold; animation: pulseText 2s infinite; 
-        }
+        .hint { margin-top: 8px; font-size: 0.85rem; color: #d63031; font-weight: bold; animation: pulseText 2s infinite; }
         @keyframes pulseText { 0% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.7; transform: scale(1); } }
 
         @keyframes titleColor { 0% { color: #d63031; } 100% { color: #e84393; } }
@@ -161,7 +169,6 @@
         /* --- NGÀY: 24/12/2025 --- */
         const startDate = new Date(2025, 11, 24, 10, 50, 0).getTime();
 
-        // Biến lưu giá trị cũ để so sánh
         let prevMin = -1;
         let prevHour = -1;
         let prevDay = -1;
@@ -179,59 +186,71 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            // Cập nhật số
             document.getElementById("days").innerText = days;
             document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
             document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
             document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
 
-            /* --- LOGIC BẮN TIM VÀO ĐÚNG Ô --- */
-            
-            // 1. Giây: Luôn bắn vào ô giây (vì giây chạy liên tục)
+            /* --- HIỆU ỨNG 1: TIM BAY NGẪU NHIÊN --- */
             spawnHeartInBox('box-seconds', 'heart-s', '❤️');
-
-            // 2. Phút: Chỉ bắn vào ô phút khi nhảy số
-            if (prevMin !== -1 && minutes !== prevMin) {
-                spawnHeartInBox('box-minutes', 'heart-m', '💗');
-            }
+            if (prevMin !== -1 && minutes !== prevMin) spawnHeartInBox('box-minutes', 'heart-m', '💗');
             prevMin = minutes;
-
-            // 3. Giờ: Chỉ bắn vào ô giờ khi nhảy số
-            if (prevHour !== -1 && hours !== prevHour) {
-                spawnHeartInBox('box-hours', 'heart-h', '💖');
-            }
+            if (prevHour !== -1 && hours !== prevHour) spawnHeartInBox('box-hours', 'heart-h', '💖');
             prevHour = hours;
-
-            // 4. Ngày: Chỉ bắn vào ô ngày khi nhảy số
-            if (prevDay !== -1 && days !== prevDay) {
-                spawnHeartInBox('box-days', 'heart-d', '💝');
-            }
+            if (prevDay !== -1 && days !== prevDay) spawnHeartInBox('box-days', 'heart-d', '💝');
             prevDay = days;
         }
 
-        // Hàm tạo tim bên trong hộp
         function spawnHeartInBox(boxId, className, icon) {
             const box = document.getElementById(boxId);
             if (!box) return;
-
             const heart = document.createElement('div');
             heart.classList.add('box-heart', className);
             heart.innerText = icon;
             
-            // Thêm tim vào trong hộp
+            // Random độ lệch ngang (tx) từ -15px đến 15px
+            const tx = (Math.random() - 0.5) * 30 + 'px';
+            // Random góc xoay (rot) từ -30deg đến 30deg
+            const rot = (Math.random() - 0.5) * 60 + 'deg';
+            
+            // Gán biến CSS cho element này
+            heart.style.setProperty('--tx', tx);
+            heart.style.setProperty('--rot', rot);
+            
             box.appendChild(heart);
-
-            // Xóa tim sau 1.2s (khi animation xong)
-            setTimeout(() => { heart.remove(); }, 1200);
+            setTimeout(() => { heart.remove(); }, 1500); // Khớp với thời gian animation
         }
 
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        /* --- CÁC TÍNH NĂNG KHÁC (GIỮ NGUYÊN) --- */
+        /* --- HIỆU ỨNG 2: HOA BAY KHI CÓ NHẠC --- */
         const audio = document.getElementById('myAudio');
+        let heartInterval;
+
+        function createMusicHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('music-heart');
+            const icons = ['💐', '🌺', '🥀', '🌹', '🌷', '🌸', '✨'];
+            heart.innerText = icons[Math.floor(Math.random() * icons.length)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            const size = Math.random() * 20 + 20;
+            heart.style.fontSize = size + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 4) + 's'; 
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 7000);
+        }
+
+        audio.onplay = function() { 
+            if (!heartInterval) {
+                heartInterval = setInterval(createMusicHeart, 900); 
+            }
+        };
+        audio.onpause = function() { clearInterval(heartInterval); heartInterval = null; };
+
         document.body.addEventListener('click', function() { if(audio.paused) audio.play(); }, { once: true });
 
+        /* --- TÍNH NĂNG 3: DOUBLE TAP --- */
         document.addEventListener('dblclick', function(e) { createClickHeart(e.pageX, e.pageY); });
         
         let lastTap = 0;
