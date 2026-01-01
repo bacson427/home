@@ -7,20 +7,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS TỐI ƯU --- */
+        /* --- CSS TỐI ƯU - DARK MODE --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
 
         body {
-            /* --- NỀN ĐỘNG ĐA SẮC LÃNG MẠN MỚI --- */
-            /* Sử dụng dải màu rộng hơn: Hồng, Cam, Tím, Xanh nhạt pha trộn */
-            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #ffd1ff, #a18cd1, #fbc2eb, #a6c1ee);
-            /* Tăng kích thước để màu chuyển mượt mà hơn */
-            background-size: 600% 600%; 
-            /* Thời gian chuyển động chậm rãi (25s) */
-            animation: gradientBG 25s ease infinite; 
+            /* NỀN ĐỘNG DARK MODE: Tím than -> Đen */
+            background: linear-gradient(to bottom, #2c003e, #000000);
+            background-size: 300% 300%; 
+            animation: gradientBG 20s ease infinite; 
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
             font-family: 'Quicksand', sans-serif; overflow: hidden; position: relative;
+            color: #ffade3; /* Màu chữ chung là hồng nhạt */
         }
 
         @keyframes gradientBG { 
@@ -30,55 +28,46 @@
         }
 
         .container {
-            text-align: center; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px);
-            padding: 30px 25px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            max-width: 500px; width: 90%; border: 2px solid rgba(255, 255, 255, 0.95);
+            text-align: center; 
+            /* Nền khung màu đen mờ */
+            background: rgba(0, 0, 0, 0.7); 
+            backdrop-filter: blur(12px);
+            padding: 30px 25px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            max-width: 500px; width: 90%; 
+            /* Viền màu tím hồng nhạt */
+            border: 2px solid rgba(255, 173, 227, 0.3);
             animation: float 6s ease-in-out infinite; position: relative; z-index: 10;
         }
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
-        /* --- CSS CHO 2 TRÁI TIM CÂN XỨNG MỚI --- */
-        .heart-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px; /* Khoảng cách giữa 2 tim */
-            margin-bottom: 5px;
-        }
-
-        .heart-icon { 
-            font-size: 50px; 
-            /* Xóa màu cứng để dùng màu tự nhiên của emoji 🫀 */
-            text-shadow: 0 0 20px rgba(231, 76, 60, 0.6); /* Tăng bóng đổ cho rực rỡ */
-        }
-
-        /* Tim trái nghiêng trái */
+        /* --- CSS CHO 2 TRÁI TIM CÂN XỨNG --- */
+        .heart-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 5px; }
+        .heart-icon { font-size: 50px; text-shadow: 0 0 20px rgba(255, 118, 117, 0.6); }
         .heart-left { animation: heartbeatLeft 1.5s ease-in-out infinite; }
-        /* Tim phải nghiêng phải (đối xứng) */
         .heart-right { animation: heartbeatRight 1.5s ease-in-out infinite; }
+        @keyframes heartbeatLeft { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.2) rotate(-10deg); } }
+        @keyframes heartbeatRight { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.2) rotate(10deg); } }
 
-        @keyframes heartbeatLeft {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.2) rotate(-10deg); }
-        }
-        @keyframes heartbeatRight {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.2) rotate(10deg); }
-        }
-
-        h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 15px; color: #d63031; line-height: 1.2; animation: titleColor 8s infinite alternate; }
+        /* Tiêu đề màu hồng đỏ */
+        h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 15px; color: #ff7675; line-height: 1.2; animation: titleColor 8s infinite alternate; }
 
         #clock { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
 
-        /* Ô THỜI GIAN */
+        /* Ô THỜI GIAN DARK MODE */
         .time-box { 
             position: relative; 
-            background: #ffffff; padding: 8px; border-radius: 12px; min-width: 65px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
+            /* Nền ô màu xám đen */
+            background: rgba(50, 50, 50, 0.8); 
+            padding: 8px; border-radius: 12px; min-width: 65px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+            border: 1px solid rgba(255, 173, 227, 0.2);
         }
         
+        /* Số màu hồng đậm */
         .time-box span { font-size: 1.6rem; font-weight: 800; color: #e84393; display: block; position: relative; z-index: 2; }
-        .time-box p { font-size: 0.8rem; color: #636e72; font-weight: 600; margin-top: 5px; text-transform: uppercase; position: relative; z-index: 2; }
+        /* Chữ (Ngày, Giờ...) màu hồng nhạt */
+        .time-box p { font-size: 0.8rem; color: #ffade3; font-weight: 600; margin-top: 5px; text-transform: uppercase; position: relative; z-index: 2; }
 
         /* HIỆU ỨNG 1: TIM BAY LƯỢN LỜ */
         .box-heart {
@@ -86,53 +75,42 @@
             pointer-events: none; z-index: 1; opacity: 0;
             animation: floatBubble 1.5s ease-out forwards;
         }
-
         @keyframes floatBubble {
             0% { bottom: 10px; opacity: 0; transform: translateX(-50%) scale(0.3) rotate(0deg); }
             30% { opacity: 1; transform: translateX(calc(-50% + var(--tx))) scale(1.2) rotate(var(--rot)); }
             100% { bottom: 150%; opacity: 0; transform: translateX(calc(-50% + var(--tx) * 1.5)) scale(0.8) rotate(calc(var(--rot) * 2)); }
         }
-
         .heart-s { font-size: 22px; color: #ff7675; } 
         .heart-m { font-size: 32px; color: #d63031; font-weight: bold; } 
         .heart-h { font-size: 42px; color: #a29bfe; font-weight: bold; } 
         .heart-d { font-size: 52px; color: #e17055; font-weight: bold; text-shadow: 0 0 5px #ff7675; }
 
         /* HIỆU ỨNG 2: HOA BAY TỪ ĐÁY */
-        .music-heart { 
-            position: fixed; bottom: -50px; pointer-events: none; z-index: 1; 
-            animation: floatUpMusic linear forwards; opacity: 0.8; 
-            will-change: transform, opacity; 
-        }
-        @keyframes floatUpMusic { 
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; } 
-            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; } 
-        }
+        .music-heart { position: fixed; bottom: -50px; pointer-events: none; z-index: 1; animation: floatUpMusic linear forwards; opacity: 0.8; will-change: transform, opacity; }
+        @keyframes floatUpMusic { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; } }
 
+        /* Ngày bắt đầu Dark Mode */
         .date-start { 
             font-size: 1.1rem; font-weight: 800; 
-            background: rgba(255, 255, 255, 0.8); 
+            background: rgba(50, 50, 50, 0.8); /* Nền tối */
+            color: #ff7675; /* Chữ hồng */
             display: inline-block; padding: 8px 25px; border-radius: 30px; 
             margin-bottom: 15px; letter-spacing: 1px;
-            animation: rainbowSlow 10s linear infinite;
+            border: 1px solid rgba(255, 173, 227, 0.2);
         }
 
-        @keyframes rainbowSlow {
-            0% { color: #ff7675; } 20% { color: #d63031; } 40% { color: #e84393; } 
-            60% { color: #6c5ce7; } 80% { color: #0984e3; } 100% { color: #ff7675; }
-        }
+        /* Thanh nhạc nền tối */
+        audio { width: 100%; height: 35px; margin-top: 5px; border-radius: 20px; opacity: 0.9; background-color: rgba(50,50,50,0.8); }
 
-        audio { width: 100%; height: 35px; margin-top: 5px; border-radius: 20px; opacity: 0.9; }
+        .copyright { margin-top: 15px; font-size: 0.8rem; color: #ffade3; font-weight: 600; }
+        .copyright span { color: #ff7675; }
 
-        .copyright { margin-top: 15px; font-size: 0.8rem; color: #888; font-weight: 600; }
-        .copyright span { color: #e74c3c; }
-
-        .hint { margin-top: 8px; font-size: 0.85rem; color: #d63031; font-weight: bold; animation: pulseText 2s infinite; }
+        .hint { margin-top: 8px; font-size: 0.85rem; color: #ff7675; font-weight: bold; animation: pulseText 2s infinite; }
         @keyframes pulseText { 0% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.7; transform: scale(1); } }
 
-        @keyframes titleColor { 0% { color: #d63031; } 100% { color: #e84393; } }
+        @keyframes titleColor { 0% { color: #ff7675; } 100% { color: #e84393; } }
         
-        .click-heart { position: absolute; font-size: 20px; white-space: nowrap; font-weight: bold; color: #d63031; pointer-events: none; animation: flyUpClick 1.5s ease-out forwards; z-index: 100; text-shadow: 0 0 5px rgba(255,255,255,0.9); }
+        .click-heart { position: absolute; font-size: 20px; white-space: nowrap; font-weight: bold; color: #ff7675; pointer-events: none; animation: flyUpClick 1.5s ease-out forwards; z-index: 100; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
         @keyframes flyUpClick { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -150px) scale(1.5); opacity: 0; } }
 
         @media (max-width: 480px) { 
