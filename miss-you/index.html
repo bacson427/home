@@ -7,13 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CẤU HÌNH MÀU LỬA MẶC ĐỊNH (Level 1) --- */
-        :root {
-            --fire-base: #ff9f43; /* Màu chân lửa */
-            --fire-mid: #ff6b6b;  /* Màu thân lửa */
-            --fire-tip: #feca57;  /* Màu ngọn lửa */
-        }
-
         /* --- CSS TỐI ƯU --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
 
@@ -38,8 +31,6 @@
             padding: 30px 25px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
             max-width: 500px; width: 90%; border: 2px solid rgba(255, 255, 255, 0.95);
             animation: float 6s ease-in-out infinite; position: relative; z-index: 10;
-            will-change: transform;
-            transition: border-color 1s ease;
         }
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
@@ -48,7 +39,7 @@
 
         h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 15px; color: #d63031; line-height: 1.2; animation: titleColor 8s infinite alternate; }
 
-        #clock { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
+        #clock { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
 
         .time-box { background: #ffffff; padding: 8px; border-radius: 12px; min-width: 65px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); animation: breathe 4s infinite ease-in-out; }
         .time-box span { font-size: 1.6rem; font-weight: 800; color: #e84393; display: block; }
@@ -67,68 +58,44 @@
             60% { color: #6c5ce7; } 80% { color: #0984e3; } 100% { color: #ff7675; }
         }
 
-        /* --- STYLE LỬA MỚI (KHÔNG DÙNG GOO FILTER) --- */
-        /* Đây là kiểu lửa vẽ bằng hình học, sắc nét và giống thật hơn */
-        .fire-wrapper {
-            position: relative;
-            width: 60px; height: 60px;
-            margin: 0 auto 10px auto; /* Căn giữa */
-            display: flex; justify-content: center; align-items: flex-end;
+        /* --- CSS CHO CÁC LOẠI TIM --- */
+        .timed-heart {
+            position: fixed;
+            bottom: -50px;
+            pointer-events: none;
+            z-index: 1;
+            animation: flyUp 4s linear forwards;
+            opacity: 0.9;
         }
 
-        .flame {
-            position: absolute;
-            bottom: 0;
-            border-radius: 50% 0 50% 50%; /* Hình giọt nước nhọn */
-            transform: rotate(-45deg);
-            transition: all 0.5s ease;
+        @keyframes flyUp {
+            0% { transform: translateY(0) scale(1); opacity: 0.8; }
+            100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
         }
 
-        /* Lớp ngoài cùng (To nhất) */
-        .flame.red {
-            width: 40px; height: 40px;
-            background: var(--fire-base);
-            box-shadow: 0 0 10px 2px rgba(0,0,0,0.1);
-            animation: flicker 3s ease-in-out infinite alternate;
+        /* 1. Tim giây (Nhỏ, bay nhanh) */
+        .heart-sec { font-size: 15px; color: #ff9f43; animation-duration: 3s; z-index: 1; }
+        
+        /* 2. Tim phút (Vừa, bay vừa) */
+        .heart-min { font-size: 35px; color: #ff6b6b; animation-duration: 5s; z-index: 2; text-shadow: 0 0 5px #ff6b6b; }
+
+        /* 3. Tim giờ (Lớn, bay chậm) */
+        .heart-hour { font-size: 60px; color: #5f27cd; animation-duration: 7s; z-index: 3; text-shadow: 0 0 10px #5f27cd; }
+
+        /* 4. Tim ngày (Khổng lồ, bay siêu chậm, lộng lẫy) */
+        .heart-day { 
+            font-size: 100px; 
+            color: #e74c3c; 
+            animation: flyUpDay 10s linear forwards; 
+            z-index: 5; 
+            text-shadow: 0 0 20px #c0392b; 
+            left: 50% !important; /* Luôn bay giữa màn hình */
+            transform: translateX(-50%);
         }
 
-        /* Lớp giữa (Vừa) */
-        .flame.orange {
-            width: 28px; height: 28px;
-            background: var(--fire-mid);
-            bottom: 4px;
-            animation: flicker 2s ease-in-out infinite alternate-reverse;
-        }
-
-        /* Lớp trong cùng (Nhỏ, sáng nhất) */
-        .flame.gold {
-            width: 16px; height: 16px;
-            background: var(--fire-tip);
-            bottom: 8px;
-            animation: flicker 1.5s ease-in-out infinite alternate;
-        }
-
-        /* Hiệu ứng bập bùng */
-        @keyframes flicker {
-            0% { transform: rotate(-45deg) scale(1, 1) skew(0deg); }
-            25% { transform: rotate(-43deg) scale(1.05, 0.95) skew(2deg); }
-            50% { transform: rotate(-47deg) scale(0.95, 1.05) skew(-2deg); }
-            75% { transform: rotate(-44deg) scale(1.02, 0.98) skew(1deg); }
-            100% { transform: rotate(-46deg) scale(0.98, 1.02) skew(-1deg); }
-        }
-
-        /* --- CÁC CẤP ĐỘ MÀU LỬA (JS sẽ gọi class này) --- */
-        /* Cấp 2: Đỏ cháy rực (>30 ngày) */
-        .lvl-2 {
-            --fire-base: #c0392b; 
-            --fire-mid: #e74c3c;
-            --fire-tip: #ff7979;
-        }
-        /* Cấp 3: Xanh ma thuật (>100 ngày) */
-        .lvl-3 {
-            --fire-base: #2c3e50;
-            --fire-mid: #3498db;
-            --fire-tip: #a29bfe;
+        @keyframes flyUpDay {
+            0% { bottom: -120px; opacity: 1; transform: translateX(-50%) scale(0.5); }
+            100% { bottom: 110vh; opacity: 0; transform: translateX(-50%) scale(1.5); }
         }
 
         audio { width: 100%; height: 35px; margin-top: 5px; border-radius: 20px; opacity: 0.9; }
@@ -148,9 +115,6 @@
 
         .click-heart { position: absolute; font-size: 20px; white-space: nowrap; font-weight: bold; color: #d63031; pointer-events: none; animation: flyUpClick 1.5s ease-out forwards; z-index: 100; text-shadow: 0 0 5px rgba(255,255,255,0.9); }
         @keyframes flyUpClick { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -150px) scale(1.5); opacity: 0; } }
-
-        .music-heart { position: fixed; bottom: -50px; pointer-events: none; z-index: 1; animation: floatUpMusic linear forwards; opacity: 0.8; will-change: transform, opacity; }
-        @keyframes floatUpMusic { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; } }
 
         @media (max-width: 480px) { 
             h1 { font-size: 2rem; } 
@@ -173,12 +137,6 @@
             <div class="time-box"> <span id="seconds">00</span> <p>Giây</p> </div>
         </div>
 
-        <div class="fire-wrapper" id="fireWrapper">
-            <div class="flame red"></div>
-            <div class="flame orange"></div>
-            <div class="flame gold"></div>
-        </div>
-
         <p class="date-start">10:50 - 24/12/2025</p>
 
         <audio id="myAudio" controls loop autoplay>
@@ -194,16 +152,17 @@
         /* --- NGÀY: 24/12/2025 --- */
         const startDate = new Date(2025, 11, 24, 10, 50, 0).getTime();
 
+        // Biến lưu trạng thái cũ để so sánh
+        let prevMin = -1;
+        let prevHour = -1;
+        let prevDay = -1;
+
         function updateCounter() {
             const now = new Date().getTime();
             const distance = now - startDate;
 
             if (distance < 0) {
                  document.getElementById("days").innerText = "00";
-                 document.getElementById("hours").innerText = "00";
-                 document.getElementById("minutes").innerText = "00";
-                 document.getElementById("seconds").innerText = "00";
-                 updateFireLevel(0); 
                  return;
             }
 
@@ -212,68 +171,80 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
+            // Cập nhật giao diện
             document.getElementById("days").innerText = days;
             document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
             document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
             document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
 
-            updateFireLevel(days);
+            /* --- LOGIC TIM BAY THEO THỜI GIAN --- */
+            
+            // 1. Giây: Luôn bay mỗi lần hàm chạy (1s/lần)
+            spawnHeart('sec');
+
+            // 2. Phút: Chỉ bay khi số phút thay đổi
+            if (prevMin !== -1 && minutes !== prevMin) {
+                spawnHeart('min');
+            }
+            prevMin = minutes;
+
+            // 3. Giờ: Chỉ bay khi số giờ thay đổi
+            if (prevHour !== -1 && hours !== prevHour) {
+                spawnHeart('hour');
+            }
+            prevHour = hours;
+
+            // 4. Ngày: Chỉ bay khi số ngày thay đổi
+            if (prevDay !== -1 && days !== prevDay) {
+                spawnHeart('day');
+            }
+            prevDay = days;
         }
 
-        /* --- HÀM ĐỔI MÀU LỬA --- */
-        function updateFireLevel(dayCount) {
-            const fireWrapper = document.getElementById('fireWrapper');
-            const box = document.getElementById('mainBox');
+        // Hàm tạo tim bay
+        function spawnHeart(type) {
+            const heart = document.createElement('div');
+            heart.classList.add('timed-heart');
             
-            // Xóa class cũ
-            fireWrapper.classList.remove('lvl-2', 'lvl-3');
-
-            // Mặc định là Level 1 (Cam vàng) - Không cần add class
-            box.style.border = "2px solid rgba(255, 255, 255, 0.95)";
-
-            if (dayCount >= 30 && dayCount < 100) {
-                // Level 2: Đỏ
-                fireWrapper.classList.add('lvl-2');
-                box.style.border = "2px solid rgba(231, 76, 60, 0.8)"; 
+            // Icon tim ngẫu nhiên
+            const icons = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🤎', '🖤', '🤍'];
+            
+            if (type === 'sec') {
+                heart.innerText = '❤️'; // Giây thì tim đỏ nhỏ
+                heart.classList.add('heart-sec');
+                heart.style.left = Math.random() * 100 + 'vw';
             } 
-            else if (dayCount >= 100) {
-                // Level 3: Xanh
-                fireWrapper.classList.add('lvl-3');
-                box.style.border = "2px solid rgba(52, 152, 219, 0.8)";
+            else if (type === 'min') {
+                heart.innerText = icons[Math.floor(Math.random() * icons.length)];
+                heart.classList.add('heart-min');
+                heart.style.left = Math.random() * 90 + 5 + 'vw'; // Không quá sát mép
             }
+            else if (type === 'hour') {
+                heart.innerText = '💖';
+                heart.classList.add('heart-hour');
+                heart.style.left = Math.random() * 80 + 10 + 'vw';
+            }
+            else if (type === 'day') {
+                heart.innerText = '💝'; // Tim ngày đặc biệt
+                heart.classList.add('heart-day');
+                // Vị trí day luôn ở giữa (đã set trong CSS)
+            }
+
+            document.body.appendChild(heart);
+
+            // Xóa sau khi bay xong
+            setTimeout(() => { heart.remove(); }, 10000);
         }
 
         setInterval(updateCounter, 1000);
-        updateCounter();
+        updateCounter(); // Chạy ngay lần đầu
 
         /* --- CÁC TÍNH NĂNG KHÁC (GIỮ NGUYÊN) --- */
         const audio = document.getElementById('myAudio');
-        let heartInterval;
-
-        function createMusicHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('music-heart');
-            const icons = ['💐', '🌺', '🥀', '🌹', '🌷'];
-            heart.innerText = icons[Math.floor(Math.random() * icons.length)];
-            heart.style.left = Math.random() * 100 + 'vw';
-            const size = Math.random() * 20 + 20;
-            heart.style.fontSize = size + 'px';
-            heart.style.animationDuration = (Math.random() * 3 + 4) + 's'; 
-            document.body.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 7000);
-        }
-
-        audio.onplay = function() { 
-            if (!heartInterval) {
-                heartInterval = setInterval(createMusicHeart, 900); 
-            }
-        };
-        audio.onpause = function() { clearInterval(heartInterval); heartInterval = null; };
-
         document.body.addEventListener('click', function() { if(audio.paused) audio.play(); }, { once: true });
 
         document.addEventListener('dblclick', function(e) { createClickHeart(e.pageX, e.pageY); });
-
+        
         let lastTap = 0;
         document.addEventListener('touchend', function(e) {
             const currentTime = new Date().getTime();
