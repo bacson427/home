@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Miss You</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@700&display=swap" rel="stylesheet">
 
     <style>
         /* --- CSS TỐI ƯU --- */
+        :root {
+            /* Định nghĩa màu lửa mặc định (Level 1 - Cam Vàng) */
+            --fire-color-outer: #f39c12; /* Màu viền ngoài */
+            --fire-color-inner: #f1c40f; /* Màu lõi trong */
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
 
         body {
@@ -28,31 +34,30 @@
 
         .container {
             text-align: center; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px);
-            padding: 40px 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            padding: 30px 25px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
             max-width: 500px; width: 90%; border: 2px solid rgba(255, 255, 255, 0.95);
             animation: float 6s ease-in-out infinite; position: relative; z-index: 10;
             will-change: transform;
-            /* Thêm transition cho viền để đổi màu mượt khi lên cấp */
-            transition: box-shadow 1s ease, border-color 1s ease;
+            transition: border-color 1s ease;
         }
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
-        .heart-icon { font-size: 60px; color: #e74c3c; animation: heartbeat 1.5s infinite; margin-bottom: 10px; text-shadow: 0 0 15px rgba(231, 76, 60, 0.4); }
+        .heart-icon { font-size: 50px; color: #e74c3c; animation: heartbeat 1.5s infinite; margin-bottom: 5px; text-shadow: 0 0 15px rgba(231, 76, 60, 0.4); }
 
-        h1 { font-family: 'Dancing Script', cursive; font-size: 2.8rem; margin-bottom: 20px; color: #d63031; line-height: 1.2; animation: titleColor 8s infinite alternate; }
+        h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 15px; color: #d63031; line-height: 1.2; animation: titleColor 8s infinite alternate; }
 
-        #clock { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+        #clock { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
 
-        .time-box { background: #ffffff; padding: 10px; border-radius: 15px; min-width: 68px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); animation: breathe 4s infinite ease-in-out; }
-        .time-box span { font-size: 1.8rem; font-weight: 800; color: #e84393; display: block; }
-        .time-box p { font-size: 0.9rem; color: #636e72; font-weight: 600; margin-top: 5px; text-transform: uppercase; }
+        .time-box { background: #ffffff; padding: 8px; border-radius: 12px; min-width: 65px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); animation: breathe 4s infinite ease-in-out; }
+        .time-box span { font-size: 1.6rem; font-weight: 800; color: #e84393; display: block; }
+        .time-box p { font-size: 0.8rem; color: #636e72; font-weight: 600; margin-top: 5px; text-transform: uppercase; }
 
         .date-start { 
-            font-size: 1.2rem; font-weight: 800; 
+            font-size: 1.1rem; font-weight: 800; 
             background: rgba(255, 255, 255, 0.8); 
             display: inline-block; padding: 8px 25px; border-radius: 30px; 
-            margin-bottom: 20px; letter-spacing: 1px;
+            margin-bottom: 15px; letter-spacing: 1px;
             animation: rainbowSlow 10s linear infinite;
         }
 
@@ -61,58 +66,88 @@
             60% { color: #6c5ce7; } 80% { color: #0984e3; } 100% { color: #ff7675; }
         }
 
-        /* --- CSS CHO NGỌN LỬA (STREAK) --- */
-        .fire-container {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
+        /* --- CSS CHO NGỌN LỬA THẬT (REALISTIC FIRE) --- */
+        .streak-container {
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 15px; gap: 10px;
+            padding: 5px 15px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 20px;
         }
-        
-        .fire-icon {
-            font-size: 35px;
-            /* Hiệu ứng lửa cháy phập phù */
-            animation: burn 0.5s infinite alternate;
-            transition: filter 1s ease, text-shadow 1s ease;
+
+        /* Khung chứa hiệu ứng lửa */
+        .realistic-fire {
+            width: 40px; height: 40px;
+            position: relative;
+            /* Áp dụng SVG filter để làm lửa trông như chất lỏng */
+            filter: url(#goo); 
+        }
+
+        /* Các hạt lửa nhỏ bay lên */
+        .fire-particle {
+            position: absolute;
+            background: var(--fire-color-outer); /* Dùng biến màu */
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+
+        .fire-particle:nth-child(1) { width: 30px; height: 30px; bottom: 0; left: 5px; animation: fireUp 2s ease-in infinite; }
+        .fire-particle:nth-child(2) { width: 25px; height: 25px; bottom: 5px; left: 10px; animation: fireUp 2.5s ease-in infinite 0.2s; }
+        .fire-particle:nth-child(3) { width: 20px; height: 20px; bottom: 2px; left: 15px; animation: fireUp 1.8s ease-in infinite 0.4s; }
+
+        /* Lõi lửa sáng hơn ở giữa */
+        .fire-center {
+            position: absolute;
+            width: 20px; height: 20px;
+            background: var(--fire-color-inner); /* Dùng biến màu lõi */
+            border-radius: 50%;
+            bottom: 2px; left: 10px;
+            animation: firePulse 1s ease-in-out infinite alternate;
+            box-shadow: 0 0 10px var(--fire-color-outer);
+        }
+
+        /* Animation lửa bay lên */
+        @keyframes fireUp {
+            0% { transform: translateY(0) scale(1); opacity: 0.8; }
+            100% { transform: translateY(-40px) scale(0.2); opacity: 0; }
+        }
+        /* Animation lõi lửa phập phồng */
+        @keyframes firePulse {
+            0% { transform: scale(1); opacity: 0.9; }
+            100% { transform: scale(1.2); opacity: 1; }
         }
 
         .streak-text {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #d63031;
-            font-family: 'Quicksand', sans-serif;
+            font-size: 1.1rem; font-weight: 800; font-family: 'Quicksand', sans-serif;
+            transition: color 1s ease;
         }
 
-        /* Các cấp độ màu lửa */
-        /* Cấp 1: Cam vàng (Mặc định) */
-        .fire-lvl-1 { 
-            filter: drop-shadow(0 0 5px #f1c40f); 
-            color: #e67e22; 
-        }
-        /* Cấp 2: Đỏ rực */
-        .fire-lvl-2 { 
-            filter: drop-shadow(0 0 8px #c0392b); 
-            color: #e74c3c; 
-        }
-        /* Cấp 3: Xanh tím (Lửa nhiệt độ cao nhất) */
-        .fire-lvl-3 { 
-            filter: drop-shadow(0 0 10px #8e44ad); 
-            color: #3498db; 
-        }
+        /* --- CÁC CẤP ĐỘ MÀU LỬA (Ghi đè biến màu) --- */
+        /* Cấp 1: Cam vàng (Mặc định - Đã set ở :root) */
+        .fire-lvl-1 .streak-text { color: #e67e22; }
 
-        @keyframes burn {
-            0% { transform: scale(1) rotate(-2deg); opacity: 0.9; }
-            100% { transform: scale(1.15) rotate(2deg); opacity: 1; }
+        /* Cấp 2: Đỏ rực (>30 ngày) */
+        .fire-lvl-2 {
+            --fire-color-outer: #c0392b; /* Đỏ đậm */
+            --fire-color-inner: #e74c3c; /* Đỏ tươi */
         }
+        .fire-lvl-2 .streak-text { color: #c0392b; }
 
-        audio { width: 100%; height: 40px; margin-top: 10px; border-radius: 20px; opacity: 0.9; }
+        /* Cấp 3: Xanh tím (>100 ngày) */
+        .fire-lvl-3 {
+            --fire-color-outer: #8e44ad; /* Tím */
+            --fire-color-inner: #3498db; /* Xanh dương */
+        }
+        .fire-lvl-3 .streak-text { color: #2980b9; }
 
-        .copyright { margin-top: 20px; font-size: 0.85rem; color: #888; font-weight: 600; letter-spacing: 0.5px; }
+
+        audio { width: 100%; height: 35px; margin-top: 5px; border-radius: 20px; opacity: 0.9; }
+
+        .copyright { margin-top: 15px; font-size: 0.8rem; color: #888; font-weight: 600; }
         .copyright span { color: #e74c3c; }
 
         .hint { 
-            margin-top: 10px; font-size: 0.9rem; color: #d63031; 
+            margin-top: 8px; font-size: 0.85rem; color: #d63031; 
             font-weight: bold; animation: pulseText 2s infinite; 
         }
         @keyframes pulseText { 0% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.7; transform: scale(1); } }
@@ -127,13 +162,18 @@
         .music-heart { position: fixed; bottom: -50px; pointer-events: none; z-index: 1; animation: floatUpMusic linear forwards; opacity: 0.8; will-change: transform, opacity; }
         @keyframes floatUpMusic { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; } }
 
-        @media (max-width: 480px) { h1 { font-size: 2.2rem; } .time-box { min-width: 60px; padding: 8px; } .time-box span { font-size: 1.5rem; } .container { padding: 30px 20px; } }
+        @media (max-width: 480px) { 
+            h1 { font-size: 2rem; } 
+            .time-box { min-width: 60px; padding: 8px; } 
+            .time-box span { font-size: 1.4rem; } 
+            .container { padding: 25px 15px; } 
+            .heart-icon { font-size: 45px; }
+        }
     </style>
 </head>
 <body>
     <div class="container" id="mainBox">
         <div class="heart-icon">🫀</div>
-        
         <h1>Chúng mình đã quen nhau</h1>
 
         <div id="clock">
@@ -143,8 +183,13 @@
             <div class="time-box"> <span id="seconds">00</span> <p>Giây</p> </div>
         </div>
 
-        <div class="fire-container">
-            <div id="fireIcon" class="fire-icon">🔥</div>
+        <div class="streak-container fire-lvl-1" id="fireContainer">
+            <div class="realistic-fire">
+                 <div class="fire-particle"></div>
+                 <div class="fire-particle"></div>
+                 <div class="fire-particle"></div>
+                 <div class="fire-center"></div>
+            </div>
             <div id="fireText" class="streak-text">Giữ lửa!</div>
         </div>
 
@@ -156,9 +201,18 @@
         </audio>
 
         <p class="copyright">Có Thể Hay Không <> 可不可以</p>
-
         <p class="hint">( Nhấp 2 lần vào màn hình )</p>
     </div>
+
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;">
+        <defs>
+            <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+                <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
+        </defs>
+    </svg>
 
     <script>
         /* --- NGÀY: 24/12/2025 --- */
@@ -169,12 +223,11 @@
             const distance = now - startDate;
 
             if (distance < 0) {
-                 // Nếu chưa đến ngày thì set 0 hết
                  document.getElementById("days").innerText = "00";
                  document.getElementById("hours").innerText = "00";
                  document.getElementById("minutes").innerText = "00";
                  document.getElementById("seconds").innerText = "00";
-                 updateFireLevel(0); // Lửa tắt hoặc level 0
+                 updateFireLevel(0); 
                  return;
             }
 
@@ -188,39 +241,35 @@
             document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
             document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
 
-            // Cập nhật màu lửa dựa trên số ngày
             updateFireLevel(days);
         }
 
-        /* --- HÀM ĐỔI MÀU LỬA THEO MỐC --- */
+        /* --- HÀM ĐỔI MÀU LỬA THẬT --- */
         function updateFireLevel(dayCount) {
-            const fire = document.getElementById('fireIcon');
+            const fireContainer = document.getElementById('fireContainer');
             const text = document.getElementById('fireText');
             const box = document.getElementById('mainBox');
             
-            // Xóa các class cũ
-            fire.classList.remove('fire-lvl-1', 'fire-lvl-2', 'fire-lvl-3');
+            // Reset class
+            fireContainer.classList.remove('fire-lvl-1', 'fire-lvl-2', 'fire-lvl-3');
 
             if (dayCount < 30) {
-                // Mốc 1: Dưới 1 tháng -> Màu Cam
-                fire.classList.add('fire-lvl-1');
-                text.innerText = "Giữ lửa! 🔥";
-                text.style.color = "#e67e22";
+                // Mốc 1: Cam vàng
+                fireContainer.classList.add('fire-lvl-1');
+                text.innerText = "Giữ lửa!";
+                box.style.border = "2px solid rgba(255, 255, 255, 0.95)"; // Viền trắng mặc định
             } 
             else if (dayCount < 100) {
-                // Mốc 2: Dưới 100 ngày -> Màu Đỏ
-                fire.classList.add('fire-lvl-2');
-                text.innerText = "Cháy rực rỡ! 🔥";
-                text.style.color = "#c0392b";
-                // Viền khung cũng đổi màu theo
-                box.style.border = "2px solid rgba(231, 76, 60, 0.8)";
+                // Mốc 2: Đỏ rực
+                fireContainer.classList.add('fire-lvl-2');
+                text.innerText = "Cháy rực rỡ!";
+                box.style.border = "2px solid rgba(231, 76, 60, 0.8)"; // Viền đỏ
             } 
             else {
-                // Mốc 3: Trên 100 ngày -> Màu Xanh (Lửa xanh là nóng nhất)
-                fire.classList.add('fire-lvl-3');
-                text.innerText = "Tình yêu bất diệt! 💎";
-                text.style.color = "#2980b9";
-                box.style.border = "2px solid rgba(52, 152, 219, 0.8)";
+                // Mốc 3: Xanh tím
+                fireContainer.classList.add('fire-lvl-3');
+                text.innerText = "Bất diệt!";
+                box.style.border = "2px solid rgba(52, 152, 219, 0.8)"; // Viền xanh
             }
         }
 
