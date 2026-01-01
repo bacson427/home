@@ -11,10 +11,13 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
 
         body {
-            /* Nền động màu tình yêu */
-            background: linear-gradient(-45deg, #ff9a44, #fc6076, #833471);
-            background-size: 300% 300%; 
-            animation: gradientBG 20s ease infinite; 
+            /* --- NỀN ĐỘNG ĐA SẮC LÃNG MẠN MỚI --- */
+            /* Sử dụng dải màu rộng hơn: Hồng, Cam, Tím, Xanh nhạt pha trộn */
+            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #ffd1ff, #a18cd1, #fbc2eb, #a6c1ee);
+            /* Tăng kích thước để màu chuyển mượt mà hơn */
+            background-size: 600% 600%; 
+            /* Thời gian chuyển động chậm rãi (25s) */
+            animation: gradientBG 25s ease infinite; 
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
             font-family: 'Quicksand', sans-serif; overflow: hidden; position: relative;
@@ -35,7 +38,33 @@
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
-        .heart-icon { font-size: 50px; color: #e74c3c; animation: heartbeat 1.5s infinite; margin-bottom: 5px; text-shadow: 0 0 15px rgba(231, 76, 60, 0.4); }
+        /* --- CSS CHO 2 TRÁI TIM CÂN XỨNG MỚI --- */
+        .heart-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* Khoảng cách giữa 2 tim */
+            margin-bottom: 5px;
+        }
+
+        .heart-icon { 
+            font-size: 50px; 
+            /* Xóa màu cứng để dùng màu tự nhiên của emoji 🫀 */
+            text-shadow: 0 0 20px rgba(231, 76, 60, 0.6); /* Tăng bóng đổ cho rực rỡ */
+        }
+
+        /* Tim trái nghiêng trái */
+        .heart-left { animation: heartbeatLeft 1.5s ease-in-out infinite; }
+        /* Tim phải nghiêng phải (đối xứng) */
+        .heart-right { animation: heartbeatRight 1.5s ease-in-out infinite; }
+
+        @keyframes heartbeatLeft {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(-10deg); }
+        }
+        @keyframes heartbeatRight {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(10deg); }
+        }
 
         h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 15px; color: #d63031; line-height: 1.2; animation: titleColor 8s infinite alternate; }
 
@@ -51,43 +80,25 @@
         .time-box span { font-size: 1.6rem; font-weight: 800; color: #e84393; display: block; position: relative; z-index: 2; }
         .time-box p { font-size: 0.8rem; color: #636e72; font-weight: 600; margin-top: 5px; text-transform: uppercase; position: relative; z-index: 2; }
 
-        /* --- CẢI TIẾN HIỆU ỨNG 1: TIM BAY LƯỢN LỜ --- */
+        /* HIỆU ỨNG 1: TIM BAY LƯỢN LỜ */
         .box-heart {
-            position: absolute;
-            left: 50%;
-            bottom: 10px;
-            transform: translateX(-50%);
-            pointer-events: none;
-            z-index: 1; /* Bay sau số */
-            opacity: 0;
-            /* Animation dùng biến --tx và --rot (random bằng JS) để bay ngẫu nhiên */
+            position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+            pointer-events: none; z-index: 1; opacity: 0;
             animation: floatBubble 1.5s ease-out forwards;
         }
 
         @keyframes floatBubble {
-            0% {
-                bottom: 10px;
-                opacity: 0;
-                transform: translateX(-50%) scale(0.3) rotate(0deg);
-            }
-            30% {
-                opacity: 1;
-                transform: translateX(calc(-50% + var(--tx))) scale(1.2) rotate(var(--rot));
-            }
-            100% {
-                bottom: 150%; /* Bay cao quá đầu ô */
-                opacity: 0;
-                transform: translateX(calc(-50% + var(--tx) * 1.5)) scale(0.8) rotate(calc(var(--rot) * 2));
-            }
+            0% { bottom: 10px; opacity: 0; transform: translateX(-50%) scale(0.3) rotate(0deg); }
+            30% { opacity: 1; transform: translateX(calc(-50% + var(--tx))) scale(1.2) rotate(var(--rot)); }
+            100% { bottom: 150%; opacity: 0; transform: translateX(calc(-50% + var(--tx) * 1.5)) scale(0.8) rotate(calc(var(--rot) * 2)); }
         }
 
-        /* Màu sắc tim */
         .heart-s { font-size: 22px; color: #ff7675; } 
         .heart-m { font-size: 32px; color: #d63031; font-weight: bold; } 
         .heart-h { font-size: 42px; color: #a29bfe; font-weight: bold; } 
         .heart-d { font-size: 52px; color: #e17055; font-weight: bold; text-shadow: 0 0 5px #ff7675; }
 
-        /* --- HIỆU ỨNG 2: HOA BAY TỪ ĐÁY (Giữ nguyên) --- */
+        /* HIỆU ỨNG 2: HOA BAY TỪ ĐÁY */
         .music-heart { 
             position: fixed; bottom: -50px; pointer-events: none; z-index: 1; 
             animation: floatUpMusic linear forwards; opacity: 0.8; 
@@ -120,8 +131,7 @@
         @keyframes pulseText { 0% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.7; transform: scale(1); } }
 
         @keyframes titleColor { 0% { color: #d63031; } 100% { color: #e84393; } }
-        @keyframes heartbeat { 0% { transform: scale(1); } 14% { transform: scale(1.2); } 28% { transform: scale(1); } 42% { transform: scale(1.2); } 70% { transform: scale(1); } }
-
+        
         .click-heart { position: absolute; font-size: 20px; white-space: nowrap; font-weight: bold; color: #d63031; pointer-events: none; animation: flyUpClick 1.5s ease-out forwards; z-index: 100; text-shadow: 0 0 5px rgba(255,255,255,0.9); }
         @keyframes flyUpClick { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -150px) scale(1.5); opacity: 0; } }
 
@@ -136,7 +146,11 @@
 </head>
 <body>
     <div class="container" id="mainBox">
-        <div class="heart-icon">🫀</div>
+        <div class="heart-container">
+            <div class="heart-icon heart-left">🫀</div>
+            <div class="heart-icon heart-right">🫀</div>
+        </div>
+        
         <h1>Chúng mình đã quen nhau</h1>
 
         <div id="clock">
@@ -208,17 +222,14 @@
             heart.classList.add('box-heart', className);
             heart.innerText = icon;
             
-            // Random độ lệch ngang (tx) từ -15px đến 15px
             const tx = (Math.random() - 0.5) * 30 + 'px';
-            // Random góc xoay (rot) từ -30deg đến 30deg
             const rot = (Math.random() - 0.5) * 60 + 'deg';
             
-            // Gán biến CSS cho element này
             heart.style.setProperty('--tx', tx);
             heart.style.setProperty('--rot', rot);
             
             box.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 1500); // Khớp với thời gian animation
+            setTimeout(() => { heart.remove(); }, 1500);
         }
 
         setInterval(updateCounter, 1000);
