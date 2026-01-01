@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS TỐI ƯU --- */
+        /* --- CSS CƠ BẢN --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
 
         body {
@@ -41,9 +41,51 @@
 
         #clock { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
 
-        .time-box { background: #ffffff; padding: 8px; border-radius: 12px; min-width: 65px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); animation: breathe 4s infinite ease-in-out; }
-        .time-box span { font-size: 1.6rem; font-weight: 800; color: #e84393; display: block; }
-        .time-box p { font-size: 0.8rem; color: #636e72; font-weight: 600; margin-top: 5px; text-transform: uppercase; }
+        /* QUAN TRỌNG: position: relative để tim bay ra từ trong ô này */
+        .time-box { 
+            position: relative; 
+            background: #ffffff; padding: 8px; border-radius: 12px; min-width: 65px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
+            /* overflow: hidden; -> Bỏ dòng này để tim bay hẳn ra ngoài cho đẹp */
+        }
+        
+        .time-box span { font-size: 1.6rem; font-weight: 800; color: #e84393; display: block; position: relative; z-index: 2; }
+        .time-box p { font-size: 0.8rem; color: #636e72; font-weight: 600; margin-top: 5px; text-transform: uppercase; position: relative; z-index: 2; }
+
+        /* --- CSS CHO TIM BAY TỪ TRONG Ô --- */
+        .box-heart {
+            position: absolute;
+            left: 50%;
+            bottom: 20%; /* Xuất phát từ giữa ô */
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 1; /* Nằm dưới số */
+            animation: popUpAndFly 1.2s ease-out forwards;
+        }
+
+        @keyframes popUpAndFly {
+            0% {
+                bottom: 20%;
+                opacity: 0;
+                transform: translateX(-50%) scale(0.5);
+            }
+            20% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.2);
+            }
+            100% {
+                bottom: 150%; /* Bay lên cao hẳn ra ngoài ô */
+                opacity: 0;
+                transform: translateX(-50%) scale(1);
+            }
+        }
+
+        /* Màu sắc tim từng loại */
+        .heart-s { font-size: 20px; color: #ff7675; } /* Giây */
+        .heart-m { font-size: 30px; color: #d63031; font-weight: bold; } /* Phút */
+        .heart-h { font-size: 40px; color: #a29bfe; font-weight: bold; } /* Giờ */
+        .heart-d { font-size: 50px; color: #e17055; font-weight: bold; text-shadow: 0 0 5px #ff7675; } /* Ngày */
+
 
         .date-start { 
             font-size: 1.1rem; font-weight: 800; 
@@ -58,46 +100,6 @@
             60% { color: #6c5ce7; } 80% { color: #0984e3; } 100% { color: #ff7675; }
         }
 
-        /* --- CSS CHO CÁC LOẠI TIM --- */
-        .timed-heart {
-            position: fixed;
-            bottom: -50px;
-            pointer-events: none;
-            z-index: 1;
-            animation: flyUp 4s linear forwards;
-            opacity: 0.9;
-        }
-
-        @keyframes flyUp {
-            0% { transform: translateY(0) scale(1); opacity: 0.8; }
-            100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
-        }
-
-        /* 1. Tim giây (Nhỏ, bay nhanh) */
-        .heart-sec { font-size: 15px; color: #ff9f43; animation-duration: 3s; z-index: 1; }
-        
-        /* 2. Tim phút (Vừa, bay vừa) */
-        .heart-min { font-size: 35px; color: #ff6b6b; animation-duration: 5s; z-index: 2; text-shadow: 0 0 5px #ff6b6b; }
-
-        /* 3. Tim giờ (Lớn, bay chậm) */
-        .heart-hour { font-size: 60px; color: #5f27cd; animation-duration: 7s; z-index: 3; text-shadow: 0 0 10px #5f27cd; }
-
-        /* 4. Tim ngày (Khổng lồ, bay siêu chậm, lộng lẫy) */
-        .heart-day { 
-            font-size: 100px; 
-            color: #e74c3c; 
-            animation: flyUpDay 10s linear forwards; 
-            z-index: 5; 
-            text-shadow: 0 0 20px #c0392b; 
-            left: 50% !important; /* Luôn bay giữa màn hình */
-            transform: translateX(-50%);
-        }
-
-        @keyframes flyUpDay {
-            0% { bottom: -120px; opacity: 1; transform: translateX(-50%) scale(0.5); }
-            100% { bottom: 110vh; opacity: 0; transform: translateX(-50%) scale(1.5); }
-        }
-
         audio { width: 100%; height: 35px; margin-top: 5px; border-radius: 20px; opacity: 0.9; }
 
         .copyright { margin-top: 15px; font-size: 0.8rem; color: #888; font-weight: 600; }
@@ -110,7 +112,6 @@
         @keyframes pulseText { 0% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.7; transform: scale(1); } }
 
         @keyframes titleColor { 0% { color: #d63031; } 100% { color: #e84393; } }
-        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
         @keyframes heartbeat { 0% { transform: scale(1); } 14% { transform: scale(1.2); } 28% { transform: scale(1); } 42% { transform: scale(1.2); } 70% { transform: scale(1); } }
 
         .click-heart { position: absolute; font-size: 20px; white-space: nowrap; font-weight: bold; color: #d63031; pointer-events: none; animation: flyUpClick 1.5s ease-out forwards; z-index: 100; text-shadow: 0 0 5px rgba(255,255,255,0.9); }
@@ -131,10 +132,18 @@
         <h1>Chúng mình đã quen nhau</h1>
 
         <div id="clock">
-            <div class="time-box"> <span id="days">00</span> <p>Ngày</p> </div>
-            <div class="time-box"> <span id="hours">00</span> <p>Giờ</p> </div>
-            <div class="time-box"> <span id="minutes">00</span> <p>Phút</p> </div>
-            <div class="time-box"> <span id="seconds">00</span> <p>Giây</p> </div>
+            <div class="time-box" id="box-days"> 
+                <span id="days">00</span> <p>Ngày</p> 
+            </div>
+            <div class="time-box" id="box-hours"> 
+                <span id="hours">00</span> <p>Giờ</p> 
+            </div>
+            <div class="time-box" id="box-minutes"> 
+                <span id="minutes">00</span> <p>Phút</p> 
+            </div>
+            <div class="time-box" id="box-seconds"> 
+                <span id="seconds">00</span> <p>Giây</p> 
+            </div>
         </div>
 
         <p class="date-start">10:50 - 24/12/2025</p>
@@ -152,7 +161,7 @@
         /* --- NGÀY: 24/12/2025 --- */
         const startDate = new Date(2025, 11, 24, 10, 50, 0).getTime();
 
-        // Biến lưu trạng thái cũ để so sánh
+        // Biến lưu giá trị cũ để so sánh
         let prevMin = -1;
         let prevHour = -1;
         let prevDay = -1;
@@ -162,8 +171,7 @@
             const distance = now - startDate;
 
             if (distance < 0) {
-                 document.getElementById("days").innerText = "00";
-                 return;
+                 document.getElementById("days").innerText = "00"; return;
             }
 
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -171,73 +179,54 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            // Cập nhật giao diện
+            // Cập nhật số
             document.getElementById("days").innerText = days;
             document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
             document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
             document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
 
-            /* --- LOGIC TIM BAY THEO THỜI GIAN --- */
+            /* --- LOGIC BẮN TIM VÀO ĐÚNG Ô --- */
             
-            // 1. Giây: Luôn bay mỗi lần hàm chạy (1s/lần)
-            spawnHeart('sec');
+            // 1. Giây: Luôn bắn vào ô giây (vì giây chạy liên tục)
+            spawnHeartInBox('box-seconds', 'heart-s', '❤️');
 
-            // 2. Phút: Chỉ bay khi số phút thay đổi
+            // 2. Phút: Chỉ bắn vào ô phút khi nhảy số
             if (prevMin !== -1 && minutes !== prevMin) {
-                spawnHeart('min');
+                spawnHeartInBox('box-minutes', 'heart-m', '💗');
             }
             prevMin = minutes;
 
-            // 3. Giờ: Chỉ bay khi số giờ thay đổi
+            // 3. Giờ: Chỉ bắn vào ô giờ khi nhảy số
             if (prevHour !== -1 && hours !== prevHour) {
-                spawnHeart('hour');
+                spawnHeartInBox('box-hours', 'heart-h', '💖');
             }
             prevHour = hours;
 
-            // 4. Ngày: Chỉ bay khi số ngày thay đổi
+            // 4. Ngày: Chỉ bắn vào ô ngày khi nhảy số
             if (prevDay !== -1 && days !== prevDay) {
-                spawnHeart('day');
+                spawnHeartInBox('box-days', 'heart-d', '💝');
             }
             prevDay = days;
         }
 
-        // Hàm tạo tim bay
-        function spawnHeart(type) {
+        // Hàm tạo tim bên trong hộp
+        function spawnHeartInBox(boxId, className, icon) {
+            const box = document.getElementById(boxId);
+            if (!box) return;
+
             const heart = document.createElement('div');
-            heart.classList.add('timed-heart');
+            heart.classList.add('box-heart', className);
+            heart.innerText = icon;
             
-            // Icon tim ngẫu nhiên
-            const icons = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🤎', '🖤', '🤍'];
-            
-            if (type === 'sec') {
-                heart.innerText = '❤️'; // Giây thì tim đỏ nhỏ
-                heart.classList.add('heart-sec');
-                heart.style.left = Math.random() * 100 + 'vw';
-            } 
-            else if (type === 'min') {
-                heart.innerText = icons[Math.floor(Math.random() * icons.length)];
-                heart.classList.add('heart-min');
-                heart.style.left = Math.random() * 90 + 5 + 'vw'; // Không quá sát mép
-            }
-            else if (type === 'hour') {
-                heart.innerText = '💖';
-                heart.classList.add('heart-hour');
-                heart.style.left = Math.random() * 80 + 10 + 'vw';
-            }
-            else if (type === 'day') {
-                heart.innerText = '💝'; // Tim ngày đặc biệt
-                heart.classList.add('heart-day');
-                // Vị trí day luôn ở giữa (đã set trong CSS)
-            }
+            // Thêm tim vào trong hộp
+            box.appendChild(heart);
 
-            document.body.appendChild(heart);
-
-            // Xóa sau khi bay xong
-            setTimeout(() => { heart.remove(); }, 10000);
+            // Xóa tim sau 1.2s (khi animation xong)
+            setTimeout(() => { heart.remove(); }, 1200);
         }
 
         setInterval(updateCounter, 1000);
-        updateCounter(); // Chạy ngay lần đầu
+        updateCounter();
 
         /* --- CÁC TÍNH NĂNG KHÁC (GIỮ NGUYÊN) --- */
         const audio = document.getElementById('myAudio');
