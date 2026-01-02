@@ -219,7 +219,7 @@
         });
         document.getElementById('hamburgerMenu').addEventListener('click', () => { const m = document.getElementById('menuDropdown'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; });
 
-        // --- CƠ CHẾ PHÁO HOA MỚI: TAN BIẾN VÔ CỰC ---
+        // --- CƠ CHẾ PHÁO HOA MỚI: RƠI TỰ DO & TAN BIẾN CHẬM ---
         const canvas = document.getElementById('fireworks-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -238,22 +238,32 @@
             constructor(x, y, color) {
                 this.x = x; this.y = y; this.color = color;
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 4 + 1;
+                const speed = Math.random() * 5 + 2; // Tốc độ nổ ban đầu
+                
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
+                
                 this.alpha = 1;
-                this.gravity = 0.05;
-                // THAY ĐỔI QUAN TRỌNG: Hệ số tan biến (Decay Factor)
-                // Thay vì trừ đi 1 số cố định, ta nhân với 0.96.
-                // Điều này giúp hạt pháo mờ dần mờ dần mãi... rất tự nhiên.
-                this.decayMultiplier = 0.96; 
+                // QUAN TRỌNG: Trọng lực và Ma sát để tạo hiệu ứng rơi thật
+                this.gravity = 0.08; // Lực hút xuống liên tục (không bao giờ dừng)
+                this.friction = 0.96; // Ma sát không khí (chỉ làm chậm bay ngang)
+                this.decay = 0.008; // Tốc độ mờ cực chậm
             }
             update() {
-                this.x += this.vx; this.y += this.vy;
+                // 1. Ma sát làm chậm tốc độ nổ ban đầu
+                this.vx *= this.friction;
+                this.vy *= this.friction;
+
+                // 2. Trọng lực luôn kéo xuống (cộng dồn vào vy)
+                // Điều này đảm bảo hạt luôn rơi xuống, không bao giờ đứng yên
                 this.vy += this.gravity;
+
+                // 3. Cập nhật vị trí
+                this.x += this.vx;
+                this.y += this.vy;
                 
-                // HIỆU ỨNG TAN BIẾN VÔ CỰC (Exponential Decay)
-                this.alpha *= this.decayMultiplier; 
+                // 4. Mờ dần rất chậm
+                this.alpha -= this.decay;
             }
             draw() {
                 ctx.globalAlpha = this.alpha;
@@ -269,7 +279,7 @@
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height;
                 this.targetY = Math.random() * (canvas.height * 0.5);
-                this.speed = Math.random() * 3 + 7;
+                this.speed = Math.random() * 3 + 8;
                 this.color = randomColor();
                 this.exploded = false;
             }
@@ -291,14 +301,14 @@
         function animate() {
             if (!isPlaying) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
             
-            // Xóa mờ dần để tạo đuôi và không che nội dung
+            // Xóa mờ dần để tạo đuôi mà KHÔNG che nội dung
             ctx.globalCompositeOperation = 'destination-out';
             ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             ctx.globalCompositeOperation = 'lighter';
 
-            if (Math.random() < 0.03) { fireworks.push(new Firework()); }
+            if (Math.random() < 0.04) { fireworks.push(new Firework()); }
 
             for (let i = fireworks.length - 1; i >= 0; i--) {
                 fireworks[i].update(); fireworks[i].draw();
@@ -307,8 +317,8 @@
             
             for (let i = particles.length - 1; i >= 0; i--) {
                 particles[i].update(); particles[i].draw();
-                // Chỉ xóa khi hạt đã CỰC KỲ MỜ (gần như tàng hình)
-                if (particles[i].alpha <= 0.01) particles.splice(i, 1);
+                // Chỉ xóa khi hạt đã mờ hẳn
+                if (particles[i].alpha <= 0) particles.splice(i, 1);
             }
             requestAnimationFrame(animate);
         }
