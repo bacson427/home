@@ -74,8 +74,6 @@
             box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
         }
 
-        @keyframes spinBorder { from { transform: translateX(-50%) rotate(0deg); } to { transform: translateX(-50%) rotate(360deg); } }
-        /* Fix animation để không xung đột với transform căn giữa */
         @keyframes spinBorder { 
             0% { transform: rotate(0deg); } 
             100% { transform: rotate(360deg); } 
@@ -84,7 +82,7 @@
         .profile-img {
             width: 100%; height: 100%; border-radius: 50%;
             object-fit: cover; border: 3px solid #000;
-            display: block; background: #000; /* Nền đen phòng khi ảnh lỗi */
+            display: block; background: #000;
             position: relative; z-index: 2;
         }
 
@@ -221,7 +219,7 @@
         });
         document.getElementById('hamburgerMenu').addEventListener('click', () => { const m = document.getElementById('menuDropdown'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; });
 
-        // --- HỆ THỐNG PHÁO HOA + PHÁO PHỤT (FOUNTAIN) ---
+        // --- HỆ THỐNG PHÁO HOA TỐI ƯU HÓA (FIX LAG) ---
         const canvas = document.getElementById('fireworks-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -244,25 +242,24 @@
         }
 
         class Particle {
-            // Constructor nhận thêm vận tốc tuỳ chỉnh để làm pháo phụt
             constructor(x, y, color, customVelocity) {
                 this.x = x; this.y = y; this.color = color;
                 
                 if (customVelocity) {
-                    // Logic cho Pháo Phụt
-                    this.vx = (Math.random() - 0.5) * 3 * scaleFactor; // Bay ngang ít
-                    this.vy = (Math.random() * -10 - 5) * scaleFactor; // Bay lên rất mạnh
+                    // Pháo Phụt
+                    this.vx = (Math.random() - 0.5) * 3 * scaleFactor;
+                    this.vy = (Math.random() * -8 - 4) * scaleFactor; // Giảm độ cao chút cho mượt
                     this.gravity = 0.2 * scaleFactor;
-                    this.decayMultiplier = 0.92; // Tan nhanh hơn chút
+                    this.decayMultiplier = 0.9; // FIX LAG: Tan nhanh hơn (0.9 thay vì 0.92)
                     this.size = 2 * scaleFactor;
                 } else {
-                    // Logic cho Pháo Nổ trên trời
+                    // Pháo Nổ trên trời
                     const angle = Math.random() * Math.PI * 2;
                     const speed = (Math.random() * 4 + 1) * scaleFactor;
                     this.vx = Math.cos(angle) * speed;
                     this.vy = Math.sin(angle) * speed;
                     this.gravity = 0.08 * scaleFactor;
-                    this.decayMultiplier = 0.95;
+                    this.decayMultiplier = 0.93; // FIX LAG: Tan nhanh hơn (0.93 thay vì 0.95)
                     this.size = 2.5 * scaleFactor;
                 }
                 
@@ -311,33 +308,33 @@
             if (!isPlaying) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
             
             ctx.globalCompositeOperation = 'destination-out';
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; 
+            // FIX LAG: Tăng độ mờ để xóa vệt cũ nhanh hơn (0.25)
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             ctx.globalCompositeOperation = 'lighter';
 
-            // 1. TẠO PHÁO HOA NỔ TRÊN TRỜI
+            // 1. PHÁO HOA NỔ TRÊN TRỜI
             if (Math.random() < 0.02) { fireworks.push(new Firework()); }
 
-            // 2. TẠO PHÁO PHỤT Ở 2 GÓC DƯỚI (Trái & Phải)
-            // Chỉ tạo khi đang bật nhạc, tần suất cao để tạo dòng chảy liên tục
-            if (Math.random() < 0.3) { 
-                // Góc Trái
-                particles.push(new Particle(0, canvas.height, randomColor(), true));
-                // Góc Phải
-                particles.push(new Particle(canvas.width, canvas.height, randomColor(), true));
+            // 2. PHÁO PHỤT (3 DÀN: TRÁI, PHẢI, GIỮA)
+            // FIX LAG: Giảm tần suất một chút (0.25) để cân bằng hiệu năng
+            if (Math.random() < 0.25) { 
+                particles.push(new Particle(0, canvas.height, randomColor(), true)); // Trái
+                particles.push(new Particle(canvas.width, canvas.height, randomColor(), true)); // Phải
+                // THÊM PHÁO GIỮA Ở ĐÂY
+                particles.push(new Particle(canvas.width / 2, canvas.height, randomColor(), true)); // Giữa
             }
 
-            // Cập nhật Pháo hoa
             for (let i = fireworks.length - 1; i >= 0; i--) {
                 fireworks[i].update(); fireworks[i].draw();
                 if (fireworks[i].exploded) fireworks.splice(i, 1);
             }
             
-            // Cập nhật Hạt nổ (cả trên trời và dưới đất)
             for (let i = particles.length - 1; i >= 0; i--) {
                 particles[i].update(); particles[i].draw();
-                if (particles[i].alpha <= 0.03) particles.splice(i, 1);
+                // FIX LAG: Xóa hạt sớm hơn khi độ mờ <= 0.05
+                if (particles[i].alpha <= 0.05) particles.splice(i, 1);
             }
             requestAnimationFrame(animate);
         }
