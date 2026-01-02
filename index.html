@@ -10,7 +10,9 @@
       gtag('config', 'G-8HWLQE73MW');
     </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="viewport" content="width=1024, user-scalable=yes">
+    
     <title>Nguyen Bac Son - Happy New Year</title>
     <meta property="og:title" content="Nguyen Bac Son" />
     <meta property="og:description" content="Happy New Year 2026" />
@@ -30,6 +32,8 @@
             color: #fff;
             padding-bottom: 80px;
             overflow-x: hidden;
+            /* Cho phép cuộn ngang nếu màn hình nhỏ hơn 1024px */
+            overflow-x: auto; 
         }
 
         /* Canvas Pháo Hoa */
@@ -38,41 +42,38 @@
             z-index: 9999; pointer-events: none;
         }
 
-        /* --- 2. LAYOUT RESPONSIVE (MÁY TÍNH vs ĐIỆN THOẠI) --- */
+        /* --- 2. LAYOUT PC CỐ ĐỊNH (2 CỘT) --- */
+        /* Vì đã set viewport=1024, trình duyệt sẽ luôn dùng giao diện này */
         .container {
             position: relative; z-index: 10;
-            max-width: 480px; /* Mặc định mobile */
-            margin: 30px auto; padding: 0 15px;
+            width: 1000px; /* Chiều rộng cố định cho đẹp */
+            margin: 30px auto; 
+            padding: 50px 20px;
+            
+            /* Cấu hình Grid 2 cột */
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 50px;
+            align-items: start;
+            text-align: left;
+        }
+        
+        /* Cột trái dính */
+        .left-column {
+            position: sticky;
+            top: 50px;
         }
 
-        /* CSS CHO MÁY TÍNH (Màn hình > 992px) */
-        @media (min-width: 992px) {
-            .container {
-                max-width: 1100px; /* Mở rộng chiều ngang */
-                display: grid;
-                grid-template-columns: 350px 1fr; /* Cột trái 350px, Cột phải tự do */
-                gap: 40px;
-                align-items: start;
-                text-align: left; /* Canh trái cho máy tính */
-            }
-            
-            /* Cột trái: Thông tin cá nhân (Dính lại khi cuộn) */
-            .left-column {
-                position: sticky;
-                top: 40px;
-            }
+        /* Cột phải lưới 2 hàng */
+        .links-container {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
 
-            /* Cột phải: Grid links */
-            .links-container {
-                display: grid !important;
-                grid-template-columns: repeat(2, 1fr); /* 2 Liên kết 1 hàng */
-                gap: 15px;
-            }
-
-            .profile-card { margin-top: 0 !important; }
-            .profile-img-wrapper { left: 50%; transform: translateX(-50%); } /* Avatar vẫn giữa card */
-            .profile-name, .profile-description { text-align: center; width: 100%; display: block; }
-            .slot-machine { text-align: center; }
+        /* Căn chỉnh lại các phần tử con cho cân đối */
+        .profile-name, .profile-description, .slot-machine, .music-section { 
+            text-align: center; width: 100%; display: block; 
         }
 
         /* --- 3. AVATAR & PROFILE --- */
@@ -80,7 +81,7 @@
             background: rgba(255, 255, 255, 0.05);
             border-radius: 25px;
             padding: 70px 20px 30px;
-            margin-bottom: 20px; margin-top: 80px;
+            margin-bottom: 20px; margin-top: 0; /* Bỏ margin top thừa */
             border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
         }
@@ -116,7 +117,7 @@
             background-size: 300% auto;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             animation: textShine 3s linear infinite;
-            text-transform: uppercase; letter-spacing: 1px; text-align: center;
+            text-transform: uppercase; letter-spacing: 1px;
         }
         @keyframes textShine { to { background-position: 200% center; } }
 
@@ -128,23 +129,23 @@
             display: inline-block; text-transform: uppercase;
             box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff0000;
             animation: neonPulse 1s ease-in-out infinite alternate;
-            text-align: center; width: auto; margin: 0 auto;
+            margin: 0 auto;
         }
         @keyframes neonPulse {
             from { box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff0000; transform: scale(1); }
             to   { box-shadow: 0 0 20px #ffeb3b, 0 0 35px #ff0000; transform: scale(1.05); }
         }
 
-        .slot-machine { font-family: 'Courier New', monospace; font-size: 1.8rem; font-weight: bold; color: #00ffea; margin: 25px 0; letter-spacing: 2px; text-shadow: 0 0 5px #00ffea; text-align: center;}
+        .slot-machine { font-family: 'Courier New', monospace; font-size: 1.8rem; font-weight: bold; color: #00ffea; margin: 25px 0; letter-spacing: 2px; text-shadow: 0 0 5px #00ffea; }
 
         /* Audio Player */
         .music-container { margin-bottom: 20px; position: relative; z-index: 20; }
-        .music-section { background: rgba(255,255,255,0.08); padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); text-align: center;}
+        .music-section { background: rgba(255,255,255,0.08); padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
         .music-section h4 { color: #eee; margin-bottom: 8px; font-size: 14px; }
         audio { width: 100%; height: 35px; opacity: 0.9; border-radius: 20px; }
 
         /* Links */
-        .links-container { display: flex; flex-direction: column; gap: 15px; }
+        .links-container { /* Grid đã được set ở container */ }
         .link-button {
             display: flex; align-items: center; text-decoration: none; color: white; padding: 15px 20px;
             border-radius: 18px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1);
@@ -251,7 +252,7 @@
         });
         document.getElementById('hamburgerMenu').addEventListener('click', () => { const m = document.getElementById('menuDropdown'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; });
 
-        // --- JS PHÁO HOA ĐÃ GIẢM SỐ LƯỢNG ---
+        // --- JS PHÁO HOA MƯỢT ---
         const canvas = document.getElementById('fireworks-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -275,7 +276,7 @@
                 this.vy = Math.sin(angle) * speed;
                 this.alpha = 1;
                 this.gravity = 0.08;
-                this.decayMultiplier = 0.96; 
+                this.decayMultiplier = 0.95; 
             }
             update() {
                 this.x += this.vx; this.y += this.vy;
@@ -319,13 +320,11 @@
             if (!isPlaying) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
             
             ctx.globalCompositeOperation = 'destination-out';
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             ctx.globalCompositeOperation = 'lighter';
 
-            // GIẢM SỐ LƯỢNG PHÁO HOA TẠI ĐÂY: 
-            // 0.015 (thấp hơn nhiều so với 0.04 trước đó)
             if (Math.random() < 0.015) { fireworks.push(new Firework()); }
 
             for (let i = fireworks.length - 1; i >= 0; i--) {
@@ -335,7 +334,7 @@
             
             for (let i = particles.length - 1; i >= 0; i--) {
                 particles[i].update(); particles[i].draw();
-                if (particles[i].alpha <= 0.01) particles.splice(i, 1);
+                if (particles[i].alpha <= 0.03) particles.splice(i, 1);
             }
             requestAnimationFrame(animate);
         }
