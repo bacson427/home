@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        /* --- 1. NỀN TỐI ĐẸP (KHÔNG ĐAU MẮT) --- */
+        /* --- 1. CẤU HÌNH CƠ BẢN --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
@@ -32,11 +32,11 @@
             overflow-x: hidden;
         }
 
-        /* --- 2. PHÁO HOA (LAYER TRÊN CÙNG - KHÔNG LAG) --- */
+        /* Canvas Pháo Hoa */
         #fireworks-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 9999; /* Đè lên tất cả */
-            pointer-events: none; /* Bấm xuyên qua được */
+            z-index: 9999; /* Luôn nổi trên cùng */
+            pointer-events: none; /* Bấm xuyên qua */
         }
 
         .container {
@@ -44,47 +44,53 @@
             max-width: 480px; margin: 30px auto; padding: 0 15px;
         }
 
-        /* --- 3. AVATAR GLOW (NHƯ ẢNH) --- */
+        /* --- 2. SỬA LỖI LOGO BỊ HỞ --- */
         .profile-card {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 25px;
-            padding: 50px 20px 30px;
-            margin-bottom: 20px; margin-top: 70px;
+            padding: 60px 20px 30px; /* Tăng padding trên để chứa avatar */
+            margin-bottom: 20px; margin-top: 80px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
         }
 
         .profile-img-wrapper {
-            position: absolute; /* Đặt tuyệt đối để nổi lên trên */
+            position: absolute;
             top: -75px; left: 50%; transform: translateX(-50%);
             width: 150px; height: 150px;
             border-radius: 50%;
-            padding: 3px;
-            /* Viền 7 màu phát sáng */
-            background: conic-gradient(#ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-            animation: spinBorder 4s linear infinite;
+            z-index: 20;
         }
-        
-        @keyframes spinBorder { 100% { transform: translateX(-50%) rotate(360deg); } }
 
-        /* Đảo ngược ảnh để không bị xoay theo viền */
-        .profile-img-inner {
-            width: 100%; height: 100%; border-radius: 50%;
-            overflow: hidden;
-            animation: spinBorderReverse 4s linear infinite;
+        /* Viền xoay 7 màu (Dùng ::before để KHÔNG BỊ HỞ) */
+        .profile-img-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -4px; /* Độ dày viền 4px */
+            border-radius: 50%;
+            background: conic-gradient(#ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+            animation: spinBorder 4s linear infinite;
+            z-index: -1; /* Nằm dưới ảnh */
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.6); /* Glow nhẹ */
         }
-        @keyframes spinBorderReverse { 100% { transform: rotate(-360deg); } }
+
+        @keyframes spinBorder { 
+            from { transform: rotate(0deg); } 
+            to { transform: rotate(360deg); } 
+        }
 
         .profile-img {
-            width: 100%; height: 100%; object-fit: cover;
-            border: 3px solid #000; /* Viền đen tách biệt */
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #000; /* Viền đen mỏng ngăn cách ảnh và màu */
+            display: block; /* Quan trọng để không bị hở đáy */
+            background: #000;
         }
 
-        /* --- 4. TÊN GRADIENT (KHÔI PHỤC HIỆU ỨNG) --- */
+        /* --- TEXT HIỆU ỨNG (GIỮ NGUYÊN) --- */
         .profile-name {
-            font-size: 32px; font-weight: 900; margin-top: 60px; margin-bottom: 15px;
-            /* Gradient màu chữ */
+            font-size: 30px; font-weight: 900; margin-top: 30px; margin-bottom: 15px;
             background: linear-gradient(to right, #fff, #00ffcc, #ff00cc, #fff);
             background-size: 300% auto;
             -webkit-background-clip: text;
@@ -94,21 +100,18 @@
         }
         @keyframes textShine { to { background-position: 200% center; } }
 
-        /* --- 5. CHÚC MỪNG NĂM MỚI NEON (KHÔI PHỤC HIỆU ỨNG) --- */
         .profile-description {
-            font-size: 18px; font-weight: bold; color: #ffeb3b;
-            padding: 10px 30px;
-            background: rgba(255, 0, 0, 0.1);
-            border: 2px solid #ffeb3b; 
-            border-radius: 50px;
+            font-size: 16px; font-weight: bold; color: #ffeb3b;
+            padding: 10px 25px;
+            background: rgba(255, 0, 0, 0.15);
+            border: 2px solid #ffeb3b; border-radius: 50px;
             display: inline-block; text-transform: uppercase;
-            /* Hiệu ứng NEON đập thình thịch */
             box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff0000;
             animation: neonPulse 1s ease-in-out infinite alternate;
         }
         @keyframes neonPulse {
             from { box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff0000; transform: scale(1); }
-            to   { box-shadow: 0 0 20px #ffeb3b, 0 0 40px #ff0000; transform: scale(1.05); }
+            to   { box-shadow: 0 0 20px #ffeb3b, 0 0 35px #ff0000; transform: scale(1.05); }
         }
 
         /* Slot Machine */
@@ -130,9 +133,9 @@
         .link-button:active { transform: scale(0.98); }
         .link-icon { width: 35px; height: 35px; border-radius: 50%; padding: 2px; background: #fff; object-fit: contain; margin-right: 15px; }
         .link-text { font-weight: 600; font-size: 15px; }
-        
-        /* Màu nút */
         .link-button::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
+        
+        /* Colors */
         .color-1::before { background: #FF512F; } .color-12::before { background: #1877F2; } .color-15::before { background: #fff; } .color-3::before { background: #EA4335; } .color-5::before { background: #00f2ea; } .color-6::before { background: #FFCC00; } .color-9::before { background: #0068FF; } .color-11::before { background: #0088cc; } .color-14::before { background: #ffa502; }
 
         /* Footer & Menu */
@@ -142,7 +145,6 @@
         .hamburger-menu span { display: block; width: 25px; height: 3px; background: #fff; margin-bottom: 4px; }
         .menu-dropdown { position: fixed; top: 60px; right: 20px; background: #222; border-radius: 8px; padding: 10px; display: none; z-index: 100; text-align: left; border: 1px solid #444; }
         .menu-dropdown a { display: block; padding: 8px 15px; color: #fff; text-decoration: none; border-bottom: 1px solid #333; }
-
         #ai-assistant-widget { position: fixed; bottom: 60px; right: 20px; z-index: 80; }
         .ai-button { width: 50px; height: 50px; border-radius: 50%; background: #6200ea; color: white; border: none; font-size: 20px; }
     </style>
@@ -164,13 +166,10 @@
     <div class="container">
         <div class="profile-card">
             <div class="profile-img-wrapper">
-                <div class="profile-img-inner">
-                    <img src="nguyen-bac-son-cover.png" alt="Avatar" class="profile-img">
-                </div>
+                <img src="nguyen-bac-son-cover.png" alt="Avatar" class="profile-img">
             </div>
             
             <h1 class="profile-name">NGUYEN BAC SON</h1>
-            
             <div class="profile-description">⚡ CHÚC MỪNG NĂM MỚI ⚡</div>
         </div>
 
@@ -230,7 +229,7 @@
         });
         document.getElementById('hamburgerMenu').addEventListener('click', () => { const m = document.getElementById('menuDropdown'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; });
 
-        // --- HỆ THỐNG PHÁO HOA TỐI ƯU (Bắn trước màn hình + Không lag) ---
+        // --- FIX LỖI PHÁO HOA GIẬT & MẤT NHANH ---
         const canvas = document.getElementById('fireworks-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -242,19 +241,19 @@
 
         function randomColor() {
             const hue = Math.floor(Math.random() * 360);
-            return `hsl(${hue}, 100%, 60%)`;
+            return `hsl(${hue}, 100%, 65%)`;
         }
 
         class Particle {
             constructor(x, y, color) {
                 this.x = x; this.y = y; this.color = color;
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 5 + 1;
+                const speed = Math.random() * 4 + 1; // Tốc độ nổ vừa phải
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
                 this.alpha = 1;
-                this.decay = 0.03; 
-                this.gravity = 0.1;
+                this.decay = 0.015; // <--- SỬA LỖI MẤT NHANH: Giảm từ 0.03 xuống 0.015
+                this.gravity = 0.05;
             }
             update() {
                 this.x += this.vx; this.y += this.vy;
@@ -274,7 +273,7 @@
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height;
                 this.targetY = Math.random() * (canvas.height * 0.5);
-                this.speed = Math.random() * 3 + 8;
+                this.speed = Math.random() * 3 + 7;
                 this.color = randomColor();
                 this.exploded = false;
             }
@@ -289,14 +288,19 @@
                 }
             }
             explode() {
-                for (let i = 0; i < 40; i++) { particles.push(new Particle(this.x, this.y, this.color)); }
+                for (let i = 0; i < 50; i++) { particles.push(new Particle(this.x, this.y, this.color)); }
             }
         }
 
         function animate() {
             if (!isPlaying) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.globalCompositeOperation = 'lighter';
+            
+            // --- SỬA LỖI GIẬT: Thay clearRect bằng fillRect mờ để tạo đuôi ---
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; // Màu đen mờ 20%
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.globalCompositeOperation = 'lighter'; // Hiệu ứng sáng
 
             if (Math.random() < 0.03) { fireworks.push(new Firework()); }
 
