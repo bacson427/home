@@ -32,23 +32,54 @@
             overflow-x: hidden;
         }
 
-        /* Canvas Pháo Hoa: Nằm trên cùng, TRONG SUỐT */
+        /* Canvas Pháo Hoa */
         #fireworks-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 9999;
-            pointer-events: none; /* Bấm xuyên qua */
+            z-index: 9999; pointer-events: none;
         }
 
+        /* --- 2. LAYOUT RESPONSIVE (MÁY TÍNH vs ĐIỆN THOẠI) --- */
         .container {
             position: relative; z-index: 10;
-            max-width: 480px; margin: 30px auto; padding: 0 15px;
+            max-width: 480px; /* Mặc định mobile */
+            margin: 30px auto; padding: 0 15px;
         }
 
-        /* --- 2. AVATAR & LOGO (GIỮ NGUYÊN ĐẸP & KHÍT) --- */
+        /* CSS CHO MÁY TÍNH (Màn hình > 992px) */
+        @media (min-width: 992px) {
+            .container {
+                max-width: 1100px; /* Mở rộng chiều ngang */
+                display: grid;
+                grid-template-columns: 350px 1fr; /* Cột trái 350px, Cột phải tự do */
+                gap: 40px;
+                align-items: start;
+                text-align: left; /* Canh trái cho máy tính */
+            }
+            
+            /* Cột trái: Thông tin cá nhân (Dính lại khi cuộn) */
+            .left-column {
+                position: sticky;
+                top: 40px;
+            }
+
+            /* Cột phải: Grid links */
+            .links-container {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr); /* 2 Liên kết 1 hàng */
+                gap: 15px;
+            }
+
+            .profile-card { margin-top: 0 !important; }
+            .profile-img-wrapper { left: 50%; transform: translateX(-50%); } /* Avatar vẫn giữa card */
+            .profile-name, .profile-description { text-align: center; width: 100%; display: block; }
+            .slot-machine { text-align: center; }
+        }
+
+        /* --- 3. AVATAR & PROFILE --- */
         .profile-card {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 25px;
-            padding: 60px 20px 30px;
+            padding: 70px 20px 30px;
             margin-bottom: 20px; margin-top: 80px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
@@ -79,15 +110,13 @@
             display: block; background: #000;
         }
 
-        /* --- TEXT HIỆU ỨNG --- */
         .profile-name {
-            font-size: 30px; font-weight: 900; margin-top: 30px; margin-bottom: 15px;
+            font-size: 30px; font-weight: 900; margin-top: 20px; margin-bottom: 15px;
             background: linear-gradient(to right, #fff, #00ffcc, #ff00cc, #fff);
             background-size: 300% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             animation: textShine 3s linear infinite;
-            text-transform: uppercase; letter-spacing: 1px;
+            text-transform: uppercase; letter-spacing: 1px; text-align: center;
         }
         @keyframes textShine { to { background-position: 200% center; } }
 
@@ -99,37 +128,37 @@
             display: inline-block; text-transform: uppercase;
             box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff0000;
             animation: neonPulse 1s ease-in-out infinite alternate;
+            text-align: center; width: auto; margin: 0 auto;
         }
         @keyframes neonPulse {
             from { box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff0000; transform: scale(1); }
             to   { box-shadow: 0 0 20px #ffeb3b, 0 0 35px #ff0000; transform: scale(1.05); }
         }
 
-        /* Slot Machine */
-        .slot-machine { font-family: 'Courier New', monospace; font-size: 1.8rem; font-weight: bold; color: #00ffea; margin: 25px 0; letter-spacing: 2px; text-shadow: 0 0 5px #00ffea; }
+        .slot-machine { font-family: 'Courier New', monospace; font-size: 1.8rem; font-weight: bold; color: #00ffea; margin: 25px 0; letter-spacing: 2px; text-shadow: 0 0 5px #00ffea; text-align: center;}
 
         /* Audio Player */
         .music-container { margin-bottom: 20px; position: relative; z-index: 20; }
-        .music-section { background: rgba(255,255,255,0.08); padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .music-section { background: rgba(255,255,255,0.08); padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); text-align: center;}
         .music-section h4 { color: #eee; margin-bottom: 8px; font-size: 14px; }
         audio { width: 100%; height: 35px; opacity: 0.9; border-radius: 20px; }
 
         /* Links */
-        .links-container { display: flex; flex-direction: column; gap: 12px; }
+        .links-container { display: flex; flex-direction: column; gap: 15px; }
         .link-button {
-            display: flex; align-items: center; text-decoration: none; color: white; padding: 12px 15px;
-            border-radius: 15px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.2s; position: relative; overflow: hidden;
+            display: flex; align-items: center; text-decoration: none; color: white; padding: 15px 20px;
+            border-radius: 18px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s, background 0.2s; position: relative; overflow: hidden;
         }
-        .link-button:active { transform: scale(0.98); }
-        .link-icon { width: 35px; height: 35px; border-radius: 50%; padding: 2px; background: #fff; object-fit: contain; margin-right: 15px; }
-        .link-text { font-weight: 600; font-size: 15px; }
-        .link-button::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
+        .link-button:hover { transform: translateY(-3px); background: rgba(255,255,255,0.15); }
+        .link-icon { width: 40px; height: 40px; border-radius: 50%; padding: 2px; background: #fff; object-fit: contain; margin-right: 15px; }
+        .link-text { font-weight: 600; font-size: 16px; }
+        .link-button::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
         
         .color-1::before { background: #FF512F; } .color-12::before { background: #1877F2; } .color-15::before { background: #fff; } .color-3::before { background: #EA4335; } .color-5::before { background: #00f2ea; } .color-6::before { background: #FFCC00; } .color-9::before { background: #0068FF; } .color-11::before { background: #0088cc; } .color-14::before { background: #ffa502; }
 
         /* Footer & Menu */
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #000; padding: 10px; font-size: 12px; z-index: 100; border-top: 1px solid #333; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #000; padding: 10px; font-size: 12px; z-index: 100; border-top: 1px solid #333; text-align: center; }
         .footer a { color: #00ffea; text-decoration: none; }
         .hamburger-menu { position: fixed; top: 20px; right: 20px; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 8px; z-index: 100; cursor: pointer; }
         .hamburger-menu span { display: block; width: 25px; height: 3px; background: #fff; margin-bottom: 4px; }
@@ -154,23 +183,27 @@
     </div>
 
     <div class="container">
-        <div class="profile-card">
-            <div class="profile-img-wrapper">
-                <img src="nguyen-bac-son-cover.png" alt="Avatar" class="profile-img">
+        
+        <div class="left-column">
+            <div class="profile-card">
+                <div class="profile-img-wrapper">
+                    <img src="nguyen-bac-son-cover.png" alt="Avatar" class="profile-img">
+                </div>
+                <h1 class="profile-name">NGUYEN BAC SON</h1>
+                <div style="text-align: center;">
+                    <div class="profile-description">⚡ CHÚC MỪNG NĂM MỚI ⚡</div>
+                </div>
             </div>
-            
-            <h1 class="profile-name">NGUYEN BAC SON</h1>
-            <div class="profile-description">⚡ CHÚC MỪNG NĂM MỚI ⚡</div>
-        </div>
 
-        <div class="counter-number slot-machine">00 00 0000</div>
+            <div class="counter-number slot-machine">00 00 0000</div>
 
-        <div class="music-container">
-            <div class="music-section">
-                <h4>🎧 Bật nhạc lên xem pháo hoa 🎆</h4>
-                <audio controls id="main-audio">
-                    <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mpeg">
-                </audio>
+            <div class="music-container">
+                <div class="music-section">
+                    <h4>🎧 Bật nhạc lên xem pháo hoa 🎆</h4>
+                    <audio controls id="main-audio">
+                        <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
             </div>
         </div>
 
@@ -209,7 +242,6 @@
     <div id="ai-assistant-widget"><button class="ai-button">💬</button></div>
 
     <script>
-        // Slot Machine
         document.addEventListener('DOMContentLoaded', () => {
             const el = document.querySelector('.slot-machine'); let count = 0;
             const interval = setInterval(() => {
@@ -219,7 +251,7 @@
         });
         document.getElementById('hamburgerMenu').addEventListener('click', () => { const m = document.getElementById('menuDropdown'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; });
 
-        // --- CƠ CHẾ PHÁO HOA MỚI: RƠI TỰ DO & TAN BIẾN CHẬM ---
+        // --- JS PHÁO HOA ĐÃ GIẢM SỐ LƯỢNG ---
         const canvas = document.getElementById('fireworks-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -238,32 +270,17 @@
             constructor(x, y, color) {
                 this.x = x; this.y = y; this.color = color;
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 5 + 2; // Tốc độ nổ ban đầu
-                
+                const speed = Math.random() * 4 + 1;
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
-                
                 this.alpha = 1;
-                // QUAN TRỌNG: Trọng lực và Ma sát để tạo hiệu ứng rơi thật
-                this.gravity = 0.08; // Lực hút xuống liên tục (không bao giờ dừng)
-                this.friction = 0.96; // Ma sát không khí (chỉ làm chậm bay ngang)
-                this.decay = 0.008; // Tốc độ mờ cực chậm
+                this.gravity = 0.08;
+                this.decayMultiplier = 0.96; 
             }
             update() {
-                // 1. Ma sát làm chậm tốc độ nổ ban đầu
-                this.vx *= this.friction;
-                this.vy *= this.friction;
-
-                // 2. Trọng lực luôn kéo xuống (cộng dồn vào vy)
-                // Điều này đảm bảo hạt luôn rơi xuống, không bao giờ đứng yên
+                this.x += this.vx; this.y += this.vy;
                 this.vy += this.gravity;
-
-                // 3. Cập nhật vị trí
-                this.x += this.vx;
-                this.y += this.vy;
-                
-                // 4. Mờ dần rất chậm
-                this.alpha -= this.decay;
+                this.alpha *= this.decayMultiplier; 
             }
             draw() {
                 ctx.globalAlpha = this.alpha;
@@ -279,7 +296,7 @@
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height;
                 this.targetY = Math.random() * (canvas.height * 0.5);
-                this.speed = Math.random() * 3 + 8;
+                this.speed = Math.random() * 3 + 7;
                 this.color = randomColor();
                 this.exploded = false;
             }
@@ -294,21 +311,22 @@
                 }
             }
             explode() {
-                for (let i = 0; i < 50; i++) { particles.push(new Particle(this.x, this.y, this.color)); }
+                for (let i = 0; i < 40; i++) { particles.push(new Particle(this.x, this.y, this.color)); }
             }
         }
 
         function animate() {
             if (!isPlaying) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
             
-            // Xóa mờ dần để tạo đuôi mà KHÔNG che nội dung
             ctx.globalCompositeOperation = 'destination-out';
             ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             ctx.globalCompositeOperation = 'lighter';
 
-            if (Math.random() < 0.04) { fireworks.push(new Firework()); }
+            // GIẢM SỐ LƯỢNG PHÁO HOA TẠI ĐÂY: 
+            // 0.015 (thấp hơn nhiều so với 0.04 trước đó)
+            if (Math.random() < 0.015) { fireworks.push(new Firework()); }
 
             for (let i = fireworks.length - 1; i >= 0; i--) {
                 fireworks[i].update(); fireworks[i].draw();
@@ -317,8 +335,7 @@
             
             for (let i = particles.length - 1; i >= 0; i--) {
                 particles[i].update(); particles[i].draw();
-                // Chỉ xóa khi hạt đã mờ hẳn
-                if (particles[i].alpha <= 0) particles.splice(i, 1);
+                if (particles[i].alpha <= 0.01) particles.splice(i, 1);
             }
             requestAnimationFrame(animate);
         }
