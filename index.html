@@ -10,8 +10,7 @@
       gtag('config', 'G-8HWLQE73MW');
     </script>
     <meta charset="UTF-8">
-    
-    <meta name="viewport" content="width=1024, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>Nguyen Bac Son - Happy New Year</title>
     <meta property="og:title" content="Nguyen Bac Son" />
@@ -32,8 +31,6 @@
             color: #fff;
             padding-bottom: 80px;
             overflow-x: hidden;
-            /* Cho phép cuộn ngang nếu màn hình nhỏ hơn 1024px */
-            overflow-x: auto; 
         }
 
         /* Canvas Pháo Hoa */
@@ -42,46 +39,18 @@
             z-index: 9999; pointer-events: none;
         }
 
-        /* --- 2. LAYOUT PC CỐ ĐỊNH (2 CỘT) --- */
-        /* Vì đã set viewport=1024, trình duyệt sẽ luôn dùng giao diện này */
+        /* Container chuẩn Mobile */
         .container {
             position: relative; z-index: 10;
-            width: 1000px; /* Chiều rộng cố định cho đẹp */
-            margin: 30px auto; 
-            padding: 50px 20px;
-            
-            /* Cấu hình Grid 2 cột */
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 50px;
-            align-items: start;
-            text-align: left;
-        }
-        
-        /* Cột trái dính */
-        .left-column {
-            position: sticky;
-            top: 50px;
+            max-width: 480px; margin: 30px auto; padding: 0 15px;
         }
 
-        /* Cột phải lưới 2 hàng */
-        .links-container {
-            display: grid !important;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        /* Căn chỉnh lại các phần tử con cho cân đối */
-        .profile-name, .profile-description, .slot-machine, .music-section { 
-            text-align: center; width: 100%; display: block; 
-        }
-
-        /* --- 3. AVATAR & PROFILE --- */
+        /* --- 2. AVATAR & PROFILE --- */
         .profile-card {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 25px;
-            padding: 70px 20px 30px;
-            margin-bottom: 20px; margin-top: 0; /* Bỏ margin top thừa */
+            padding: 60px 20px 30px;
+            margin-bottom: 20px; margin-top: 80px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
         }
@@ -94,6 +63,7 @@
             z-index: 20;
         }
 
+        /* Viền xoay 7 màu */
         .profile-img-wrapper::before {
             content: '';
             position: absolute; inset: -4px; border-radius: 50%;
@@ -112,7 +82,7 @@
         }
 
         .profile-name {
-            font-size: 30px; font-weight: 900; margin-top: 20px; margin-bottom: 15px;
+            font-size: 30px; font-weight: 900; margin-top: 30px; margin-bottom: 15px;
             background: linear-gradient(to right, #fff, #00ffcc, #ff00cc, #fff);
             background-size: 300% auto;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -129,7 +99,6 @@
             display: inline-block; text-transform: uppercase;
             box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff0000;
             animation: neonPulse 1s ease-in-out infinite alternate;
-            margin: 0 auto;
         }
         @keyframes neonPulse {
             from { box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff0000; transform: scale(1); }
@@ -145,28 +114,26 @@
         audio { width: 100%; height: 35px; opacity: 0.9; border-radius: 20px; }
 
         /* Links */
-        .links-container { /* Grid đã được set ở container */ }
+        .links-container { display: flex; flex-direction: column; gap: 12px; }
         .link-button {
-            display: flex; align-items: center; text-decoration: none; color: white; padding: 15px 20px;
-            border-radius: 18px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; align-items: center; text-decoration: none; color: white; padding: 12px 15px;
+            border-radius: 15px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1);
             transition: transform 0.2s, background 0.2s; position: relative; overflow: hidden;
         }
-        .link-button:hover { transform: translateY(-3px); background: rgba(255,255,255,0.15); }
-        .link-icon { width: 40px; height: 40px; border-radius: 50%; padding: 2px; background: #fff; object-fit: contain; margin-right: 15px; }
-        .link-text { font-weight: 600; font-size: 16px; }
-        .link-button::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
+        .link-button:active { transform: scale(0.98); }
+        .link-icon { width: 35px; height: 35px; border-radius: 50%; padding: 2px; background: #fff; object-fit: contain; margin-right: 15px; }
+        .link-text { font-weight: 600; font-size: 15px; }
+        .link-button::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
         
         .color-1::before { background: #FF512F; } .color-12::before { background: #1877F2; } .color-15::before { background: #fff; } .color-3::before { background: #EA4335; } .color-5::before { background: #00f2ea; } .color-6::before { background: #FFCC00; } .color-9::before { background: #0068FF; } .color-11::before { background: #0088cc; } .color-14::before { background: #ffa502; }
 
         /* Footer & Menu */
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #000; padding: 10px; font-size: 12px; z-index: 100; border-top: 1px solid #333; text-align: center; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #000; padding: 10px; font-size: 12px; z-index: 100; border-top: 1px solid #333; }
         .footer a { color: #00ffea; text-decoration: none; }
         .hamburger-menu { position: fixed; top: 20px; right: 20px; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 8px; z-index: 100; cursor: pointer; }
         .hamburger-menu span { display: block; width: 25px; height: 3px; background: #fff; margin-bottom: 4px; }
         .menu-dropdown { position: fixed; top: 60px; right: 20px; background: #222; border-radius: 8px; padding: 10px; display: none; z-index: 100; text-align: left; border: 1px solid #444; }
         .menu-dropdown a { display: block; padding: 8px 15px; color: #fff; text-decoration: none; border-bottom: 1px solid #333; }
-        #ai-assistant-widget { position: fixed; bottom: 60px; right: 20px; z-index: 80; }
-        .ai-button { width: 50px; height: 50px; border-radius: 50%; background: #6200ea; color: white; border: none; font-size: 20px; }
     </style>
 </head>
 <body>
@@ -184,27 +151,23 @@
     </div>
 
     <div class="container">
-        
-        <div class="left-column">
-            <div class="profile-card">
-                <div class="profile-img-wrapper">
-                    <img src="nguyen-bac-son-cover.png" alt="Avatar" class="profile-img">
-                </div>
-                <h1 class="profile-name">NGUYEN BAC SON</h1>
-                <div style="text-align: center;">
-                    <div class="profile-description">⚡ CHÚC MỪNG NĂM MỚI ⚡</div>
-                </div>
+        <div class="profile-card">
+            <div class="profile-img-wrapper">
+                <img src="nguyen-bac-son-cover.png" alt="Avatar" class="profile-img">
             </div>
+            
+            <h1 class="profile-name">NGUYEN BAC SON</h1>
+            <div class="profile-description">⚡ CHÚC MỪNG NĂM MỚI ⚡</div>
+        </div>
 
-            <div class="counter-number slot-machine">00 00 0000</div>
+        <div class="counter-number slot-machine">00 00 0000</div>
 
-            <div class="music-container">
-                <div class="music-section">
-                    <h4>🎧 Bật nhạc lên xem pháo hoa 🎆</h4>
-                    <audio controls id="main-audio">
-                        <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mpeg">
-                    </audio>
-                </div>
+        <div class="music-container">
+            <div class="music-section">
+                <h4>🎧 Bật nhạc lên xem pháo hoa 🎆</h4>
+                <audio controls id="main-audio">
+                    <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mpeg">
+                </audio>
             </div>
         </div>
 
@@ -240,7 +203,6 @@
     </div>
 
     <div class="footer">© 2026 Nguyen Bac Son | <a href="#">Privacy Policy</a></div>
-    <div id="ai-assistant-widget"><button class="ai-button">💬</button></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -252,7 +214,7 @@
         });
         document.getElementById('hamburgerMenu').addEventListener('click', () => { const m = document.getElementById('menuDropdown'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; });
 
-        // --- JS PHÁO HOA MƯỢT ---
+        // --- JS PHÁO HOA MƯỢT (ĐÃ FIX LỖI) ---
         const canvas = document.getElementById('fireworks-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -325,7 +287,7 @@
             
             ctx.globalCompositeOperation = 'lighter';
 
-            if (Math.random() < 0.015) { fireworks.push(new Firework()); }
+            if (Math.random() < 0.02) { fireworks.push(new Firework()); }
 
             for (let i = fireworks.length - 1; i >= 0; i--) {
                 fireworks[i].update(); fireworks[i].draw();
