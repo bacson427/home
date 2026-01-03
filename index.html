@@ -20,25 +20,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        /* --- 1. CẤU HÌNH NỀN TẾT CHUYỂN ĐỘNG (TET ATMOSPHERE) --- */
+        /* --- 1. CẤU HÌNH NỀN TẾT CHUYỂN ĐỘNG --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            
             /* Gradient màu Tết: Đỏ thẫm, Tím than, Vàng đồng tối */
             background: linear-gradient(-45deg, #2b0000, #1a0a2e, #3d2e00, #1f0000);
             background-size: 400% 400%;
-            animation: nightSkyMove 20s ease infinite; /* Chuyển động rất chậm */
-            
+            animation: nightSkyMove 20s ease infinite;
             min-height: 100vh;
             color: #fff;
             padding-bottom: 80px;
             overflow-x: hidden;
         }
 
-        /* Animation cho nền */
         @keyframes nightSkyMove {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -104,18 +101,22 @@
         }
         @keyframes textShine { to { background-position: 200% center; } }
 
+        /* --- CHỮ CHÚC MỪNG NĂM MỚI MÀU ĐỎ --- */
         .profile-description {
-            font-size: 16px; font-weight: bold; color: #ffeb3b;
+            font-size: 16px; font-weight: bold; 
+            color: #ff3333; /* Chữ màu Đỏ tươi */
             padding: 10px 25px;
-            background: rgba(255, 0, 0, 0.15);
-            border: 2px solid #ffeb3b; border-radius: 50px;
+            background: rgba(50, 0, 0, 0.3);
+            border: 2px solid #ff0000; /* Viền Đỏ */
+            border-radius: 50px;
             display: inline-block; text-transform: uppercase;
-            box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff0000;
+            /* Hiệu ứng phát sáng Đỏ Neon */
+            box-shadow: 0 0 10px #ff0000, 0 0 20px #ff3333;
             animation: neonPulse 1s ease-in-out infinite alternate;
         }
         @keyframes neonPulse {
-            from { box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff0000; transform: scale(1); }
-            to   { box-shadow: 0 0 20px #ffeb3b, 0 0 35px #ff0000; transform: scale(1.05); }
+            from { box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; transform: scale(1); }
+            to   { box-shadow: 0 0 20px #ff0000, 0 0 40px #ff3333; transform: scale(1.05); }
         }
 
         .slot-machine { font-family: 'Courier New', monospace; font-size: 1.8rem; font-weight: bold; color: #00ffea; margin: 25px 0; letter-spacing: 2px; text-shadow: 0 0 5px #00ffea; }
@@ -227,12 +228,11 @@
         });
         document.getElementById('hamburgerMenu').addEventListener('click', () => { const m = document.getElementById('menuDropdown'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; });
 
-        // --- HỆ THỐNG PHÁO HOA + HOA RƠI ---
         const canvas = document.getElementById('fireworks-canvas');
         const ctx = canvas.getContext('2d');
-        let particles = []; // Hạt pháo hoa
-        let fireworks = []; // Quả pháo hoa bay lên
-        let blossoms = []; // Cánh hoa rơi
+        let particles = []; 
+        let fireworks = []; 
+        let blossoms = []; 
         let isPlaying = false;
         let scaleFactor = 1;
 
@@ -249,27 +249,25 @@
             return `hsl(${hue}, 100%, 80%)`;
         }
 
-        // --- LỚP CÁNH HOA RƠI (Blossom Class) ---
+        // --- CÁNH HOA RƠI (Blossom) ---
         class Blossom {
             constructor() {
                 this.x = Math.random() * canvas.width;
-                this.y = -20; // Bắt đầu từ trên đỉnh màn hình
-                this.size = (Math.random() * 5 + 3) * scaleFactor; // Kích thước ngẫu nhiên
-                // 50% là Hoa Đào (Hồng), 50% là Hoa Mai (Vàng)
-                this.color = Math.random() < 0.5 ? '#FFC0CB' : '#FFD700';
-                this.speedY = (Math.random() * 1 + 0.5) * scaleFactor; // Tốc độ rơi chậm
-                this.swaySpeed = Math.random() * 0.02 + 0.01; // Tốc độ lắc lư
-                this.swayRange = Math.random() * 2 + 1; // Biên độ lắc lư
+                this.y = -20;
+                this.size = (Math.random() * 5 + 3) * scaleFactor;
+                this.color = Math.random() < 0.5 ? '#FFC0CB' : '#FFD700'; // Đào & Mai
+                this.speedY = (Math.random() * 1 + 0.5) * scaleFactor;
+                this.swaySpeed = Math.random() * 0.02 + 0.01;
+                this.swayRange = Math.random() * 2 + 1;
                 this.swayOffset = Math.random() * Math.PI * 2;
-                this.angle = Math.random() * Math.PI * 2; // Góc xoay ban đầu
-                this.spinSpeed = (Math.random() - 0.5) * 0.05; // Tốc độ xoay
+                this.angle = Math.random() * Math.PI * 2;
+                this.spinSpeed = (Math.random() - 0.5) * 0.05;
             }
             update() {
                 this.y += this.speedY;
-                // Tạo hiệu ứng lắc lư qua lại hình sin
                 this.x += Math.sin(this.swayOffset) * this.swayRange;
                 this.swayOffset += this.swaySpeed;
-                this.angle += this.spinSpeed; // Xoay cánh hoa
+                this.angle += this.spinSpeed;
             }
             draw() {
                 ctx.save();
@@ -277,14 +275,13 @@
                 ctx.rotate(this.angle);
                 ctx.fillStyle = this.color;
                 ctx.beginPath();
-                // Vẽ hình elip làm cánh hoa
                 ctx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.restore();
             }
         }
 
-        // --- CÁC LỚP PHÁO HOA CŨ (Particle & Firework) ---
+        // --- PHÁO HOA (Particle) ---
         class Particle {
             constructor(x, y, color, customVelocity, isBig) {
                 this.x = x; this.y = y; this.color = color;
@@ -323,22 +320,20 @@
         }
 
         function animate() {
-            // Xóa sạch màn hình
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // --- VẼ HOA RƠI (Chế độ thường) ---
+            // 1. VẼ HOA RƠI (Chế độ thường)
             ctx.globalCompositeOperation = 'source-over';
-            // Tạo hoa rơi liên tục (kể cả khi không bật nhạc)
             if (Math.random() < 0.05) { blossoms.push(new Blossom()); }
             for (let i = blossoms.length - 1; i >= 0; i--) {
                 blossoms[i].update();
                 blossoms[i].draw();
-                if (blossoms[i].y > canvas.height + 20) blossoms.splice(i, 1); // Xóa khi rơi khỏi màn hình
+                if (blossoms[i].y > canvas.height + 20) blossoms.splice(i, 1);
             }
 
-            // --- VẼ PHÁO HOA (Chỉ khi bật nhạc) ---
+            // 2. VẼ PHÁO HOA (Chỉ khi bật nhạc)
             if (isPlaying) {
-                ctx.globalCompositeOperation = 'lighter'; // Chế độ sáng cho pháo hoa
+                ctx.globalCompositeOperation = 'lighter'; 
                 if (Math.random() < 0.05) { fireworks.push(new Firework()); }
                 if (Math.random() < 0.25) { 
                     particles.push(new Particle(0, canvas.height, randomColor(), true)); 
@@ -361,8 +356,8 @@
         audio.addEventListener('play', () => { isPlaying = true; });
         audio.addEventListener('pause', () => { isPlaying = false; });
         audio.addEventListener('ended', () => { isPlaying = false; });
-        // Bắt đầu animation ngay lập tức để vẽ hoa rơi
-        animate();
+        
+        animate(); // Bắt đầu animation ngay lập tức
     </script>
 </body>
 </html>
