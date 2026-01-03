@@ -20,17 +20,29 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        /* --- 1. CẤU HÌNH CƠ BẢN --- */
+        /* --- 1. CẤU HÌNH NỀN CHUYỂN ĐỘNG (DARK NIGHT SKY) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+            
+            /* Gradient màu tối chuyển động: Đen -> Xanh Đêm -> Tím Than */
+            background: linear-gradient(-45deg, #000000, #0f0c29, #302b63, #24243e, #000000);
+            background-size: 400% 400%;
+            animation: nightSkyMove 15s ease infinite; /* Chuyển động chậm trong 15s */
+            
             min-height: 100vh;
             color: #fff;
             padding-bottom: 80px;
             overflow-x: hidden;
+        }
+
+        /* Animation cho nền */
+        @keyframes nightSkyMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         /* Canvas Pháo Hoa */
@@ -46,12 +58,13 @@
 
         /* --- 2. AVATAR & LOGO --- */
         .profile-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.05); /* Kính mờ */
             border-radius: 25px;
             padding: 60px 20px 30px;
             margin-bottom: 20px; margin-top: 80px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
+            backdrop-filter: blur(5px); /* Làm mờ nền sau card */
         }
 
         .profile-img-wrapper {
@@ -233,7 +246,7 @@
 
         function randomColor() {
             const hue = Math.floor(Math.random() * 360);
-            return `hsl(${hue}, 100%, 75%)`;
+            return `hsl(${hue}, 100%, 80%)`;
         }
 
         class Particle {
@@ -286,7 +299,7 @@
                 this.speed = (Math.random() * 3 + 7) * scaleFactor;
                 this.color = randomColor();
                 this.exploded = false;
-                this.size = (this.isBig ? 5 : 3) * scaleFactor; // Đạn pháo to hơn
+                this.size = (this.isBig ? 5 : 3.5) * scaleFactor; // Đạn pháo to hơn
             }
             update() {
                 this.y -= this.speed;
@@ -301,7 +314,7 @@
             explode() {
                 // Tạo chớp sáng màn hình khi có quả nổ to
                 if (this.isBig) {
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                 }
 
@@ -316,15 +329,15 @@
         function animate() {
             if (!isPlaying) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
             
-            // Xóa sạch để không bị vệt mờ
+            // Xóa sạch màn hình mỗi frame (KHÔNG ĐỂ LẠI VỆT MỜ)
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             ctx.globalCompositeOperation = 'lighter';
 
-            // TĂNG TỈ LỆ BẮN LÊN (0.05 thay vì 0.02) -> Nhiều pháo hơn
+            // TĂNG TỈ LỆ BẮN LÊN (0.05)
             if (Math.random() < 0.05) { fireworks.push(new Firework()); }
 
-            // PHÁO PHỤT (3 DÀN)
+            // PHÁO PHỤT (3 DÀN: TRÁI, PHẢI, GIỮA)
             if (Math.random() < 0.25) { 
                 particles.push(new Particle(0, canvas.height, randomColor(), true)); 
                 particles.push(new Particle(canvas.width, canvas.height, randomColor(), true));
