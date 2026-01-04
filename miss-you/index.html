@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Miss You - Romantic Dark</title>
+    <title>Miss You - Flower Rain</title>
 
     <meta property="og:title" content="Miss You - Nguyễn Bắc Sơn">
     <meta property="og:description" content="Nhấp để xem chi tiết ❤️">
@@ -47,7 +47,7 @@
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
-        /* TIM CÂN XỨNG Ở TRÊN CÙNG */
+        /* TIM CÂN XỨNG */
         .heart-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 5px; }
         .heart-icon { font-size: 50px; text-shadow: 0 0 25px rgba(220, 20, 60, 0.8); }
         .heart-left { animation: heartbeatLeft 1.5s ease-in-out infinite; }
@@ -70,60 +70,46 @@
         .time-box span { font-size: 1.6rem; font-weight: 800; color: #df99ff; display: block; position: relative; z-index: 2; text-shadow: 0 0 8px rgba(223, 153, 255, 0.4); }
         .time-box p { font-size: 0.8rem; color: #a4b0be; font-weight: 600; margin-top: 5px; text-transform: uppercase; position: relative; z-index: 2; }
 
-        /* --- CSS VẼ LÁ CÂY NHƯ THẬT --- */
-        .real-leaf {
-            position: fixed; top: -50px; z-index: 0; pointer-events: none; opacity: 0.7;
-            animation: leafFall linear forwards;
-        }
-        .leaf-shape {
-            width: 100%; height: 100%; border-radius: 5px 30px 5px 30px; box-shadow: 0 0 5px rgba(0,0,0,0.3);
-        }
-        .leaf-autumn { background: linear-gradient(45deg, #ff9966, #ff5e62); }
-        .leaf-green { background: linear-gradient(45deg, #11998e, #38ef7d); }
-        .leaf-gold { background: linear-gradient(45deg, #f0c27b, #4b1248); }
-        
-        @keyframes leafFall {
-            0% { top: -10%; transform: translateX(0) rotate(0deg) skew(0deg); }
-            100% { top: 120%; transform: translateX(0) rotate(180deg) skew(0deg); }
+        /* --- CSS MƯA CÁNH HOA (FLOWER RAIN) --- */
+        .flower-petal {
+            position: fixed; top: -10%; z-index: 0; pointer-events: none; opacity: 0.8;
+            /* Hình dáng cánh hoa: Bầu dục nhọn 2 đầu */
+            border-radius: 100% 0% 100% 0%; 
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+            animation: petalFall linear forwards;
         }
 
-        /* --- CSS VẼ TRÁI TIM 3D CHÂN THỰC (NEW) --- */
-        /* Container chứa tim để bay lên */
+        /* Màu Hoa Đào (Hồng) */
+        .petal-peach { background: linear-gradient(45deg, #ffc0cb, #ff69b4); }
+        /* Màu Hoa Mai (Vàng) */
+        .petal-apricot { background: linear-gradient(45deg, #fff176, #fbc02d); }
+
+        /* Hiệu ứng rơi lả tả như mưa phùn */
+        @keyframes petalFall {
+            0% { top: -10%; transform: translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { top: 110%; transform: translateX(50px) rotate(360deg); opacity: 0.5; }
+        }
+
+
+        /* --- CSS TRÁI TIM 3D BAY LÊN (GIỮ NGUYÊN) --- */
         .real-heart-container {
             position: fixed; bottom: -50px; pointer-events: none; z-index: 1;
             animation: floatUpRealHeart linear forwards; opacity: 0.9;
         }
-
-        /* Tạo hình dáng trái tim bằng CSS (Kỹ thuật 2 hình tròn + 1 hình vuông) */
         .real-heart-shape {
-            position: relative; width: 100%; height: 100%;
-            transform: rotate(-45deg); /* Xoay để tạo hình tim */
+            position: relative; width: 100%; height: 100%; transform: rotate(-45deg);
         }
-        .real-heart-shape::before,
-        .real-heart-shape::after {
-            content: ""; position: absolute; width: 100%; height: 100%; border-radius: 50%;
-            background: inherit; /* Kế thừa màu gradient từ cha */
+        .real-heart-shape::before, .real-heart-shape::after {
+            content: ""; position: absolute; width: 100%; height: 100%; border-radius: 50%; background: inherit;
         }
         .real-heart-shape::before { top: -50%; left: 0; }
         .real-heart-shape::after { top: 0; right: -50%; }
 
-        /* Các loại Ngọc Tim 3D (Dùng Radial Gradient tạo khối) */
-        .heart-type-red { /* Hồng Ngọc */
-            background: radial-gradient(circle at 30% 30%, #ff5e62, #a71d31);
-            box-shadow: 0 0 10px rgba(255, 94, 98, 0.4);
-        }
-        .heart-type-blue { /* Sapphire Xanh */
-            background: radial-gradient(circle at 30% 30%, #54a0ff, #2e86de);
-            box-shadow: 0 0 10px rgba(84, 160, 255, 0.4);
-        }
-        .heart-type-gold { /* Thạch Anh Vàng */
-            background: radial-gradient(circle at 30% 30%, #f1c40f, #c0392b);
-            box-shadow: 0 0 10px rgba(241, 196, 15, 0.4);
-        }
-        .heart-type-purple { /* Thạch Anh Tím */
-            background: radial-gradient(circle at 30% 30%, #e056fd, #686de0);
-            box-shadow: 0 0 10px rgba(224, 86, 253, 0.4);
-        }
+        .heart-type-red { background: radial-gradient(circle at 30% 30%, #ff5e62, #a71d31); box-shadow: 0 0 10px rgba(255, 94, 98, 0.4); }
+        .heart-type-blue { background: radial-gradient(circle at 30% 30%, #54a0ff, #2e86de); box-shadow: 0 0 10px rgba(84, 160, 255, 0.4); }
+        .heart-type-gold { background: radial-gradient(circle at 30% 30%, #f1c40f, #c0392b); box-shadow: 0 0 10px rgba(241, 196, 15, 0.4); }
+        .heart-type-purple { background: radial-gradient(circle at 30% 30%, #e056fd, #686de0); box-shadow: 0 0 10px rgba(224, 86, 253, 0.4); }
 
         @keyframes floatUpRealHeart { 
             0% { transform: translateY(0) rotate(0deg) scale(0.6); opacity: 0; } 
@@ -131,8 +117,7 @@
             100% { transform: translateY(-110vh) rotate(360deg) scale(1); opacity: 0; } 
         }
 
-
-        /* --- CSS TIM BAY TỪ Ô SỐ --- */
+        /* TIM BAY TỪ Ô SỐ */
         .box-heart {
             position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
             pointer-events: none; z-index: 1; opacity: 0;
@@ -147,7 +132,6 @@
         .heart-m { font-size: 32px; color: #ff7f50; font-weight: bold; text-shadow: 0 0 8px #ff6348; } 
         .heart-h { font-size: 42px; color: #a29bfe; font-weight: bold; text-shadow: 0 0 10px #6c5ce7; } 
         .heart-d { font-size: 52px; color: #7bed9f; font-weight: bold; text-shadow: 0 0 12px #2ed573; }
-
 
         .date-start { 
             font-size: 1.1rem; font-weight: 800; 
@@ -223,26 +207,37 @@
     </div>
 
     <script>
-        /* --- 1. LÁ RƠI NHƯ THẬT --- */
-        function createRealLeaf() {
-            const leafContainer = document.createElement('div');
-            leafContainer.classList.add('real-leaf');
-            leafContainer.style.left = Math.random() * 100 + 'vw';
-            const size = Math.random() * 15 + 15;
-            leafContainer.style.width = size + 'px';
-            leafContainer.style.height = size + 'px';
-            leafContainer.style.animationDuration = (Math.random() * 7 + 8) + 's';
+        /* --- 1. MƯA HOA MAI - ĐÀO (DẠNG MƯA PHÙN) --- */
+        function createFlowerRain() {
+            const petal = document.createElement('div');
+            petal.classList.add('flower-petal');
+            
+            // Random loại cánh (Đào hoặc Mai)
+            const isPeach = Math.random() > 0.5;
+            petal.classList.add(isPeach ? 'petal-peach' : 'petal-apricot');
+            
+            // Random vị trí xuất phát
+            petal.style.left = Math.random() * 100 + 'vw';
+            
+            // Random kích thước (nhỏ như cánh hoa thật)
+            const size = Math.random() * 10 + 10; // 10px - 20px
+            petal.style.width = size + 'px';
+            petal.style.height = size + 'px';
+            
+            // Random tốc độ rơi (nhanh hơn lá một chút để giống mưa phùn)
+            petal.style.animationDuration = (Math.random() * 3 + 4) + 's'; // 4s - 7s
+            
+            // Random độ trễ
+            petal.style.animationDelay = Math.random() + 's';
 
-            const leafShape = document.createElement('div');
-            leafShape.classList.add('leaf-shape');
-            const types = ['leaf-autumn', 'leaf-green', 'leaf-gold'];
-            leafShape.classList.add(types[Math.floor(Math.random() * types.length)]);
-
-            leafContainer.appendChild(leafShape);
-            document.body.appendChild(leafContainer);
-            setTimeout(() => { leafContainer.remove(); }, 15000);
+            document.body.appendChild(petal);
+            
+            // Xóa sau khi rơi xong
+            setTimeout(() => { petal.remove(); }, 8000);
         }
-        setInterval(createRealLeaf, 1200);
+        
+        // Mật độ dày hơn: 300ms tạo 1 cánh
+        setInterval(createFlowerRain, 300);
 
 
         /* --- 2. ĐẾM NGÀY & TIM BAY TỪ Ô --- */
@@ -289,29 +284,24 @@
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        /* --- 3. TRÁI TIM 3D CHÂN THỰC BAY KHI CÓ NHẠC (NEW) --- */
+        /* --- 3. TIM 3D BAY KHI CÓ NHẠC --- */
         const audio = document.getElementById('myAudio');
         let heartInterval;
 
         function createRealFloatingHeart() {
-            // Container bay lên
             const container = document.createElement('div');
             container.classList.add('real-heart-container');
-
-            // Hình dáng trái tim 3D
             const heartShape = document.createElement('div');
             heartShape.classList.add('real-heart-shape');
 
-            // Random loại ngọc tim
             const types = ['heart-type-red', 'heart-type-blue', 'heart-type-gold', 'heart-type-purple'];
             heartShape.classList.add(types[Math.floor(Math.random() * types.length)]);
 
-            // Random vị trí, kích thước (Tim 3D cần to hơn chút để thấy rõ hiệu ứng)
             container.style.left = Math.random() * 100 + 'vw';
-            const size = Math.random() * 30 + 20; // Kích thước từ 20px - 50px
+            const size = Math.random() * 30 + 20;
             container.style.width = size + 'px';
             container.style.height = size + 'px';
-            container.style.animationDuration = (Math.random() * 4 + 6) + 's'; // Bay chậm (6-10s)
+            container.style.animationDuration = (Math.random() * 4 + 6) + 's'; 
 
             container.appendChild(heartShape);
             document.body.appendChild(container);
