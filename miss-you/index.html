@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Miss You - Fixed Fade</title>
+    <title>Miss You - Perfect Fireworks</title>
     
     <meta property="og:title" content="Miss You - Nguyễn Bắc Sơn">
     <meta property="og:description" content="Nhấp để xem chi tiết ❤️">
@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
 
         body {
@@ -31,13 +30,13 @@
             100% { background-position: 0% 50%; } 
         }
 
-        /* Canvas nằm trên cùng nhưng trong suốt */
+        /* Canvas nằm đè lên trên cùng nhưng cho phép bấm xuyên qua */
         #fireworksCanvas {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 100; 
-            pointer-events: none; /* Bấm xuyên qua */
+            pointer-events: none; 
         }
 
         .container {
@@ -47,36 +46,37 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.6);
             max-width: 500px; width: 90%; 
             border: 1px solid rgba(255, 255, 255, 0.1);
-            /* Khung đứng yên */
-            position: relative; 
+            animation: float 6s ease-in-out infinite; position: relative; 
             z-index: 10; 
         }
 
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+
         .heart-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 5px; }
-        /* Tim to đứng yên (không animation) */
-        .heart-icon { font-size: 50px; text-shadow: 0 0 20px rgba(220, 20, 60, 0.8); transform: scale(1); }
+        .heart-icon { font-size: 50px; text-shadow: 0 0 20px rgba(220, 20, 60, 0.8); }
+        .heart-left { animation: heartbeat 1.5s infinite; }
+        .heart-right { animation: heartbeat 1.5s infinite 0.2s; }
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
         h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 15px; color: #ff4757; }
 
         #clock { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
-        .time-box { position: relative; background: rgba(40, 40, 40, 0.8); padding: 8px; border-radius: 12px; min-width: 65px; border: 1px solid rgba(255,255,255,0.1); }
-        .time-box span { font-size: 1.6rem; font-weight: 800; color: #df99ff; display: block; position: relative; z-index: 2; }
-        .time-box p { font-size: 0.8rem; color: #a4b0be; margin-top: 5px; text-transform: uppercase; position: relative; z-index: 2; }
+        .time-box { background: rgba(40, 40, 40, 0.8); padding: 8px; border-radius: 12px; min-width: 65px; border: 1px solid rgba(255,255,255,0.1); }
+        .time-box span { font-size: 1.6rem; font-weight: 800; color: #df99ff; display: block; }
+        .time-box p { font-size: 0.8rem; color: #a4b0be; margin-top: 5px; text-transform: uppercase; }
 
-        /* Tim nhỏ bay lên */
         .box-heart {
             position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
             pointer-events: none; z-index: 1; opacity: 0;
-            animation: flyUpStraight 1.2s ease-out forwards;
+            animation: floatBubble 1.5s ease-out forwards;
         }
-        @keyframes flyUpStraight {
-            0% { bottom: 5px; opacity: 0; transform: translateX(-50%) scale(0.5); }
-            20% { opacity: 1; }
-            100% { bottom: 120%; opacity: 0; transform: translateX(-50%) scale(1.2); }
+        @keyframes floatBubble {
+            0% { bottom: 10px; opacity: 0; transform: translateX(-50%) scale(0.3); }
+            50% { opacity: 1; }
+            100% { bottom: 150%; opacity: 0; transform: translateX(-50%) scale(1.2); }
         }
-        .heart-s { font-size: 20px; color: #ff6b81; }
+        .heart-s { font-size: 22px; color: #ff6b81; }
 
-        /* Tim 3D khi có nhạc */
         .real-heart-container { position: fixed; bottom: -50px; pointer-events: none; z-index: 1; animation: floatUp 8s linear forwards; }
         .real-heart-shape { position: relative; width: 100%; height: 100%; transform: rotate(-45deg); }
         .real-heart-shape::before, .real-heart-shape::after { content: ""; position: absolute; width: 100%; height: 100%; border-radius: 50%; background: inherit; }
@@ -90,8 +90,8 @@
 
         .date-start { font-size: 1.1rem; font-weight: 800; background: rgba(0,0,0,0.5); color: #ff6b81; display: inline-block; padding: 8px 25px; border-radius: 30px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
         
-        /* Audio có ID để JS bắt vị trí */
-        #mainAudio { width: 100%; height: 35px; margin-top: 5px; border-radius: 20px; opacity: 0.9; filter: invert(90%) hue-rotate(240deg); position: relative; z-index: 20; outline: none; }
+        /* AUDIO CÓ ID myAudio ĐỂ JS BẮT DÍNH */
+        #myAudio { width: 100%; height: 35px; margin-top: 5px; border-radius: 20px; opacity: 0.9; filter: invert(90%) hue-rotate(240deg); position: relative; z-index: 20; outline: none; }
         
         .copyright { margin-top: 15px; font-size: 0.8rem; color: #888; }
         .hint { margin-top: 8px; font-size: 0.85rem; color: #ff4757; animation: pulse 2s infinite; }
@@ -106,8 +106,8 @@
 
     <div class="container" id="mainBox">
         <div class="heart-container">
-            <div class="heart-icon">🫀</div>
-            <div class="heart-icon">🫀</div>
+            <div class="heart-icon heart-left">🫀</div>
+            <div class="heart-icon heart-right">🫀</div>
         </div>
 
         <h1>Chúng mình đã quen nhau</h1>
@@ -121,7 +121,7 @@
 
         <p class="date-start">10:50 - 24/12/2025</p>
 
-        <audio id="mainAudio" controls loop autoplay>
+        <audio id="myAudio" controls loop autoplay>
             <source src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3" type="audio/mpeg">
             Trình duyệt của bạn không hỗ trợ phát nhạc.
         </audio>
@@ -131,36 +131,37 @@
     </div>
 
     <script>
-        /* --- 1. XỬ LÝ PHÁO HOA & TAN BIẾN TẠI AUDIO --- */
+        /* --- 1. HỆ THỐNG PHÁO HOA TRÁI TIM RƠI (FIXED) --- */
         const canvas = document.getElementById('fireworksCanvas');
-        const ctx = canvas.getContext('2d'); // SỬA LỖI: Mặc định alpha là true
+        const ctx = canvas.getContext('2d'); 
         
         let w, h, audioTop;
         
+        // Hàm lấy vị trí thanh Audio chuẩn xác
+        function updateAudioPos() {
+            const el = document.getElementById('myAudio');
+            if(el) {
+                // Lấy vị trí mép trên cùng của thanh Audio
+                audioTop = el.getBoundingClientRect().top;
+            } else {
+                audioTop = window.innerHeight; // Dự phòng
+            }
+        }
+
         function resize() {
             w = canvas.width = window.innerWidth;
             h = canvas.height = window.innerHeight;
             updateAudioPos();
         }
         
-        function updateAudioPos() {
-            const el = document.getElementById('mainAudio');
-            if(el) {
-                // Lấy vị trí mép trên của audio
-                audioTop = el.getBoundingClientRect().top;
-            } else {
-                audioTop = h; 
-            }
-        }
-
         window.addEventListener('resize', resize);
-        window.addEventListener('scroll', updateAudioPos); 
-        setTimeout(() => { resize(); updateAudioPos(); }, 500);
+        window.addEventListener('scroll', updateAudioPos);
+        setTimeout(resize, 100); // Khởi tạo
 
         let particles = [];
         let projectiles = [];
 
-        // Pháo bay lên
+        // Class Pháo bay lên
         class Projectile {
             constructor(x, targetY, side) {
                 this.x = x; this.y = h;
@@ -184,29 +185,28 @@
             }
         }
 
-        // Hạt pháo rơi
+        // Class Hạt nổ (Tim rơi)
         class Particle {
             constructor(x, y, color, vx, vy) {
                 this.x = x; this.y = y;
                 this.color = color;
                 this.vx = vx; this.vy = vy;
                 this.life = 1.0; 
-                this.gravity = 0.02; // Rơi chậm
+                this.gravity = 0.02; // Rơi rất chậm
             }
             update() {
                 this.vy += this.gravity;
                 this.x += this.vx; this.y += this.vy;
                 
-                // --- LOGIC TAN BIẾN CHÍNH XÁC ---
-                // Tính khoảng cách tới Audio
+                // --- LOGIC TAN BIẾN TẠI AUDIO ---
+                // Tính khoảng cách từ hạt pháo đến mép trên Audio
                 let dist = audioTop - this.y;
-                
-                if (dist < 60) { 
-                    // Nếu cách Audio dưới 60px thì mờ cực nhanh
-                    this.life -= 0.1; 
+
+                if (dist < 80) { // Nếu còn cách 80px
+                    // Càng gần càng mờ (dist = 0 thì opacity = 0)
+                    this.life = Math.max(0, dist / 80);
                 } else {
-                    // Nếu ở trên cao thì mờ rất chậm
-                    this.life -= 0.003; 
+                    this.life -= 0.003; // Mờ tự nhiên
                 }
             }
             draw() {
@@ -225,7 +225,7 @@
                 let hx = 16 * Math.pow(Math.sin(t), 3);
                 let hy = -(13 * Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
                 
-                let scale = 3; 
+                let scale = 3.5; 
                 let startX = x + hx * scale;
                 let startY = y + hy * scale;
                 
@@ -238,7 +238,6 @@
 
         function loop() {
             requestAnimationFrame(loop);
-            // Xóa sạch canvas mỗi khung hình (để trong suốt)
             ctx.clearRect(0, 0, w, h);
 
             for(let i = projectiles.length - 1; i >= 0; i--) {
@@ -249,6 +248,7 @@
                     projectiles.splice(i, 1);
                 }
             }
+
             for(let i = particles.length - 1; i >= 0; i--) {
                 let p = particles[i];
                 p.update(); p.draw();
@@ -258,10 +258,14 @@
         loop();
 
         function shoot() {
-            updateAudioPos(); // Cập nhật vị trí audio trước khi bắn
+            // Cập nhật lại vị trí audio trước khi bắn
+            updateAudioPos();
             projectiles.push(new Projectile(0, h, h/3.5, 'left'));
             projectiles.push(new Projectile(w, h, h/3.5, 'right'));
         }
+
+        // BẮN THỬ NGAY KHI VÀO WEB (Để bạn thấy luôn)
+        setTimeout(shoot, 1000); 
 
         /* --- 2. LOGIC ĐẾM NGÀY --- */
         const startDate = new Date(2025, 11, 24, 10, 50, 0).getTime();
@@ -282,6 +286,7 @@
             document.getElementById("minutes").innerText = mins < 10 ? "0"+mins : mins;
             document.getElementById("seconds").innerText = secs < 10 ? "0"+secs : secs;
 
+            // Kích hoạt pháo hoa giây 00 và 30
             if ((secs === 0 || secs === 30) && secs !== lastSec) {
                 shoot();
                 lastSec = secs;
@@ -298,14 +303,15 @@
             h.className = 'box-heart ' + cls;
             h.innerText = icon;
             box.appendChild(h);
-            setTimeout(() => h.remove(), 1200);
+            setTimeout(() => h.remove(), 1500);
         }
         setInterval(updateCounter, 1000);
         updateCounter();
 
         /* --- 3. TIM 3D (CHỈ BẬT KHI CÓ NHẠC) --- */
-        const audio = document.getElementById('mainAudio');
+        const audio = document.getElementById('myAudio');
         let heartInt;
+        
         function create3DHeart() {
             const div = document.createElement('div');
             div.className = 'real-heart-container';
@@ -322,6 +328,7 @@
             document.body.appendChild(div);
             setTimeout(() => div.remove(), 8000);
         }
+
         audio.onplay = () => { if(!heartInt) heartInt = setInterval(create3DHeart, 1500); };
         audio.onpause = () => { clearInterval(heartInt); heartInt = null; };
         document.body.addEventListener('click', () => { if(audio.paused) audio.play(); }, {once:true});
