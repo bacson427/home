@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Miss You - Smooth Fireworks</title>
+    <title>Miss You - Zero Lag</title>
 
     <meta property="og:title" content="Miss You - Nguyễn Bắc Sơn">
     <meta property="og:description" content="Nhấp để xem chi tiết ❤️">
@@ -18,10 +18,10 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
 
         body {
-            /* NỀN ĐỘNG SIÊU TỐI */
-            background: linear-gradient(-45deg, #000000, #1a0b2e, #2d0000, #0f0c29, #192a56, #240b36);
+            /* NỀN TỐI HUYỀN BÍ */
+            background: linear-gradient(-45deg, #000000, #1a0b2e, #240b36);
             background-size: 400% 400%; 
-            animation: gradientBG 25s ease infinite; 
+            animation: gradientBG 20s ease infinite; 
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
             font-family: 'Quicksand', sans-serif; overflow: hidden; position: relative;
@@ -36,11 +36,11 @@
 
         .container {
             text-align: center; 
-            background: rgba(0, 0, 0, 0.6); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.5); 
+            backdrop-filter: blur(5px); /* Giảm blur để nhẹ máy */
+            -webkit-backdrop-filter: blur(5px);
             padding: 30px 25px; border-radius: 25px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             max-width: 500px; width: 90%; 
             border: 1px solid rgba(255, 255, 255, 0.1);
             animation: float 6s ease-in-out infinite; position: relative; z-index: 10;
@@ -49,13 +49,52 @@
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
-        /* TIM CÂN XỨNG */
-        .heart-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 5px; position: relative; }
-        .heart-icon { font-size: 50px; text-shadow: 0 0 20px rgba(220, 20, 60, 0.8); position: relative; z-index: 2;}
-        .heart-left { animation: heartbeatLeft 1.5s ease-in-out infinite; }
-        .heart-right { animation: heartbeatRight 1.5s ease-in-out infinite; }
-        @keyframes heartbeatLeft { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.1) rotate(-10deg); } } 
-        @keyframes heartbeatRight { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.1) rotate(10deg); } }
+        /* --- HIỆU ỨNG HÀO QUANG (RIPPLE) TỪ TRÁI TIM --- */
+        .heart-container { 
+            display: flex; justify-content: center; gap: 30px; margin-bottom: 10px; position: relative; 
+        }
+        
+        .heart-wrapper {
+            position: relative;
+            width: 50px; height: 50px;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .heart-icon { 
+            font-size: 50px; 
+            position: relative; z-index: 2;
+            filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.8));
+            animation: heartbeat 1.5s infinite;
+        }
+
+        /* Vòng sóng tỏa ra */
+        .heart-wrapper::before, .heart-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: rgba(255, 107, 107, 0.4);
+            z-index: 1;
+            animation: rippleEffect 2s linear infinite;
+        }
+        .heart-wrapper::after {
+            animation-delay: 1s; /* Sóng sau đuổi sóng trước */
+        }
+
+        @keyframes rippleEffect {
+            0% { width: 100%; height: 100%; opacity: 0.8; border: 1px solid rgba(255, 107, 107, 0.5); }
+            100% { width: 300%; height: 300%; opacity: 0; border: 0px solid rgba(255, 107, 107, 0); }
+        }
+
+        @keyframes heartbeat { 
+            0% { transform: scale(1); } 
+            15% { transform: scale(1.2); } 
+            30% { transform: scale(1); } 
+            45% { transform: scale(1.2); } 
+            60% { transform: scale(1); } 
+        }
 
         h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 15px; color: #ff4757; line-height: 1.2; animation: titleColor 8s infinite alternate; text-shadow: 0 0 10px rgba(255, 71, 87, 0.5); }
 
@@ -72,19 +111,37 @@
         .time-box span { font-size: 1.6rem; font-weight: 800; color: #df99ff; display: block; position: relative; z-index: 2; text-shadow: 0 0 8px rgba(223, 153, 255, 0.4); }
         .time-box p { font-size: 0.8rem; color: #a4b0be; font-weight: 600; margin-top: 5px; text-transform: uppercase; position: relative; z-index: 2; }
 
-        /* --- CSS HẠT PHÁO (TỐI ƯU HÓA) --- */
-        .firework-particle {
+        /* --- ĐOM ĐÓM (FIREFLIES) - CSS PURE (KHÔNG LAG) --- */
+        .firefly {
             position: fixed;
-            width: 4px; height: 4px; /* Hạt nhỏ nhẹ */
+            width: 4px; height: 4px;
+            background-color: #ffff00;
             border-radius: 50%;
-            pointer-events: none; /* Không chặn click */
-            z-index: 15; 
-            will-change: transform, opacity; /* Ép GPU xử lý */
-            /* Giảm độ blur của shadow để đỡ lag */
-            box-shadow: 0 0 4px currentColor; 
+            box-shadow: 0 0 10px #ffff00, 0 0 20px #ff9900;
+            opacity: 0;
+            animation: fly 15s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Tạo nhiều đom đóm với vị trí và thời gian khác nhau */
+        .firefly:nth-child(1) { top: 80%; left: 10%; animation-duration: 12s; animation-delay: 0s; }
+        .firefly:nth-child(2) { top: 20%; left: 80%; animation-duration: 15s; animation-delay: 2s; }
+        .firefly:nth-child(3) { top: 60%; left: 50%; animation-duration: 10s; animation-delay: 1s; }
+        .firefly:nth-child(4) { top: 90%; left: 90%; animation-duration: 18s; animation-delay: 3s; }
+        .firefly:nth-child(5) { top: 10%; left: 10%; animation-duration: 20s; animation-delay: 0.5s; }
+        .firefly:nth-child(6) { top: 50%; left: 20%; animation-duration: 14s; animation-delay: 4s; }
+        .firefly:nth-child(7) { top: 30%; left: 60%; animation-duration: 16s; animation-delay: 1.5s; }
+
+        @keyframes fly {
+            0% { transform: translate(0, 0); opacity: 0; }
+            20% { opacity: 1; }
+            50% { transform: translate(50px, -50px); opacity: 0.5; }
+            80% { opacity: 1; }
+            100% { transform: translate(-50px, -100px); opacity: 0; }
         }
 
-        /* --- TRÁI TIM 3D --- */
+        /* --- TRÁI TIM 3D (GIỮ NGUYÊN) --- */
         .real-heart-container {
             position: fixed; bottom: -50px; pointer-events: none; z-index: 1;
             animation: floatUpRealHeart linear forwards; opacity: 0.9;
@@ -143,7 +200,7 @@
             outline: none;
             transition: opacity 0.3s;
             position: relative; 
-            z-index: 20; /* Đảm bảo audio nằm trên pháo */
+            z-index: 20; 
         }
         audio:hover { opacity: 1; }
 
@@ -168,10 +225,22 @@
     </style>
 </head>
 <body>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+
     <div class="container" id="mainBox">
         <div class="heart-container">
-            <div class="heart-icon heart-left" id="heartLeftTrigger">🫀</div>
-            <div class="heart-icon heart-right" id="heartRightTrigger">🫀</div>
+            <div class="heart-wrapper">
+                <div class="heart-icon">🫀</div>
+            </div>
+            <div class="heart-wrapper">
+                <div class="heart-icon">🫀</div>
+            </div>
         </div>
 
         <h1>Chúng mình đã quen nhau</h1>
@@ -195,85 +264,7 @@
     </div>
 
     <script>
-        /* --- 1. PHÁO PHỤT ĐA SẮC - ĐÃ TỐI ƯU HIỆU NĂNG --- */
-        const heartLeftTrigger = document.getElementById('heartLeftTrigger');
-        const heartRightTrigger = document.getElementById('heartRightTrigger');
-        const audioPlayerEl = document.getElementById('myAudio');
-
-        // Biến lưu vị trí audio để không phải tính toán liên tục
-        let audioRectTop = 0;
-        
-        function updateAudioPosition() {
-            if(audioPlayerEl) {
-                audioRectTop = audioPlayerEl.getBoundingClientRect().top;
-            }
-        }
-        // Cập nhật vị trí khi load và khi resize
-        updateAudioPosition();
-        window.addEventListener('resize', updateAudioPosition);
-
-        function launchSpark(sourceEl) {
-            if (!sourceEl || !audioPlayerEl) return;
-
-            const spark = document.createElement('div');
-            spark.classList.add('firework-particle');
-            
-            // Bảng màu đa sắc rực rỡ
-            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ffffff', '#ff9900'];
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            spark.style.backgroundColor = color;
-            spark.style.color = color; 
-
-            document.body.appendChild(spark);
-
-            const startRect = sourceEl.getBoundingClientRect();
-            let startX = startRect.left + startRect.width / 2;
-            let startY = startRect.top + startRect.height / 2;
-
-            // Tính điểm mờ dần
-            const fadeStartLimit = audioRectTop - 80; 
-            const fadeEndLimit = audioRectTop;
-
-            let posX = startX;
-            let posY = startY;
-            let vX = (Math.random() - 0.5) * 2; // Tốc độ ngang giảm xíu cho mượt
-            let vY = -(Math.random() * 3 + 2); 
-            let gravity = 0.1; 
-            let opacity = 1;
-
-            function animateSparkFrame() {
-                vY += gravity; 
-                posX += vX;
-                posY += vY;
-
-                // Logic mờ dần
-                if (posY > fadeStartLimit) {
-                    let distanceToFinish = fadeEndLimit - posY;
-                    opacity = Math.max(0, distanceToFinish / 80); 
-                }
-
-                spark.style.left = posX + 'px';
-                spark.style.top = posY + 'px';
-                spark.style.opacity = opacity;
-
-                // Xóa hạt nếu xong nhiệm vụ
-                if (opacity <= 0 || posY >= fadeEndLimit || posX < -20 || posX > window.innerWidth + 20) {
-                    spark.remove();
-                } else {
-                    requestAnimationFrame(animateSparkFrame);
-                }
-            }
-            animateSparkFrame();
-        }
-
-        // Tối ưu: Bắn mỗi 120ms (thay vì 50-80ms) -> Giảm tải CPU đáng kể
-        setInterval(() => {
-            launchSpark(heartLeftTrigger);
-            launchSpark(heartRightTrigger);
-        }, 120);
-
-
-        /* --- 2. ĐẾM NGÀY & TIM BAY TỪ Ô SỐ --- */
+        /* --- 1. ĐẾM NGÀY & TIM BAY --- */
         const startDate = new Date(2025, 11, 24, 10, 50, 0).getTime();
         let prevMin = -1, prevHour = -1, prevDay = -1;
 
@@ -317,7 +308,7 @@
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        /* --- 3. TIM 3D BAY KHI CÓ NHẠC --- */
+        /* --- 2. TIM 3D BAY KHI CÓ NHẠC --- */
         const audio = document.getElementById('myAudio');
         let heartInterval;
 
@@ -350,7 +341,7 @@
         audio.onpause = function() { clearInterval(heartInterval); heartInterval = null; };
         document.body.addEventListener('click', function() { if(audio.paused) audio.play(); }, { once: true });
 
-        /* --- 4. DOUBLE TAP --- */
+        /* --- 3. DOUBLE TAP --- */
         document.addEventListener('dblclick', function(e) { createClickHeart(e.pageX, e.pageY); });
         let lastTap = 0;
         document.addEventListener('touchend', function(e) {
