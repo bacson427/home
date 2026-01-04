@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Miss You - Front Fireworks</title>
+    <title>Miss You</title>
 
     <meta property="og:title" content="Miss You - Nguyễn Bắc Sơn">
     <meta property="og:description" content="Nhấp để xem chi tiết ❤️">
@@ -18,21 +18,83 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
 
         body {
-            /* NỀN TỐI HUYỀN BÍ */
-            background: linear-gradient(-45deg, #000000, #1a0b2e, #240b36);
-            background-size: 400% 400%; 
-            animation: gradientBG 20s ease infinite; 
+            /* NỀN TỐI TĨNH (Thay đổi quan trọng để giảm lag) */
+            /* Sử dụng nền tối tĩnh làm base, hiệu ứng chuyển động sẽ nằm ở lớp trên */
+            background: radial-gradient(circle at center, #1a0b2e 0%, #000000 100%);
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
             font-family: 'Quicksand', sans-serif; overflow: hidden; position: relative;
             color: #ffade3; 
         }
 
-        @keyframes gradientBG { 
-            0% { background-position: 0% 50%; } 
-            50% { background-position: 100% 50%; } 
-            100% { background-position: 0% 50%; } 
+        /* --- HIỆU ỨNG NỀN CHUYỂN ĐỘNG (MỚI THÊM) --- */
+        /* Lớp chứa các khối màu nền */
+        .bg-blobs-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; /* Nằm dưới cùng */
+            pointer-events: none;
+            overflow: hidden;
         }
+
+        /* Style chung cho các khối màu */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            /* Làm mờ mạnh để tạo cảm giác mềm mại, lãng mạn */
+            filter: blur(70px); 
+            opacity: 0.5; /* Độ trong suốt vừa phải */
+            /* Gợi ý trình duyệt tối ưu hóa cho chuyển động transform */
+            will-change: transform;
+        }
+
+        /* Khối 1: Màu hồng phấn */
+        .blob-1 {
+            top: -100px; left: -100px;
+            width: 50vw; height: 50vw;
+            background: #ff758c;
+            animation: moveBlob1 25s infinite alternate ease-in-out;
+        }
+
+        /* Khối 2: Màu tím ấm */
+        .blob-2 {
+            bottom: -150px; right: -150px;
+            width: 60vw; height: 60vw;
+            background: #6a0572;
+            animation: moveBlob2 30s infinite alternate ease-in-out;
+        }
+
+        /* Khối 3: Màu đỏ rượu vang (ở giữa) */
+        .blob-3 {
+            top: 30%; left: 30%;
+            width: 40vw; height: 40vw;
+            background: #800020;
+            animation: moveBlob3 35s infinite alternate ease-in-out;
+            opacity: 0.3;
+        }
+
+        /* Animation di chuyển nhẹ nhàng (Sử dụng translate để tối ưu hiệu năng) */
+        @keyframes moveBlob1 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30vw, 40vh) scale(1.2); }
+        }
+        @keyframes moveBlob2 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-40vw, -30vh) scale(0.9); }
+        }
+        @keyframes moveBlob3 {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            100% { transform: translate(20vw, -20vh) scale(1.1) rotate(180deg); }
+        }
+        
+        /* --- Responsive cho blobs trên mobile --- */
+        @media (max-width: 768px) {
+             .blob { filter: blur(50px); opacity: 0.4; } /* Giảm blur và opacity trên mobile để nhẹ hơn */
+             .blob-1 { width: 80vw; height: 80vw; }
+             .blob-2 { width: 90vw; height: 90vw; }
+             .blob-3 { width: 70vw; height: 70vw; }
+        }
+
 
         /* --- CANVAS PHÁO HOA (LAYER TRÊN CÙNG) --- */
         #fireworksCanvas {
@@ -118,6 +180,12 @@
     </style>
 </head>
 <body>
+    <div class="bg-blobs-container">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
     <canvas id="fireworksCanvas"></canvas>
 
     <div class="container" id="mainBox">
@@ -197,16 +265,10 @@
                 }
 
                 // Logic 2: Mờ dần khi rơi đến gần thanh audio
-                // audioTopY là vị trí mép trên của thanh audio
-                // Bắt đầu mờ khi còn cách audio khoảng 80px
                 const fadeDistance = 80; 
                 if (this.y > audioTopY - fadeDistance) {
-                    // Tính toán độ trong suốt dựa trên khoảng cách còn lại
-                    // Càng gần audioTopY thì alpha càng về 0
                     let fadeAlpha = (audioTopY - this.y) / fadeDistance;
                     if (fadeAlpha < 0) fadeAlpha = 0;
-                    
-                    // Chọn giá trị nhỏ hơn giữa alpha hiện tại và fadeAlpha
                     this.alpha = Math.min(this.alpha, fadeAlpha);
                 }
             }
@@ -243,18 +305,16 @@
             requestAnimationFrame(animate);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Lấy vị trí hiện tại của thanh audio (tính cả lúc nó float lên xuống)
             const audioEl = document.getElementById('myAudio');
-            let audioTop = canvas.height; // Mặc định là đáy màn hình nếu không tìm thấy audio
+            let audioTop = canvas.height; 
             if (audioEl) {
                 const rect = audioEl.getBoundingClientRect();
-                audioTop = rect.top; // Vị trí mép trên của audio so với màn hình
+                audioTop = rect.top;
             }
 
             particles.forEach((particle, index) => {
-                // Chỉ vẽ nếu particle còn sống và alpha > 0
                 if (particle.life > 0 && particle.alpha > 0.01) {
-                    particle.update(audioTop); // Truyền vị trí audio vào hàm update
+                    particle.update(audioTop); 
                     particle.draw();
                 } else {
                     particles.splice(index, 1);
@@ -298,7 +358,6 @@
             if (seconds !== 0 && seconds !== 30) lastFiredSecond = -1;
 
             spawnHeartInBox('box-seconds', 'heart-s', '❤️');
-            // ... (Logic tim bay từ ô số giữ nguyên)
             if (prevMin !== -1 && minutes !== prevMin) spawnHeartInBox('box-minutes', 'heart-m', '💗');
             prevMin = minutes;
             if (prevHour !== -1 && hours !== prevHour) spawnHeartInBox('box-hours', 'heart-h', '💖');
@@ -307,7 +366,6 @@
             prevDay = days;
         }
 
-        // Logic tim bay từ ô số (rút gọn để code clean)
         let prevMin = -1, prevHour = -1, prevDay = -1;
         
         function spawnHeartInBox(boxId, className, icon) {
