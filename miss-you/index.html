@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Miss You - Heart Fireworks</title>
+    <title>Miss You - Front Fireworks</title>
 
     <meta property="og:title" content="Miss You - Nguyễn Bắc Sơn">
     <meta property="og:description" content="Nhấp để xem chi tiết ❤️">
@@ -34,13 +34,15 @@
             100% { background-position: 0% 50%; } 
         }
 
-        /* Canvas vẽ pháo hoa nằm trên nền nhưng dưới nội dung */
+        /* --- CANVAS PHÁO HOA (LAYER TRÊN CÙNG) --- */
         #fireworksCanvas {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: 1; 
-            pointer-events: none;
+            /* Z-index 100 để nằm đè lên mọi thứ */
+            z-index: 100; 
+            /* Quan trọng: Cho phép bấm xuyên qua để chỉnh nhạc */
+            pointer-events: none; 
         }
 
         .container {
@@ -53,13 +55,13 @@
             max-width: 500px; width: 90%; 
             border: 1px solid rgba(255, 255, 255, 0.1);
             animation: float 6s ease-in-out infinite; position: relative; 
-            z-index: 10; /* Nội dung nằm trên pháo hoa */
+            z-index: 10; 
             will-change: transform; 
         }
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
-        /* HIỆU ỨNG HÀO QUANG (RIPPLE) */
+        /* HIỆU ỨNG RIPPLE TIM */
         .heart-container { display: flex; justify-content: center; gap: 30px; margin-bottom: 10px; position: relative; }
         .heart-wrapper { position: relative; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; }
         .heart-icon { font-size: 50px; position: relative; z-index: 2; filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.8)); animation: heartbeat 1.5s infinite; }
@@ -149,7 +151,7 @@
     </div>
 
     <script>
-        /* --- 1. HỆ THỐNG PHÁO HOA TRÁI TIM (CANVAS) --- */
+        /* --- 1. HỆ THỐNG PHÁO HOA TRÁI TIM RƠI (CANVAS FRONT LAYER) --- */
         const canvas = document.getElementById('fireworksCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -161,78 +163,59 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // Cấu hình hạt pháo hoa
         class Particle {
-            constructor(x, y, color, velocity, isHeartShape, side) {
+            constructor(x, y, color, velocity) {
                 this.x = x;
                 this.y = y;
                 this.color = color;
                 this.velocity = velocity;
                 this.alpha = 1;
-                this.friction = 0.96; // Lực cản để hạt dừng lại
-                // Thời gian tồn tại: 20 giây (mỗi giây khoảng 60 khung hình) -> 1200 frames
-                this.life = 1200; 
-                this.maxLife = 1200;
+                this.friction = 0.96; 
+                this.gravity = 0.05; 
+                this.life = 1200; // Tồn tại 20s
             }
 
             draw() {
                 ctx.globalAlpha = this.alpha;
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2); // Hạt nhỏ 2.5px
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
                 ctx.fill();
-                // Hiệu ứng lấp lánh (Twinkle)
-                if (Math.random() > 0.8) {
-                    ctx.globalAlpha = this.alpha * 0.5;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
-                    ctx.fill();
-                }
             }
 
             update() {
                 this.velocity.x *= this.friction;
                 this.velocity.y *= this.friction;
+                this.velocity.y += this.gravity;
                 this.x += this.velocity.x;
                 this.y += this.velocity.y;
                 this.life--;
 
-                // Mờ dần rất chậm. Chỉ mờ hẳn khi còn 10% sự sống
-                if (this.life < 120) {
-                    this.alpha = this.life / 120;
+                if (this.life < 200) {
+                    this.alpha = this.life / 200;
                 }
             }
         }
 
         function createHeartExplosion(x, y, side) {
-            const particleCount = 100; // Số lượng hạt mỗi nửa
+            const particleCount = 80; 
             const colors = ['#ff7675', '#d63031', '#e84393', '#fd79a8', '#a29bfe'];
             
             for (let i = 0; i < particleCount; i++) {
-                // Thuật toán vẽ hình trái tim
-                // Left side: t từ PI đến 2PI. Right side: t từ 0 đến PI
                 let t = (side === 'left') 
                     ? Math.PI + (Math.PI * i / particleCount) 
                     : (Math.PI * i / particleCount);
                 
-                // Công thức trái tim
-                // x = 16sin^3(t)
-                // y = 13cos(t) - 5cos(2t) - 2cos(3t) - cos(4t)
-                
-                // Tính toán vector vận tốc để hạt bay vào đúng vị trí hình tim
                 let heartX = 16 * Math.pow(Math.sin(t), 3);
-                let heartY = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)); // Đảo ngược Y vì canvas
+                let heartY = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
                 
-                // Scale độ lớn trái tim
-                let scale = 3.5; 
+                let scale = 4;
                 
-                // Vận tốc bắn ra
                 let velocity = {
-                    x: heartX * 0.15 * Math.random() + heartX * 0.05,
-                    y: heartY * 0.15 * Math.random() + heartY * 0.05
+                    x: (heartX * 0.1) + (Math.random() - 0.5) * 0.5, 
+                    y: (heartY * 0.1) + (Math.random() - 0.5) * 0.5
                 };
 
-                // Đẩy hạt ra xa tâm một chút để tạo hình ngay
                 let startX = x + heartX * scale;
                 let startY = y + heartY * scale;
 
@@ -241,14 +224,12 @@
             }
         }
 
-        // Loop vẽ canvas
         function animate() {
             requestAnimationFrame(animate);
-            // Xóa màn hình nhưng giữ lại chút vệt mờ (trail) không cần thiết vì ta muốn nó đứng yên
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             particles.forEach((particle, index) => {
-                if (particle.life > 0) {
+                if (particle.life > 0 && particle.y < canvas.height + 10) {
                     particle.update();
                     particle.draw();
                 } else {
@@ -258,23 +239,16 @@
         }
         animate();
 
-        // Hàm kích hoạt bắn pháo
         function launchHeartFireworks() {
             const centerX = canvas.width / 2;
-            const centerY = canvas.height / 3; // Nổ ở phía trên màn hình
-
-            // Quả trái: Nửa tim trái
+            const centerY = canvas.height / 3.5; 
             createHeartExplosion(centerX, centerY, 'left');
-            // Quả phải: Nửa tim phải
             createHeartExplosion(centerX, centerY, 'right');
         }
 
 
         /* --- 2. ĐẾM NGÀY & TRIGGER PHÁO HOA --- */
         const startDate = new Date(2025, 11, 24, 10, 50, 0).getTime();
-        let prevMin = -1, prevHour = -1, prevDay = -1;
-        
-        // Cờ kiểm tra để không bắn lặp lại trong cùng 1 giây
         let lastFiredSecond = -1; 
 
         function updateCounter() {
@@ -292,15 +266,15 @@
             document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
             document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
 
-            // --- TRIGGER PHÁO HOA (Mỗi 30s: giây thứ 0 và giây thứ 30) ---
+            // --- TRIGGER PHÁO HOA (Giây 00 và 30) ---
             if ((seconds === 0 || seconds === 30) && seconds !== lastFiredSecond) {
                 launchHeartFireworks();
-                lastFiredSecond = seconds; // Đánh dấu đã bắn giây này
+                lastFiredSecond = seconds; 
             }
-            if (seconds !== 0 && seconds !== 30) lastFiredSecond = -1; // Reset cờ
+            if (seconds !== 0 && seconds !== 30) lastFiredSecond = -1;
 
-            // Tim bay từ ô số
             spawnHeartInBox('box-seconds', 'heart-s', '❤️');
+            // ... (Logic tim bay từ ô số giữ nguyên)
             if (prevMin !== -1 && minutes !== prevMin) spawnHeartInBox('box-minutes', 'heart-m', '💗');
             prevMin = minutes;
             if (prevHour !== -1 && hours !== prevHour) spawnHeartInBox('box-hours', 'heart-h', '💖');
@@ -309,6 +283,9 @@
             prevDay = days;
         }
 
+        // Logic tim bay từ ô số (rút gọn để code clean)
+        let prevMin = -1, prevHour = -1, prevDay = -1;
+        
         function spawnHeartInBox(boxId, className, icon) {
             const box = document.getElementById(boxId);
             if (!box) return;
