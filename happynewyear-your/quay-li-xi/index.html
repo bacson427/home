@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lì Xì Tết 2026 - Nguyễn Bắc Sơn</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background: radial-gradient(circle at center, #8d0801, #1a0000);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* Khung chính */
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid #fca311;
+            box-shadow: 0 0 30px rgba(217, 4, 41, 0.5);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #fca311;
+            font-size: 2.5em;
+            margin: 0 0 20px 0;
+            text-shadow: 2px 2px 4px black;
+        }
+
+        /* Phần Đăng nhập */
+        #login-area input {
+            padding: 12px;
+            width: 70%;
+            border-radius: 20px;
+            border: none;
+            text-align: center;
+            outline: none;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background: linear-gradient(to right, #fca311, #ffb703);
+            border: none;
+            padding: 10px 30px;
+            border-radius: 20px;
+            color: #8d0801;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        button:active { transform: scale(0.95); }
+
+        /* Lưới Lì xì */
+        #game-area { display: none; }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .lixi {
+            background-color: #d90429;
+            border: 1px solid #fca311;
+            border-radius: 8px;
+            aspect-ratio: 2/3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .lixi:hover { transform: translateY(-3px); }
+        .lixi::after { content: "🧧"; }
+
+        /* Modal Kết quả */
+        #result-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .money { font-size: 4em; color: #fca311; font-weight: bold; margin: 20px; animation: pop 0.5s; }
+        @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        
+        .note { font-size: 0.8em; color: #aaa; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="login-area">
+            <h1>Lì Xì 2026</h1>
+            <p>Nhập mật khẩu để mở (SĐT của Sơn)</p>
+            <input type="password" id="passInput" placeholder="Nhập mật khẩu...">
+            <br>
+            <button onclick="checkPass()">VÀO NHẬN LÌ XÌ</button>
+            <p id="msg" style="color: red; min-height: 20px; font-size: 0.9em;"></p>
+        </div>
+
+        <div id="game-area">
+            <h1>Chọn 1 Bao Nhé</h1>
+            <div class="grid-container" id="grid"></div>
+        </div>
+    </div>
+
+    <div id="result-modal">
+        <h2 style="color: white;">Chúc Mừng Năm Mới!</h2>
+        <div class="money" id="res-money"></div>
+        <p style="color: white;">Chụp màn hình gửi lại tớ nhé!</p>
+        <p id="save-status" class="note">Đang lưu...</p>
+        <button onclick="location.reload()">Thoát</button>
+    </div>
+
+    <script>
+        // === CẤU HÌNH Ở ĐÂY ===
+        const PASSWORD = "0879546673"; // Mật khẩu
+        
+        // Dán link Google Apps Script của bạn vào giữa 2 dấu ngoặc kép bên dưới
+        // Nếu chưa có thì để trống "" -> Game vẫn chơi được nhưng không lưu vào Sheet
+        const SHEET_API_URL = ""; 
+
+        const MENH_GIA = ["10k", "20k", "50k", "100k", "200k", "100k", "50k", "200k", "20k"];
+        // =======================
+
+        // Kiểm tra đã chơi chưa (Chính sách 1 IP/Trình duyệt)
+        if(localStorage.getItem('da_mo_lixi_2026')) {
+            document.getElementById('msg').innerText = "Bạn đã mở lì xì rồi! (Mỗi máy chỉ 1 lần)";
+            // Khóa nút
+            document.querySelector('button').disabled = true;
+            document.querySelector('button').style.background = '#ccc';
+        }
+
+        function checkPass() {
+            const inp = document.getElementById('passInput').value;
+            if (inp === PASSWORD) {
+                if(localStorage.getItem('da_mo_lixi_2026')) {
+                    alert("Bạn đã mở rồi, không được mở nữa nhé!");
+                    return;
+                }
+                document.getElementById('login-area').style.display = 'none';
+                document.getElementById('game-area').style.display = 'block';
+                taoLixi();
+            } else {
+                document.getElementById('msg').innerText = "Sai mật khẩu rồi! Thử lại đi.";
+            }
+        }
+
+        function taoLixi() {
+            const grid = document.getElementById('grid');
+            // Tạo 9 bao
+            for(let i=0; i<9; i++) {
+                let box = document.createElement('div');
+                box.className = 'lixi';
+                box.onclick = function() { moLixi() };
+                grid.appendChild(box);
+            }
+        }
+
+        function moLixi() {
+            // Random tiền
+            const tien = MENH_GIA[Math.floor(Math.random() * MENH_GIA.length)];
+            
+            // Hiện kết quả
+            document.getElementById('result-modal').style.display = 'flex';
+            document.getElementById('res-money').innerText = tien;
+            
+            // Đánh dấu đã mở (Lưu vào trình duyệt)
+            localStorage.setItem('da_mo_lixi_2026', 'true');
+
+            // Gửi sang Google Sheet
+            guiDuLieu(tien);
+        }
+
+        function guiDuLieu(sotien) {
+            const status = document.getElementById('save-status');
+            
+            if (!SHEET_API_URL) {
+                status.innerText = "Chế độ chơi offline (Chưa cấu hình Sheet)";
+                return;
+            }
+
+            fetch(SHEET_API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prize: sotien })
+            })
+            .then(() => { status.innerText = "Đã lưu kết quả thành công!"; })
+            .catch(() => { status.innerText = "Lỗi mạng, nhớ chụp màn hình nhé!"; });
+        }
+    </script>
+</body>
+</html>
