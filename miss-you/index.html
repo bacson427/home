@@ -183,7 +183,7 @@
                 ctx.fill();
             }
 
-            update() {
+            update(audioTopY) {
                 this.velocity.x *= this.friction;
                 this.velocity.y *= this.friction;
                 this.velocity.y += this.gravity;
@@ -191,8 +191,23 @@
                 this.y += this.velocity.y;
                 this.life--;
 
+                // Logic 1: Mờ dần theo tuổi thọ (mặc định)
                 if (this.life < 200) {
                     this.alpha = this.life / 200;
+                }
+
+                // Logic 2: Mờ dần khi rơi đến gần thanh audio
+                // audioTopY là vị trí mép trên của thanh audio
+                // Bắt đầu mờ khi còn cách audio khoảng 80px
+                const fadeDistance = 80; 
+                if (this.y > audioTopY - fadeDistance) {
+                    // Tính toán độ trong suốt dựa trên khoảng cách còn lại
+                    // Càng gần audioTopY thì alpha càng về 0
+                    let fadeAlpha = (audioTopY - this.y) / fadeDistance;
+                    if (fadeAlpha < 0) fadeAlpha = 0;
+                    
+                    // Chọn giá trị nhỏ hơn giữa alpha hiện tại và fadeAlpha
+                    this.alpha = Math.min(this.alpha, fadeAlpha);
                 }
             }
         }
@@ -228,9 +243,18 @@
             requestAnimationFrame(animate);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Lấy vị trí hiện tại của thanh audio (tính cả lúc nó float lên xuống)
+            const audioEl = document.getElementById('myAudio');
+            let audioTop = canvas.height; // Mặc định là đáy màn hình nếu không tìm thấy audio
+            if (audioEl) {
+                const rect = audioEl.getBoundingClientRect();
+                audioTop = rect.top; // Vị trí mép trên của audio so với màn hình
+            }
+
             particles.forEach((particle, index) => {
-                if (particle.life > 0 && particle.y < canvas.height + 10) {
-                    particle.update();
+                // Chỉ vẽ nếu particle còn sống và alpha > 0
+                if (particle.life > 0 && particle.alpha > 0.01) {
+                    particle.update(audioTop); // Truyền vị trí audio vào hàm update
                     particle.draw();
                 } else {
                     particles.splice(index, 1);
