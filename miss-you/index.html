@@ -97,7 +97,7 @@
 
 
         /* --- CANVAS PHÁO HOA (LAYER TRÊN CÙNG) --- */
-#fireworksCanvas {
+        #fireworksCanvas {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
@@ -147,7 +147,7 @@
         .real-heart-shape::after { top: 0; right: -50%; }
         .heart-type-red { background: radial-gradient(circle at 30% 30%, #ff5e62, #a71d31); box-shadow: 0 0 5px rgba(255, 94, 98, 0.4); }
         .heart-type-blue { background: radial-gradient(circle at 30% 30%, #54a0ff, #2e86de); box-shadow: 0 0 5px rgba(84, 160, 255, 0.4); }
-.heart-type-gold { background: radial-gradient(circle at 30% 30%, #f1c40f, #c0392b); box-shadow: 0 0 5px rgba(241, 196, 15, 0.4); }
+        .heart-type-gold { background: radial-gradient(circle at 30% 30%, #f1c40f, #c0392b); box-shadow: 0 0 5px rgba(241, 196, 15, 0.4); }
         .heart-type-purple { background: radial-gradient(circle at 30% 30%, #e056fd, #686de0); box-shadow: 0 0 5px rgba(224, 86, 253, 0.4); }
         @keyframes floatUpRealHeart { 0% { transform: translateY(0) rotate(0deg) scale(0.6); opacity: 0; } 10% { opacity: 0.9; } 100% { transform: translateY(-110vh) rotate(360deg) scale(1); opacity: 0; } }
 
@@ -162,6 +162,43 @@
         .date-start { font-size: 1.1rem; font-weight: 800; background: rgba(0, 0, 0, 0.5); color: #ff6b81; display: inline-block; padding: 8px 25px; border-radius: 30px; margin-bottom: 15px; letter-spacing: 1px; border: 1px solid rgba(255, 255, 255, 0.1); }
         audio { width: 100%; height: 35px; margin-top: 5px; border-radius: 20px; opacity: 0.8; filter: invert(90%) hue-rotate(240deg) saturate(150%) brightness(0.8); outline: none; transition: opacity 0.3s; position: relative; z-index: 20; }
         audio:hover { opacity: 1; }
+        
+        /* Ô CHÚC MỪNG NĂM MỚI */
+        .new-year-box {
+            display: inline-block;
+            margin-top: 15px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #6a0572 50%, #1a0b2e 100%);
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 15px rgba(255, 107, 107, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 5;
+        }
+        
+        .new-year-box:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4), 0 0 25px rgba(255, 107, 107, 0.7);
+            color: #ffde7d;
+            background: linear-gradient(135deg, #ff8e8e 0%, #7a0b82 50%, #2a0b3e 100%);
+        }
+        
+        .new-year-box::before {
+            content: '🎉';
+            margin-right: 8px;
+        }
+        
+        .new-year-box::after {
+            content: '🎊';
+            margin-left: 8px;
+        }
+        
         .copyright { margin-top: 15px; font-size: 0.8rem; color: #747d8c; font-weight: 600; }
         .copyright span { color: #ff4757; }
         .hint { margin-top: 8px; font-size: 0.85rem; color: #ff4757; font-weight: bold; animation: pulseText 2s infinite; }
@@ -176,6 +213,7 @@
             .time-box span { font-size: 1.4rem; } 
             .container { padding: 25px 15px; } 
             .heart-icon { font-size: 45px; }
+            .new-year-box { font-size: 1rem; padding: 10px 20px; margin-top: 10px; }
         }
     </style>
 </head>
@@ -199,7 +237,7 @@
         </div>
 
         <h1>Chúng mình đã quen nhau</h1>
-<div id="clock">
+        <div id="clock">
             <div class="time-box" id="box-days"> <span id="days">00</span> <p>Ngày</p> </div>
             <div class="time-box" id="box-hours"> <span id="hours">00</span> <p>Giờ</p> </div>
             <div class="time-box" id="box-minutes"> <span id="minutes">00</span> <p>Phút</p> </div>
@@ -212,6 +250,11 @@
             <source src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3" type="audio/mpeg">
             Trình duyệt của bạn không hỗ trợ phát nhạc.
         </audio>
+        
+        <!-- Ô CHÚC MỪNG NĂM MỚI CÓ THỂ NHẤN VÀO -->
+        <a href="https://nguyenbacson.io.vn" target="_blank" class="new-year-box">
+            CHÚC MỪNG NĂM MỚI
+        </a>
 
         <p class="copyright">Có Thể Hay Không <> 可不可以</p>
         <p class="hint">( Nhấp 2 lần vào màn hình )</p>
@@ -303,7 +346,7 @@
         function animate() {
             requestAnimationFrame(animate);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-const audioEl = document.getElementById('myAudio');
+            const audioEl = document.getElementById('myAudio');
             let audioTop = canvas.height; 
             if (audioEl) {
                 const rect = audioEl.getBoundingClientRect();
@@ -390,7 +433,7 @@ const audioEl = document.getElementById('myAudio');
             container.classList.add('real-heart-container');
             const heartShape = document.createElement('div');
             heartShape.classList.add('real-heart-shape');
-const types = ['heart-type-red', 'heart-type-blue', 'heart-type-gold', 'heart-type-purple'];
+            const types = ['heart-type-red', 'heart-type-blue', 'heart-type-gold', 'heart-type-purple'];
             heartShape.classList.add(types[Math.floor(Math.random() * types.length)]);
             container.style.left = Math.random() * 100 + 'vw';
             const size = Math.random() * 30 + 20;
@@ -401,7 +444,8 @@ const types = ['heart-type-red', 'heart-type-blue', 'heart-type-gold', 'heart-ty
             document.body.appendChild(container);
             setTimeout(() => { container.remove(); }, 10000);
         }
-                audio.onplay = function() { if (!heartInterval) heartInterval = setInterval(createRealFloatingHeart, 1500); };
+        
+        audio.onplay = function() { if (!heartInterval) heartInterval = setInterval(createRealFloatingHeart, 1500); };
         audio.onpause = function() { clearInterval(heartInterval); heartInterval = null; };
         document.body.addEventListener('click', function() { if(audio.paused) audio.play(); }, { once: true });
 
