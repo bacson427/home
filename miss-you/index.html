@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Miss You - Fixed</title>
+    <title>Miss You - Fixed & Smooth</title>
+    
     <meta property="og:title" content="Miss You - Nguyễn Bắc Sơn">
     <meta property="og:description" content="Nhấp để xem chi tiết ❤️">
     <meta property="og:image" content="https://nguyenbacson.io.vn/miss-you.png">
+    
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@700&display=swap" rel="stylesheet">
 
     <style>
@@ -14,8 +16,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
 
         body {
-            /* Nền tối đơn giản */
-            background: linear-gradient(-45deg, #000000, #1a0b2e, #240b36);
+            /* Nền tối gradient lãng mạn */
+            background: linear-gradient(-45deg, #000000, #2c003e, #1a0b2e);
             background-size: 400% 400%; 
             animation: gradientBG 20s ease infinite; 
             height: 100vh;
@@ -30,13 +32,13 @@
             100% { background-position: 0% 50%; } 
         }
 
-        /* Canvas vẽ pháo nằm đè lên trên nhưng trong suốt */
+        /* Canvas pháo hoa nằm đè lên trên cùng nhưng trong suốt */
         #fireworksCanvas {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: 100; /* Nằm trên cùng */
-            pointer-events: none; /* Bấm xuyên qua được */
+            z-index: 100; /* Lớp trên cùng */
+            pointer-events: none; /* Cho phép bấm xuyên qua */
         }
 
         .container {
@@ -129,12 +131,10 @@
         <p class="copyright">Có Thể Hay Không <> 可不可以</p>
         <p class="hint">( Nhấp 2 lần vào màn hình )</p>
     </div>
-
     <script>
-        /* --- 1. HỆ THỐNG PHÁO HOA TRÁI TIM RƠI (ĐÃ FIX LỖI MÀN HÌNH ĐEN) --- */
+        /* --- 1. HỆ THỐNG PHÁO HOA --- */
         const canvas = document.getElementById('fireworksCanvas');
-        // QUAN TRỌNG: Không dùng {alpha: false} nữa để nền trong suốt trở lại
-        const ctx = canvas.getContext('2d'); 
+        const ctx = canvas.getContext('2d'); // Đã bật lại Alpha channel (mặc định)
         
         let w, h, audioTop;
         
@@ -147,8 +147,7 @@
         }
         window.addEventListener('resize', resize);
         window.addEventListener('scroll', resize);
-        // Gọi resize sau 100ms để đảm bảo audio đã render
-        setTimeout(resize, 100);
+        setTimeout(resize, 500); // Đợi load xong để lấy vị trí Audio
 
         let particles = [];
         let projectiles = [];
@@ -177,7 +176,7 @@
             }
         }
 
-        // Class Hạt nổ (Tim)
+        // Class Hạt nổ (Tim rơi)
         class Particle {
             constructor(x, y, color, vx, vy) {
                 this.x = x; this.y = y;
@@ -190,7 +189,7 @@
                 this.vy += this.gravity;
                 this.x += this.vx; this.y += this.vy;
                 
-                // Tan biến khi rơi gần audio (cách 50px)
+                // Tan biến khi rơi gần audio
                 if (this.y > audioTop - 50) this.life -= 0.05; 
                 else this.life -= 0.005; 
             }
@@ -202,8 +201,7 @@
         }
 
         function createExplosion(x, y, side) {
-            // SỐ LƯỢNG HẠT: 40 (Nhẹ máy)
-            const count = 40; 
+            const count = 40; // Ít hạt để không lag
             const colors = ['#ff7675', '#e84393', '#a29bfe', '#fff'];
             
             for(let i=0; i<count; i++) {
@@ -224,7 +222,7 @@
 
         function loop() {
             requestAnimationFrame(loop);
-            // Xóa canvas sạch sẽ để trong suốt
+            // Xóa màn hình sạch sẽ để hiện nền phía sau
             ctx.clearRect(0, 0, w, h);
 
             for(let i = projectiles.length - 1; i >= 0; i--) {
@@ -251,10 +249,9 @@
             projectiles.push(new Projectile(w, h, h/3.5, 'right'));
         }
 
-        /* --- 2. LOGIC ĐẾM NGÀY --- */
+        /* --- 2. ĐẾM NGÀY --- */
         const startDate = new Date(2025, 11, 24, 10, 50, 0).getTime();
         let lastSec = -1;
-        let prevMin = -1, prevHour = -1, prevDay = -1;
 
         function updateCounter() {
             const now = new Date().getTime();
@@ -278,14 +275,7 @@
             }
             if (secs !== 0 && secs !== 30) lastSec = -1;
 
-            // Tim bay từ ô số
             spawnHeart('box-seconds', 'heart-s', '❤️');
-            if (prevMin !== -1 && mins !== prevMin) spawnHeart('box-minutes', 'heart-m', '💗');
-            prevMin = mins;
-            if (prevHour !== -1 && hours !== prevHour) spawnHeart('box-hours', 'heart-h', '💖');
-            prevHour = hours;
-            if (prevDay !== -1 && days !== prevDay) spawnHeart('box-days', 'heart-d', '💝');
-            prevDay = days;
         }
 
         function spawnHeart(id, cls, icon) {
