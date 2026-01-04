@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lì Xì Tết 2026 - Nguyễn Bắc Sơn</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:wght@400;700&display=swap');
@@ -13,32 +14,19 @@
             font-family: 'Roboto', sans-serif;
             background: radial-gradient(circle at center, #8d0801, #1a0000);
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            overflow: hidden;
-            position: relative;
+            display: flex; justify-content: center; align-items: center;
+            color: white; overflow: hidden;
         }
 
-        /* Nút Admin (Xuất dữ liệu) */
-        .btn-admin {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(255,255,255,0.1);
-            color: #fca311;
-            border: 1px solid #fca311;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            cursor: pointer;
-            z-index: 1000;
-            text-decoration: none;
+        /* Nút Admin */
+        .btn-gear {
+            position: absolute; top: 15px; left: 15px;
+            font-size: 24px; cursor: pointer; opacity: 0.5;
+            z-index: 999;
         }
-        .btn-admin:hover { background: rgba(255,255,255,0.2); }
+        .btn-gear:hover { opacity: 1; }
 
-        /* Khung chính */
+        /* Container Chính */
         .container {
             text-align: center;
             background: rgba(255, 255, 255, 0.05);
@@ -47,34 +35,31 @@
             border-radius: 20px;
             border: 2px solid #fca311;
             box-shadow: 0 0 30px rgba(217, 4, 41, 0.5);
-            width: 90%;
-            max-width: 400px;
+            width: 90%; max-width: 450px;
+            position: relative;
         }
 
         h1 {
             font-family: 'Dancing Script', cursive;
-            color: #fca311;
-            font-size: 2.5em;
-            margin: 0 0 20px 0;
+            color: #fca311; font-size: 2.5em; margin-bottom: 20px;
             text-shadow: 2px 2px 4px black;
         }
 
-        /* Phần Đăng nhập */
-        #login-area input {
+        input {
             padding: 12px; width: 70%;
             border-radius: 20px; border: none;
-            text-align: center; outline: none;
-            font-size: 16px; margin-bottom: 15px;
+            text-align: center; outline: none; font-size: 16px; margin-bottom: 15px;
         }
 
-        button.btn-main {
+        .btn-main {
             background: linear-gradient(to right, #fca311, #ffb703);
             border: none; padding: 10px 30px;
             border-radius: 20px; color: #8d0801;
-            font-weight: bold; cursor: pointer;
-            font-size: 16px; transition: 0.2s;
+            font-weight: bold; cursor: pointer; font-size: 16px;
+            transition: 0.2s;
         }
-        button.btn-main:active { transform: scale(0.95); }
+        .btn-main:active { transform: scale(0.95); }
+        .btn-main:disabled { background: #ccc; cursor: not-allowed; }
 
         /* Lưới Lì xì */
         #game-area { display: none; }
@@ -83,10 +68,8 @@
             gap: 10px; margin-top: 20px;
         }
         .lixi {
-            background-color: #d90429;
-            border: 1px solid #fca311;
-            border-radius: 8px;
-            aspect-ratio: 2/3;
+            background-color: #d90429; border: 1px solid #fca311;
+            border-radius: 8px; aspect-ratio: 2/3;
             display: flex; justify-content: center; align-items: center;
             font-size: 2em; cursor: pointer;
             transition: transform 0.2s; position: relative;
@@ -97,27 +80,53 @@
         /* Modal Kết quả */
         #result-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: none; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 100;
+            background: rgba(0,0,0,0.95); display: none;
+            flex-direction: column; justify-content: center; align-items: center; z-index: 200;
         }
         .money { font-size: 4em; color: #fca311; font-weight: bold; margin: 20px; animation: pop 0.5s; }
         @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-        .note { font-size: 0.8em; color: #aaa; margin-top: 10px; }
+
+        /* Bảng Admin (Ẩn) */
+        #admin-panel {
+            display: none;
+            position: absolute; top: 50px; left: 15px;
+            background: #fff; color: #333;
+            padding: 15px; border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            text-align: left; width: 250px; z-index: 1000;
+        }
+        #admin-panel h3 { margin-top: 0; color: #d90429; }
+        .admin-btn {
+            display: block; width: 100%; margin-bottom: 10px;
+            padding: 8px; border: none; border-radius: 5px; cursor: pointer; color: white;
+        }
+        .btn-reset { background: #d90429; }
+        .btn-excel { background: #217346; } /* Màu Excel */
+        .btn-close { background: #666; margin-top: 10px; }
+
     </style>
 </head>
 <body>
 
-    <div class="btn-admin" onclick="exportData()">⚙️ Quản lý</div>
+    <div class="btn-gear" onclick="openAdmin()">⚙️</div>
+
+    <div id="admin-panel">
+        <h3>Quản Trị Viên</h3>
+        <p style="font-size: 12px; margin-bottom: 10px;">Quản lý lượt chơi trên máy này:</p>
+        
+        <button class="admin-btn btn-excel" onclick="xuatExcel()">📥 Xuất File Excel</button>
+        <button class="admin-btn btn-reset" onclick="resetLuotChoi()">🔄 Cho phép mở lại</button>
+        <button class="admin-btn btn-close" onclick="document.getElementById('admin-panel').style.display='none'">Đóng</button>
+    </div>
 
     <div class="container">
         <div id="login-area">
             <h1>Lì Xì 2026</h1>
-            <p>Nhập mật khẩu để mở (SĐT của Dương)</p>
+            <p>Nhập mật khẩu để mở (SĐT của Sơn)</p>
             <input type="password" id="passInput" placeholder="Nhập mật khẩu...">
             <br>
-            <button class="btn-main" onclick="checkPass()">VÀO NHẬN LÌ XÌ</button>
-            <p id="msg" style="color: red; min-height: 20px; font-size: 0.9em;"></p>
+            <button class="btn-main" id="btnLogin" onclick="checkPass()">VÀO NHẬN LÌ XÌ</button>
+            <p id="msg" style="color: #ff6b6b; min-height: 20px; font-size: 0.9em; margin-top: 10px;"></p>
         </div>
 
         <div id="game-area">
@@ -129,41 +138,41 @@
     <div id="result-modal">
         <h2 style="color: white;">Chúc Mừng Năm Mới!</h2>
         <div class="money" id="res-money"></div>
-        <p style="color: white;">Chụp màn hình gửi lại tớ nhé!</p>
-        <p id="save-status" class="note">Đang lưu...</p>
-        <button class="btn-main" onclick="location.reload()">Thoát</button>
+        <p style="color: white;">Đưa máy cho Sơn xem để nhận tiền nhé!</p>
+        <button class="btn-main" onclick="location.reload()">Quay lại</button>
     </div>
 
     <script>
-        // === CẤU HÌNH CẦN THAY ĐỔI ===
-        
-        // 1. Link App Script (Để lưu dữ liệu vào Sheet)
-        // Lấy từ bước Deploy "Web App"
-        const SHEET_API_URL = ""; 
-
-        // 2. Link File Google Sheet (Để mở ra xem/xuất dữ liệu khi nhập pass admin)
-        // Copy cái đường link trên trình duyệt khi cậu đang mở file Sheet
-        const LINK_FILE_SHEET = "https://docs.google.com/spreadsheets/d/xxxxxxxx/edit"; 
-
-        const USER_PASS = "0879546673"; // Pass người dùng chơi
-        const ADMIN_PASS = "0347432736"; // Pass admin để xuất dữ liệu
-        
+        // === CẤU HÌNH ===
+        const PASS_USER = "0879546673";
+        const PASS_ADMIN = "0347432736";
         const MENH_GIA = ["10k", "20k", "50k", "100k", "200k", "100k", "50k", "200k", "20k"];
-        // ==============================
+        
+        // Key lưu trữ
+        const KEY_STATUS = 'da_mo_lixi_2026';
+        const KEY_HISTORY = 'lich_su_lixi_2026';
 
-        // Kiểm tra đã chơi chưa
-        if(localStorage.getItem('da_mo_lixi_2026')) {
-            document.getElementById('msg').innerText = "Bạn đã mở lì xì rồi! (Mỗi máy chỉ 1 lần)";
-            document.querySelector('button.btn-main').disabled = true;
-            document.querySelector('button.btn-main').style.background = '#ccc';
+        // Kiểm tra ngay khi vào trang
+        checkStatus();
+
+        function checkStatus() {
+            if(localStorage.getItem(KEY_STATUS)) {
+                document.getElementById('msg').innerText = "Máy này đã mở lì xì rồi!";
+                document.getElementById('btnLogin').innerText = "ĐÃ MỞ RỒI";
+                document.getElementById('btnLogin').disabled = true;
+            } else {
+                document.getElementById('msg').innerText = "";
+                document.getElementById('btnLogin').innerText = "VÀO NHẬN LÌ XÌ";
+                document.getElementById('btnLogin').disabled = false;
+            }
         }
 
-        // Đăng nhập để CHƠI
+        // Đăng nhập người chơi
         function checkPass() {
             const inp = document.getElementById('passInput').value;
-            if (inp === USER_PASS) {
-                if(localStorage.getItem('da_mo_lixi_2026')) {
-                    alert("Bạn đã mở rồi, không được mở nữa nhé!");
+            if (inp === PASS_USER) {
+                if(localStorage.getItem(KEY_STATUS)) {
+                    alert("Bạn đã mở rồi! Muốn mở lại hãy nhờ Admin reset.");
                     return;
                 }
                 document.getElementById('login-area').style.display = 'none';
@@ -174,19 +183,43 @@
             }
         }
 
-        // Chức năng XUẤT DỮ LIỆU (Admin)
-        function exportData() {
-            let pass = prompt("Nhập mật khẩu Admin để xem danh sách:");
-            if (pass === ADMIN_PASS) {
-                // Mở trang Google Sheet ra tab mới
-                if (LINK_FILE_SHEET && LINK_FILE_SHEET.includes("http")) {
-                    window.open(LINK_FILE_SHEET, '_blank');
-                } else {
-                    alert("Cậu chưa dán Link File Sheet vào code!");
-                }
+        // Mở Admin Panel
+        function openAdmin() {
+            let pass = prompt("Nhập mật khẩu Quản Trị Viên:");
+            if (pass === PASS_ADMIN) {
+                document.getElementById('admin-panel').style.display = 'block';
             } else if (pass !== null) {
                 alert("Sai mật khẩu Admin!");
             }
+        }
+
+        // Chức năng 1: Reset lượt chơi
+        function resetLuotChoi() {
+            if(confirm("Bạn có chắc muốn cho người này chơi lại không?")) {
+                localStorage.removeItem(KEY_STATUS);
+                alert("Đã Reset! Giờ họ có thể mở lì xì lại.");
+                location.reload(); // Tải lại trang để cập nhật trạng thái
+            }
+        }
+
+        // Chức năng 2: Xuất Excel
+        function xuatExcel() {
+            // Lấy dữ liệu lịch sử
+            let dataStr = localStorage.getItem(KEY_HISTORY);
+            let data = dataStr ? JSON.parse(dataStr) : [];
+
+            if (data.length === 0) {
+                alert("Chưa có dữ liệu nào để xuất!");
+                return;
+            }
+
+            // Tạo Worksheet từ dữ liệu JSON
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "DanhSachLixi");
+
+            // Xuất file
+            XLSX.writeFile(wb, "Danh_Sach_Trung_Lixi_2026.xlsx");
         }
 
         function taoLixi() {
@@ -203,28 +236,29 @@
         function moLixi() {
             const tien = MENH_GIA[Math.floor(Math.random() * MENH_GIA.length)];
             
+            // Hiện kết quả
             document.getElementById('result-modal').style.display = 'flex';
             document.getElementById('res-money').innerText = tien;
             
-            localStorage.setItem('da_mo_lixi_2026', 'true');
-            guiDuLieu(tien);
+            // 1. Đánh dấu đã chơi
+            localStorage.setItem(KEY_STATUS, 'true');
+
+            // 2. Lưu vào lịch sử (để xuất Excel)
+            luuLichSu(tien);
         }
 
-        function guiDuLieu(sotien) {
-            const status = document.getElementById('save-status');
-            if (!SHEET_API_URL) {
-                status.innerText = "Chưa cấu hình Sheet API!";
-                return;
-            }
+        function luuLichSu(tien) {
+            let history = localStorage.getItem(KEY_HISTORY);
+            let arr = history ? JSON.parse(history) : [];
+            
+            // Thêm lượt mới
+            arr.push({
+                "Thời Gian": new Date().toLocaleString('vi-VN'),
+                "Mệnh Giá": tien,
+                "Ghi Chú": "Hợp lệ"
+            });
 
-            fetch(SHEET_API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prize: sotien })
-            })
-            .then(() => { status.innerText = "Đã lưu vào hệ thống!"; })
-            .catch(() => { status.innerText = "Lỗi mạng, nhớ chụp màn hình!"; });
+            localStorage.setItem(KEY_HISTORY, JSON.stringify(arr));
         }
     </script>
 </body>
