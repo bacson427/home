@@ -71,7 +71,7 @@
     let frame = 0;
     let isPlaying = false;
 
-    // --- ÂM THANH ---
+    // --- ÂM THANH (VOLUME TO RÕ) ---
     const sounds = {
         launch: new Audio('https://nguyenbacson.io.vn/moi-ban.mp3'),
         short: new Audio('https://nguyenbacson.io.vn/no-ngan.mp3'),
@@ -86,10 +86,13 @@
         if (baseAudio) {
             const clone = baseAudio.cloneNode();
             if (type === 'long') clone.volume = 0.8;
-            else if (type === 'launch') clone.volume = 0.4; 
-            else if (type === 'big') clone.volume = 1.0; 
-            else clone.volume = 0.6;
+            else if (type === 'launch') clone.volume = 0.3; // Rít vừa phải
+            else if (type === 'small') clone.volume = 0.6; // Nổ bé nhưng rõ
+            else clone.volume = 0.5;
             
+            // Random tốc độ phát để âm thanh nghe tự nhiên hơn (không bị đều chằn chặn)
+            if(type !== 'long') clone.playbackRate = random(0.9, 1.2);
+
             clone.play().catch(e => {});
         }
     }
@@ -110,23 +113,20 @@
             
             this.distanceToTarget = Math.sqrt(Math.pow(targetX - x, 2) + Math.pow(targetY - y, 2));
             this.angle = Math.atan2(targetY - y, targetX - x);
-            this.speed = random(12, 15); 
+            this.speed = random(12, 18); // Bay nhanh
             this.vx = Math.cos(this.angle) * this.speed;
             this.vy = Math.sin(this.angle) * this.speed;
-            this.brightness = random(50, 70);
-            this.history = [];
+            this.brightness = random(50, 80); // Sáng hơn
 
+            // Tiếng rít khi bay lên
             if(type !== 'text') playSound('launch');
         }
 
         update(index) {
-            this.history.push({x: this.x, y: this.y});
-            if(this.history.length > 5) this.history.shift();
-
             this.x += this.vx;
             this.y += this.vy;
-            this.vx *= 0.98;
-            this.vy *= 0.98;
+            this.vx *= 0.96; // Bay nhanh, dừng nhanh
+            this.vy *= 0.96;
 
             if (Math.abs(this.vx) + Math.abs(this.vy) < 2 || this.y <= this.targetY) {
                 createExplosion(this.x, this.y, this.type, this.text);
@@ -136,20 +136,16 @@
 
         draw() {
             ctx.beginPath();
-            if(this.history.length > 0) {
-                ctx.moveTo(this.history[0].x, this.history[0].y);
-                for(let i=0; i<this.history.length; i++) ctx.lineTo(this.history[i].x, this.history[i].y);
-            } else {
-                ctx.moveTo(this.x, this.y);
-            }
+            ctx.moveTo(this.x - this.vx * 2, this.y - this.vy * 2);
             ctx.lineTo(this.x, this.y);
-            ctx.strokeStyle = `hsl(40, 100%, ${this.brightness}%)`;
-            ctx.lineWidth = 3;
+            // Đuôi pháo mảnh và sáng
+            ctx.strokeStyle = `hsl(45, 100%, ${this.brightness}%)`;
+            ctx.lineWidth = 1.5; 
             ctx.stroke();
         }
     }
 
-    // --- CLASS 2: HẠT NỔ ---
+    // --- CLASS 2: HẠT NỔ (MINIATURE) ---
     class Particle {
         constructor(x, y, hue, type, targetX, targetY) {
             this.x = x;
@@ -164,42 +160,26 @@
             this.gravity = 0.04;
             this.alpha = 1;
             
-            // --- CHỈNH SỬA QUAN TRỌNG: TỐC ĐỘ TAN BIẾN (DECAY) ---
-            // Số càng lớn -> Tan càng nhanh -> Không bị dồn cục
-            
-            if (type === 'big') { 
-                const angle = Math.random() * Math.PI * 2;
-                const speed = random(2, 18); 
-                this.vx = Math.cos(angle) * speed;
-                this.vy = Math.sin(angle) * speed;
-                this.friction = 0.92; 
-                this.gravity = 0.03; 
-                // Tan nhanh hơn bản cũ (0.015 - 0.03)
-                this.decay = random(0.015, 0.03); 
-                this.size = random(2, 4);
-            } 
-            else if (type === 'small') {
-                const angle = Math.random() * Math.PI * 2;
-                const speed = random(2, 8); 
-                this.vx = Math.cos(angle) * speed;
-                this.vy = Math.sin(angle) * speed;
-                // Tan rất nhanh
-                this.decay = random(0.05, 0.08); 
-                this.size = random(1, 2);
-            }
-            else if (type === 'text') {
+            // --- CẤU HÌNH SIZE NHỎ & TAN NHANH ---
+            if (type === 'text') {
                 this.vx = 0; this.vy = 0;
-                this.size = 1.8;
-                this.decay = 0; // Chữ không bao giờ tan
+                this.size = 1.5;
+                this.decay = 0; 
             }
             else {
-                // Mặc định cho pháo nổ thường
+                // Pháo hoa nổ (Loại nào cũng bé)
                 const angle = Math.random() * Math.PI * 2;
-                const speed = random(2, 10);
+                const speed = random(1, 10); // Lực nổ vẫn mạnh để bung rộng
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
-                this.size = 2;
-                this.decay = random(0.02, 0.04); // Tan vừa phải
+                
+                // KÍCH THƯỚC SIÊU NHỎ
+                this.size = random(0.5, 1.5); 
+                
+                this.friction = 0.94;
+                this.gravity = 0.03; 
+                // Tan biến nhanh gọn
+                this.decay = random(0.02, 0.05); 
             }
         }
 
@@ -215,11 +195,11 @@
                 this.vy += this.gravity;
                 this.x += this.vx;
                 this.y += this.vy;
-                this.alpha -= this.decay; // Trừ độ trong suốt
+                this.alpha -= this.decay;
                 
-                if (this.type === 'big' && Math.random() < 0.1) this.alpha = 1; 
+                // Hiệu ứng lấp lánh (sparkle)
+                if (Math.random() < 0.2) this.alpha = 1; 
                 
-                // Hạt nào mờ hết thì xóa ngay lập tức khỏi bộ nhớ
                 if (this.alpha <= 0) particles.splice(index, 1);
             }
         }
@@ -227,7 +207,8 @@
         draw() {
             ctx.save();
             ctx.globalAlpha = this.alpha;
-            ctx.fillStyle = `hsl(${this.hue}, 100%, 60%)`;
+            // Tăng độ bão hòa màu lên 100% cho rực rỡ
+            ctx.fillStyle = `hsl(${this.hue}, 100%, 70%)`;
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.fill();
@@ -267,13 +248,14 @@
     }
 
     function createExplosion(x, y, type, text) {
-        // ÂM THANH
-        if (type === 'big') playSound('big');
-        else if (type === 'small') playSound('small');
-        else if (type === 'text') playSound('short');
-        else playSound('short');
+        // ÂM THANH: Ưu tiên tiếng chùm bé/ngắn cho khớp với hình ảnh nhỏ
+        if (type === 'text') playSound('short');
+        else {
+             // Random giữa tiếng nổ ngắn và nổ chùm bé
+             if(Math.random() < 0.5) playSound('short');
+             else playSound('small');
+        }
 
-        // HÌNH ẢNH
         if (type === 'text') {
             const data = getTextPoints(text);
             const points = data.points;
@@ -283,20 +265,14 @@
                 const destY = p.y - (data.height / 2) + y;
                 particles.push(new Particle(x, y, baseHue, 'text', destX, destY));
             });
-            for(let i=0; i<30; i++) particles.push(new Particle(x, y, random(0,360), 'small'));
         } 
-        else if (type === 'big') {
-            const hue = random(0, 360);
-            // Giảm số lượng hạt xuống 1 chút cho đỡ rối (150 -> 120)
-            for (let i = 0; i < 120; i++) particles.push(new Particle(x, y, hue, 'big'));
-        }
-        else if (type === 'small') {
-            const hue = random(0, 360);
-            for (let i = 0; i < 30; i++) particles.push(new Particle(x, y, hue, 'small'));
-        }
         else {
+            // Nổ pháo hoa thường (BÉ NHƯNG NHIỀU HẠT ĐỂ MỊN)
             const hue = random(0, 360);
-            for (let i = 0; i < 50; i++) particles.push(new Particle(x, y, hue, 'normal'));
+            const count = random(30, 60); // Số lượng hạt vừa phải
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(x, y, hue, 'normal'));
+            }
         }
     }
 
@@ -313,10 +289,11 @@
     }
 
     function startShow() {
-        // VỊ TRÍ CHỮ (Giữ nguyên cho đẹp)
+        // VỊ TRÍ CHỮ
         const line1Y = canvas.height * 0.1; 
         const line2Y = canvas.height * 0.3; 
 
+        // 1. CHỮ
         setTimeout(() => {
             fireworks.push(new Firework(canvas.width/2, canvas.height, canvas.width/2, line1Y, 'text', "CHÚC MỪNG NĂM MỚI"));
         }, 100);
@@ -325,37 +302,39 @@
             fireworks.push(new Firework(canvas.width/2, canvas.height, canvas.width/2, line2Y, 'text', "TRƯƠNG THỊ DƯƠNG"));
         }, 1200);
 
-        // KÍCH HOẠT CHÙM DÀI
+        // 2. CHÙM DÀI (CHẾ ĐỘ SPAM NHIỀU NHƯNG BÉ)
         setTimeout(() => {
             playSound('long');
             let waveCount = 0;
             const finaleInterval = setInterval(() => {
                 waveCount++;
-                for(let i=0; i<5; i++) {
+                
+                // BẮN MỘT LÚC 12 QUẢ (Nhiều chưa!)
+                for(let i=0; i<12; i++) {
                     setTimeout(() => {
-                        const type = Math.random() < 0.6 ? 'big' : 'small'; 
                         const x = random(10, canvas.width - 10);
-                        const y = random(canvas.height * 0.4, canvas.height * 0.85);
+                        // Chỉ nổ ở 60% dưới màn hình
+                        const y = random(canvas.height * 0.4, canvas.height * 0.9);
                         
                         fireworks.push(new Firework(
                             random(10, canvas.width-10), 
                             canvas.height, 
                             x, y, 
-                            type
+                            'normal' // Loại thường, hạt bé
                         ));
-                    }, i * 200);
+                    }, i * 100); // Bắn liên thanh lạch cạch lạch cạch
                 }
 
-                if(waveCount >= 8) {
+                if(waveCount >= 8) { // Hết nhạc nền
                     clearInterval(finaleInterval);
+                    // Chế độ bắn thưa sau khi hết nhạc
                     setInterval(() => {
-                        const type = Math.random() < 0.5 ? 'big' : 'small';
                         const x = random(10, canvas.width - 10);
-                        const y = random(canvas.height * 0.4, canvas.height * 0.85);
-                        fireworks.push(new Firework(random(0, canvas.width), canvas.height, x, y, type));
-                    }, 2500);
+                        const y = random(canvas.height * 0.4, canvas.height * 0.9);
+                        fireworks.push(new Firework(random(0, canvas.width), canvas.height, x, y, 'normal'));
+                    }, 1000);
                 }
-            }, 3000); 
+            }, 3000); // 3 giây 1 đợt mưa pháo
 
         }, 4000);
     }
