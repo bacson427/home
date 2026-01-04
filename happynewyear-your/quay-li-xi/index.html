@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lì Xì Tết 2026 - Nguyễn Bắc Sơn</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:wght@400;700&display=swap');
 
@@ -18,11 +18,11 @@
             color: white; overflow: hidden;
         }
 
-        /* Nút Admin */
+        /* Nút Admin - Luôn hiển thị trên cùng */
         .btn-gear {
             position: absolute; top: 15px; left: 15px;
             font-size: 24px; cursor: pointer; opacity: 0.5;
-            z-index: 999;
+            z-index: 2000; /* Cao hơn cả overlay đếm ngược */
         }
         .btn-gear:hover { opacity: 1; }
 
@@ -37,6 +37,7 @@
             box-shadow: 0 0 30px rgba(217, 4, 41, 0.5);
             width: 90%; max-width: 450px;
             position: relative;
+            z-index: 10;
         }
 
         h1 {
@@ -51,15 +52,14 @@
             text-align: center; outline: none; font-size: 16px; margin-bottom: 15px;
         }
 
-        /* Style chung cho nút bấm và thẻ a */
         .btn-main {
             background: linear-gradient(to right, #fca311, #ffb703);
             border: none; padding: 10px 30px;
             border-radius: 20px; color: #8d0801;
             font-weight: bold; cursor: pointer; font-size: 16px;
             transition: 0.2s;
-            text-decoration: none; /* Bỏ gạch chân cho link */
-            display: inline-block; /* Để thẻ a hiển thị đẹp như nút */
+            text-decoration: none;
+            display: inline-block;
             margin-top: 15px;
         }
         .btn-main:active { transform: scale(0.95); }
@@ -97,7 +97,7 @@
             background: #fff; color: #333;
             padding: 15px; border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            text-align: left; width: 250px; z-index: 1000;
+            text-align: left; width: 250px; z-index: 2001;
         }
         #admin-panel h3 { margin-top: 0; color: #d90429; }
         .admin-btn {
@@ -105,8 +105,33 @@
             padding: 8px; border: none; border-radius: 5px; cursor: pointer; color: white;
         }
         .btn-reset { background: #d90429; }
-        .btn-excel { background: #217346; } /* Màu Excel */
+        .btn-excel { background: #217346; }
         .btn-close { background: #666; margin-top: 10px; }
+
+        /* --- MÀN HÌNH ĐẾM NGƯỢC --- */
+        #countdown-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 1000; /* Cao hơn container nhưng thấp hơn nút Admin */
+            text-align: center;
+        }
+        #countdown-overlay h2 {
+            color: #fca311; margin-bottom: 30px;
+            font-size: 2em; text-transform: uppercase;
+        }
+        #countdown {
+            display: flex; gap: 15px;
+        }
+        .time-box {
+            display: flex; flex-direction: column; align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px; border-radius: 10px; min-width: 60px;
+            border: 1px solid #fca311;
+        }
+        .time-val { font-size: 2.5em; font-weight: bold; color: #fff; }
+        .time-label { font-size: 0.9em; color: #ccc; margin-top: 5px; }
 
     </style>
 </head>
@@ -117,13 +142,35 @@
     <div id="admin-panel">
         <h3>Quản Trị Viên</h3>
         <p style="font-size: 12px; margin-bottom: 10px;">Quản lý lượt chơi trên máy này:</p>
-        
         <button class="admin-btn btn-excel" onclick="xuatExcel()">📥 Xuất File Excel</button>
         <button class="admin-btn btn-reset" onclick="resetLuotChoi()">🔄 Cho phép mở lại</button>
         <button class="admin-btn btn-close" onclick="document.getElementById('admin-panel').style.display='none'">Đóng</button>
     </div>
 
-    <div class="container">
+    <div id="countdown-overlay">
+        <h2>Sắp đến giờ nhận lì xì</h2>
+        <div id="countdown">
+            <div class="time-box">
+                <span class="time-val" id="days">00</span>
+                <span class="time-label">Ngày</span>
+            </div>
+            <div class="time-box">
+                <span class="time-val" id="hours">00</span>
+                <span class="time-label">Giờ</span>
+            </div>
+            <div class="time-box">
+                <span class="time-val" id="minutes">00</span>
+                <span class="time-label">Phút</span>
+            </div>
+            <div class="time-box">
+                <span class="time-val" id="seconds">00</span>
+                <span class="time-label">Giây</span>
+            </div>
+        </div>
+        <p style="color: #888; font-style: italic; margin-top: 20px;">Hẹn gặp lại vào Mùng 1 Tết!</p>
+    </div>
+
+    <div class="container" id="main-container" style="display: none;">
         <div id="login-area">
             <h1>Lì Xì 2026</h1>
             <p>Nhập mật khẩu để mở (SĐT của Sơn)</p>
@@ -143,7 +190,6 @@
         <h2 style="color: white;">Chúc Mừng Năm Mới!</h2>
         <div class="money" id="res-money"></div>
         <p style="color: white;">Chụp màn hình gửi lại tớ nhé!</p>
-        
         <a href="https://nguyenbacson.io.vn" target="_blank" class="btn-main">LIÊN HỆ</a>
     </div>
 
@@ -153,11 +199,50 @@
         const PASS_ADMIN = "0347432736";
         const MENH_GIA = ["10k", "20k", "50k", "100k", "200k", "100k", "50k", "200k", "20k"];
         
+        // --- CẤU HÌNH THỜI GIAN ĐẾM NGƯỢC ---
+        const targetDate = new Date("February 17, 2026 00:00:00").getTime();
+
         // Key lưu trữ
         const KEY_STATUS = 'da_mo_lixi_2026';
         const KEY_HISTORY = 'lich_su_lixi_2026';
 
-        // Kiểm tra ngay khi vào trang
+        // --- HÀM ĐẾM NGƯỢC ---
+        const elDays = document.getElementById('days');
+        const elHours = document.getElementById('hours');
+        const elMinutes = document.getElementById('minutes');
+        const elSeconds = document.getElementById('seconds');
+        const overlay = document.getElementById('countdown-overlay');
+        const mainContainer = document.getElementById('main-container');
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                // Đã đến giờ: Ẩn đếm ngược, hiện game
+                clearInterval(timerInterval);
+                overlay.style.display = 'none';
+                mainContainer.style.display = 'block';
+                return;
+            }
+
+            // Tính toán
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Hiển thị
+            elDays.innerText = days < 10 ? '0' + days : days;
+            elHours.innerText = hours < 10 ? '0' + hours : hours;
+            elMinutes.innerText = minutes < 10 ? '0' + minutes : minutes;
+            elSeconds.innerText = seconds < 10 ? '0' + seconds : seconds;
+        }
+
+        const timerInterval = setInterval(updateCountdown, 1000);
+        updateCountdown(); // Chạy ngay lập tức
+
+        // --- CÁC HÀM GAME CŨ ---
         checkStatus();
 
         function checkStatus() {
@@ -172,7 +257,6 @@
             }
         }
 
-        // Đăng nhập người chơi
         function checkPass() {
             const inp = document.getElementById('passInput').value;
             if (inp === PASS_USER) {
@@ -188,7 +272,6 @@
             }
         }
 
-        // Mở Admin Panel
         function openAdmin() {
             let pass = prompt("Nhập mật khẩu Quản Trị Viên:");
             if (pass === PASS_ADMIN) {
@@ -198,32 +281,24 @@
             }
         }
 
-        // Chức năng 1: Reset lượt chơi
         function resetLuotChoi() {
             if(confirm("Bạn có chắc muốn cho người này chơi lại không?")) {
                 localStorage.removeItem(KEY_STATUS);
                 alert("Đã Reset! Giờ họ có thể mở lì xì lại.");
-                location.reload(); // Tải lại trang để cập nhật trạng thái
+                location.reload(); 
             }
         }
 
-        // Chức năng 2: Xuất Excel
         function xuatExcel() {
-            // Lấy dữ liệu lịch sử
             let dataStr = localStorage.getItem(KEY_HISTORY);
             let data = dataStr ? JSON.parse(dataStr) : [];
-
             if (data.length === 0) {
                 alert("Chưa có dữ liệu nào để xuất!");
                 return;
             }
-
-            // Tạo Worksheet từ dữ liệu JSON
             const ws = XLSX.utils.json_to_sheet(data);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "DanhSachLixi");
-
-            // Xuất file
             XLSX.writeFile(wb, "Danh_Sach_Trung_Lixi_2026.xlsx");
         }
 
@@ -240,29 +315,20 @@
 
         function moLixi() {
             const tien = MENH_GIA[Math.floor(Math.random() * MENH_GIA.length)];
-            
-            // Hiện kết quả
             document.getElementById('result-modal').style.display = 'flex';
             document.getElementById('res-money').innerText = tien;
-            
-            // 1. Đánh dấu đã chơi
             localStorage.setItem(KEY_STATUS, 'true');
-
-            // 2. Lưu vào lịch sử (để xuất Excel)
             luuLichSu(tien);
         }
 
         function luuLichSu(tien) {
             let history = localStorage.getItem(KEY_HISTORY);
             let arr = history ? JSON.parse(history) : [];
-            
-            // Thêm lượt mới
             arr.push({
                 "Thời Gian": new Date().toLocaleString('vi-VN'),
                 "Mệnh Giá": tien,
                 "Ghi Chú": "Hợp lệ"
             });
-
             localStorage.setItem(KEY_HISTORY, JSON.stringify(arr));
         }
     </script>
