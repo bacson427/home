@@ -183,6 +183,117 @@
     </div>
 
     <script>
+        // --- DỮ LIỆU TỪ VỰNG TOPIK 1 FULL (~800 TỪ) ---
+        const vocabularyDB = {
+            "basics": [ // CƠ BẢN & ĐẠI TỪ (Rất quan trọng)
+                {k:"나/저", v:"Tôi/Tớ"}, {k:"너/당신", v:"Bạn/Anh/Chị"}, {k:"우리/저희", v:"Chúng tôi"}, {k:"그/그녀", v:"Anh ấy/Cô ấy"},
+                {k:"이것", v:"Cái này"}, {k:"그것", v:"Cái đó"}, {k:"저것", v:"Cái kia"}, {k:"여기", v:"Ở đây"},
+                {k:"거기", v:"Ở đó"}, {k:"저기", v:"Ở kia"}, {k:"무엇/뭐", v:"Cái gì"}, {k:"어디", v:"Ở đâu"},
+                {k:"언제", v:"Khi nào"}, {k:"누구", v:"Ai"}, {k:"왜", v:"Tại sao"}, {k:"어떻게", v:"Như thế nào"},
+                {k:"얼마", v:"Bao nhiêu"}, {k:"몇", v:"Mấy"}, {k:"어느", v:"Nào (cái nào)"}, {k:"무슨", v:"Gì (loại gì)"},
+                {k:"남자", v:"Nam giới"}, {k:"여자", v:"Nữ giới"}, {k:"사람", v:"Người"}, {k:"분", v:"Vị (kính ngữ người)"},
+                {k:"아이", v:"Trẻ em"}, {k:"어른", v:"Người lớn"}, {k:"이름", v:"Tên"}, {k:"나이", v:"Tuổi"},
+                {k:"생일", v:"Sinh nhật"}, {k:"번호", v:"Số (điện thoại)"}, {k:"주소", v:"Địa chỉ"}, {k:"고향", v:"Quê hương"}
+            ],
+            "numbers_positions": [ // SỐ ĐẾM & VỊ TRÍ
+                {k:"일", v:"Một (Hán Hàn)"}, {k:"이", v:"Hai (Hán Hàn)"}, {k:"삼", v:"Ba (Hán Hàn)"}, {k:"사", v:"Bốn (Hán Hàn)"},
+                {k:"오", v:"Năm (Hán Hàn)"}, {k:"육", v:"Sáu (Hán Hàn)"}, {k:"칠", v:"Bảy (Hán Hàn)"}, {k:"팔", v:"Tám (Hán Hàn)"},
+                {k:"구", v:"Chín (Hán Hàn)"}, {k:"십", v:"Mười (Hán Hàn)"}, {k:"백", v:"Trăm"}, {k:"천", v:"Nghìn"}, {k:"만", v:"Vạn (10 nghìn)"},
+                {k:"하나", v:"Một (Thuần Hàn)"}, {k:"둘", v:"Hai (Thuần Hàn)"}, {k:"셋", v:"Ba (Thuần Hàn)"}, {k:"넷", v:"Bốn (Thuần Hàn)"},
+                {k:"다섯", v:"Năm (Thuần Hàn)"}, {k:"여섯", v:"Sáu (Thuần Hàn)"}, {k:"일곱", v:"Bảy (Thuần Hàn)"}, {k:"여덟", v:"Tám (Thuần Hàn)"},
+                {k:"아홉", v:"Chín (Thuần Hàn)"}, {k:"열", v:"Mười (Thuần Hàn)"}, {k:"스물", v:"Hai mươi"},
+                {k:"위", v:"Trên"}, {k:"아래/밑", v:"Dưới"}, {k:"앞", v:"Trước"}, {k:"뒤", v:"Sau"},
+                {k:"안/속", v:"Trong"}, {k:"밖", v:"Ngoài"}, {k:"옆", v:"Bên cạnh"}, {k:"사이", v:"Ở giữa"},
+                {k:"왼쪽", v:"Bên trái"}, {k:"오른쪽", v:"Bên phải"}, {k:"동쪽", v:"Phía Đông"}, {k:"서쪽", v:"Phía Tây"},
+                {k:"남쪽", v:"Phía Nam"}, {k:"북쪽", v:"Phía Bắc"}
+            ],
+            "nature_time": [ // THIÊN NHIÊN & THỜI GIAN
+                {k:"자연", v:"Thiên nhiên"}, {k:"하늘", v:"Bầu trời"}, {k:"땅", v:"Đất"}, {k:"강", v:"Sông"},
+                {k:"바다", v:"Biển"}, {k:"산", v:"Núi"}, {k:"나무", v:"Cây"}, {k:"꽃", v:"Hoa"},
+                {k:"해", v:"Mặt trời"}, {k:"달", v:"Mặt trăng"}, {k:"별", v:"Ngôi sao"}, {k:"구름", v:"Mây"},
+                {k:"바람", v:"Gió"}, {k:"비", v:"Mưa"}, {k:"눈", v:"Tuyết"}, {k:"날씨", v:"Thời tiết"},
+                {k:"계절", v:"Mùa"}, {k:"봄", v:"Mùa xuân"}, {k:"여름", v:"Mùa hè"}, {k:"가을", v:"Mùa thu"}, {k:"겨울", v:"Mùa đông"},
+                {k:"오늘", v:"Hôm nay"}, {k:"내일", v:"Ngày mai"}, {k:"어제", v:"Hôm qua"}, {k:"모레", v:"Ngày kia"},
+                {k:"그저께", v:"Hôm kia"}, {k:"지금", v:"Bây giờ"}, {k:"아까", v:"Lúc nãy"}, {k:"나중", v:"Sau này"},
+                {k:"아침", v:"Sáng"}, {k:"점심", v:"Trưa"}, {k:"저녁", v:"Tối"}, {k:"밤", v:"Đêm"},
+                {k:"새벽", v:"Sáng sớm"}, {k:"오전", v:"Buổi sáng (AM)"}, {k:"오후", v:"Buổi chiều (PM)"},
+                {k:"평일", v:"Ngày thường"}, {k:"주말", v:"Cuối tuần"}, {k:"휴일/공휴일", v:"Ngày nghỉ/Lễ"},
+                {k:"월요일", v:"Thứ 2"}, {k:"화요일", v:"Thứ 3"}, {k:"수요일", v:"Thứ 4"}, {k:"목요일", v:"Thứ 5"},
+                {k:"금요일", v:"Thứ 6"}, {k:"토요일", v:"Thứ 7"}, {k:"일요일", v:"Chủ nhật"},
+                {k:"시간", v:"Thời gian/Tiếng"}, {k:"분", v:"Phút"}, {k:"초", v:"Giây"}, {k:"하루", v:"Một ngày"}
+            ],
+            "places": [ // NƠI CHỐN
+                {k:"집", v:"Nhà"}, {k:"방", v:"Phòng"}, {k:"화장실", v:"Nhà vệ sinh"}, {k:"거실", v:"Phòng khách"},
+                {k:"부엌/주방", v:"Bếp"}, {k:"침실", v:"Phòng ngủ"}, {k:"현관", v:"Lối vào"}, {k:"마당", v:"Sân"},
+                {k:"학교", v:"Trường học"}, {k:"도서관", v:"Thư viện"}, {k:"서점", v:"Hiệu sách"}, {k:"교실", v:"Lớp học"},
+                {k:"회사", v:"Công ty"}, {k:"사무실", v:"Văn phòng"}, {k:"회의실", v:"Phòng họp"}, {k:"은행", v:"Ngân hàng"},
+                {k:"우체국", v:"Bưu điện"}, {k:"병원", v:"Bệnh viện"}, {k:"약국", v:"Hiệu thuốc"}, {k:"경찰서", v:"Đồn cảnh sát"},
+                {k:"식당", v:"Nhà hàng"}, {k:"카페", v:"Quán cà phê"}, {k:"가게", v:"Cửa hàng"}, {k:"편의점", v:"Cửa hàng tiện lợi"},
+                {k:"시장", v:"Chợ"}, {k:"백화점", v:"TT Thương mại"}, {k:"영화관/극장", v:"Rạp phim"}, {k:"노래방", v:"Quán Karaoke"},
+                {k:"공원", v:"Công viên"}, {k:"기숙사", v:"Ký túc xá"}, {k:"세탁소", v:"Tiệm giặt là"}, {k:"미용실", v:"Tiệm làm tóc"},
+                {k:"공항", v:"Sân bay"}, {k:"기차역", v:"Ga tàu"}, {k:"정류장", v:"Trạm xe buýt"}, {k:"항구", v:"Cảng"},
+                {k:"서울", v:"Seoul"}, {k:"한국", v:"Hàn Quốc"}, {k:"베트남", v:"Việt Nam"}, {k:"외국", v:"Nước ngoài"}
+            ],
+            "objects": [ // ĐỒ VẬT
+                {k:"가방", v:"Túi xách/Cặp"}, {k:"지갑", v:"Ví"}, {k:"안경", v:"Kính"}, {k:"우산", v:"Ô/Dù"},
+                {k:"모자", v:"Mũ"}, {k:"신발", v:"Giày"}, {k:"양말", v:"Tất"}, {k:"옷", v:"Quần áo"},
+                {k:"바지", v:"Quần"}, {k:"치마", v:"Váy"}, {k:"티셔츠", v:"Áo phông"}, {k:"코트", v:"Áo khoác"},
+                {k:"책", v:"Sách"}, {k:"공책", v:"Vở"}, {k:"연필", v:"Bút chì"}, {k:"볼펜", v:"Bút bi"},
+                {k:"지우개", v:"Tẩy"}, {k:"필통", v:"Hộp bút"}, {k:"시계", v:"Đồng hồ"}, {k:"달력", v:"Lịch"},
+                {k:"거울", v:"Gương"}, {k:"휴지", v:"Giấy/Khăn giấy"}, {k:"수건", v:"Khăn mặt"}, {k:"비누", v:"Xà phòng"},
+                {k:"칫솔", v:"Bàn chải"}, {k:"치약", v:"Kem đánh răng"}, {k:"샴푸", v:"Dầu gội"}, {k:"침대", v:"Giường"},
+                {k:"책상", v:"Bàn học"}, {k:"의자", v:"Ghế"}, {k:"냉장고", v:"Tủ lạnh"}, {k:"세탁기", v:"Máy giặt"},
+                {k:"에어컨", v:"Điều hòa"}, {k:"선풍기", v:"Quạt"}, {k:"텔레비전", v:"TV"}, {k:"컴퓨터", v:"Máy tính"},
+                {k:"휴대전화", v:"Điện thoại DĐ"}, {k:"카메라", v:"Máy ảnh"}, {k:"사진", v:"Bức ảnh"}, {k:"열쇠", v:"Chìa khóa"}
+            ],
+            "transport_food": [ // GIAO THÔNG & ẨM THỰC
+                {k:"버스", v:"Xe buýt"}, {k:"택시", v:"Taxi"}, {k:"지하철", v:"Tàu điện ngầm"}, {k:"기차", v:"Tàu hỏa"},
+                {k:"자전거", v:"Xe đạp"}, {k:"오토바이", v:"Xe máy"}, {k:"비행기", v:"Máy bay"}, {k:"배", v:"Tàu/Thuyền"},
+                {k:"차/자동차", v:"Xe ô tô"}, {k:"신호등", v:"Đèn giao thông"}, {k:"표", v:"Vé"}, {k:"길", v:"Đường"},
+                {k:"밥", v:"Cơm"}, {k:"빵", v:"Bánh mì"}, {k:"라면", v:"Mì tôm"}, {k:"국수", v:"Mì/Bún"},
+                {k:"고기", v:"Thịt"}, {k:"소고기", v:"Thịt bò"}, {k:"돼지고기", v:"Thịt lợn"}, {k:"닭고기", v:"Thịt gà"},
+                {k:"생선", v:"Cá"}, {k:"계란", v:"Trứng"}, {k:"과일", v:"Hoa quả"}, {k:"사과", v:"Táo"},
+                {k:"수박", v:"Dưa hấu"}, {k:"포도", v:"Nho"}, {k:"딸기", v:"Dâu tây"}, {k:"물", v:"Nước"},
+                {k:"우유", v:"Sữa"}, {k:"주스", v:"Nước trái cây"}, {k:"커피", v:"Cà phê"}, {k:"맥주", v:"Bia"},
+                {k:"맛", v:"Vị"}, {k:"반찬", v:"Món ăn kèm"}, {k:"김치", v:"Kimchi"}, {k:"불고기", v:"Bulgogi"}
+            ],
+            "verbs_basic": [ // ĐỘNG TỪ CƠ BẢN (Nhất định phải thuộc)
+                {k:"가다", v:"Đi"}, {k:"오다", v:"Đến"}, {k:"먹다", v:"Ăn"}, {k:"마시다", v:"Uống"},
+                {k:"자다", v:"Ngủ"}, {k:"일어나다", v:"Thức dậy"}, {k:"보다", v:"Xem/Nhìn"}, {k:"듣다", v:"Nghe"},
+                {k:"말하다", v:"Nói"}, {k:"이야기하다", v:"Nói chuyện"}, {k:"읽다", v:"Đọc"}, {k:"쓰다", v:"Viết/Đắng/Đội"},
+                {k:"사다", v:"Mua"}, {k:"팔다", v:"Bán"}, {k:"입다", v:"Mặc (quần áo)"}, {k:"신다", v:"Đi (giày/tất)"},
+                {k:"벗다", v:"Cởi"}, {k:"쓰다", v:"Đội (mũ)"}, {k:"하다", v:"Làm"}, {k:"공부하다", v:"Học"},
+                {k:"일하다", v:"Làm việc"}, {k:"운동하다", v:"Tập thể dục"}, {k:"쉬다", v:"Nghỉ ngơi"}, {k:"만나다", v:"Gặp gỡ"},
+                {k:"헤어지다", v:"Chia tay"}, {k:"주다", v:"Cho"}, {k:"받다", v:"Nhận"}, {k:"보내다", v:"Gửi"},
+                {k:"배우다", v:"Học (kỹ năng)"}, {k:"가르치다", v:"Dạy"}, {k:"기다리다", v:"Chờ đợi"}, {k:"타다", v:"Lên xe/Đi xe"},
+                {k:"내리다", v:"Xuống xe"}, {k:"갈아타다", v:"Đổi xe"}, {k:"걷다", v:"Đi bộ"}, {k:"뛰다", v:"Chạy"},
+                {k:"앉다", v:"Ngồi"}, {k:"서다", v:"Đứng"}, {k:"살다", v:"Sống"}, {k:"죽다", v:"Chết"},
+                {k:"알다", v:"Biết"}, {k:"모르다", v:"Không biết"}, {k:"좋아하다", v:"Thích"}, {k:"싫어하다", v:"Ghét"},
+                {k:"사랑하다", v:"Yêu"}, {k:"결혼하다", v:"Kết hôn"}, {k:"노래하다", v:"Hát"}, {k:"요리하다", v:"Nấu ăn"},
+                {k:"청소하다", v:"Dọn dẹp"}, {k:"세수하다", v:"Rửa mặt"}, {k:"샤워하다", v:"Tắm"}, {k:"빨래하다", v:"Giặt đồ"},
+                {k:"여행하다", v:"Du lịch"}, {k:"전화하다", v:"Gọi điện"}, {k:"출발하다", v:"Xuất phát"}, {k:"도착하다", v:"Đến nơi"}
+            ],
+            "adjectives": [ // TÍNH TỪ & TRẠNG TỪ
+                {k:"크다", v:"To/Lớn"}, {k:"작다", v:"Nhỏ/Bé"}, {k:"많다", v:"Nhiều"}, {k:"적다", v:"Ít"},
+                {k:"좋다", v:"Tốt"}, {k:"나쁘다", v:"Xấu/Tệ"}, {k:"싸다", v:"Rẻ"}, {k:"비싸다", v:"Đắt"},
+                {k:"춥다", v:"Lạnh"}, {k:"덥다", v:"Nóng"}, {k:"따뜻하다", v:"Ấm áp"}, {k:"시원하다", v:"Mát mẻ"},
+                {k:"어렵다", v:"Khó"}, {k:"쉽다", v:"Dễ"}, {k:"가깝다", v:"Gần"}, {k:"멀다", v:"Xa"},
+                {k:"빠르다", v:"Nhanh"}, {k:"느리다", v:"Chậm"}, {k:"맛있다", v:"Ngon"}, {k:"맛없다", v:"Không ngon"},
+                {k:"재미있다", v:"Thú vị/Hay"}, {k:"재미없다", v:"Chán/Không hay"}, {k:"예쁘다", v:"Đẹp"}, {k:"멋있다", v:"Ngầu/Đẹp trai"},
+                {k:"아프다", v:"Đau/Ốm"}, {k:"피곤하다", v:"Mệt mỏi"}, {k:"바쁘다", v:"Bận rộn"}, {k:"한가하다", v:"Rảnh rỗi"},
+                {k:"깨끗하다", v:"Sạch sẽ"}, {k:"더럽다", v:"Bẩn"}, {k:"조용하다", v:"Yên tĩnh"}, {k:"시끄럽다", v:"Ồn ào"},
+                {k:"길다", v:"Dài"}, {k:"짧다", v:"Ngắn"}, {k:"무겁다", v:"Nặng"}, {k:"가볍다", v:"Nhẹ"},
+                {k:"밝다", v:"Sáng"}, {k:"어둡다", v:"Tối"}, {k:"같다", v:"Giống"}, {k:"다르다", v:"Khác"},
+                {k:"친절하다", v:"Thân thiện"}, {k:"똑똑하다", v:"Thông minh"}, {k:"기쁘다", v:"Vui mừng"}, {k:"슬프다", v:"Buồn"},
+                // Trạng từ
+                {k:"아주/매우", v:"Rất"}, {k:"너무", v:"Quá/Lắm"}, {k:"잘", v:"Giỏi/Tốt"}, {k:"못", v:"Không thể"},
+                {k:"안", v:"Không"}, {k:"더", v:"Hơn/Thêm"}, {k:"다", v:"Tất cả"}, {k:"함께/같이", v:"Cùng nhau"},
+                {k:"항상/언제나", v:"Luôn luôn"}, {k:"가끔", v:"Thỉnh thoảng"}, {k:"자주", v:"Thường xuyên"}, {k:"일찍", v:"Sớm"},
+                {k:"늦게", v:"Muộn"}, {k:"빨리", v:"Nhanh lên"}, {k:"천천히", v:"Từ từ"}, {k:"방금", v:"Vừa mới"},
+                {k:"벌써", v:"Đã...rồi"}, {k:"아직", v:"Vẫn/Chưa"}, {k:"꼭", v:"Nhất định"}, {k:"아마", v:"Có lẽ"}
+            ]
+        };
+
         // --- DỮ LIỆU TỪ VỰNG MỚI (~800 từ) ---
         const vocabularyDB = {
             "nature_time": [
