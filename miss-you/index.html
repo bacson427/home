@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Miss You - Slow Motion</title>
+    <title>Miss You - Smooth Dark</title>
 
     <meta property="og:title" content="Miss You - Nguyễn Bắc Sơn">
     <meta property="og:description" content="Nhấp để xem chi tiết ❤️">
@@ -14,14 +14,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS TỐI ƯU --- */
+        /* --- CSS TỐI ƯU HIỆU NĂNG --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
 
         body {
             /* NỀN ĐỘNG SIÊU TỐI */
             background: linear-gradient(-45deg, #000000, #1a0b2e, #2d0000, #0f0c29, #192a56, #240b36);
             background-size: 400% 400%; 
-            animation: gradientBG 20s ease infinite; 
+            animation: gradientBG 25s ease infinite; /* Làm chậm nền lại chút để đỡ tốn tài nguyên */
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
             font-family: 'Quicksand', sans-serif; overflow: hidden; position: relative;
@@ -37,23 +37,25 @@
         .container {
             text-align: center; 
             background: rgba(0, 0, 0, 0.6); 
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px); /* Blur nhẹ để đỡ lag */
+            -webkit-backdrop-filter: blur(8px); /* Hỗ trợ Safari/iPhone */
             padding: 30px 25px; border-radius: 25px; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             max-width: 500px; width: 90%; 
             border: 1px solid rgba(255, 255, 255, 0.1);
             animation: float 6s ease-in-out infinite; position: relative; z-index: 10;
+            will-change: transform; /* Tối ưu chuyển động */
         }
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
         /* TIM CÂN XỨNG */
         .heart-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 5px; }
-        .heart-icon { font-size: 50px; text-shadow: 0 0 25px rgba(220, 20, 60, 0.8); }
+        .heart-icon { font-size: 50px; text-shadow: 0 0 20px rgba(220, 20, 60, 0.8); }
         .heart-left { animation: heartbeatLeft 1.5s ease-in-out infinite; }
         .heart-right { animation: heartbeatRight 1.5s ease-in-out infinite; }
-        @keyframes heartbeatLeft { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.2) rotate(-10deg); } }
-        @keyframes heartbeatRight { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.2) rotate(10deg); } }
+        @keyframes heartbeatLeft { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.1) rotate(-10deg); } } /* Giảm scale chút cho mượt */
+        @keyframes heartbeatRight { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.1) rotate(10deg); } }
 
         h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 15px; color: #ff4757; line-height: 1.2; animation: titleColor 8s infinite alternate; text-shadow: 0 0 10px rgba(255, 71, 87, 0.5); }
 
@@ -70,46 +72,36 @@
         .time-box span { font-size: 1.6rem; font-weight: 800; color: #df99ff; display: block; position: relative; z-index: 2; text-shadow: 0 0 8px rgba(223, 153, 255, 0.4); }
         .time-box p { font-size: 0.8rem; color: #a4b0be; font-weight: 600; margin-top: 5px; text-transform: uppercase; position: relative; z-index: 2; }
 
-        /* --- CSS MƯA PHÙN HOA LỜ ĐỜ (SLOW MOTION) --- */
+        /* --- MƯA PHÙN HOA (TỐI ƯU HÓA) --- */
         .flower-drizzle {
             position: fixed; top: -10%; z-index: 0; pointer-events: none; 
             border-radius: 50%; 
-            box-shadow: 0 0 5px rgba(255,255,255,0.3);
-            /* Animation rơi lờ đờ */
+            /* Bỏ box-shadow phức tạp khi bay nhiều để giảm lag */
+            background: rgba(255, 255, 255, 0.8);
             animation-name: drizzleSway;
             animation-timing-function: ease-in-out;
             animation-fill-mode: forwards;
+            will-change: transform, opacity; /* Kích hoạt GPU */
         }
 
         .drizzle-peach { background: rgba(255, 182, 193, 0.9); }
         .drizzle-apricot { background: rgba(255, 235, 59, 0.9); }
         .drizzle-white { background: rgba(255, 255, 255, 0.7); }
 
-        /* Hiệu ứng rơi lượn lờ qua lại */
         @keyframes drizzleSway {
-            0% { 
-                top: -10%; 
-                transform: translateX(0) rotate(0deg); 
-                opacity: 0; 
-            }
+            0% { top: -10%; transform: translateX(0) rotate(0deg); opacity: 0; }
             10% { opacity: 0.8; }
-            
-            25% { transform: translateX(30px) rotate(45deg); } /* Lượn phải */
-            50% { transform: translateX(-30px) rotate(90deg); } /* Lượn trái */
-            75% { transform: translateX(30px) rotate(135deg); } /* Lượn phải */
-            
-            100% { 
-                top: 110%; 
-                transform: translateX(0) rotate(180deg); 
-                opacity: 0; 
-            }
+            25% { transform: translateX(20px) rotate(45deg); }
+            50% { transform: translateX(-20px) rotate(90deg); }
+            75% { transform: translateX(20px) rotate(135deg); }
+            100% { top: 110%; transform: translateX(0) rotate(180deg); opacity: 0; }
         }
 
-
-        /* CSS TRÁI TIM 3D BAY LÊN */
+        /* --- TRÁI TIM 3D --- */
         .real-heart-container {
             position: fixed; bottom: -50px; pointer-events: none; z-index: 1;
             animation: floatUpRealHeart linear forwards; opacity: 0.9;
+            will-change: transform;
         }
         .real-heart-shape {
             position: relative; width: 100%; height: 100%; transform: rotate(-45deg);
@@ -120,10 +112,10 @@
         .real-heart-shape::before { top: -50%; left: 0; }
         .real-heart-shape::after { top: 0; right: -50%; }
 
-        .heart-type-red { background: radial-gradient(circle at 30% 30%, #ff5e62, #a71d31); box-shadow: 0 0 10px rgba(255, 94, 98, 0.4); }
-        .heart-type-blue { background: radial-gradient(circle at 30% 30%, #54a0ff, #2e86de); box-shadow: 0 0 10px rgba(84, 160, 255, 0.4); }
-        .heart-type-gold { background: radial-gradient(circle at 30% 30%, #f1c40f, #c0392b); box-shadow: 0 0 10px rgba(241, 196, 15, 0.4); }
-        .heart-type-purple { background: radial-gradient(circle at 30% 30%, #e056fd, #686de0); box-shadow: 0 0 10px rgba(224, 86, 253, 0.4); }
+        .heart-type-red { background: radial-gradient(circle at 30% 30%, #ff5e62, #a71d31); box-shadow: 0 0 5px rgba(255, 94, 98, 0.4); }
+        .heart-type-blue { background: radial-gradient(circle at 30% 30%, #54a0ff, #2e86de); box-shadow: 0 0 5px rgba(84, 160, 255, 0.4); }
+        .heart-type-gold { background: radial-gradient(circle at 30% 30%, #f1c40f, #c0392b); box-shadow: 0 0 5px rgba(241, 196, 15, 0.4); }
+        .heart-type-purple { background: radial-gradient(circle at 30% 30%, #e056fd, #686de0); box-shadow: 0 0 5px rgba(224, 86, 253, 0.4); }
 
         @keyframes floatUpRealHeart { 
             0% { transform: translateY(0) rotate(0deg) scale(0.6); opacity: 0; } 
@@ -136,6 +128,7 @@
             position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
             pointer-events: none; z-index: 1; opacity: 0;
             animation: floatBubble 1.5s ease-out forwards;
+            will-change: transform, opacity;
         }
         @keyframes floatBubble {
             0% { bottom: 10px; opacity: 0; transform: translateX(-50%) scale(0.3) rotate(0deg); }
@@ -221,36 +214,33 @@
     </div>
 
     <script>
-        /* --- 1. MƯA PHÙN HOA LỜ ĐỜ (SLOW MOTION) --- */
+        /* --- 1. MƯA PHÙN HOA LỜ ĐỜ (TỐI ƯU HÓA) --- */
         function createFlowerDrizzle() {
             const petal = document.createElement('div');
             petal.classList.add('flower-drizzle');
             
-            // Random loại hạt mưa (Đào, Mai, Trắng)
             const type = Math.random();
             if (type < 0.4) petal.classList.add('drizzle-peach');
             else if (type < 0.8) petal.classList.add('drizzle-apricot');
             else petal.classList.add('drizzle-white');
             
-            // Random vị trí
             petal.style.left = Math.random() * 100 + 'vw';
             
-            // SIZE NHỎ (MƯA PHÙN)
-            const size = Math.random() * 3 + 3; // 3px - 6px
+            const size = Math.random() * 3 + 3; 
             petal.style.width = size + 'px';
             petal.style.height = size + 'px';
             
-            // TỐC ĐỘ RẤT CHẬM (10s - 18s) -> Tạo cảm giác lờ đờ
+            // Tốc độ rơi 10s - 18s (chậm)
             petal.style.animationDuration = (Math.random() * 8 + 10) + 's'; 
 
             document.body.appendChild(petal);
             
-            // Xóa sau khi rơi xong (20s vì rơi chậm)
+            // Xóa sau 20s
             setTimeout(() => { petal.remove(); }, 20000);
         }
         
-        // Giãn thời gian tạo hạt ra (200ms) để đỡ rối mắt vì nó rơi chậm
-        setInterval(createFlowerDrizzle, 200);
+        // Tăng thời gian tạo hạt lên 400ms (giảm mật độ để mượt hơn)
+        setInterval(createFlowerDrizzle, 400);
 
 
         /* --- 2. ĐẾM NGÀY & TIM BAY --- */
@@ -297,7 +287,7 @@
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        /* --- 3. TIM 3D BAY KHI CÓ NHẠC --- */
+        /* --- 3. TIM 3D BAY KHI CÓ NHẠC (Giảm tần suất tạo) --- */
         const audio = document.getElementById('myAudio');
         let heartInterval;
 
@@ -321,7 +311,12 @@
             setTimeout(() => { container.remove(); }, 10000);
         }
 
-        audio.onplay = function() { if (!heartInterval) heartInterval = setInterval(createRealFloatingHeart, 900); };
+        audio.onplay = function() { 
+            if (!heartInterval) {
+                // Tăng lên 1500ms (1.5s) mới tạo 1 tim -> Đỡ lag hơn
+                heartInterval = setInterval(createRealFloatingHeart, 1500); 
+            }
+        };
         audio.onpause = function() { clearInterval(heartInterval); heartInterval = null; };
         document.body.addEventListener('click', function() { if(audio.paused) audio.play(); }, { once: true });
 
