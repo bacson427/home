@@ -87,8 +87,8 @@
             const clone = baseAudio.cloneNode();
             if (type === 'long') clone.volume = 0.8;
             else if (type === 'launch') clone.volume = 0.3;
-            else if (type === 'small') clone.volume = 0.6;
-            else clone.volume = 0.5;
+            else if (type === 'small') clone.volume = 0.5;
+            else clone.volume = 0.6;
             
             if(type !== 'long') clone.playbackRate = random(0.9, 1.2);
             clone.play().catch(e => {});
@@ -135,13 +135,13 @@
             ctx.beginPath();
             ctx.moveTo(this.x - this.vx * 2, this.y - this.vy * 2);
             ctx.lineTo(this.x, this.y);
-            ctx.strokeStyle = `hsl(45, 100%, ${this.brightness}%)`;
+            ctx.strokeStyle = `hsl(${random(0,360)}, 100%, ${this.brightness}%)`; // Đuôi cũng random màu
             ctx.lineWidth = 1.5; 
             ctx.stroke();
         }
     }
 
-    // --- CLASS 2: HẠT NỔ (TAN BIẾN NGAY) ---
+    // --- CLASS 2: HẠT NỔ (LÂU TAN - 5-7s) ---
     class Particle {
         constructor(x, y, hue, type, targetX, targetY) {
             this.x = x;
@@ -157,22 +157,24 @@
             if (type === 'text') {
                 this.vx = 0; this.vy = 0;
                 this.size = 1.5;
-                this.decay = 0; // Chữ không tan
+                this.decay = 0; // Chữ không bao giờ tan
             }
             else {
-                // PHÁO HOA: TAN BIẾN NGAY TRÊN KHÔNG
+                // PHÁO HOA:
                 const angle = Math.random() * Math.PI * 2;
-                const speed = random(1, 8); // Vẫn nổ bung ra
+                const speed = random(1, 12); // Nổ bung ra
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
                 
-                this.size = random(0.5, 1.5); // Hạt siêu nhỏ
+                this.size = random(0.5, 2.0); 
                 
-                this.friction = 0.92; // Dừng lại nhanh hơn
-                this.gravity = 0.01; // <--- TRỌNG LỰC GẦN NHƯ = 0 (Không rơi)
+                this.friction = 0.95; // Hãm tốc độ lại để nó trôi
+                this.gravity = 0.005; // <--- TRỌNG LỰC SIÊU NHẸ (gần như 0) để bay lơ lửng 7s mà ko rơi
                 
-                // Tốc độ tan biến cực nhanh
-                this.decay = random(0.04, 0.08); 
+                // TÍNH TOÁN THỜI GIAN TAN BIẾN (DECAY)
+                // Muốn sống 5s (300 frame) -> decay ~ 0.0033
+                // Muốn sống 7s (420 frame) -> decay ~ 0.0023
+                this.decay = random(0.002, 0.0035); 
             }
         }
 
@@ -188,9 +190,10 @@
                 this.vy += this.gravity;
                 this.x += this.vx;
                 this.y += this.vy;
-                this.alpha -= this.decay; // Mờ đi rất nhanh
+                this.alpha -= this.decay; // Giảm từ từ trong 5-7s
                 
-                if (Math.random() < 0.2) this.alpha = 1; 
+                // Nhấp nháy liên tục
+                if (Math.random() < 0.05) this.alpha = random(0.5, 1); 
                 
                 if (this.alpha <= 0) particles.splice(index, 1);
             }
@@ -213,7 +216,6 @@
         offCanvas.width = window.innerWidth;
         offCanvas.height = 200; 
         
-        // Chỉnh font nhỏ lại một chút để an toàn tuyệt đối trên mobile
         let fontSize = 70;
         if (window.innerWidth < 450) fontSize = 32; 
         else if (window.innerWidth < 800) fontSize = 45; 
@@ -257,10 +259,13 @@
             });
         } 
         else {
-            const hue = random(0, 360);
-            const count = random(30, 60); 
+            // FULL COLOR RANDOM
+            const hue = random(0, 360); 
+            // Số lượng hạt nhiều để đẹp
+            const count = random(40, 70); 
             for (let i = 0; i < count; i++) {
-                particles.push(new Particle(x, y, hue, 'normal'));
+                // Mỗi hạt có thể lệch màu một chút để lung linh hơn
+                particles.push(new Particle(x, y, hue + random(-20, 20), 'normal'));
             }
         }
     }
@@ -278,9 +283,9 @@
     }
 
     function startShow() {
-        // --- CHỈNH SỬA QUAN TRỌNG: VỊ TRÍ TUYỆT ĐỐI ---
-        const line1Y = canvas.height * 0.1; // 10% từ trên xuống
-        const line2Y = canvas.height * 0.3; // 30% từ trên xuống (Cách dòng 1 rất xa)
+        // --- VỊ TRÍ SIÊU CAO ---
+        const line1Y = canvas.height * 0.05; // 5% (Sát mép trên)
+        const line2Y = canvas.height * 0.25; // 25% (Cách 20% màn hình)
 
         // 1. CHỮ
         setTimeout(() => {
@@ -291,19 +296,19 @@
             fireworks.push(new Firework(canvas.width/2, canvas.height, canvas.width/2, line2Y, 'text', "TRƯƠNG THỊ DƯƠNG"));
         }, 1200);
 
-        // 2. PHÁO HOA (TAN BIẾN NHANH)
+        // 2. PHÁO HOA
         setTimeout(() => {
             playSound('long');
             let waveCount = 0;
             const finaleInterval = setInterval(() => {
                 waveCount++;
                 
-                // Tăng số lượng lên 15 quả/đợt
-                for(let i=0; i<15; i++) {
+                // Bắn 12 quả/đợt
+                for(let i=0; i<12; i++) {
                     setTimeout(() => {
                         const x = random(10, canvas.width - 10);
-                        // Nổ từ 40% màn hình trở xuống
-                        const y = random(canvas.height * 0.4, canvas.height * 0.9);
+                        // Nổ từ 35% màn hình trở xuống (vẫn tránh chữ)
+                        const y = random(canvas.height * 0.35, canvas.height * 0.9);
                         
                         fireworks.push(new Firework(
                             random(10, canvas.width-10), 
@@ -318,7 +323,7 @@
                     clearInterval(finaleInterval);
                     setInterval(() => {
                         const x = random(10, canvas.width - 10);
-                        const y = random(canvas.height * 0.4, canvas.height * 0.9);
+                        const y = random(canvas.height * 0.35, canvas.height * 0.9);
                         fireworks.push(new Firework(random(0, canvas.width), canvas.height, x, y, 'normal'));
                     }, 800);
                 }
