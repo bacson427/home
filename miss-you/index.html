@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Miss You - Flower Drizzle</title>
+    <title>Miss You - Slow Motion</title>
 
     <meta property="og:title" content="Miss You - Nguyễn Bắc Sơn">
     <meta property="og:description" content="Nhấp để xem chi tiết ❤️">
@@ -70,25 +70,39 @@
         .time-box span { font-size: 1.6rem; font-weight: 800; color: #df99ff; display: block; position: relative; z-index: 2; text-shadow: 0 0 8px rgba(223, 153, 255, 0.4); }
         .time-box p { font-size: 0.8rem; color: #a4b0be; font-weight: 600; margin-top: 5px; text-transform: uppercase; position: relative; z-index: 2; }
 
-        /* --- CSS MƯA PHÙN HOA (TINY FLOWER RAIN) --- */
+        /* --- CSS MƯA PHÙN HOA LỜ ĐỜ (SLOW MOTION) --- */
         .flower-drizzle {
             position: fixed; top: -10%; z-index: 0; pointer-events: none; 
-            border-radius: 50%; /* Tròn như hạt mưa */
-            box-shadow: 0 0 3px rgba(255,255,255,0.4); /* Phát sáng nhẹ */
-            animation: drizzleFall linear forwards;
+            border-radius: 50%; 
+            box-shadow: 0 0 5px rgba(255,255,255,0.3);
+            /* Animation rơi lờ đờ */
+            animation-name: drizzleSway;
+            animation-timing-function: ease-in-out;
+            animation-fill-mode: forwards;
         }
 
-        /* Màu Hoa Đào (Hồng nhạt) */
-        .drizzle-peach { background: rgba(255, 182, 193, 0.8); }
-        /* Màu Hoa Mai (Vàng nhạt) */
-        .drizzle-apricot { background: rgba(255, 235, 59, 0.8); }
-        /* Màu trắng (Mưa bụi) */
-        .drizzle-white { background: rgba(255, 255, 255, 0.6); }
+        .drizzle-peach { background: rgba(255, 182, 193, 0.9); }
+        .drizzle-apricot { background: rgba(255, 235, 59, 0.9); }
+        .drizzle-white { background: rgba(255, 255, 255, 0.7); }
 
-        @keyframes drizzleFall {
-            0% { top: -10%; transform: translateX(0); opacity: 0; }
+        /* Hiệu ứng rơi lượn lờ qua lại */
+        @keyframes drizzleSway {
+            0% { 
+                top: -10%; 
+                transform: translateX(0) rotate(0deg); 
+                opacity: 0; 
+            }
             10% { opacity: 0.8; }
-            100% { top: 110%; transform: translateX(20px); opacity: 0; }
+            
+            25% { transform: translateX(30px) rotate(45deg); } /* Lượn phải */
+            50% { transform: translateX(-30px) rotate(90deg); } /* Lượn trái */
+            75% { transform: translateX(30px) rotate(135deg); } /* Lượn phải */
+            
+            100% { 
+                top: 110%; 
+                transform: translateX(0) rotate(180deg); 
+                opacity: 0; 
+            }
         }
 
 
@@ -207,12 +221,12 @@
     </div>
 
     <script>
-        /* --- 1. MƯA PHÙN HOA (TINY FLOWER DRIZZLE) --- */
+        /* --- 1. MƯA PHÙN HOA LỜ ĐỜ (SLOW MOTION) --- */
         function createFlowerDrizzle() {
             const petal = document.createElement('div');
             petal.classList.add('flower-drizzle');
             
-            // Random loại hạt mưa (Đào, Mai, hoặc Trắng)
+            // Random loại hạt mưa (Đào, Mai, Trắng)
             const type = Math.random();
             if (type < 0.4) petal.classList.add('drizzle-peach');
             else if (type < 0.8) petal.classList.add('drizzle-apricot');
@@ -221,22 +235,22 @@
             // Random vị trí
             petal.style.left = Math.random() * 100 + 'vw';
             
-            // SIZE SIÊU NHỎ (MƯA PHÙN)
-            const size = Math.random() * 3 + 2; // 2px - 5px
+            // SIZE NHỎ (MƯA PHÙN)
+            const size = Math.random() * 3 + 3; // 3px - 6px
             petal.style.width = size + 'px';
             petal.style.height = size + 'px';
             
-            // Tốc độ rơi nhanh hơn chút (3s - 5s)
-            petal.style.animationDuration = (Math.random() * 2 + 3) + 's'; 
+            // TỐC ĐỘ RẤT CHẬM (10s - 18s) -> Tạo cảm giác lờ đờ
+            petal.style.animationDuration = (Math.random() * 8 + 10) + 's'; 
 
             document.body.appendChild(petal);
             
-            // Xóa sau khi rơi xong
-            setTimeout(() => { petal.remove(); }, 5000);
+            // Xóa sau khi rơi xong (20s vì rơi chậm)
+            setTimeout(() => { petal.remove(); }, 20000);
         }
         
-        // Mật độ RẤT DÀY (50ms tạo 1 hạt)
-        setInterval(createFlowerDrizzle, 50);
+        // Giãn thời gian tạo hạt ra (200ms) để đỡ rối mắt vì nó rơi chậm
+        setInterval(createFlowerDrizzle, 200);
 
 
         /* --- 2. ĐẾM NGÀY & TIM BAY --- */
