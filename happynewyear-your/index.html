@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy New Year 2026 - Matrix Love</title>
+    <style>
+        /* Cấu hình cơ bản */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace; /* Font kiểu code */
+        }
+
+        /* Canvas cho hiệu ứng mưa Matrix */
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* Container chứa chữ và nội dung chính */
+        #content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            width: 100%;
+            pointer-events: none; /* Để chuột không che mất hiệu ứng */
+        }
+
+        /* Style cho chữ */
+        .message {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffccff;
+            text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px #ff00ff;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: none; /* Ẩn mặc định */
+        }
+
+        .message.active {
+            display: block;
+            opacity: 1;
+            animation: glitch 1s infinite;
+        }
+
+        /* Hiệu ứng Glitch (nhiễu sóng) cho chữ */
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Style đặc biệt cho Trái tim ở cuối */
+        .heart-container {
+            display: none;
+            opacity: 0;
+            transition: opacity 2s ease;
+            position: relative;
+        }
+
+        .heart-container.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            flex-direction: column;
+        }
+
+        /* Vẽ hình trái tim bằng CSS */
+        .heart-shape {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: transparent;
+            z-index: -1;
+            animation: pulse 1.5s infinite;
+        }
+        
+        /* Tạo hình trái tim từ SVG để đẹp hơn */
+        .heart-svg {
+            width: 400px;
+            fill: none;
+            stroke: #ff0099;
+            stroke-width: 10;
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+            animation: drawHeart 4s forwards, pulse 1s infinite 4s;
+            filter: drop-shadow(0 0 15px #ff00ff);
+        }
+
+        @keyframes drawHeart {
+            to { stroke-dashoffset: 0; fill: rgba(255, 0, 153, 0.2); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .final-text {
+            margin-top: -20px;
+            font-size: 1.5rem;
+            max-width: 600px;
+            line-height: 1.5;
+            color: #fff;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+
+        /* Nút phát nhạc (ẩn sau khi bấm) */
+        #start-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 30px;
+            background: #ff00ff;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 100;
+            border-radius: 5px;
+            box-shadow: 0 0 20px #ff00ff;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrixCanvas"></canvas>
+
+    <div id="content">
+        <div class="message" id="msg-3">3</div>
+        <div class="message" id="msg-2">2</div>
+        <div class="message" id="msg-1">1</div>
+        <div class="message" id="msg-hny">Happy New Year 2026</div>
+        <div class="message" id="msg-name">Quỳnh Anh Babee</div>
+        <div class="message" id="msg-wishes1">Tuổi mới thật nhìu may mắn</div>
+        <div class="message" id="msg-wishes2">hạnh phúc bình an đến với em</div>
+        
+        <div class="heart-container" id="final-scene">
+            <svg class="heart-svg" viewBox="0 0 512 512">
+                <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"/>
+            </svg>
+            <div class="final-text">
+                CHÚC EM IU LUÔN HẠNH<br>PHÚC BÊN ANH NHA
+            </div>
+        </div>
+    </div>
+
+    <button id="start-btn">BẤM VÀO ĐÂY ĐỂ BẮT ĐẦU NHA</button>
+    
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // --- 1. Cấu hình Matrix Rain ---
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポ1234567890';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nums = '0123456789';
+        const alphabet = katakana + latin + nums;
+
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+
+        const rainDrops = [];
+        for (let x = 0; x < columns; x++) {
+            rainDrops[x] = 1;
+        }
+
+        const draw = () => {
+            // Tạo hiệu ứng mờ dần (trail effect)
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Màu chữ (Hồng tím)
+            ctx.fillStyle = '#ff00ff'; 
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                
+                // Vẽ chữ
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                // Reset khi chạm đáy hoặc ngẫu nhiên
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        };
+
+        // Resize canvas khi đổi kích thước màn hình
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+
+        // --- 2. Kịch bản chạy chữ (Timeline) ---
+        const startBtn = document.getElementById('start-btn');
+        const bgMusic = document.getElementById('bg-music');
+        let interval;
+
+        const timeline = [
+            { id: 'msg-3', time: 0, duration: 1000 },
+            { id: 'msg-2', time: 1000, duration: 1000 },
+            { id: 'msg-1', time: 2000, duration: 1000 },
+            { id: 'msg-hny', time: 3000, duration: 3000 },
+            { id: 'msg-name', time: 6000, duration: 3000 },
+            { id: 'msg-wishes1', time: 9000, duration: 3000 },
+            { id: 'msg-wishes2', time: 12000, duration: 3000 },
+            { id: 'final-scene', time: 15000, duration: 999999 } // Hiện mãi mãi
+        ];
+
+        startBtn.addEventListener('click', () => {
+            startBtn.style.display = 'none'; // Ẩn nút
+            bgMusic.play().catch(e => console.log("Cần tương tác để phát nhạc")); // Phát nhạc
+            
+            // Bắt đầu hiệu ứng Matrix
+            interval = setInterval(draw, 30);
+
+            // Bắt đầu kịch bản timeline
+            timeline.forEach(item => {
+                setTimeout(() => {
+                    // Ẩn tất cả các message trước đó (trừ trái tim cuối)
+                    document.querySelectorAll('.message').forEach(el => {
+                        el.classList.remove('active');
+                        el.style.display = 'none';
+                    });
+
+                    // Hiện element hiện tại
+                    const el = document.getElementById(item.id);
+                    if (el) {
+                        if (item.id === 'final-scene') {
+                            el.classList.add('show');
+                        } else {
+                            el.style.display = 'block';
+                            // Hack nhỏ để trigger animation
+                            setTimeout(() => el.classList.add('active'), 50); 
+                        }
+                    }
+
+                }, item.time);
+            });
+        });
+    </script>
+</body>
+</html>
