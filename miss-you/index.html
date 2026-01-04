@@ -47,7 +47,7 @@
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
-        /* TIM CÂN XỨNG */
+        /* TIM CÂN XỨNG Ở TRÊN CÙNG */
         .heart-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 5px; }
         .heart-icon { font-size: 50px; text-shadow: 0 0 25px rgba(220, 20, 60, 0.8); }
         .heart-left { animation: heartbeatLeft 1.5s ease-in-out infinite; }
@@ -87,45 +87,52 @@
             100% { top: 120%; transform: translateX(0) rotate(180deg) skew(0deg); }
         }
 
-        /* --- CSS VẼ HOA NHƯ THẬT (ĐÃ SỬA LOẠI HOA) --- */
-        .real-flower-container {
+        /* --- CSS VẼ TRÁI TIM 3D CHÂN THỰC (NEW) --- */
+        /* Container chứa tim để bay lên */
+        .real-heart-container {
             position: fixed; bottom: -50px; pointer-events: none; z-index: 1;
-            animation: floatUpFlower linear forwards; opacity: 0.8;
-        }
-        .flower-head {
-            width: 100%; height: 100%;
-            border-radius: 50%;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+            animation: floatUpRealHeart linear forwards; opacity: 0.9;
         }
 
-        /* 1. Hồng Nhung (Đỏ thắm) */
-        .flower-red-rose { 
+        /* Tạo hình dáng trái tim bằng CSS (Kỹ thuật 2 hình tròn + 1 hình vuông) */
+        .real-heart-shape {
+            position: relative; width: 100%; height: 100%;
+            transform: rotate(-45deg); /* Xoay để tạo hình tim */
+        }
+        .real-heart-shape::before,
+        .real-heart-shape::after {
+            content: ""; position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            background: inherit; /* Kế thừa màu gradient từ cha */
+        }
+        .real-heart-shape::before { top: -50%; left: 0; }
+        .real-heart-shape::after { top: 0; right: -50%; }
+
+        /* Các loại Ngọc Tim 3D (Dùng Radial Gradient tạo khối) */
+        .heart-type-red { /* Hồng Ngọc */
             background: radial-gradient(circle at 30% 30%, #ff5e62, #a71d31);
-            border-radius: 45% 55% 50% 50% / 50% 45% 55% 50%;
+            box-shadow: 0 0 10px rgba(255, 94, 98, 0.4);
         }
-        /* 2. Mẫu Đơn (Hồng phấn) */
-        .flower-pink-peony { 
-            background: radial-gradient(circle at center, #ffc0cb, #ff69b4);
-            border-radius: 50% 45% 55% 50%;
-        }
-        /* 3. Hồng Xanh (Xanh dương - Tình yêu bất diệt) */
-        .flower-blue-rose { 
+        .heart-type-blue { /* Sapphire Xanh */
             background: radial-gradient(circle at 30% 30%, #54a0ff, #2e86de);
-            border-radius: 45% 55% 50% 50% / 50% 45% 55% 50%;
+            box-shadow: 0 0 10px rgba(84, 160, 255, 0.4);
         }
-        /* 4. Hướng Dương (Vàng - Thủy chung) */
-        .flower-sunflower { 
-            /* Nhụy đen, cánh vàng */
-            background: radial-gradient(circle, #3d3d3d 20%, #f1c40f 30%, #f39c12 90%);
-            border-radius: 50%;
+        .heart-type-gold { /* Thạch Anh Vàng */
+            background: radial-gradient(circle at 30% 30%, #f1c40f, #c0392b);
+            box-shadow: 0 0 10px rgba(241, 196, 15, 0.4);
+        }
+        .heart-type-purple { /* Thạch Anh Tím */
+            background: radial-gradient(circle at 30% 30%, #e056fd, #686de0);
+            box-shadow: 0 0 10px rgba(224, 86, 253, 0.4);
         }
 
-        @keyframes floatUpFlower { 
-            0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0.8; } 
+        @keyframes floatUpRealHeart { 
+            0% { transform: translateY(0) rotate(0deg) scale(0.6); opacity: 0; } 
+            10% { opacity: 0.9; }
             100% { transform: translateY(-110vh) rotate(360deg) scale(1); opacity: 0; } 
         }
 
-        /* TIM BAY TỪ Ô SỐ */
+
+        /* --- CSS TIM BAY TỪ Ô SỐ --- */
         .box-heart {
             position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
             pointer-events: none; z-index: 1; opacity: 0;
@@ -140,6 +147,7 @@
         .heart-m { font-size: 32px; color: #ff7f50; font-weight: bold; text-shadow: 0 0 8px #ff6348; } 
         .heart-h { font-size: 42px; color: #a29bfe; font-weight: bold; text-shadow: 0 0 10px #6c5ce7; } 
         .heart-d { font-size: 52px; color: #7bed9f; font-weight: bold; text-shadow: 0 0 12px #2ed573; }
+
 
         .date-start { 
             font-size: 1.1rem; font-weight: 800; 
@@ -236,7 +244,8 @@
         }
         setInterval(createRealLeaf, 1200);
 
-        /* --- 2. ĐẾM NGÀY --- */
+
+        /* --- 2. ĐẾM NGÀY & TIM BAY TỪ Ô --- */
         const startDate = new Date(2025, 11, 24, 10, 50, 0).getTime();
         let prevMin = -1, prevHour = -1, prevDay = -1;
 
@@ -280,32 +289,36 @@
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        /* --- 3. HOA NHƯ THẬT BAY KHI CÓ NHẠC (ĐÃ ĐỔI LOẠI HOA) --- */
+        /* --- 3. TRÁI TIM 3D CHÂN THỰC BAY KHI CÓ NHẠC (NEW) --- */
         const audio = document.getElementById('myAudio');
         let heartInterval;
 
-        function createRealFlower() {
-            const flowerContainer = document.createElement('div');
-            flowerContainer.classList.add('real-flower-container');
-            const flowerHead = document.createElement('div');
-            flowerHead.classList.add('flower-head');
+        function createRealFloatingHeart() {
+            // Container bay lên
+            const container = document.createElement('div');
+            container.classList.add('real-heart-container');
 
-            // ĐÃ XÓA HOA CÚC, THAY BẰNG HỒNG XANH & HƯỚNG DƯƠNG
-            const flowerTypes = ['flower-red-rose', 'flower-pink-peony', 'flower-blue-rose', 'flower-sunflower'];
-            flowerHead.classList.add(flowerTypes[Math.floor(Math.random() * flowerTypes.length)]);
+            // Hình dáng trái tim 3D
+            const heartShape = document.createElement('div');
+            heartShape.classList.add('real-heart-shape');
 
-            flowerContainer.style.left = Math.random() * 100 + 'vw';
-            const size = Math.random() * 25 + 15;
-            flowerContainer.style.width = size + 'px';
-            flowerContainer.style.height = size + 'px';
-            flowerContainer.style.animationDuration = (Math.random() * 4 + 5) + 's'; 
+            // Random loại ngọc tim
+            const types = ['heart-type-red', 'heart-type-blue', 'heart-type-gold', 'heart-type-purple'];
+            heartShape.classList.add(types[Math.floor(Math.random() * types.length)]);
 
-            flowerContainer.appendChild(flowerHead);
-            document.body.appendChild(flowerContainer);
-            setTimeout(() => { flowerContainer.remove(); }, 10000);
+            // Random vị trí, kích thước (Tim 3D cần to hơn chút để thấy rõ hiệu ứng)
+            container.style.left = Math.random() * 100 + 'vw';
+            const size = Math.random() * 30 + 20; // Kích thước từ 20px - 50px
+            container.style.width = size + 'px';
+            container.style.height = size + 'px';
+            container.style.animationDuration = (Math.random() * 4 + 6) + 's'; // Bay chậm (6-10s)
+
+            container.appendChild(heartShape);
+            document.body.appendChild(container);
+            setTimeout(() => { container.remove(); }, 10000);
         }
 
-        audio.onplay = function() { if (!heartInterval) heartInterval = setInterval(createRealFlower, 900); };
+        audio.onplay = function() { if (!heartInterval) heartInterval = setInterval(createRealFloatingHeart, 900); };
         audio.onpause = function() { clearInterval(heartInterval); heartInterval = null; };
         document.body.addEventListener('click', function() { if(audio.paused) audio.play(); }, { once: true });
 
