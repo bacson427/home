@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Miss You - Fixed & Smooth</title>
-    
+    <title>Miss You - Front Fireworks</title>
+
     <meta property="og:title" content="Miss You - Nguyễn Bắc Sơn">
     <meta property="og:description" content="Nhấp để xem chi tiết ❤️">
     <meta property="og:image" content="https://nguyenbacson.io.vn/miss-you.png">
-    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nguyenbacson.io.vn/miss-you/">
+
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS --- */
+        /* --- CSS CƠ BẢN --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
 
         body {
-            /* Nền tối gradient lãng mạn */
-            background: linear-gradient(-45deg, #000000, #2c003e, #1a0b2e);
+            /* NỀN TỐI HUYỀN BÍ */
+            background: linear-gradient(-45deg, #000000, #1a0b2e, #240b36);
             background-size: 400% 400%; 
             animation: gradientBG 20s ease infinite; 
             height: 100vh;
@@ -32,75 +34,87 @@
             100% { background-position: 0% 50%; } 
         }
 
-        /* Canvas pháo hoa nằm đè lên trên cùng nhưng trong suốt */
+        /* --- CANVAS PHÁO HOA (LAYER TRÊN CÙNG) --- */
         #fireworksCanvas {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: 100; /* Lớp trên cùng */
-            pointer-events: none; /* Cho phép bấm xuyên qua */
+            /* Z-index 100 để nằm đè lên mọi thứ */
+            z-index: 100; 
+            /* Quan trọng: Cho phép bấm xuyên qua để chỉnh nhạc */
+            pointer-events: none; 
         }
 
         .container {
             text-align: center; 
-            background: rgba(0, 0, 0, 0.6); 
+            background: rgba(0, 0, 0, 0.5); 
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             padding: 30px 25px; border-radius: 25px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             max-width: 500px; width: 90%; 
             border: 1px solid rgba(255, 255, 255, 0.1);
             animation: float 6s ease-in-out infinite; position: relative; 
             z-index: 10; 
+            will-change: transform; 
         }
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
-        .heart-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 5px; }
-        .heart-icon { font-size: 50px; text-shadow: 0 0 20px rgba(220, 20, 60, 0.8); }
-        .heart-left { animation: heartbeat 1.5s infinite; }
-        .heart-right { animation: heartbeat 1.5s infinite 0.2s; }
-        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        /* HIỆU ỨNG RIPPLE TIM */
+        .heart-container { display: flex; justify-content: center; gap: 30px; margin-bottom: 10px; position: relative; }
+        .heart-wrapper { position: relative; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; }
+        .heart-icon { font-size: 50px; position: relative; z-index: 2; filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.8)); animation: heartbeat 1.5s infinite; }
+        .heart-wrapper::before, .heart-wrapper::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; border-radius: 50%; background: rgba(255, 107, 107, 0.4); z-index: 1; animation: rippleEffect 2s linear infinite; }
+        .heart-wrapper::after { animation-delay: 1s; }
+        @keyframes rippleEffect { 0% { width: 100%; height: 100%; opacity: 0.8; border: 1px solid rgba(255, 107, 107, 0.5); } 100% { width: 300%; height: 300%; opacity: 0; border: 0px solid rgba(255, 107, 107, 0); } }
+        @keyframes heartbeat { 0%, 30%, 60% { transform: scale(1); } 15%, 45% { transform: scale(1.2); } }
 
-        h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 15px; color: #ff4757; }
+        h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 15px; color: #ff4757; line-height: 1.2; animation: titleColor 8s infinite alternate; text-shadow: 0 0 10px rgba(255, 71, 87, 0.5); }
 
         #clock { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
-        .time-box { background: rgba(40, 40, 40, 0.8); padding: 8px; border-radius: 12px; min-width: 65px; border: 1px solid rgba(255,255,255,0.1); }
-        .time-box span { font-size: 1.6rem; font-weight: 800; color: #df99ff; display: block; }
-        .time-box p { font-size: 0.8rem; color: #a4b0be; margin-top: 5px; text-transform: uppercase; }
+        .time-box { position: relative; background: rgba(30, 30, 30, 0.7); padding: 8px; border-radius: 12px; min-width: 65px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .time-box span { font-size: 1.6rem; font-weight: 800; color: #df99ff; display: block; position: relative; z-index: 2; text-shadow: 0 0 8px rgba(223, 153, 255, 0.4); }
+        .time-box p { font-size: 0.8rem; color: #a4b0be; font-weight: 600; margin-top: 5px; text-transform: uppercase; position: relative; z-index: 2; }
 
-        .box-heart {
-            position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
-            pointer-events: none; z-index: 1; opacity: 0;
-            animation: floatBubble 1.5s ease-out forwards;
-        }
-        @keyframes floatBubble {
-            0% { bottom: 10px; opacity: 0; transform: translateX(-50%) scale(0.3); }
-            50% { opacity: 1; }
-            100% { bottom: 150%; opacity: 0; transform: translateX(-50%) scale(1.2); }
-        }
-        .heart-s { font-size: 22px; color: #ff6b81; }
-
-        /* Tim 3D khi có nhạc */
-        .real-heart-container { position: fixed; bottom: -50px; pointer-events: none; z-index: 1; animation: floatUp 8s linear forwards; }
+        /* TRÁI TIM 3D (GIỮ NGUYÊN) */
+        .real-heart-container { position: fixed; bottom: -50px; pointer-events: none; z-index: 1; animation: floatUpRealHeart linear forwards; opacity: 0.9; will-change: transform; }
         .real-heart-shape { position: relative; width: 100%; height: 100%; transform: rotate(-45deg); }
         .real-heart-shape::before, .real-heart-shape::after { content: ""; position: absolute; width: 100%; height: 100%; border-radius: 50%; background: inherit; }
         .real-heart-shape::before { top: -50%; left: 0; }
         .real-heart-shape::after { top: 0; right: -50%; }
-        .heart-type-red { background: radial-gradient(circle, #ff5e62, #a71d31); }
-        .heart-type-blue { background: radial-gradient(circle, #54a0ff, #2e86de); }
-        .heart-type-gold { background: radial-gradient(circle, #f1c40f, #c0392b); }
-        .heart-type-purple { background: radial-gradient(circle, #e056fd, #686de0); }
-        @keyframes floatUp { to { transform: translateY(-110vh) rotate(360deg); } }
+        .heart-type-red { background: radial-gradient(circle at 30% 30%, #ff5e62, #a71d31); box-shadow: 0 0 5px rgba(255, 94, 98, 0.4); }
+        .heart-type-blue { background: radial-gradient(circle at 30% 30%, #54a0ff, #2e86de); box-shadow: 0 0 5px rgba(84, 160, 255, 0.4); }
+        .heart-type-gold { background: radial-gradient(circle at 30% 30%, #f1c40f, #c0392b); box-shadow: 0 0 5px rgba(241, 196, 15, 0.4); }
+        .heart-type-purple { background: radial-gradient(circle at 30% 30%, #e056fd, #686de0); box-shadow: 0 0 5px rgba(224, 86, 253, 0.4); }
+        @keyframes floatUpRealHeart { 0% { transform: translateY(0) rotate(0deg) scale(0.6); opacity: 0; } 10% { opacity: 0.9; } 100% { transform: translateY(-110vh) rotate(360deg) scale(1); opacity: 0; } }
 
-        .date-start { font-size: 1.1rem; font-weight: 800; background: rgba(0,0,0,0.5); color: #ff6b81; display: inline-block; padding: 8px 25px; border-radius: 30px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        
-        #mainAudio { width: 100%; height: 35px; margin-top: 5px; border-radius: 20px; opacity: 0.9; filter: invert(90%) hue-rotate(240deg); position: relative; z-index: 20; outline: none; }
-        
-        .copyright { margin-top: 15px; font-size: 0.8rem; color: #888; }
-        .hint { margin-top: 8px; font-size: 0.85rem; color: #ff4757; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
-        
-        .click-heart { position: absolute; font-size: 20px; color: #ff4757; pointer-events: none; animation: flyUpClick 1s ease-out forwards; z-index: 100; text-shadow: 0 0 2px #fff; }
-        @keyframes flyUpClick { 100% { transform: translate(-50%, -100px); opacity: 0; } }
+        /* TIM BAY TỪ Ô SỐ */
+        .box-heart { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); pointer-events: none; z-index: 1; opacity: 0; animation: floatBubble 1.5s ease-out forwards; will-change: transform, opacity; }
+        @keyframes floatBubble { 0% { bottom: 10px; opacity: 0; transform: translateX(-50%) scale(0.3) rotate(0deg); } 30% { opacity: 1; transform: translateX(calc(-50% + var(--tx))) scale(1.2) rotate(var(--rot)); } 100% { bottom: 150%; opacity: 0; transform: translateX(calc(-50% + var(--tx) * 1.5)) scale(0.8) rotate(calc(var(--rot) * 2)); } }
+        .heart-s { font-size: 22px; color: #ff6b81; text-shadow: 0 0 5px #ff4757; } 
+        .heart-m { font-size: 32px; color: #ff7f50; font-weight: bold; text-shadow: 0 0 8px #ff6348; } 
+        .heart-h { font-size: 42px; color: #a29bfe; font-weight: bold; text-shadow: 0 0 10px #6c5ce7; } 
+        .heart-d { font-size: 52px; color: #7bed9f; font-weight: bold; text-shadow: 0 0 12px #2ed573; }
+
+        .date-start { font-size: 1.1rem; font-weight: 800; background: rgba(0, 0, 0, 0.5); color: #ff6b81; display: inline-block; padding: 8px 25px; border-radius: 30px; margin-bottom: 15px; letter-spacing: 1px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        audio { width: 100%; height: 35px; margin-top: 5px; border-radius: 20px; opacity: 0.8; filter: invert(90%) hue-rotate(240deg) saturate(150%) brightness(0.8); outline: none; transition: opacity 0.3s; position: relative; z-index: 20; }
+        audio:hover { opacity: 1; }
+        .copyright { margin-top: 15px; font-size: 0.8rem; color: #747d8c; font-weight: 600; }
+        .copyright span { color: #ff4757; }
+        .hint { margin-top: 8px; font-size: 0.85rem; color: #ff4757; font-weight: bold; animation: pulseText 2s infinite; }
+        @keyframes pulseText { 0% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.6; transform: scale(1); } }
+        @keyframes titleColor { 0% { color: #ff4757; } 100% { color: #ff6b81; } }
+        .click-heart { position: absolute; font-size: 20px; white-space: nowrap; font-weight: bold; color: #ff4757; pointer-events: none; animation: flyUpClick 1.5s ease-out forwards; z-index: 100; text-shadow: 0 0 5px rgba(0,0,0,0.8); }
+        @keyframes flyUpClick { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -150px) scale(1.5); opacity: 0; } }
+
+        @media (max-width: 480px) { 
+            h1 { font-size: 2rem; } 
+            .time-box { min-width: 60px; padding: 8px; } 
+            .time-box span { font-size: 1.4rem; } 
+            .container { padding: 25px 15px; } 
+            .heart-icon { font-size: 45px; }
+        }
     </style>
 </head>
 <body>
@@ -108,8 +122,12 @@
 
     <div class="container" id="mainBox">
         <div class="heart-container">
-            <div class="heart-icon heart-left">🫀</div>
-            <div class="heart-icon heart-right">🫀</div>
+            <div class="heart-wrapper">
+                <div class="heart-icon">🫀</div>
+            </div>
+            <div class="heart-wrapper">
+                <div class="heart-icon">🫀</div>
+            </div>
         </div>
 
         <h1>Chúng mình đã quen nhau</h1>
@@ -123,7 +141,7 @@
 
         <p class="date-start">10:50 - 24/12/2025</p>
 
-        <audio id="mainAudio" controls loop autoplay>
+        <audio id="myAudio" controls loop autoplay>
             <source src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3" type="audio/mpeg">
             Trình duyệt của bạn không hỗ trợ phát nhạc.
         </audio>
@@ -131,210 +149,203 @@
         <p class="copyright">Có Thể Hay Không <> 可不可以</p>
         <p class="hint">( Nhấp 2 lần vào màn hình )</p>
     </div>
+
     <script>
-        /* --- 1. HỆ THỐNG PHÁO HOA --- */
+        /* --- 1. HỆ THỐNG PHÁO HOA TRÁI TIM RƠI (CANVAS FRONT LAYER) --- */
         const canvas = document.getElementById('fireworksCanvas');
-        const ctx = canvas.getContext('2d'); // Đã bật lại Alpha channel (mặc định)
-        
-        let w, h, audioTop;
-        
-        function resize() {
-            w = canvas.width = window.innerWidth;
-            h = canvas.height = window.innerHeight;
-            const el = document.getElementById('mainAudio');
-            if(el) audioTop = el.getBoundingClientRect().top;
-            else audioTop = h;
-        }
-        window.addEventListener('resize', resize);
-        window.addEventListener('scroll', resize);
-        setTimeout(resize, 500); // Đợi load xong để lấy vị trí Audio
-
+        const ctx = canvas.getContext('2d');
         let particles = [];
-        let projectiles = [];
 
-        // Class Pháo bay lên
-        class Projectile {
-            constructor(x, targetY, side) {
-                this.x = x; this.y = h;
-                this.targetY = targetY;
-                this.side = side;
-                this.speed = 7;
-                const dx = (w/2) - x;
-                const dy = targetY - h;
-                const angle = Math.atan2(dy, dx);
-                this.vx = Math.cos(angle) * this.speed;
-                this.vy = Math.sin(angle) * this.speed;
-                this.dead = false;
-            }
-            update() {
-                this.x += this.vx; this.y += this.vy;
-                if (this.y <= this.targetY) this.dead = true;
-            }
-            draw() {
-                ctx.fillStyle = '#fff';
-                ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI*2); ctx.fill();
-            }
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-        // Class Hạt nổ (Tim rơi)
         class Particle {
-            constructor(x, y, color, vx, vy) {
-                this.x = x; this.y = y;
+            constructor(x, y, color, velocity) {
+                this.x = x;
+                this.y = y;
                 this.color = color;
-                this.vx = vx; this.vy = vy;
-                this.life = 1.0; 
-                this.gravity = 0.02; // Rơi rất chậm
+                this.velocity = velocity;
+                this.alpha = 1;
+                this.friction = 0.96; 
+                this.gravity = 0.05; 
+                this.life = 1200; // Tồn tại 20s
             }
-            update() {
-                this.vy += this.gravity;
-                this.x += this.vx; this.y += this.vy;
-                
-                // Tan biến khi rơi gần audio
-                if (this.y > audioTop - 50) this.life -= 0.05; 
-                else this.life -= 0.005; 
-            }
+
             draw() {
-                ctx.globalAlpha = Math.max(0, this.life);
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
-                ctx.beginPath(); ctx.arc(this.x, this.y, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.fill();
             }
-        }
 
-        function createExplosion(x, y, side) {
-            const count = 40; // Ít hạt để không lag
-            const colors = ['#ff7675', '#e84393', '#a29bfe', '#fff'];
-            
-            for(let i=0; i<count; i++) {
-                let t = (side === 'left') ? Math.PI + (Math.PI*i/count) : (Math.PI*i/count);
-                let hx = 16 * Math.pow(Math.sin(t), 3);
-                let hy = -(13 * Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
-                
-                let scale = 3; 
-                let startX = x + hx * scale;
-                let startY = y + hy * scale;
-                
-                let vx = (hx * 0.05) + (Math.random()-0.5)*0.2;
-                let vy = (hy * 0.05) + (Math.random()-0.5)*0.2;
-                
-                particles.push(new Particle(startX, startY, colors[i%4], vx, vy));
-            }
-        }
+            update() {
+                this.velocity.x *= this.friction;
+                this.velocity.y *= this.friction;
+                this.velocity.y += this.gravity;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.life--;
 
-        function loop() {
-            requestAnimationFrame(loop);
-            // Xóa màn hình sạch sẽ để hiện nền phía sau
-            ctx.clearRect(0, 0, w, h);
-
-            for(let i = projectiles.length - 1; i >= 0; i--) {
-                let p = projectiles[i];
-                p.update();
-                p.draw();
-                if(p.dead) {
-                    createExplosion(w/2, p.targetY, p.side);
-                    projectiles.splice(i, 1);
+                if (this.life < 200) {
+                    this.alpha = this.life / 200;
                 }
             }
+        }
 
-            for(let i = particles.length - 1; i >= 0; i--) {
-                let p = particles[i];
-                p.update();
-                p.draw();
-                if(p.life <= 0) particles.splice(i, 1);
+        function createHeartExplosion(x, y, side) {
+            const particleCount = 80; 
+            const colors = ['#ff7675', '#d63031', '#e84393', '#fd79a8', '#a29bfe'];
+            
+            for (let i = 0; i < particleCount; i++) {
+                let t = (side === 'left') 
+                    ? Math.PI + (Math.PI * i / particleCount) 
+                    : (Math.PI * i / particleCount);
+                
+                let heartX = 16 * Math.pow(Math.sin(t), 3);
+                let heartY = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                
+                let scale = 4;
+                
+                let velocity = {
+                    x: (heartX * 0.1) + (Math.random() - 0.5) * 0.5, 
+                    y: (heartY * 0.1) + (Math.random() - 0.5) * 0.5
+                };
+
+                let startX = x + heartX * scale;
+                let startY = y + heartY * scale;
+
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particles.push(new Particle(startX, startY, color, velocity));
             }
         }
-        loop();
 
-        function shoot() {
-            projectiles.push(new Projectile(0, h, h/3.5, 'left'));
-            projectiles.push(new Projectile(w, h, h/3.5, 'right'));
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((particle, index) => {
+                if (particle.life > 0 && particle.y < canvas.height + 10) {
+                    particle.update();
+                    particle.draw();
+                } else {
+                    particles.splice(index, 1);
+                }
+            });
+        }
+        animate();
+
+        function launchHeartFireworks() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 3.5; 
+            createHeartExplosion(centerX, centerY, 'left');
+            createHeartExplosion(centerX, centerY, 'right');
         }
 
-        /* --- 2. ĐẾM NGÀY --- */
+
+        /* --- 2. ĐẾM NGÀY & TRIGGER PHÁO HOA --- */
         const startDate = new Date(2025, 11, 24, 10, 50, 0).getTime();
-        let lastSec = -1;
+        let lastFiredSecond = -1; 
 
         function updateCounter() {
             const now = new Date().getTime();
-            const dist = now - startDate;
-            if (dist < 0) return;
+            const distance = now - startDate;
+            if (distance < 0) { document.getElementById("days").innerText = "00"; return; }
 
-            const days = Math.floor(dist / (86400000));
-            const hours = Math.floor((dist % 86400000) / 3600000);
-            const mins = Math.floor((dist % 3600000) / 60000);
-            const secs = Math.floor((dist % 60000) / 1000);
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
             document.getElementById("days").innerText = days;
-            document.getElementById("hours").innerText = hours < 10 ? "0"+hours : hours;
-            document.getElementById("minutes").innerText = mins < 10 ? "0"+mins : mins;
-            document.getElementById("seconds").innerText = secs < 10 ? "0"+secs : secs;
+            document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
+            document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
+            document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
 
-            // Kích hoạt pháo hoa giây 00 và 30
-            if ((secs === 0 || secs === 30) && secs !== lastSec) {
-                shoot();
-                lastSec = secs;
+            // --- TRIGGER PHÁO HOA (Giây 00 và 30) ---
+            if ((seconds === 0 || seconds === 30) && seconds !== lastFiredSecond) {
+                launchHeartFireworks();
+                lastFiredSecond = seconds; 
             }
-            if (secs !== 0 && secs !== 30) lastSec = -1;
+            if (seconds !== 0 && seconds !== 30) lastFiredSecond = -1;
 
-            spawnHeart('box-seconds', 'heart-s', '❤️');
+            spawnHeartInBox('box-seconds', 'heart-s', '❤️');
+            // ... (Logic tim bay từ ô số giữ nguyên)
+            if (prevMin !== -1 && minutes !== prevMin) spawnHeartInBox('box-minutes', 'heart-m', '💗');
+            prevMin = minutes;
+            if (prevHour !== -1 && hours !== prevHour) spawnHeartInBox('box-hours', 'heart-h', '💖');
+            prevHour = hours;
+            if (prevDay !== -1 && days !== prevDay) spawnHeartInBox('box-days', 'heart-d', '💝');
+            prevDay = days;
         }
 
-        function spawnHeart(id, cls, icon) {
-            const box = document.getElementById(id);
-            if(!box) return;
-            const h = document.createElement('div');
-            h.className = 'box-heart ' + cls;
-            h.innerText = icon;
-            box.appendChild(h);
-            setTimeout(() => h.remove(), 1500);
+        // Logic tim bay từ ô số (rút gọn để code clean)
+        let prevMin = -1, prevHour = -1, prevDay = -1;
+        
+        function spawnHeartInBox(boxId, className, icon) {
+            const box = document.getElementById(boxId);
+            if (!box) return;
+            const heart = document.createElement('div');
+            heart.classList.add('box-heart', className);
+            heart.innerText = icon;
+            const tx = (Math.random() - 0.5) * 30 + 'px';
+            const rot = (Math.random() - 0.5) * 60 + 'deg';
+            heart.style.setProperty('--tx', tx);
+            heart.style.setProperty('--rot', rot);
+            box.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 1500);
         }
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        /* --- 3. TIM 3D (CHỈ BẬT KHI CÓ NHẠC) --- */
-        const audio = document.getElementById('mainAudio');
-        let heartInt;
-        
-        function create3DHeart() {
-            const div = document.createElement('div');
-            div.className = 'real-heart-container';
-            const shape = document.createElement('div');
-            shape.className = 'real-heart-shape';
-            const types = ['red', 'blue', 'gold', 'purple'];
-            shape.classList.add('heart-type-' + types[Math.floor(Math.random()*4)]);
-            
-            div.style.left = Math.random()*100 + 'vw';
-            const size = Math.random()*20 + 20; 
-            div.style.width = size+'px'; div.style.height = size+'px';
-            
-            div.appendChild(shape);
-            document.body.appendChild(div);
-            setTimeout(() => div.remove(), 8000);
+        /* --- 3. TIM 3D BAY KHI CÓ NHẠC --- */
+        const audio = document.getElementById('myAudio');
+        let heartInterval;
+        function createRealFloatingHeart() {
+            const container = document.createElement('div');
+            container.classList.add('real-heart-container');
+            const heartShape = document.createElement('div');
+            heartShape.classList.add('real-heart-shape');
+            const types = ['heart-type-red', 'heart-type-blue', 'heart-type-gold', 'heart-type-purple'];
+            heartShape.classList.add(types[Math.floor(Math.random() * types.length)]);
+            container.style.left = Math.random() * 100 + 'vw';
+            const size = Math.random() * 30 + 20;
+            container.style.width = size + 'px';
+            container.style.height = size + 'px';
+            container.style.animationDuration = (Math.random() * 4 + 6) + 's'; 
+            container.appendChild(heartShape);
+            document.body.appendChild(container);
+            setTimeout(() => { container.remove(); }, 10000);
         }
-
-        audio.onplay = () => { if(!heartInt) heartInt = setInterval(create3DHeart, 1500); };
-        audio.onpause = () => { clearInterval(heartInt); heartInt = null; };
-        document.body.addEventListener('click', () => { if(audio.paused) audio.play(); }, {once:true});
+        audio.onplay = function() { if (!heartInterval) heartInterval = setInterval(createRealFloatingHeart, 1500); };
+        audio.onpause = function() { clearInterval(heartInterval); heartInterval = null; };
+        document.body.addEventListener('click', function() { if(audio.paused) audio.play(); }, { once: true });
 
         /* --- 4. DOUBLE TAP --- */
+        document.addEventListener('dblclick', function(e) { createClickHeart(e.pageX, e.pageY); });
         let lastTap = 0;
-        document.addEventListener('touchend', (e) => {
-            const now = new Date().getTime();
-            if (now - lastTap < 500) {
-                const t = e.changedTouches[0];
-                createClickHeart(t.pageX, t.pageY);
+        document.addEventListener('touchend', function(e) {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (tapLength < 500 && tapLength > 0) {
+                const touch = e.changedTouches[0];
+                createClickHeart(touch.pageX, touch.pageY);
                 e.preventDefault();
             }
-            lastTap = now;
+            lastTap = currentTime;
         });
-        document.addEventListener('dblclick', (e) => createClickHeart(e.pageX, e.pageY));
-
         function createClickHeart(x, y) {
-            const h = document.createElement('div');
-            h.innerText = '🖤Happy New Year 🤍';
-            h.className = 'click-heart';
-            h.style.left = x + 'px'; h.style.top = y + 'px';
-            document.body.appendChild(h);
-            setTimeout(() => h.remove(), 1000);
+            const heart = document.createElement('div');
+            heart.innerText = '🖤Happy New Year 🤍'; 
+            heart.className = 'click-heart';
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 1500);
         }
     </script>
 </body>
