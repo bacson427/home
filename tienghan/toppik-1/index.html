@@ -4,19 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Luyện Thi TOPIK 1 Master - Nguyễn Bắc Sơn</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Bảng màu: Giữ nguyên giao diện hiện đại */
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --card-back-gradient: linear-gradient(to right, #fa709a 0%, #fee140 100%);
-            --primary-color: #6c5ce7;
-            --text-dark: #2d3436;
+            /* Bảng màu mới: Sáng sủa, tươi mới (Mesh Gradient style) */
+            --bg-mesh: radial-gradient(at 0% 0%, hsla(253,100%,85%,1) 0px, transparent 50%),
+                       radial-gradient(at 50% 100%, hsla(208,100%,80%,1) 0px, transparent 50%),
+                       radial-gradient(at 100% 0%, hsla(335,100%,88%,1) 0px, transparent 50%),
+                       linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            
+            --card-back: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Màu mặt sau đậm hơn để tương phản text trắng */
+            --primary-color: #5f3dc4; /* Màu tím chủ đạo đậm hơn chút cho dễ đọc */
+            --accent-color: #0ca678; /* Màu xanh ngọc cho nút nghe */
+            --text-dark: #212529;
+            --glass-bg: rgba(255, 255, 255, 0.85); /* Nền kính mờ đục hơn */
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg-gradient);
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-mesh);
+            background-attachment: fixed; /* Giữ nền cố định khi cuộn */
+            background-size: 200% 200%; /* Kích thước lớn để tạo hiệu ứng loang */
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -27,96 +35,114 @@
             color: var(--text-dark);
         }
 
+        /* Khung chính gọn gàng hơn */
         .main-wrapper {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: var(--glass-bg);
+            padding: 40px; /* Tăng khoảng cách bên trong */
+            border-radius: 40px; /* Bo tròn nhiều hơn */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); /* Bóng đổ mềm mại */
             width: 100%;
-            max-width: 550px;
+            max-width: 500px; /* Thu hẹp chiều rộng tối đa một chút cho gọn */
             text-align: center;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px); /* Hiệu ứng mờ nền mạnh hơn */
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         h1 {
-            margin: 0; font-weight: 800; font-size: 32px;
-            background: linear-gradient(to right, #6c5ce7, #a29bfe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin: 0; font-weight: 900; font-size: 30px;
+            color: var(--primary-color);
+            letter-spacing: -0.5px;
         }
-        .subtitle { color: #636e72; font-size: 14px; margin-bottom: 25px; font-weight: 600; }
+        .subtitle-container { margin: 15px 0 25px 0; line-height: 1.4; }
+        .subtitle { color: #868e96; font-size: 14px; font-weight: 600; margin: 0; }
+        .user-name { color: var(--primary-color); font-weight: 700; }
 
+        /* Select box sạch sẽ hơn */
         select {
-            width: 100%; padding: 15px; font-size: 16px;
-            border-radius: 15px; border: 2px solid #dfe6e9;
-            margin-bottom: 30px; font-family: inherit; font-weight: 600;
-            cursor: pointer; outline: none; transition: 0.3s;
-            background: #f8f9fa; color: var(--primary-color);
+            width: 100%; padding: 16px 20px; font-size: 16px;
+            border-radius: 20px; border: 2px solid #e9ecef;
+            margin-bottom: 35px; font-family: inherit; font-weight: 700;
+            cursor: pointer; outline: none; transition: all 0.2s;
+            background: #fff; color: var(--text-dark);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            appearance: none; /* Xóa mũi tên mặc định của trình duyệt */
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f3dc4' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            background-size: 16px;
         }
-        select:focus { border-color: var(--primary-color); background: #fff; }
+        select:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(95, 61, 196, 0.1); }
 
         .card-container {
             perspective: 1000px;
-            width: 100%; height: 350px;
-            margin-bottom: 30px;
+            width: 100%; height: 320px; /* Chiều cao vừa phải */
+            margin-bottom: 35px;
         }
 
         .card {
             width: 100%; height: 100%; position: relative;
-            transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer; box-shadow: 0 15px 35px rgba(108, 92, 231, 0.2); border-radius: 25px;
+            transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* Hiệu ứng lật nảy mạnh hơn */
+            cursor: pointer; 
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08); /* Bóng thẻ nhẹ nhàng hơn */
         }
-        .card.flipped { transform: rotateY(180deg); box-shadow: 0 15px 35px rgba(250, 112, 154, 0.3); }
+        .card.flipped { transform: rotateY(180deg); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); }
 
         .front, .back {
             position: absolute; width: 100%; height: 100%;
-            backface-visibility: hidden; border-radius: 25px;
+            backface-visibility: hidden; border-radius: 30px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 20px; box-sizing: border-box; border: 3px solid transparent;
+            padding: 30px; box-sizing: border-box;
         }
 
-        .front { background: #fff; border-color: #f1f2f6; }
-        .back { background: var(--card-back-gradient); color: white; transform: rotateY(180deg); text-shadow: 0 2px 4px rgba(0,0,0,0.2);}
+        .front { background: #fff;  }
+        .back { background: var(--card-back); color: white; transform: rotateY(180deg); }
 
-        /* Điều chỉnh font-size để phù hợp với từ dài */
-        .word { font-size: 48px; font-weight: 800; color: var(--primary-color); margin-bottom: 15px; word-break: keep-all; }
-        .meaning { font-size: 28px; font-weight: 700; word-break: keep-all; }
-        .index { position: absolute; top: 20px; left: 20px; font-size: 14px; color: #b2bec3; font-weight: 600; }
-        .hint { font-size: 14px; color: #b2bec3; margin-top: 20px; }
+        /* Typography cho thẻ */
+        .word { font-size: 54px; font-weight: 900; color: var(--primary-color); margin-bottom: 15px; word-break: keep-all; line-height: 1.1; }
+        .meaning { font-size: 32px; font-weight: 800; word-break: keep-all; line-height: 1.2;}
+        .index { position: absolute; top: 25px; left: 25px; font-size: 15px; color: #adb5bd; font-weight: 700; }
+        .hint { font-size: 14px; color: #adb5bd; margin-top: 25px; font-weight: 600; letter-spacing: 0.5px; }
 
-        .btn-group { display: flex; gap: 15px; justify-content: center; margin-top: 20px; align-items: center; }
+        /* Controls gọn gàng */
+        .btn-group { display: flex; gap: 20px; justify-content: center; margin-top: 25px; align-items: center; }
         button {
-            border: none; border-radius: 50px;
-            font-size: 18px; cursor: pointer; font-weight: 800;
-            font-family: inherit; transition: all 0.3s ease;
+            border: none; border-radius: 50%; /* Nút tròn */
+            cursor: pointer; font-weight: 800;
+            font-family: inherit; transition: all 0.2s ease;
             display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
         }
+        button:active { transform: scale(0.95) !important; } /* Hiệu ứng khi nhấn */
 
         .btn-nav { 
-            padding: 15px; background: #dfe6e9; color: var(--text-dark); width: 60px; height: 60px;
+            background: #fff; color: var(--primary-color); width: 55px; height: 55px; font-size: 20px;
         }
-        .btn-nav:hover { background: #b2bec3; transform: scale(1.1); }
+        .btn-nav:hover { background: #f8f9fa; transform: translateY(-3px); box-shadow: 0 12px 20px rgba(0,0,0,0.15); }
 
         .btn-speak { 
-            padding: 15px 40px; 
-            background: linear-gradient(to right, #00b09b, #96c93d);
-            color: white; box-shadow: 0 10px 20px rgba(0, 176, 155, 0.3);
+            padding: 0 35px; height: 55px; border-radius: 30px; /* Nút speak hình viên thuốc */
+            background: var(--accent-color);
+            color: white; font-size: 17px;
+            box-shadow: 0 8px 20px rgba(12, 166, 120, 0.3);
         }
-        .btn-speak:hover { transform: translateY(-5px); box-shadow: 0 15px 25px rgba(0, 176, 155, 0.5); }
+        .btn-speak:hover { background: #099268; transform: translateY(-3px); box-shadow: 0 12px 25px rgba(12, 166, 120, 0.4); }
 
-        #counter { color: #636e72; font-weight: 600; margin-top: 20px; }
+        #counter { color: #868e96; font-weight: 700; margin-top: 25px; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="main-wrapper">
         <h1>TOPIK 1 MASTER</h1>
-        <p class="subtitle">Vocabulary Set: Extended (800+ Words)</p>
-        <p class="subtitle">Người học: Nguyễn Bắc Sơn</p>
+        <div class="subtitle-container">
+            <p class="subtitle">Extended Vocabulary (~800 Words)</p>
+            <p class="subtitle">Học viên: <span class="user-name">Nguyễn Bắc Sơn</span></p>
+        </div>
 
         <select id="topicSelect" onchange="changeTopic()">
-            <option value="all">📚 Tất cả từ vựng (Full List)</option>
+            <option value="all">📚 Tất cả từ vựng (Ngẫu nhiên)</option>
             <option value="nature_time">🌳 Thiên nhiên & Thời gian</option>
-            <option value="places">b🏢 Nơi chốn & Công trình</option>
+            <option value="places">🏢 Nơi chốn & Công trình</option>
             <option value="objects">🛋️ Đồ vật & Cá nhân</option>
             <option value="transport">✈️ Giao thông</option>
             <option value="jobs">👮 Nghề nghiệp</option>
@@ -131,9 +157,8 @@
             <div class="card" onclick="flipCard()">
                 <div class="front">
                     <div class="index" id="cardIndex">#1</div>
-                    <div style="font-size: 50px; margin-bottom: 10px;">🇰🇷</div>
                     <div class="word" id="cardKorean">자연</div>
-                    <div class="hint">(Chạm để lật)</div>
+                    <div class="hint">CHẠM ĐỂ LẬT</div>
                 </div>
                 <div class="back">
                     <div class="meaning" id="cardVietnamese">Thiên nhiên</div>
@@ -142,16 +167,23 @@
         </div>
 
         <div class="btn-group">
-            <button class="btn-nav" onclick="prevCard()">⬅️</button>
-            <button class="btn-speak" onclick="speak()">🔊 NGHE</button>
-            <button class="btn-nav" onclick="nextCard()">➡️</button>
+            <button class="btn-nav" onclick="prevCard()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="btn-speak" onclick="speak()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                NGHE
+            </button>
+            <button class="btn-nav" onclick="nextCard()">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
         </div>
 
         <p id="counter">Đang tải dữ liệu...</p>
     </div>
 
     <script>
-        // --- DỮ LIỆU TỪ VỰNG MỚI (Mở rộng ~800 từ) ---
+        // --- DỮ LIỆU TỪ VỰNG MỚI (~800 từ) ---
         const vocabularyDB = {
             "nature_time": [
                 {k:"자연", v:"Thiên nhiên"}, {k:"하늘", v:"Bầu trời"}, {k:"땅/흙", v:"Đất"}, {k:"강", v:"Sông"},
@@ -192,19 +224,16 @@
                 {k:"여행", v:"Du lịch"}, {k:"취미", v:"Sở thích"}, {k:"휴가", v:"Kỳ nghỉ"}
             ],
             "verbs": [
-                // Sinh hoạt hàng ngày
                 {k:"씻다", v:"Rửa"}, {k:"샤워하다", v:"Tắm vòi sen"}, {k:"청소하다", v:"Dọn dẹp"}, {k:"빨래하다", v:"Giặt giũ"},
                 {k:"요리하다", v:"Nấu ăn"}, {k:"설거지하다", v:"Rửa bát"}, {k:"세수하다", v:"Rửa mặt"}, {k:"이빨을 닦다", v:"Đánh răng"},
                 {k:"걷다", v:"Đi bộ"}, {k:"뛰다", v:"Chạy"}, {k:"운전하다", v:"Lái xe"}, {k:"타다", v:"Lên, đi (xe)"},
                 {k:"내리다", v:"Xuống (xe)"}, {k:"기다리다", v:"Chờ đợi"}, {k:"찾다", v:"Tìm kiếm"}, {k:"사용하다", v:"Sử dụng"},
                 {k:"필요하다", v:"Cần thiết"}, {k:"도와주다", v:"Giúp đỡ"},
-                // Cảm xúc & Tương tác
                 {k:"웃다", v:"Cười"}, {k:"울다", v:"Khóc"}, {k:"사랑하다", v:"Yêu"}, {k:"좋아하다", v:"Thích"},
                 {k:"싫어하다", v:"Ghét"}, {k:"걱정하다", v:"Lo lắng"}, {k:"놀라다", v:"Ngạc nhiên"}, {k:"부르다", v:"Gọi, hát"},
                 {k:"춤추다", v:"Nhảy múa"}, {k:"약속하다", v:"Hứa hẹn"}, {k:"초대하다", v:"Mời"}, {k:"설명하다", v:"Giải thích"},
                 {k:"질문하다", v:"Hỏi"}, {k:"대답하다", v:"Trả lời"}, {k:"소개하다", v:"Giới thiệu"}, {k:"축하하다", v:"Chúc mừng"},
                 {k:"감사하다", v:"Cảm ơn"}, {k:"미안하다", v:"Xin lỗi"},
-                // Hành động khác
                 {k:"열리다", v:"Được mở"}, {k:"닫히다", v:"Được đóng"}, {k:"보이다", v:"Được nhìn thấy"}, {k:"들리다", v:"Được nghe thấy"},
                 {k:"만들다", v:"Làm ra"}, {k:"고치다", v:"Sửa chữa"}, {k:"생각하다", v:"Suy nghĩ"}, {k:"결정하다", v:"Quyết định"}
             ],
@@ -217,24 +246,19 @@
                 {k:"특별하다", v:"Đặc biệt"}, {k:"일반적이다", v:"Thông thường"}, {k:"직접적이다", v:"Trực tiếp"}, {k:"유명하다", v:"Nổi tiếng"}
             ],
             "adverbs": [
-                // Trạng từ
                 {k:"특히", v:"Đặc biệt là"}, {k:"사실은", v:"Thực ra là"}, {k:"물론", v:"Tất nhiên"}, {k:"아마도", v:"Có lẽ"},
                 {k:"분명히", v:"Rõ ràng"}, {k:"갑자기", v:"Đột nhiên"}, {k:"벌써", v:"Đã… rồi"}, {k:"아직", v:"Vẫn chưa"},
                 {k:"전혀", v:"Hoàn toàn không"}, {k:"절대로", v:"Tuyệt đối"}, {k:"대부분", v:"Phần lớn"}, {k:"모두/전부", v:"Tất cả"},
                 {k:"약", v:"Khoảng chừng"}, {k:"바로", v:"Ngay lập tức"}, {k:"직접", v:"Trực tiếp"}, {k:"혼자", v:"Một mình"},
                 {k:"꼭", v:"Nhất định"}, {k:"별로", v:"Không… lắm"},
-                // Từ nối
                 {k:"그리고", v:"Và"}, {k:"하지만/그런데", v:"Nhưng"}, {k:"그래서", v:"Vì vậy"}, {k:"그러면/그럼", v:"Vậy thì"},
                 {k:"때문에", v:"Bởi vì"}, {k:"그래도", v:"Tuy vậy nhưng"}, {k:"또는/혹은", v:"Hoặc là"}, {k:"예를 들어", v:"Ví dụ như"}
             ],
             "situational": [
-                // Bưu điện/Ngân hàng
                 {k:"우표", v:"Tem thư"}, {k:"소포", v:"Bưu phẩm"}, {k:"송금", v:"Chuyển tiền"}, {k:"계좌", v:"Tài khoản"},
                 {k:"입금", v:"Gửi tiền vào"}, {k:"출금", v:"Rút tiền"}, {k:"비밀번호", v:"Mật mã"},
-                // Bệnh viện
                 {k:"두통", v:"Đau đầu"}, {k:"복통", v:"Đau bụng"}, {k:"열", v:"Sốt"}, {k:"기침", v:"Ho"},
                 {k:"상처", v:"Vết thương"}, {k:"휴식", v:"Nghỉ ngơi"}, {k:"진찰", v:"Khám bệnh"},
-                // Mua sắm & Ăn uống
                 {k:"사이즈", v:"Kích cỡ"}, {k:"색깔", v:"Màu sắc"}, {k:"할인", v:"Giảm giá"}, {k:"계산(하다)", v:"Thanh toán"},
                 {k:"영수증", v:"Hóa đơn"}, {k:"포장(하다)", v:"Đóng gói"}, {k:"메뉴", v:"Thực đơn"}, {k:"주문(하다)", v:"Gọi món"},
                 {k:"맵다", v:"Cay"}, {k:"달다", v:"Ngọt"}, {k:"짜다", v:"Mặn"}, {k:"시다", v:"Chua"},
@@ -243,7 +267,7 @@
             ]
         };
 
-        // --- LOGIC XỬ LÝ (Giữ nguyên luồng hoạt động) ---
+        // --- LOGIC XỬ LÝ (Không đổi) ---
         let currentList = [];
         let currentIndex = 0;
         let isFlipped = false;
@@ -251,10 +275,8 @@
         function loadTopic(topic) {
             currentList = [];
             if (topic === 'all') {
-                // Gộp tất cả các mảng con thành một mảng lớn
                 Object.values(vocabularyDB).forEach(arr => currentList.push(...arr));
-                // Xáo trộn ngẫu nhiên một chút khi chọn chế độ "Tất cả"
-                currentList.sort(() => Math.random() - 0.5);
+                currentList.sort(() => Math.random() - 0.5); // Xáo trộn ngẫu nhiên
             } else {
                 currentList = vocabularyDB[topic];
             }
@@ -274,10 +296,9 @@
 
         function updateCard() {
             const card = document.querySelector('.card');
-            card.classList.remove('flipped'); // Reset trạng thái lật
+            card.classList.remove('flipped');
             isFlipped = false;
 
-            // Chờ hiệu ứng lật về xong mới đổi chữ (mượt hơn)
             setTimeout(() => {
                 const item = currentList[currentIndex];
                 document.getElementById('cardKorean').innerText = item.k;
@@ -304,19 +325,13 @@
         }
 
         function speak() {
-            // Chỉ đọc mặt đang hiển thị (nếu lật rồi thì không đọc tiếng Hàn)
-            // Nhưng để học tốt thì luôn đọc tiếng Hàn
             const text = currentList[currentIndex].k;
-            
-            // Tách từ vựng khỏi các ký tự đặc biệt nếu có (ví dụ: 매일/날마다 -> đọc cả 2 hoặc 1)
-            // Ở đây đọc nguyên văn
             const utter = new SpeechSynthesisUtterance(text);
             utter.lang = 'ko-KR';
-            utter.rate = 0.8; // Tốc độ đọc vừa phải
+            utter.rate = 0.8;
             window.speechSynthesis.speak(utter);
         }
 
-        // Khởi động ứng dụng
         window.onload = function() {
             loadTopic('all');
         };
