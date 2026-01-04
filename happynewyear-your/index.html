@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy New Year - Truong Thi Duong</title>
+    <title>Pháo Hoa Nghệ Thuật 2026</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             background: #000;
-            overflow: hidden; /* Ẩn thanh cuộn */
+            overflow: hidden;
         }
         canvas {
             display: block;
@@ -21,31 +21,31 @@
 <canvas id="canvas"></canvas>
 
 <script>
-    // Cài đặt cơ bản
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Mảng chứa pháo hoa và hạt nổ
     let fireworks = [];
     let particles = [];
+    let flashOpacity = 0; // Biến dùng để tạo hiệu ứng chớp sáng
 
     // Cấu hình vật lý
-    const gravity = 0.05; // Trọng lực nhẹ để hạt rơi chậm
-    const friction = 0.96; // Lực cản không khí
+    const FRICTION = 0.92; // Độ ma sát (hạt bay ra rồi chậm lại nhanh hay chậm)
+    const GRAVITY = 0.02; // Trọng lực rất nhẹ
 
-    // Hàm tạo màu ngẫu nhiên
     function randomColor() {
         return `hsl(${Math.random() * 360}, 100%, 50%)`;
     }
 
-    // --- CLASS 1: VIÊN PHÁO BAY LÊN ---
+    // --- CLASS 1: VIÊN PHÁO BAY LÊN (Tên lửa) ---
     class Firework {
         constructor(x, y, targetX, targetY, type, text) {
             this.x = x;
             this.y = y;
+            this.startX = x;
+            this.startY = y;
             this.targetX = targetX;
             this.targetY = targetY;
             this.type = type; // 'normal' hoặc 'text'
@@ -53,85 +53,87 @@
             
             this.distanceToTarget = Math.sqrt(Math.pow(targetX - x, 2) + Math.pow(targetY - y, 2));
             this.angle = Math.atan2(targetY - y, targetX - x);
-            this.speed = 15; // Tốc độ bay lên
+            this.speed = 12; // Tốc độ bay
             this.vx = Math.cos(this.angle) * this.speed;
             this.vy = Math.sin(this.angle) * this.speed;
-            this.brightness = Math.random() * 30 + 50;
-            this.history = []; // Tạo đuôi pháo
+            this.brightness = Math.random() * 30 + 60;
         }
 
         update(index) {
-            // Lưu vết đuôi
-            this.history.push({x: this.x, y: this.y});
-            if(this.history.length > 3) this.history.shift();
-
             this.x += this.vx;
             this.y += this.vy;
 
-            // Giảm tốc độ khi đến gần đích
-            this.vx *= 0.98;
-            this.vy *= 0.98;
+            // Tính khoảng cách đã bay
+            const distanceTraveled = Math.sqrt(Math.pow(this.x - this.startX, 2) + Math.pow(this.y - this.startY, 2));
 
-            // Kiểm tra xem đã đến đích hoặc bắt đầu rơi xuống chưa
-            if (this.vy >= -1) {
-                // Nổ
-                createExplosion(this.x, this.y, this.type, this.text);
+            // Khi đến đích (hoặc gần đích)
+            if (distanceTraveled >= this.distanceToTarget) {
+                createExplosion(this.targetX, this.targetY, this.type, this.text);
                 fireworks.splice(index, 1);
             }
         }
 
         draw() {
             ctx.beginPath();
-            if (this.history.length > 0) {
-                ctx.moveTo(this.history[0].x, this.history[0].y);
-                for (let i = 1; i < this.history.length; i++) {
-                    ctx.lineTo(this.history[i].x, this.history[i].y);
-                }
-            }
+            // Vẽ đuôi dài hơn chút cho giống tên lửa
+            ctx.moveTo(this.x - this.vx * 3, this.y - this.vy * 3);
             ctx.lineTo(this.x, this.y);
-            ctx.strokeStyle = `hsl(40, 100%, ${this.brightness}%)`; // Màu vàng cam cho đuôi
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = `hsl(45, 100%, ${this.brightness}%)`; // Màu vàng sáng
+            ctx.lineWidth = 4; // Đuôi dày
+            ctx.lineCap = 'round'; 
             ctx.stroke();
         }
     }
 
     // --- CLASS 2: HẠT NỔ (PARTICLE) ---
     class Particle {
-        constructor(x, y, color, velocity, isTextParticle) {
+        constructor(x, y, color, type, targetX, targetY) {
             this.x = x;
             this.y = y;
             this.color = color;
-            this.angle = Math.random() * Math.PI * 2;
-            this.velocity = velocity; // Tốc độ nổ
-            this.vx = Math.cos(this.angle) * this.velocity;
-            this.vy = Math.sin(this.angle) * this.velocity;
-            this.alpha = 1;
-            this.decay = Math.random() * 0.01 + 0.005; // Độ mờ dần
-            this.isTextParticle = isTextParticle;
+            this.type = type; // 'normal' hoặc 'text'
             
-            // Nếu là hạt chữ thì cho nó đứng yên một chút
-            if (isTextParticle) {
-                this.vx = 0; 
-                this.vy = 0;
-                this.decay = 0.005; // Chữ lâu tan hơn
-            }
+            // Nếu là text, nó sẽ có đích đến
+            this.destX = targetX; 
+            this.destY = targetY;
+
+            // Tạo lực nổ ban đầu (Văng ra tung toé)
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 15 + 5; // Nổ mạnh
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            
+            this.alpha = 1;
+            this.decay = Math.random() * 0.01 + 0.005;
         }
 
         update(index) {
-            // Nếu không phải hạt chữ thì di chuyển tản ra
-            if (!this.isTextParticle) {
-                this.vx *= friction;
-                this.vy *= friction;
-                this.vy += gravity;
-                this.x += this.vx;
-                this.y += this.vy;
-            } else {
-                // Hạt chữ rơi cực chậm
-                this.y += 0.2; 
-            }
+            // 1. Chuyển động vật lý cơ bản (Nổ ra)
+            this.vx *= FRICTION;
+            this.vy *= FRICTION;
             
-            this.alpha -= this.decay;
+            // 2. Nếu là hạt chữ, sau khi nổ ra sẽ bị hút về vị trí chữ
+            if (this.type === 'text') {
+                // Tính lực hút về đích (Spring physics)
+                const dx = this.destX - this.x;
+                const dy = this.destY - this.y;
+                
+                // Chỉ bắt đầu hút khi tốc độ nổ đã giảm bớt (sau khoảng 0.5s)
+                // Hoặc hút ngay nhưng nhẹ
+                this.vx += dx * 0.08; // Lực hút X (số càng to hút càng mạnh)
+                this.vy += dy * 0.08; // Lực hút Y
+                
+                this.alpha = 1; // Hạt chữ không bị mờ đi nhanh
+            } else {
+                // Hạt thường thì rơi xuống
+                this.vy += GRAVITY;
+                this.alpha -= this.decay;
+            }
 
+            this.x += this.vx;
+            this.y += this.vy;
+
+            // Xoá hạt nếu mờ hẳn
             if (this.alpha <= 0) {
                 particles.splice(index, 1);
             }
@@ -142,27 +144,25 @@
             ctx.globalAlpha = this.alpha;
             ctx.fillStyle = this.color;
             ctx.beginPath();
-            // Hạt chữ vẽ nhỏ hơn chút cho sắc nét
-            ctx.arc(this.x, this.y, this.isTextParticle ? 1.5 : 2, 0, Math.PI * 2);
+            ctx.arc(this.x, this.y, this.type === 'text' ? 2 : 2.5, 0, Math.PI * 2);
             ctx.fill();
             ctx.restore();
         }
     }
 
-    // --- HÀM XỬ LÝ CHỮ THÀNH TOẠ ĐỘ ---
+    // --- XỬ LÝ TEXT THÀNH MATRIX ĐIỂM ---
     function getTextPoints(text) {
         const offCanvas = document.createElement('canvas');
         const offCtx = offCanvas.getContext('2d');
         offCanvas.width = window.innerWidth;
-        offCanvas.height = 300;
+        offCanvas.height = 400;
         
-        // Chỉnh font chữ dựa trên màn hình
-        let fontSize = 100;
-        if (window.innerWidth < 800) fontSize = 50; // Mobile
-        if (text.length > 10 && window.innerWidth < 500) fontSize = 35; // Tên dài trên mobile
-
-        offCtx.font = `bold ${fontSize}px Arial`;
-        offCtx.fillStyle = '#FFFFFF';
+        // Font chữ to, đậm
+        let fontSize = 80;
+        if (window.innerWidth < 600) fontSize = 40;
+        
+        offCtx.font = `900 ${fontSize}px Arial`; // 900 là cực đậm
+        offCtx.fillStyle = 'white';
         offCtx.textAlign = 'center';
         offCtx.textBaseline = 'middle';
         offCtx.fillText(text, offCanvas.width / 2, offCanvas.height / 2);
@@ -170,124 +170,126 @@
         const imageData = offCtx.getImageData(0, 0, offCanvas.width, offCanvas.height);
         const data = imageData.data;
         const points = [];
-        
-        // Độ phân giải quét (số càng lớn càng ít hạt, càng mượt)
-        const gap = 3; 
+        const gap = 4; // Mật độ điểm (4 là vừa đẹp)
 
         for (let y = 0; y < offCanvas.height; y += gap) {
             for (let x = 0; x < offCanvas.width; x += gap) {
                 if (data[(y * offCanvas.width + x) * 4 + 3] > 128) {
-                    points.push({
-                        x: x,
-                        y: y
-                    });
+                    points.push({ x, y });
                 }
             }
         }
         return { points, width: offCanvas.width, height: offCanvas.height };
     }
 
-    // --- HÀM TẠO VỤ NỔ ---
+    // --- TẠO VỤ NỔ ---
     function createExplosion(x, y, type, text) {
+        // 1. Hiệu ứng Flash sáng màn hình
+        flashOpacity = 1; 
+
         if (type === 'text') {
-            const textData = getTextPoints(text);
-            const points = textData.points;
+            const data = getTextPoints(text);
+            const points = data.points;
             
-            // Xác định màu sắc
-            let color = 'hsl(45, 100%, 60%)'; // Mặc định vàng
-            if (text.includes('DƯƠNG')) color = 'hsl(320, 100%, 65%)'; // Hồng cho tên Dương
-            if (text.includes('NĂM MỚI')) color = 'hsl(50, 100%, 60%)'; // Vàng cho năm mới
+            // Màu sắc
+            let color = `hsl(45, 100%, 60%)`; // Vàng
+            if (text.includes("DƯƠNG")) color = `hsl(320, 100%, 60%)`; // Hồng đậm
 
             points.forEach(p => {
-                // Tính toán để dời chữ về đúng vị trí pháo nổ
-                // textData.width/2 là tâm của canvas ảo
-                // textData.height/2 là tâm của canvas ảo
-                const finalX = p.x - (textData.width / 2) + x;
-                const finalY = p.y - (textData.height / 2) + y;
+                // Tính toán vị trí đích của hạt (để xếp thành chữ)
+                // Căn giữa vị trí nổ
+                const destX = p.x - (data.width / 2) + x;
+                const destY = p.y - (data.height / 2) + y;
                 
-                particles.push(new Particle(finalX, finalY, color, 0, true));
+                // Sinh ra hạt TẠI ĐIỂM NỔ (x, y) chứ không phải tại đích
+                // Sau đó hạt sẽ tự bay về destX, destY
+                particles.push(new Particle(x, y, color, 'text', destX, destY));
             });
             
-            // Thêm vài hạt nổ tung toé xung quanh chữ cho đẹp
-            for (let i = 0; i < 50; i++) {
-                particles.push(new Particle(x, y, randomColor(), Math.random() * 5 + 2, false));
+            // Thêm các hạt nổ phụ bay lung tung cho tự nhiên
+            for(let i=0; i<50; i++) {
+                 particles.push(new Particle(x, y, randomColor(), 'normal'));
             }
 
         } else {
             // Nổ thường
-            for (let i = 0; i < 80; i++) {
-                const color = randomColor();
-                particles.push(new Particle(x, y, color, Math.random() * 6 + 1, false));
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle(x, y, randomColor(), 'normal'));
             }
         }
     }
 
-    // --- VÒNG LẶP ANIMATION ---
+    // --- LOOP CHÍNH ---
     function loop() {
         requestAnimationFrame(loop);
-
-        // Hiệu ứng mờ dần để tạo vệt
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; 
+        
+        // Vẽ nền đen mờ (tạo vệt đuôi)
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Vẽ và cập nhật pháo
+        // Vẽ hiệu ứng Flash (Chớp sáng)
+        if (flashOpacity > 0) {
+            ctx.fillStyle = `rgba(255, 255, 255, ${flashOpacity})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            flashOpacity -= 0.05; // Giảm dần độ sáng
+        }
+
         fireworks.forEach((fw, index) => {
             fw.draw();
             fw.update(index);
         });
 
-        // Vẽ và cập nhật hạt
         particles.forEach((p, index) => {
             p.draw();
             p.update(index);
         });
     }
 
-    // --- KỊCH BẢN CHẠY ---
-    // Tự động chạy ngay khi load trang
-    function startScenario() {
-        // 1. Sau 0.5s: Bắn chữ CHÚC MỪNG NĂM MỚI
+    // --- KỊCH BẢN ---
+    function startShow() {
+        // 1. Quả 1: CHÚC MỪNG NĂM MỚI
         setTimeout(() => {
             fireworks.push(new Firework(
                 canvas.width / 2, canvas.height, 
                 canvas.width / 2, canvas.height * 0.3, 
                 'text', "CHÚC MỪNG NĂM MỚI"
             ));
-        }, 500);
+        }, 1000);
 
-        // 2. Sau 4s: Bắn chữ TRƯƠNG THỊ DƯƠNG
+        // 2. Quả 2: TRƯƠNG THỊ DƯƠNG (Bắn sau 5s)
         setTimeout(() => {
-            fireworks.push(new Firework(
-                canvas.width / 2, canvas.height, 
-                canvas.width / 2, canvas.height * 0.4, 
-                'text', "TRƯƠNG THỊ DƯƠNG"
-            ));
+            // Bắn 2 quả phụ 2 bên làm nền trước
+            fireworks.push(new Firework(canvas.width * 0.2, canvas.height, canvas.width * 0.3, canvas.height * 0.5, 'normal'));
+            fireworks.push(new Firework(canvas.width * 0.8, canvas.height, canvas.width * 0.7, canvas.height * 0.5, 'normal'));
             
-            // Kèm 2 pháo phụ 2 bên
-            fireworks.push(new Firework(canvas.width * 0.2, canvas.height, canvas.width * 0.2, canvas.height * 0.3, 'normal'));
-            fireworks.push(new Firework(canvas.width * 0.8, canvas.height, canvas.width * 0.8, canvas.height * 0.3, 'normal'));
-        }, 4500);
+            // Quả chính
+            setTimeout(() => {
+                fireworks.push(new Firework(
+                    canvas.width / 2, canvas.height, 
+                    canvas.width / 2, canvas.height * 0.45, 
+                    'text', "TRƯƠNG THỊ DƯƠNG"
+                ));
+            }, 500);
+        }, 6000);
 
-        // 3. Sau 9s: Bắn loạn xạ
+        // 3. Chế độ bắn tự do (Sau 12s)
         setTimeout(() => {
             setInterval(() => {
-                const startX = Math.random() * canvas.width;
-                const targetX = Math.random() * canvas.width;
-                const targetY = Math.random() * (canvas.height * 0.6); // Chỉ nổ ở nửa trên
-                fireworks.push(new Firework(startX, canvas.height, targetX, targetY, 'normal'));
-            }, 700); // 0.7s bắn 1 quả
-        }, 9000);
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height / 2;
+                fireworks.push(new Firework(Math.random() * canvas.width, canvas.height, x, y, 'normal'));
+            }, 1000);
+        }, 12000);
     }
 
-    // Xử lý resize màn hình
+    // Resize
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     });
 
-    // Bắt đầu
     loop();
-    startScenario();
+    startShow();
 
 </script>
 </body>
