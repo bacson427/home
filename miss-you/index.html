@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Miss You - Colorful Sparks</title>
+    <title>Miss You - Smooth Fireworks</title>
 
     <meta property="og:title" content="Miss You - Nguyễn Bắc Sơn">
     <meta property="og:description" content="Nhấp để xem chi tiết ❤️">
@@ -37,8 +37,8 @@
         .container {
             text-align: center; 
             background: rgba(0, 0, 0, 0.6); 
-            backdrop-filter: blur(8px); 
-            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
             padding: 30px 25px; border-radius: 25px; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             max-width: 500px; width: 90%; 
@@ -72,38 +72,16 @@
         .time-box span { font-size: 1.6rem; font-weight: 800; color: #df99ff; display: block; position: relative; z-index: 2; text-shadow: 0 0 8px rgba(223, 153, 255, 0.4); }
         .time-box p { font-size: 0.8rem; color: #a4b0be; font-weight: 600; margin-top: 5px; text-transform: uppercase; position: relative; z-index: 2; }
 
-        /* --- MƯA PHÙN HOA LỜ ĐỜ --- */
-        .flower-drizzle {
-            position: fixed; top: -10%; z-index: 0; pointer-events: none; 
-            border-radius: 50%; 
-            background: rgba(255, 255, 255, 0.8);
-            animation-name: drizzleSway;
-            animation-timing-function: ease-in-out;
-            animation-fill-mode: forwards;
-            will-change: transform, opacity; 
-        }
-        .drizzle-peach { background: rgba(255, 182, 193, 0.9); }
-        .drizzle-apricot { background: rgba(255, 235, 59, 0.9); }
-        .drizzle-white { background: rgba(255, 255, 255, 0.7); }
-
-        @keyframes drizzleSway {
-            0% { top: -10%; transform: translateX(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.8; }
-            25% { transform: translateX(30px) rotate(45deg); }
-            50% { transform: translateX(-30px) rotate(90deg); }
-            75% { transform: translateX(30px) rotate(135deg); }
-            100% { top: 110%; transform: translateX(0) rotate(180deg); opacity: 0; }
-        }
-
-        /* --- HẠT PHÁO ĐA SẮC --- */
+        /* --- CSS HẠT PHÁO (TỐI ƯU HÓA) --- */
         .firework-particle {
             position: fixed;
-            width: 4px; height: 4px;
+            width: 4px; height: 4px; /* Hạt nhỏ nhẹ */
             border-radius: 50%;
-            pointer-events: none;
+            pointer-events: none; /* Không chặn click */
             z-index: 15; 
-            will-change: transform, opacity;
-            box-shadow: 0 0 6px currentColor; /* Phát sáng theo màu hạt */
+            will-change: transform, opacity; /* Ép GPU xử lý */
+            /* Giảm độ blur của shadow để đỡ lag */
+            box-shadow: 0 0 4px currentColor; 
         }
 
         /* --- TRÁI TIM 3D --- */
@@ -165,7 +143,7 @@
             outline: none;
             transition: opacity 0.3s;
             position: relative; 
-            z-index: 20; 
+            z-index: 20; /* Đảm bảo audio nằm trên pháo */
         }
         audio:hover { opacity: 1; }
 
@@ -217,30 +195,22 @@
     </div>
 
     <script>
-        /* --- 1. MƯA HOA LỜ ĐỜ (SLOW) --- */
-        function createFlowerDrizzle() {
-            const petal = document.createElement('div');
-            petal.classList.add('flower-drizzle');
-            const type = Math.random();
-            if (type < 0.4) petal.classList.add('drizzle-peach');
-            else if (type < 0.8) petal.classList.add('drizzle-apricot');
-            else petal.classList.add('drizzle-white');
-            
-            petal.style.left = Math.random() * 100 + 'vw';
-            const size = Math.random() * 3 + 3; 
-            petal.style.width = size + 'px';
-            petal.style.height = size + 'px';
-            petal.style.animationDuration = (Math.random() * 8 + 10) + 's'; 
-
-            document.body.appendChild(petal);
-            setTimeout(() => { petal.remove(); }, 20000);
-        }
-        setInterval(createFlowerDrizzle, 400);
-
-        /* --- 2. PHÁO PHỤT ĐA SẮC (RAINBOW SPARKS) --- */
+        /* --- 1. PHÁO PHỤT ĐA SẮC - ĐÃ TỐI ƯU HIỆU NĂNG --- */
         const heartLeftTrigger = document.getElementById('heartLeftTrigger');
         const heartRightTrigger = document.getElementById('heartRightTrigger');
         const audioPlayerEl = document.getElementById('myAudio');
+
+        // Biến lưu vị trí audio để không phải tính toán liên tục
+        let audioRectTop = 0;
+        
+        function updateAudioPosition() {
+            if(audioPlayerEl) {
+                audioRectTop = audioPlayerEl.getBoundingClientRect().top;
+            }
+        }
+        // Cập nhật vị trí khi load và khi resize
+        updateAudioPosition();
+        window.addEventListener('resize', updateAudioPosition);
 
         function launchSpark(sourceEl) {
             if (!sourceEl || !audioPlayerEl) return;
@@ -248,18 +218,8 @@
             const spark = document.createElement('div');
             spark.classList.add('firework-particle');
             
-            // --- BẢNG MÀU ĐA DẠNG ---
-            const colors = [
-                '#ff0000', // Đỏ
-                '#00ff00', // Xanh lá
-                '#0000ff', // Xanh dương
-                '#ffff00', // Vàng chanh
-                '#00ffff', // Cyan
-                '#ff00ff', // Tím hồng
-                '#ffffff', // Trắng
-                '#ff9900', // Cam
-                '#7d5fff'  // Tím đậm
-            ];
+            // Bảng màu đa sắc rực rỡ
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ffffff', '#ff9900'];
             const color = colors[Math.floor(Math.random() * colors.length)];
             spark.style.backgroundColor = color;
             spark.style.color = color; 
@@ -270,14 +230,14 @@
             let startX = startRect.left + startRect.width / 2;
             let startY = startRect.top + startRect.height / 2;
 
-            const audioRect = audioPlayerEl.getBoundingClientRect();
-            const fadeStartLimit = audioRect.top - 100; 
-            const fadeEndLimit = audioRect.top;
+            // Tính điểm mờ dần
+            const fadeStartLimit = audioRectTop - 80; 
+            const fadeEndLimit = audioRectTop;
 
             let posX = startX;
             let posY = startY;
-            let vX = (Math.random() - 0.5) * 3; 
-            let vY = -(Math.random() * 4 + 2); 
+            let vX = (Math.random() - 0.5) * 2; // Tốc độ ngang giảm xíu cho mượt
+            let vY = -(Math.random() * 3 + 2); 
             let gravity = 0.1; 
             let opacity = 1;
 
@@ -286,16 +246,18 @@
                 posX += vX;
                 posY += vY;
 
+                // Logic mờ dần
                 if (posY > fadeStartLimit) {
                     let distanceToFinish = fadeEndLimit - posY;
-                    opacity = Math.max(0, distanceToFinish / 100); 
+                    opacity = Math.max(0, distanceToFinish / 80); 
                 }
 
                 spark.style.left = posX + 'px';
                 spark.style.top = posY + 'px';
                 spark.style.opacity = opacity;
 
-                if (opacity <= 0 || posY >= fadeEndLimit || posX < -50 || posX > window.innerWidth + 50) {
+                // Xóa hạt nếu xong nhiệm vụ
+                if (opacity <= 0 || posY >= fadeEndLimit || posX < -20 || posX > window.innerWidth + 20) {
                     spark.remove();
                 } else {
                     requestAnimationFrame(animateSparkFrame);
@@ -304,13 +266,14 @@
             animateSparkFrame();
         }
 
+        // Tối ưu: Bắn mỗi 120ms (thay vì 50-80ms) -> Giảm tải CPU đáng kể
         setInterval(() => {
             launchSpark(heartLeftTrigger);
             launchSpark(heartRightTrigger);
-        }, 80);
+        }, 120);
 
 
-        /* --- 3. ĐẾM NGÀY --- */
+        /* --- 2. ĐẾM NGÀY & TIM BAY TỪ Ô SỐ --- */
         const startDate = new Date(2025, 11, 24, 10, 50, 0).getTime();
         let prevMin = -1, prevHour = -1, prevDay = -1;
 
@@ -354,7 +317,7 @@
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        /* --- 4. TIM 3D BAY KHI CÓ NHẠC --- */
+        /* --- 3. TIM 3D BAY KHI CÓ NHẠC --- */
         const audio = document.getElementById('myAudio');
         let heartInterval;
 
@@ -378,11 +341,16 @@
             setTimeout(() => { container.remove(); }, 10000);
         }
 
-        audio.onplay = function() { if (!heartInterval) heartInterval = setInterval(createRealFloatingHeart, 1500); };
+        audio.onplay = function() { 
+            if (!heartInterval) {
+                // 1.5 giây mới thả 1 tim -> Đỡ lag
+                heartInterval = setInterval(createRealFloatingHeart, 1500); 
+            }
+        };
         audio.onpause = function() { clearInterval(heartInterval); heartInterval = null; };
         document.body.addEventListener('click', function() { if(audio.paused) audio.play(); }, { once: true });
 
-        /* --- 5. DOUBLE TAP --- */
+        /* --- 4. DOUBLE TAP --- */
         document.addEventListener('dblclick', function(e) { createClickHeart(e.pageX, e.pageY); });
         let lastTap = 0;
         document.addEventListener('touchend', function(e) {
