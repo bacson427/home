@@ -70,9 +70,37 @@
     let particles = [];
     let frame = 0;
     let isPlaying = false;
-    let isFinaleMode = false;
+    let currentStage = 0;
+    const stages = ['text1', 'text2', 'single', 'small', 'big', 'finale', 'continuous'];
 
-    // --- ÂM THANH THEO TRÌNH TỰ ---
+    // Tính toán kích thước pháo hoa dựa trên màn hình
+    function getFireworkSize() {
+        const screenArea = canvas.width * canvas.height;
+        if (screenArea < 300000) { // Màn hình nhỏ (mobile)
+            return {
+                particleSize: 0.5,
+                trailWidth: 1,
+                glowRadius: 1,
+                particleCount: 15
+            };
+        } else if (screenArea < 1000000) { // Màn hình trung bình (tablet)
+            return {
+                particleSize: 0.8,
+                trailWidth: 1.5,
+                glowRadius: 1.5,
+                particleCount: 25
+            };
+        } else { // Màn hình lớn (desktop)
+            return {
+                particleSize: 1.2,
+                trailWidth: 2,
+                glowRadius: 2,
+                particleCount: 35
+            };
+        }
+    }
+
+    // --- ÂM THANH ---
     const sounds = {
         launch: new Audio('https://nguyenbacson.io.vn/moi-ban.mp3'),
         short: new Audio('https://nguyenbacson.io.vn/no-ngan.mp3'),
@@ -81,7 +109,6 @@
         long: new Audio('https://nguyenbacson.io.vn/chum-dai.mp3')
     };
 
-    // Cấu hình âm thanh
     sounds.launch.volume = 0.4;
     sounds.short.volume = 0.7;
     sounds.small.volume = 0.6;
@@ -102,9 +129,11 @@
         return Math.random() * (max - min) + min;
     }
 
-    // --- CLASS 1: PHÁO BAY ---
+    // --- CLASS PHÁO BAY ---
     class Firework {
         constructor(x, y, targetX, targetY, type, text, explosionType = 'normal') {
+            const size = getFireworkSize();
+            
             this.x = x;
             this.y = y;
             this.targetX = targetX;
@@ -115,11 +144,12 @@
             
             this.distanceToTarget = Math.sqrt(Math.pow(targetX - x, 2) + Math.pow(targetY - y, 2));
             this.angle = Math.atan2(targetY - y, targetX - x);
-            this.speed = random(16, 22);
+            this.speed = random(12, 18); // Giảm tốc độ
             this.vx = Math.cos(this.angle) * this.speed;
             this.vy = Math.sin(this.angle) * this.speed;
-            this.brightness = random(80, 100);
+            this.brightness = random(70, 90);
             this.colorHue = random(0, 360);
+            this.size = size; // Lưu kích thước
 
             playSound('launch');
         }
@@ -127,34 +157,37 @@
         update(index) {
             this.x += this.vx;
             this.y += this.vy;
-            this.vx *= 0.98;
-            this.vy *= 0.98;
+            this.vx *= 0.97;
+            this.vy *= 0.97;
 
-            if (Math.abs(this.vx) + Math.abs(this.vy) < 2 || this.y <= this.targetY) {
+            if (Math.abs(this.vx) + Math.abs(this.vy) < 1.5 || this.y <= this.targetY) {
                 createExplosion(this.x, this.y, this.type, this.text, this.explosionType);
                 fireworks.splice(index, 1);
             }
         }
 
         draw() {
+            const trailLength = 3;
             ctx.beginPath();
-            ctx.moveTo(this.x - this.vx * 4, this.y - this.vy * 4);
+            ctx.moveTo(this.x - this.vx * trailLength, this.y - this.vy * trailLength);
             ctx.lineTo(this.x, this.y);
             ctx.strokeStyle = `hsl(${this.colorHue}, 100%, ${this.brightness}%)`;
-            ctx.lineWidth = 2;
+            ctx.lineWidth = this.size.trailWidth;
             ctx.lineCap = 'round';
             ctx.stroke();
             
             ctx.beginPath();
-            ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+            ctx.arc(this.x, this.y, this.size.trailWidth, 0, Math.PI * 2);
             ctx.fillStyle = `hsl(${this.colorHue}, 100%, 95%)`;
             ctx.fill();
         }
     }
 
-    // --- CLASS 2: HẠT NỔ ---
+    // --- CLASS HẠT NỔ ---
     class Particle {
         constructor(x, y, hue, type, targetX, targetY, explosionType = 'normal') {
+            const size = getFireworkSize();
+            
             this.x = x;
             this.y = y;
             this.type = type; 
@@ -165,47 +198,48 @@
             this.baseX = targetX;
             this.baseY = targetY;
             this.alpha = 1;
+            this.sizeConfig = size;
             
             if (type === 'text') {
                 this.vx = 0; 
                 this.vy = 0;
-                this.size = 1.8;
+                this.size = size.particleSize * 1.2;
                 this.decay = 0;
                 this.glow = 0.8;
             }
             else {
                 switch(explosionType) {
                     case 'short':
-                        this.size = random(1.2, 2.5);
-                        this.speed = random(6, 12);
+                        this.size = random(size.particleSize * 0.8, size.particleSize * 1.5);
+                        this.speed = random(4, 8);
                         this.friction = 0.92;
-                        this.gravity = 0.02;
+                        this.gravity = 0.015;
                         this.decay = random(0.02, 0.03);
                         break;
                         
                     case 'small':
-                        this.size = random(0.8, 1.8);
-                        this.speed = random(10, 16);
+                        this.size = random(size.particleSize * 0.6, size.particleSize * 1.2);
+                        this.speed = random(6, 10);
                         this.friction = 0.90;
-                        this.gravity = 0.01;
+                        this.gravity = 0.008;
                         this.decay = random(0.01, 0.02);
                         break;
                         
                     case 'big':
-                        this.size = random(1.2, 3);
-                        this.speed = random(4, 10);
+                        this.size = random(size.particleSize * 1, size.particleSize * 2);
+                        this.speed = random(3, 6);
                         this.friction = 0.96;
-                        this.gravity = 0.004;
+                        this.gravity = 0.003;
                         this.decay = random(0.002, 0.004);
                         this.twinkleSpeed = random(0.1, 0.2);
                         this.twinklePhase = random(0, Math.PI * 2);
                         break;
                         
                     default:
-                        this.size = random(0.8, 2);
-                        this.speed = random(6, 13);
+                        this.size = random(size.particleSize * 0.7, size.particleSize * 1.3);
+                        this.speed = random(4, 9);
                         this.friction = 0.94;
-                        this.gravity = 0.008;
+                        this.gravity = 0.006;
                         this.decay = random(0.005, 0.01);
                 }
                 
@@ -218,10 +252,10 @@
 
         update(index) {
             if (this.type === 'text') {
-                this.x += (this.destX - this.x) * 0.08;
-                this.y += (this.destY - this.y) * 0.08;
-                this.destY = this.baseY + Math.sin(frame * 0.04 + this.x * 0.02) * 1.5;
-                this.hue += 0.8;
+                this.x += (this.destX - this.x) * 0.06;
+                this.y += (this.destY - this.y) * 0.06;
+                this.destY = this.baseY + Math.sin(frame * 0.03 + this.x * 0.015) * 1;
+                this.hue += 0.5;
             } else {
                 this.vx *= this.friction;
                 this.vy *= this.friction;
@@ -244,13 +278,14 @@
             ctx.save();
             ctx.globalAlpha = this.alpha;
             
-            if (this.explosionType === 'big' && this.size > 1.8) {
-                const glowRadius = this.size * 1.5;
+            // Hiệu ứng glow cho hạt lớn
+            if (this.size > this.sizeConfig.particleSize * 1.5) {
+                const glowRadius = this.size * this.sizeConfig.glowRadius;
                 const gradient = ctx.createRadialGradient(
                     this.x, this.y, 0,
                     this.x, this.y, glowRadius
                 );
-                gradient.addColorStop(0, `hsla(${this.hue}, 100%, 80%, 0.5)`);
+                gradient.addColorStop(0, `hsla(${this.hue}, 100%, 80%, 0.4)`);
                 gradient.addColorStop(1, `hsla(${this.hue}, 100%, 50%, 0)`);
                 
                 ctx.beginPath();
@@ -268,15 +303,17 @@
         }
     }
 
-    function getTextPoints(text) {
+    function getTextPoints(text, isSmall = false) {
         const offCanvas = document.createElement('canvas');
         const offCtx = offCanvas.getContext('2d');
         offCanvas.width = window.innerWidth;
-        offCanvas.height = 120; 
         
-        let fontSize = 60;
-        if (window.innerWidth < 450) fontSize = 28; 
-        else if (window.innerWidth < 800) fontSize = 40; 
+        // Kích thước chữ nhỏ hơn
+        let fontSize = isSmall ? 40 : 50;
+        if (window.innerWidth < 450) fontSize = isSmall ? 24 : 30; 
+        else if (window.innerWidth < 800) fontSize = isSmall ? 32 : 40; 
+        
+        offCanvas.height = fontSize * 1.5;
         
         offCtx.font = `900 ${fontSize}px Arial`;
         offCtx.fillStyle = 'white';
@@ -287,7 +324,7 @@
         const imageData = offCtx.getImageData(0, 0, offCanvas.width, offCanvas.height);
         const data = imageData.data;
         const points = [];
-        const gap = 4; // Tăng gap để ít điểm hơn
+        const gap = isSmall ? 5 : 4; // Tăng gap cho ít điểm hơn
 
         for (let y = 0; y < offCanvas.height; y += gap) {
             for (let x = 0; x < offCanvas.width; x += gap) {
@@ -307,12 +344,12 @@
         }
 
         if (type === 'text') {
-            const data = getTextPoints(text);
+            const data = getTextPoints(text, true); // Chữ nhỏ hơn
             const points = data.points;
             let baseHue = text.includes("DƯƠNG") ? 320 : 45; 
             
-            // Giới hạn số điểm chữ
-            const maxPoints = Math.min(points.length, 200);
+            // Số điểm chữ ít hơn
+            const maxPoints = Math.min(points.length, 100);
             for (let i = 0; i < maxPoints; i += 1) {
                 const p = points[i];
                 const destX = p.x - (data.width / 2) + x;
@@ -322,21 +359,21 @@
         } 
         else {
             const hue = random(0, 360);
+            const size = getFireworkSize();
             let count;
             
-            // GIẢM SỐ LƯỢNG HẠT ĐÁNG KỂ
             switch(explosionType) {
                 case 'short':
-                    count = Math.floor(random(15, 25)); // Giảm từ 30-50
+                    count = Math.floor(random(8, 15));
                     break;
                 case 'small':
-                    count = Math.floor(random(25, 40)); // Giảm từ 60-90
+                    count = Math.floor(random(12, 20));
                     break;
                 case 'big':
-                    count = Math.floor(random(40, 60)); // Giảm từ 120-180
+                    count = Math.floor(random(20, 30));
                     break;
                 default:
-                    count = Math.floor(random(20, 35)); // Giảm từ 40-70
+                    count = Math.floor(random(10, 18));
             }
             
             for (let i = 0; i < count; i++) {
@@ -350,18 +387,20 @@
         if(!isPlaying) return;
         frame++;
 
-        // Giới hạn số lượng particles để tránh lag
-        if (particles.length > 1000) {
-            particles = particles.slice(-800); // Giữ lại 800 particles gần đây nhất
+        // Giới hạn số lượng
+        if (particles.length > 500) {
+            particles = particles.slice(-400);
         }
         
-        if (fireworks.length > 50) {
-            fireworks = fireworks.slice(-40); // Giữ lại 40 fireworks gần đây nhất
+        if (fireworks.length > 30) {
+            fireworks = fireworks.slice(-25);
         }
 
-        ctx.fillStyle = isFinaleMode ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 0.2)';
+        // Clear với độ mờ khác nhau
+        ctx.fillStyle = currentStage >= 5 ? 'rgba(0, 0, 0, 0.08)' : 'rgba(0, 0, 0, 0.15)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+        // Update và draw
         for (let i = fireworks.length - 1; i >= 0; i--) {
             fireworks[i].update(i);
             fireworks[i].draw();
@@ -373,111 +412,95 @@
         }
     }
 
-    function startShow() {
-        // --- KHOẢNG CÁCH DÒNG CHỮ ---
-        const line1Y = canvas.height * 0.2; // 20%
-        const line2Y = canvas.height * 0.4; // 40%
-
-        // 1. CHỮ
-        setTimeout(() => {
-            fireworks.push(new Firework(
-                canvas.width/2, 
-                canvas.height, 
-                canvas.width/2, 
-                line1Y, 
-                'text', 
-                "CHÚC MỪNG NĂM MỚI"
-            ));
-        }, 100);
-
-        setTimeout(() => {
-            fireworks.push(new Firework(
-                canvas.width/2, 
-                canvas.height, 
-                canvas.width/2, 
-                line2Y, 
-                'text', 
-                "TRƯƠNG THỊ DƯƠNG"
-            ));
-        }, 1200);
-
-        // 2. TRÌNH TỰ PHÁO HOA (GIẢM SỐ LƯỢNG)
+    function nextStage() {
+        currentStage = (currentStage + 1) % stages.length;
         
-        // Giai đoạn 1: Pháo đơn lẻ
-        setTimeout(() => {
-            for(let i = 0; i < 5; i++) { // Giảm từ 8
+        switch(stages[currentStage]) {
+            case 'text1':
+                fireworks.push(new Firework(
+                    canvas.width/2, 
+                    canvas.height, 
+                    canvas.width/2, 
+                    canvas.height * 0.3, 
+                    'text', 
+                    "CHÚC MỪNG"
+                ));
+                break;
+                
+            case 'text2':
                 setTimeout(() => {
-                    const x = random(100, canvas.width - 100);
-                    const y = random(canvas.height * 0.5, canvas.height * 0.7);
-                    fireworks.push(new Firework(
-                        random(50, canvas.width - 50), 
-                        canvas.height, 
-                        x, y, 
-                        'normal',
-                        '',
-                        'short'
-                    ));
-                }, i * 500); // Tăng delay
-            }
-        }, 2500);
-
-        // Giai đoạn 2: Chùm bé
-        setTimeout(() => {
-            for(let i = 0; i < 8; i++) { // Giảm từ 12
-                setTimeout(() => {
-                    const x = random(80, canvas.width - 80);
-                    const y = random(canvas.height * 0.45, canvas.height * 0.75);
-                    fireworks.push(new Firework(
-                        random(0, canvas.width), 
-                        canvas.height, 
-                        x, y, 
-                        'normal',
-                        '',
-                        'small'
-                    ));
-                }, i * 400); // Tăng delay
-            }
-        }, 6000);
-
-        // Giai đoạn 3: Chùm to
-        setTimeout(() => {
-            for(let i = 0; i < 4; i++) { // Giảm từ 6
-                setTimeout(() => {
-                    const x = random(150, canvas.width - 150);
-                    const y = random(canvas.height * 0.4, canvas.height * 0.65);
                     fireworks.push(new Firework(
                         canvas.width/2, 
                         canvas.height, 
-                        x, y, 
-                        'normal',
-                        '',
-                        'big'
+                        canvas.width/2, 
+                        canvas.height * 0.5, 
+                        'text', 
+                        "DƯƠNG"
                     ));
-                }, i * 1000); // Tăng delay
-            }
-        }, 10000);
-
-        // Giai đoạn 4: FINALE MODE
-        setTimeout(() => {
-            isFinaleMode = true;
-            playSound('long');
-            
-            let finaleStart = Date.now();
-            const finaleDuration = 20000; // Giảm từ 25s xuống 20s
-            
-            function finaleWave() {
-                if (Date.now() - finaleStart > finaleDuration) {
-                    isFinaleMode = false;
-                    return;
-                }
+                }, 800);
+                break;
                 
-                // Mỗi wave bắn ít hơn
-                const count = Math.floor(random(4, 7)); // Giảm từ 8-12
-                for(let i = 0; i < count; i++) {
+            case 'single':
+                // 3 pháo đơn
+                for(let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const x = random(100, canvas.width - 100);
+                        const y = random(canvas.height * 0.4, canvas.height * 0.6);
+                        fireworks.push(new Firework(
+                            random(50, canvas.width - 50), 
+                            canvas.height, 
+                            x, y, 
+                            'normal',
+                            '',
+                            'short'
+                        ));
+                    }, i * 600);
+                }
+                break;
+                
+            case 'small':
+                // 4 chùm bé
+                for(let i = 0; i < 4; i++) {
+                    setTimeout(() => {
+                        const x = random(80, canvas.width - 80);
+                        const y = random(canvas.height * 0.35, canvas.height * 0.65);
+                        fireworks.push(new Firework(
+                            random(0, canvas.width), 
+                            canvas.height, 
+                            x, y, 
+                            'normal',
+                            '',
+                            'small'
+                        ));
+                    }, i * 800);
+                }
+                break;
+                
+            case 'big':
+                // 2 chùm to
+                for(let i = 0; i < 2; i++) {
+                    setTimeout(() => {
+                        const x = random(150, canvas.width - 150);
+                        const y = random(canvas.height * 0.3, canvas.height * 0.55);
+                        fireworks.push(new Firework(
+                            canvas.width/2, 
+                            canvas.height, 
+                            x, y, 
+                            'normal',
+                            '',
+                            'big'
+                        ));
+                    }, i * 1200);
+                }
+                break;
+                
+            case 'finale':
+                playSound('long');
+                // Finale ngắn
+                for(let i = 0; i < 6; i++) {
                     setTimeout(() => {
                         const x = random(50, canvas.width - 50);
-                        const y = random(canvas.height * 0.4, canvas.height * 0.8);
-                        
+                        const y = random(canvas.height * 0.3, canvas.height * 0.7);
                         const types = ['short', 'small', 'big'];
                         const type = types[Math.floor(Math.random() * types.length)];
                         
@@ -489,32 +512,53 @@
                             '',
                             type
                         ));
-                    }, i * 150); // Tăng delay
+                    }, i * 400);
                 }
+                break;
                 
-                // Lặp lại chậm hơn
-                setTimeout(finaleWave, 1200); // Tăng từ 800ms
-            }
-            
-            finaleWave();
-            
-        }, 15000);
+            case 'continuous':
+                // Chế độ liên tục nhẹ
+                setInterval(() => {
+                    if (Math.random() < 0.3) {
+                        const x = random(100, canvas.width - 100);
+                        const y = random(canvas.height * 0.4, canvas.height * 0.6);
+                        const types = ['short', 'small'];
+                        const type = types[Math.floor(Math.random() * types.length)];
+                        
+                        fireworks.push(new Firework(
+                            random(0, canvas.width), 
+                            canvas.height, 
+                            x, y, 
+                            'normal',
+                            '',
+                            type
+                        ));
+                    }
+                }, 1500);
+                break;
+        }
+        
+        // Chuyển stage tiếp theo sau 5-7 giây
+        const nextDelay = currentStage === 6 ? 10000 : random(5000, 7000);
+        setTimeout(nextStage, nextDelay);
+    }
 
-        // Sau finale
+    function startShow() {
+        // Bắt đầu với stage đầu tiên
+        currentStage = -1;
+        nextStage();
+        
+        // Thêm chữ mừng năm mới lớn ban đầu
         setTimeout(() => {
-            setInterval(() => {
-                if (!isFinaleMode && Math.random() < 0.2) { // Giảm xác suất
-                    const x = random(100, canvas.width - 100);
-                    const y = random(canvas.height * 0.5, canvas.height * 0.7);
-                    fireworks.push(new Firework(
-                        random(0, canvas.width), 
-                        canvas.height, 
-                        x, y, 
-                        'normal'
-                    ));
-                }
-            }, 3000); // Tăng interval
-        }, 35000); // Giảm thời gian chờ
+            fireworks.push(new Firework(
+                canvas.width/2, 
+                canvas.height, 
+                canvas.width/2, 
+                canvas.height * 0.2, 
+                'text', 
+                "2025"
+            ));
+        }, 500);
     }
 
     overlay.addEventListener('click', () => {
