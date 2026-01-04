@@ -15,7 +15,7 @@
         canvas {
             display: block;
         }
-        
+
         /* --- PHẦN TEXT NEON --- */
         #neon-container {
             position: absolute;
@@ -78,7 +78,7 @@
             100% { transform: scale(1.1) rotate(2deg); }
         }
 
-        /* --- NÚT LÌ XÌ Ở GÓC PHẢI --- */
+        /* --- NÚT LÌ XÌ --- */
         #lucky-money-link {
             position: fixed;
             bottom: 20px;
@@ -92,7 +92,7 @@
             transform: translateY(20px);
             pointer-events: none;
         }
-        
+
         #lucky-money-link:hover {
             transform: scale(1.2) rotate(-10deg) !important;
         }
@@ -103,34 +103,68 @@
              pointer-events: auto;
         }
 
-        /* --- OVERLAY MỞ ĐẦU --- */
+        /* --- OVERLAY MỞ ĐẦU & ĐẾM NGƯỢC --- */
         #overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
             color: white;
             z-index: 999;
-            cursor: pointer;
             text-align: center;
             user-select: none;
             transition: opacity 1s ease;
         }
         #overlay h1 {
             color: #ffcc00;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-size: 24px;
             text-shadow: 0 0 20px #ff6600;
         }
-        #overlay p {
-            animation: pulse 1.5s infinite;
+        
+        /* Style cho đồng hồ đếm ngược */
+        #countdown {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
         }
+        .time-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            min-width: 60px;
+            border: 1px solid rgba(255, 204, 0, 0.3);
+        }
+        .time-val {
+            font-size: 30px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px #ff00de;
+        }
+        .time-label {
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 5px;
+        }
+
+        /* Dòng chữ hướng dẫn click (ẩn ban đầu) */
+        #start-instruction {
+            color: #ccc;
+            font-size: 16px;
+            animation: pulse 1.5s infinite;
+            display: none; /* Ẩn cho đến khi hết giờ */
+            cursor: pointer;
+        }
+
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 0.6; }
             50% { transform: scale(1.05); opacity: 1; }
@@ -141,7 +175,29 @@
 
 <div id="overlay">
     <h1>✨ Gửi: Trương Thị Dương ✨</h1>
-    <p>(Chạm màn hình để bắt đầu)</p>
+    
+    <div id="countdown">
+        <div class="time-box">
+            <span class="time-val" id="days">00</span>
+            <span class="time-label">Ngày</span>
+        </div>
+        <div class="time-box">
+            <span class="time-val" id="hours">00</span>
+            <span class="time-label">Giờ</span>
+        </div>
+        <div class="time-box">
+            <span class="time-val" id="minutes">00</span>
+            <span class="time-label">Phút</span>
+        </div>
+        <div class="time-box">
+            <span class="time-val" id="seconds">00</span>
+            <span class="time-label">Giây</span>
+        </div>
+    </div>
+
+    <p id="waiting-text" style="color: #888; font-style: italic;">Sắp đến giờ nhận lì xì rồi...</p>
+
+    <p id="start-instruction">(Chạm màn hình để mở quà)</p>
 </div>
 
 <div id="neon-container">
@@ -156,6 +212,59 @@
 <canvas id="canvas"></canvas>
 
 <script>
+    // --- CẤU HÌNH THỜI GIAN ---
+    // Ngày đích: 00:00:00 ngày 17/02/2026
+    const targetDate = new Date("February 17, 2026 00:00:00").getTime();
+    let canStart = false; // Biến kiểm tra xem đã được phép bắt đầu chưa
+
+       // Các element đếm ngược
+    const elDays = document.getElementById('days');
+    const elHours = document.getElementById('hours');
+    const elMinutes = document.getElementById('minutes');
+    const elSeconds = document.getElementById('seconds');
+    const elCountdown = document.getElementById('countdown');
+    const elWaitingText = document.getElementById('waiting-text');
+    const elInstruction = document.getElementById('start-instruction');
+
+    // Hàm cập nhật đếm ngược
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        if (distance < 0) {
+            // ĐÃ ĐẾN GIỜ G
+            clearInterval(timerInterval);
+            canStart = true;
+            
+            // Ẩn đồng hồ, hiện hướng dẫn click
+            elCountdown.style.display = 'none';
+            elWaitingText.style.display = 'none';
+            elInstruction.style.display = 'block';
+            
+            // Đổi tiêu đề cho phấn khích
+            document.querySelector('#overlay h1').innerText = "✨ ĐÃ ĐẾN GIỜ HOÀNG ĐẠO ✨";
+            return;
+        }
+
+        // Tính toán thời gian
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Hiển thị (thêm số 0 đằng trước nếu < 10)
+        elDays.innerText = days < 10 ? '0' + days : days;
+        elHours.innerText = hours < 10 ? '0' + hours : hours;
+        elMinutes.innerText = minutes < 10 ? '0' + minutes : minutes;
+        elSeconds.innerText = seconds < 10 ? '0' + seconds : seconds;
+    }
+
+    // Chạy đếm ngược mỗi giây
+    const timerInterval = setInterval(updateCountdown, 1000);
+    updateCountdown(); // Chạy ngay lập tức để không bị delay 1s đầu
+
+    // ---------------------------------------------------------
+
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     const overlay = document.getElementById('overlay');
@@ -172,7 +281,7 @@
     let frame = 0;
     let isPlaying = false;
     let currentStage = -1;
-    
+
     const stages = ['intro', 'show_text', 'mix_firework', 'finale'];
 
     function getScreenConfig() {
@@ -400,12 +509,15 @@
     }
 
     overlay.addEventListener('click', () => {
+        // KIỂM TRA: Chỉ cho phép click khi đã hết giờ đếm ngược
+        if (!canStart) return;
+
         overlay.style.opacity = '0';
         setTimeout(() => { 
             overlay.style.display = 'none'; 
             luckyLink.classList.add('show');
         }, 1000);
-        
+
         isPlaying = true;
         const s = new Audio(); s.play().catch(()=>{});
         nextStage();
