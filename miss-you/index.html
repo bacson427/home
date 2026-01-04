@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Miss You - Flower Rain</title>
+    <title>Miss You - Flower Drizzle</title>
 
     <meta property="og:title" content="Miss You - Nguyễn Bắc Sơn">
     <meta property="og:description" content="Nhấp để xem chi tiết ❤️">
@@ -70,29 +70,29 @@
         .time-box span { font-size: 1.6rem; font-weight: 800; color: #df99ff; display: block; position: relative; z-index: 2; text-shadow: 0 0 8px rgba(223, 153, 255, 0.4); }
         .time-box p { font-size: 0.8rem; color: #a4b0be; font-weight: 600; margin-top: 5px; text-transform: uppercase; position: relative; z-index: 2; }
 
-        /* --- CSS MƯA CÁNH HOA (FLOWER RAIN) --- */
-        .flower-petal {
-            position: fixed; top: -10%; z-index: 0; pointer-events: none; opacity: 0.8;
-            /* Hình dáng cánh hoa: Bầu dục nhọn 2 đầu */
-            border-radius: 100% 0% 100% 0%; 
-            box-shadow: 0 0 5px rgba(0,0,0,0.2);
-            animation: petalFall linear forwards;
+        /* --- CSS MƯA PHÙN HOA (TINY FLOWER RAIN) --- */
+        .flower-drizzle {
+            position: fixed; top: -10%; z-index: 0; pointer-events: none; 
+            border-radius: 50%; /* Tròn như hạt mưa */
+            box-shadow: 0 0 3px rgba(255,255,255,0.4); /* Phát sáng nhẹ */
+            animation: drizzleFall linear forwards;
         }
 
-        /* Màu Hoa Đào (Hồng) */
-        .petal-peach { background: linear-gradient(45deg, #ffc0cb, #ff69b4); }
-        /* Màu Hoa Mai (Vàng) */
-        .petal-apricot { background: linear-gradient(45deg, #fff176, #fbc02d); }
+        /* Màu Hoa Đào (Hồng nhạt) */
+        .drizzle-peach { background: rgba(255, 182, 193, 0.8); }
+        /* Màu Hoa Mai (Vàng nhạt) */
+        .drizzle-apricot { background: rgba(255, 235, 59, 0.8); }
+        /* Màu trắng (Mưa bụi) */
+        .drizzle-white { background: rgba(255, 255, 255, 0.6); }
 
-        /* Hiệu ứng rơi lả tả như mưa phùn */
-        @keyframes petalFall {
-            0% { top: -10%; transform: translateX(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            100% { top: 110%; transform: translateX(50px) rotate(360deg); opacity: 0.5; }
+        @keyframes drizzleFall {
+            0% { top: -10%; transform: translateX(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { top: 110%; transform: translateX(20px); opacity: 0; }
         }
 
 
-        /* --- CSS TRÁI TIM 3D BAY LÊN (GIỮ NGUYÊN) --- */
+        /* CSS TRÁI TIM 3D BAY LÊN */
         .real-heart-container {
             position: fixed; bottom: -50px; pointer-events: none; z-index: 1;
             animation: floatUpRealHeart linear forwards; opacity: 0.9;
@@ -207,40 +207,39 @@
     </div>
 
     <script>
-        /* --- 1. MƯA HOA MAI - ĐÀO (DẠNG MƯA PHÙN) --- */
-        function createFlowerRain() {
+        /* --- 1. MƯA PHÙN HOA (TINY FLOWER DRIZZLE) --- */
+        function createFlowerDrizzle() {
             const petal = document.createElement('div');
-            petal.classList.add('flower-petal');
+            petal.classList.add('flower-drizzle');
             
-            // Random loại cánh (Đào hoặc Mai)
-            const isPeach = Math.random() > 0.5;
-            petal.classList.add(isPeach ? 'petal-peach' : 'petal-apricot');
+            // Random loại hạt mưa (Đào, Mai, hoặc Trắng)
+            const type = Math.random();
+            if (type < 0.4) petal.classList.add('drizzle-peach');
+            else if (type < 0.8) petal.classList.add('drizzle-apricot');
+            else petal.classList.add('drizzle-white');
             
-            // Random vị trí xuất phát
+            // Random vị trí
             petal.style.left = Math.random() * 100 + 'vw';
             
-            // Random kích thước (nhỏ như cánh hoa thật)
-            const size = Math.random() * 10 + 10; // 10px - 20px
+            // SIZE SIÊU NHỎ (MƯA PHÙN)
+            const size = Math.random() * 3 + 2; // 2px - 5px
             petal.style.width = size + 'px';
             petal.style.height = size + 'px';
             
-            // Random tốc độ rơi (nhanh hơn lá một chút để giống mưa phùn)
-            petal.style.animationDuration = (Math.random() * 3 + 4) + 's'; // 4s - 7s
-            
-            // Random độ trễ
-            petal.style.animationDelay = Math.random() + 's';
+            // Tốc độ rơi nhanh hơn chút (3s - 5s)
+            petal.style.animationDuration = (Math.random() * 2 + 3) + 's'; 
 
             document.body.appendChild(petal);
             
             // Xóa sau khi rơi xong
-            setTimeout(() => { petal.remove(); }, 8000);
+            setTimeout(() => { petal.remove(); }, 5000);
         }
         
-        // Mật độ dày hơn: 300ms tạo 1 cánh
-        setInterval(createFlowerRain, 300);
+        // Mật độ RẤT DÀY (50ms tạo 1 hạt)
+        setInterval(createFlowerDrizzle, 50);
 
 
-        /* --- 2. ĐẾM NGÀY & TIM BAY TỪ Ô --- */
+        /* --- 2. ĐẾM NGÀY & TIM BAY --- */
         const startDate = new Date(2025, 11, 24, 10, 50, 0).getTime();
         let prevMin = -1, prevHour = -1, prevDay = -1;
 
