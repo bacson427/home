@@ -442,3 +442,42 @@
         }, 2500);
 
         // 4. Kết thúc intro
+        setTimeout(() => { clearInterval(scenarioInterval); }, 16000);
+
+
+        // 5. Finale
+        setTimeout(() => {
+            stageDiv.style.opacity = 0; 
+            messageBox.style.opacity = 0; 
+            playSound('finale');
+            document.getElementById('lucky-money-link').className = 'show';
+
+            let finaleEndTime = Date.now() + 25000;
+            function autoFireFinale() {
+                if(Date.now() > finaleEndTime) return;
+                if(Math.random() < 0.18) { 
+                    let type = Math.random() < 0.15 ? 'mega' : 'normal';
+                    fireworks.push(new Firework(type));
+                }
+                if(isPlaying) requestAnimationFrame(autoFireFinale);
+            }
+            autoFireFinale();
+        }, 17000);
+
+        // 6. Reset Loop
+        setTimeout(() => {
+            stageDiv.classList.remove('stage-enter');
+            stageDiv.style.opacity = 1; 
+            messageBox.style.opacity = 1;
+            runScenarioLoop();
+        }, 45000);
+    }
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        initRings();
+    });
+</script>
+</body>
+</html>
