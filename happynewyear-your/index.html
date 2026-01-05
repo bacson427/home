@@ -3,285 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy New Year - Truong Thi Duong</title>
+    <title>Happy New Year & Lì Xì 2026 - Nguyễn Bắc Sơn</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:wght@400;700&display=swap');
+
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background: #020202;
             overflow: hidden;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Roboto', sans-serif; /* Dùng font của Game cho đẹp */
         }
-        canvas {
-            display: block;
-        }
+        canvas { display: block; }
 
-        /* --- PHẦN TEXT NEON --- */
+        /* --- 1. PHẦN TEXT NEON (PHÁO HOA) --- */
         #neon-container {
-            position: absolute;
-            top: 40%;
-            left: 0;
-            width: 100%;
-            transform: translateY(-50%);
-            text-align: center;
-            z-index: 10;
-            pointer-events: none;
-            display: none;
+            position: absolute; top: 40%; left: 0; width: 100%;
+            transform: translateY(-50%); text-align: center;
+            z-index: 10; pointer-events: none; display: none;
         }
-
         .neon-text {
-            font-size: 50px;
-            font-weight: bold;
-            color: #fff;
+            font-size: 50px; font-weight: bold; color: #fff;
             text-transform: uppercase;
-            text-shadow: 
-                0 0 5px #fff,
-                0 0 10px #fff,
-                0 0 20px #ff00de,
-                0 0 30px #ff00de,
-                0 0 40px #ff00de,
-                0 0 55px #ff00de,
-                0 0 75px #ff00de;
+            text-shadow: 0 0 5px #fff, 0 0 20px #ff00de, 0 0 55px #ff00de;
             animation: floatAndGlow 3s ease-in-out infinite alternate;
-            margin: 10px 0;
-            opacity: 0;
-            transition: opacity 1.5s ease;
+            margin: 10px 0; opacity: 0; transition: opacity 1.5s ease;
         }
-
         .sub-text {
-            font-size: 60px;
-            color: #fff;
-            font-weight: 900;
-            text-shadow: 
-                0 0 5px #fff,
-                0 0 10px #fff,
-                0 0 20px #ff9900,
-                0 0 30px #ff9900,
-                0 0 40px #ff9900;
+            font-size: 60px; color: #fff; font-weight: 900;
+            text-shadow: 0 0 5px #fff, 0 0 20px #ff9900, 0 0 40px #ff9900;
             animation: zoomMove 4s ease-in-out infinite alternate;
-            opacity: 0;
-            transition: opacity 1.5s ease 0.5s;
+            opacity: 0; transition: opacity 1.5s ease 0.5s;
         }
-
         @media (max-width: 600px) {
             .neon-text { font-size: 30px; }
             .sub-text { font-size: 38px; }
         }
-
         @keyframes floatAndGlow {
             0% { transform: translateY(0); text-shadow: 0 0 20px #ff00de; }
-            100% { transform: translateY(-20px); text-shadow: 0 0 40px #ff00de, 0 0 80px #ff00de; }
+            100% { transform: translateY(-20px); text-shadow: 0 0 40px #ff00de; }
         }
-
         @keyframes zoomMove {
             0% { transform: scale(1) rotate(-2deg); }
             100% { transform: scale(1.1) rotate(2deg); }
         }
 
-        /* --- NÚT LÌ XÌ --- */
-        #lucky-money-link {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            font-size: 50px;
+        /* --- 2. NÚT LÌ XÌ (🧧) --- */
+        #lucky-btn {
+            position: fixed; bottom: 20px; right: 20px;
+            font-size: 50px; cursor: pointer; z-index: 1000;
+            transition: all 0.5s ease;
+            opacity: 0; transform: translateY(20px); pointer-events: none;
             text-decoration: none;
-            z-index: 1000;
-            transition:all 0.5s ease;
-            cursor: pointer;
-            opacity: 0;
-            transform: translateY(20px);
-            pointer-events: none;
         }
+        #lucky-btn:hover { transform: scale(1.2) rotate(-10deg) !important; }
+        #lucky-btn.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
-        #lucky-money-link:hover {
-            transform: scale(1.2) rotate(-10deg) !important;
-        }
-
-        #lucky-money-link.show {
-             opacity: 1;
-             transform: translateY(0);
-             pointer-events: auto;
-        }
-
-        /* --- OVERLAY MỞ ĐẦU & ĐẾM NGƯỢC --- */
-        #overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        /* --- 3. OVERLAY ĐẾM NGƯỢC --- */
+        #countdown-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            color: white;
-            z-index: 999;
-            text-align: center;
-            user-select: none;
-            transition: opacity 1s ease;
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column; color: white; z-index: 999;
+            text-align: center; user-select: none; transition: opacity 1s ease;
         }
-        #overlay h1 {
-            color: #ffcc00;
-            margin-bottom: 20px;
-            font-size: 24px;
+        #countdown-overlay h1 {
+            color: #ffcc00; margin-bottom: 20px; font-size: 24px;
             text-shadow: 0 0 20px #ff6600;
         }
-        
-        /* Style cho đồng hồ đếm ngược */
-        #countdown {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
+        #countdown { display: flex; gap: 15px; margin-bottom: 20px; }
         .time-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 8px;
-            min-width: 60px;
-            border: 1px solid rgba(255, 204, 0, 0.3);
+            display: flex; flex-direction: column; align-items: center;
+            background: rgba(255, 255, 255, 0.1); padding: 10px;
+            border-radius: 8px; min-width: 60px; border: 1px solid rgba(255, 204, 0, 0.3);
         }
-        .time-val {
-            font-size: 30px;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 10px #ff00de;
-        }
-        .time-label {
-            font-size: 12px;
-            color: #ccc;
-            margin-top: 5px;
-        }
-
-        /* Dòng chữ hướng dẫn click (ẩn ban đầu) */
+        .time-val { font-size: 30px; font-weight: bold; color: #fff; }
+        .time-label { font-size: 12px; color: #ccc; margin-top: 5px; }
         #start-instruction {
-            color: #ccc;
-            font-size: 16px;
-            animation: pulse 1.5s infinite;
-            display: none; /* Ẩn cho đến khi hết giờ */
-            cursor: pointer;
+            color: #ccc; font-size: 16px; animation: pulse 1.5s infinite;
+            display: none; cursor: pointer;
         }
-
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 0.6; }
             50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        /* --- 4. GAME LÌ XÌ (MODAL) --- */
+        #game-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); /* Nền tối mờ để thấy pháo hoa phía sau */
+            backdrop-filter: blur(5px);
+            display: none; justify-content: center; align-items: center;
+            z-index: 2000;
+        }
+        .game-container {
+            text-align: center; background: rgba(255, 255, 255, 0.1);
+            padding: 30px; border-radius: 20px; border: 2px solid #fca311;
+            box-shadow: 0 0 30px rgba(217, 4, 41, 0.5);
+            width: 90%; max-width: 450px; position: relative;
+        }
+        .game-h1 {
+            font-family: 'Dancing Script', cursive; color: #fca311;
+            font-size: 2.5em; margin-bottom: 20px; text-shadow: 2px 2px 4px black;
+        }
+        .game-input {
+            padding: 12px; width: 70%; border-radius: 20px; border: none;
+            text-align: center; outline: none; font-size: 16px; margin-bottom: 15px;
+        }
+        .btn-main {
+            background: linear-gradient(to right, #fca311, #ffb703);
+            border: none; padding: 10px 30px; border-radius: 20px;
+            color: #8d0801; font-weight: bold; cursor: pointer; font-size: 16px;
+            margin-top: 15px; transition: 0.2s;
+        }
+        .btn-main:active { transform: scale(0.95); }
+        
+        /* Grid Lì Xì */
+        .grid-container {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 10px; margin-top: 20px;
+        }
+        .lixi {
+            background-color: #d90429; border: 1px solid #fca311;
+            border-radius: 8px; aspect-ratio: 2/3;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2em; cursor: pointer; transition: transform 0.2s;
+        }
+        .lixi:hover { transform: translateY(-3px); }
+        .lixi::after { content: "🧧"; }
+
+        /* Kết quả Game */
+        #result-popup {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); display: none; border-radius: 20px;
+            flex-direction: column; justify-content: center; align-items: center; z-index: 10;
+        }
+        .money { font-size: 4em; color: #fca311; font-weight: bold; margin: 20px; animation: pop 0.5s; }
+
+        /* --- 5. ADMIN PANEL --- */
+        .btn-gear {
+            position: absolute; top: 15px; left: 15px;
+            font-size: 24px; cursor: pointer; opacity: 0.5; z-index: 3000;
+            color: white;
+        }
+        .btn-gear:hover { opacity: 1; }
+        #admin-panel {
+            display: none; position: absolute; top: 50px; left: 15px;
+            background: #fff; color: #333; padding: 15px; border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); width: 250px; z-index: 3001;
+            text-align: left;
+        }
+        .admin-btn {
+            display: block; width: 100%; margin-bottom: 10px;
+            padding: 8px; border: none; border-radius: 5px; cursor: pointer; color: white;
+        }
+        .btn-unlock { background: #0077b6; }
+        .btn-excel { background: #217346; }
+        .btn-reset { background: #d90429; }
+        .btn-close { background: #666; }
+        
+        /* Nút đóng game */
+        .btn-close-game {
+            position: absolute; top: 10px; right: 15px; font-size: 24px;
+            color: #fff; cursor: pointer; opacity: 0.7;
         }
     </style>
 </head>
 <body>
 
-<div id="overlay">
-    <h1>✨ Gửi: Trương Thị Dương ✨</h1>
-    
-    <div id="countdown">
-        <div class="time-box">
-            <span class="time-val" id="days">00</span>
-            <span class="time-label">Ngày</span>
+    <div class="btn-gear" onclick="openAdmin()">⚙️</div>
+    <div id="admin-panel">
+        <h3 style="margin-top:0; color:#d90429">Quản Trị Viên</h3>
+        <button class="admin-btn btn-unlock" onclick="adminUnlock()">🔓 Mở khóa (Xem trước)</button>
+        <button class="admin-btn btn-excel" onclick="xuatExcel()">📥 Xuất Excel Lì Xì</button>
+        <button class="admin-btn btn-reset" onclick="resetLuotChoi()">🔄 Reset Lượt Chơi</button>
+        <button class="admin-btn btn-close" onclick="document.getElementById('admin-panel').style.display='none'">Đóng</button>
+    </div>
+
+    <div id="countdown-overlay">
+        <h1>✨ Gửi: Trương Thị Dương ✨</h1>
+        <div id="countdown">
+            <div class="time-box"><span class="time-val" id="days">00</span><span class="time-label">Ngày</span></div>
+            <div class="time-box"><span class="time-val" id="hours">00</span><span class="time-label">Giờ</span></div>
+            <div class="time-box"><span class="time-val" id="minutes">00</span><span class="time-label">Phút</span></div>
+            <div class="time-box"><span class="time-val" id="seconds">00</span><span class="time-label">Giây</span></div>
         </div>
-        <div class="time-box">
-            <span class="time-val" id="hours">00</span>
-            <span class="time-label">Giờ</span>
-        </div>
-        <div class="time-box">
-            <span class="time-val" id="minutes">00</span>
-            <span class="time-label">Phút</span>
-        </div>
-        <div class="time-box">
-            <span class="time-val" id="seconds">00</span>
-            <span class="time-label">Giây</span>
+        <p id="waiting-text" style="color: #888; font-style: italic;">Sắp đến giờ nhận lì xì rồi...</p>
+        <p id="start-instruction">(Chạm màn hình để mở quà)</p>
+    </div>
+
+    <div id="neon-container">
+        <div class="neon-text" id="line1">CHÚC MỪNG NĂM MỚI</div>
+        <div class="sub-text" id="line2">TRƯƠNG THỊ DƯƠNG</div>
+    </div>
+    <canvas id="canvas"></canvas>
+
+    <a href="javascript:void(0)" id="lucky-btn" onclick="openGame()" title="Nhận Lì Xì">🧧</a>
+
+    <div id="game-modal">
+        <div class="game-container">
+            <span class="btn-close-game" onclick="closeGame()">×</span>
+            
+            <div id="login-area">
+                <h1 class="game-h1">Lì Xì 2026</h1>
+                <p style="color:white">Nhập mật khẩu (SĐT của Sơn)</p>
+                <input type="password" class="game-input" id="passInput" placeholder="Nhập mật khẩu...">
+                <br>
+                <button class="btn-main" id="btnLoginGame" onclick="checkPassGame()">VÀO NHẬN LÌ XÌ</button>
+                <p id="game-msg" style="color: #ff6b6b; min-height: 20px; font-size: 0.9em; margin-top: 10px;"></p>
+            </div>
+
+            <div id="game-area" style="display:none;">
+                <h1 class="game-h1">Chọn 1 Bao Nhé</h1>
+                <div class="grid-container" id="grid"></div>
+            </div>
+
+            <div id="result-popup">
+                <h2 style="color: white;">Chúc Mừng Năm Mới!</h2>
+                <div class="money" id="res-money"></div>
+                <p style="color: white;">Chụp màn hình gửi lại tớ nhé!</p>
+                <button class="btn-main" onclick="closeGame()">ĐÓNG</button>
+            </div>
         </div>
     </div>
 
-    <p id="waiting-text" style="color: #888; font-style: italic;">Sắp đến giờ nhận lì xì rồi...</p>
-
-    <p id="start-instruction">(Chạm màn hình để mở quà)</p>
-</div>
-
-<div id="neon-container">
-    <div class="neon-text" id="line1">CHÚC MỪNG NĂM MỚI</div>
-    <div class="sub-text" id="line2">TRƯƠNG THỊ DƯƠNG</div>
-</div>
-
-<a href="https://nguyenbacson.io.vn/happynewyear-your/quay-li-xi" id="lucky-money-link" target="_blank" title="Nhận Lì Xì">
-    🧧
-</a>
-
-<canvas id="canvas"></canvas>
-
 <script>
-    // --- CẤU HÌNH THỜI GIAN ---
-    // Ngày đích: 00:00:00 ngày 17/02/2026
+    // ============================================
+    // PHẦN 1: LOGIC ĐẾM NGƯỢC & PHÁO HOA
+    // ============================================
     const targetDate = new Date("February 17, 2026 00:00:00").getTime();
-    let canStart = false; // Biến kiểm tra xem đã được phép bắt đầu chưa
+    let canStart = false;
+    let timerInterval;
 
-       // Các element đếm ngược
-    const elDays = document.getElementById('days');
-    const elHours = document.getElementById('hours');
-    const elMinutes = document.getElementById('minutes');
-    const elSeconds = document.getElementById('seconds');
     const elCountdown = document.getElementById('countdown');
     const elWaitingText = document.getElementById('waiting-text');
     const elInstruction = document.getElementById('start-instruction');
+    const overlay = document.getElementById('countdown-overlay');
 
-    // Hàm cập nhật đếm ngược
     function updateCountdown() {
         const now = new Date().getTime();
         const distance = targetDate - now;
 
         if (distance < 0) {
-            // ĐÃ ĐẾN GIỜ G
-            clearInterval(timerInterval);
-            canStart = true;
-            
-            // Ẩn đồng hồ, hiện hướng dẫn click
-            elCountdown.style.display = 'none';
-            elWaitingText.style.display = 'none';
-            elInstruction.style.display = 'block';
-            
-            // Đổi tiêu đề cho phấn khích
-            document.querySelector('#overlay h1').innerText = "✨ ĐÃ ĐẾN GIỜ HOÀNG ĐẠO ✨";
+            unlockShow();
             return;
         }
 
-        // Tính toán thời gian
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        // Hiển thị (thêm số 0 đằng trước nếu < 10)
-        elDays.innerText = days < 10 ? '0' + days : days;
-        elHours.innerText = hours < 10 ? '0' + hours : hours;
-        elMinutes.innerText = minutes < 10 ? '0' + minutes : minutes;
-        elSeconds.innerText = seconds < 10 ? '0' + seconds : seconds;
+        document.getElementById('days').innerText = days < 10 ? '0' + days : days;
+        document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
+        document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+        document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
     }
 
-    // Chạy đếm ngược mỗi giây
-    const timerInterval = setInterval(updateCountdown, 1000);
-    updateCountdown(); // Chạy ngay lập tức để không bị delay 1s đầu
+    function unlockShow() {
+        clearInterval(timerInterval);
+        canStart = true;
+        elCountdown.style.display = 'none';
+        elWaitingText.style.display = 'none';
+        elInstruction.style.display = 'block';
+        document.querySelector('#countdown-overlay h1').innerText = "✨ ĐÃ ĐẾN GIỜ HOÀNG ĐẠO ✨";
+    }
 
-    // ---------------------------------------------------------
+    timerInterval = setInterval(updateCountdown, 1000);
+    updateCountdown();
 
+    // --- SETUP PHÁO HOA ---
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    const overlay = document.getElementById('overlay');
     const neonContainer = document.getElementById('neon-container');
     const line1 = document.getElementById('line1');
     const line2 = document.getElementById('line2');
-    const luckyLink = document.getElementById('lucky-money-link');
+    const luckyBtn = document.getElementById('lucky-btn');
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     let fireworks = [];
     let particles = [];
-    let frame = 0;
     let isPlaying = false;
     let currentStage = -1;
-
     const stages = ['intro', 'show_text', 'mix_firework', 'finale'];
 
     function getScreenConfig() {
@@ -300,7 +305,6 @@
     };
 
     sounds.launch.volume = 0.3;
-    sounds.short.volume = 0.5;
     sounds.long.volume = 0.8;
 
     function playSound(type) {
@@ -319,7 +323,6 @@
     }
 
     function random(min, max) { return Math.random() * (max - min) + min; }
-
     function getRandomColor() {
         const palettes = [[30, 60], [0, 20], [180, 220], [280, 320], [0, 360]];
         const palette = palettes[Math.floor(Math.random() * palettes.length)];
@@ -328,11 +331,7 @@
 
     class Firework {
         constructor(x, y, targetX, targetY, type) {
-            this.x = x;
-            this.y = y;
-            this.targetX = targetX;
-            this.targetY = targetY;
-            this.type = type; 
+            this.x = x; this.y = y; this.targetX = targetX; this.targetY = targetY; this.type = type;
             const angle = Math.atan2(targetY - y, targetX - x);
             const speed = random(13, 17);
             this.vx = Math.cos(angle) * speed;
@@ -344,9 +343,7 @@
         update(index) {
             this.trail.push({x: this.x, y: this.y});
             if(this.trail.length > 4) this.trail.shift();
-            this.x += this.vx;
-            this.y += this.vy;
-            this.vy += 0.05;
+            this.x += this.vx; this.y += this.vy; this.vy += 0.05;
             const dist = Math.sqrt(Math.pow(this.x - this.targetX, 2) + Math.pow(this.y - this.targetY, 2));
             if (dist < 20 || (this.vy >= 0 && this.y < canvas.height - 100)) {
                 createExplosion(this.x, this.y, this.type);
@@ -358,51 +355,34 @@
             ctx.moveTo(this.trail[0]?.x || this.x, this.trail[0]?.y || this.y);
             ctx.lineTo(this.x, this.y);
             ctx.strokeStyle = `hsl(${this.hue}, 100%, 60%)`;
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-            ctx.stroke();
+            ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.stroke();
         }
     }
 
     class Particle {
         constructor(x, y, hue, type) {
-            this.x = x;
-            this.y = y;
-            this.hue = hue;
-            this.type = type;
-            this.alpha = 1;
-            this.decay = random(0.008, 0.015);
+            this.x = x; this.y = y; this.hue = hue; this.type = type;
+            this.alpha = 1; this.decay = random(0.008, 0.015);
             const config = getScreenConfig();
             const speed = type === 'big' ? random(4, 8) : random(2, 5);
             const angle = random(0, Math.PI * 2);
             this.vx = Math.cos(angle) * speed;
             this.vy = Math.sin(angle) * speed;
-            this.friction = 0.95;
-            this.gravity = 0.05;
+            this.friction = 0.95; this.gravity = 0.05;
             this.size = random(1, 3) * config.scale;
-            if (type === 'big') {
-                this.friction = 0.93;
-                this.sparkle = Math.random() < 0.3;
-            }
+            if (type === 'big') { this.friction = 0.93; this.sparkle = Math.random() < 0.3; }
         }
         update(index) {
-            this.vx *= this.friction;
-            this.vy *= this.friction;
-            this.vy += this.gravity;
-            this.x += this.vx;
-            this.y += this.vy;
-            this.alpha -= this.decay;
+            this.vx *= this.friction; this.vy *= this.friction; this.vy += this.gravity;
+            this.x += this.vx; this.y += this.vy; this.alpha -= this.decay;
             if (this.type === 'big' && this.sparkle) this.alpha = random(0.4, 1);
             if (this.alpha <= 0.01) particles.splice(index, 1);
         }
         draw() {
-            ctx.save();
-            ctx.globalAlpha = this.alpha;
+            ctx.save(); ctx.globalAlpha = this.alpha;
             ctx.fillStyle = `hsl(${this.hue}, 100%, 60%)`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill(); ctx.restore();
         }
     }
 
@@ -427,19 +407,16 @@
         switch(stage) {
             case 'intro':
                 neonContainer.style.display = 'none';
-                line1.style.opacity = '0';
-                line2.style.opacity = '0';
+                line1.style.opacity = '0'; line2.style.opacity = '0';
                 for(let i=0; i<3; i++) {
                     setTimeout(() => {
                         fireworks.push(new Firework(
                             random(canvas.width*0.2, canvas.width*0.8), canvas.height,
-                            random(canvas.width*0.3, canvas.width*0.7), random(canvas.height*0.2, canvas.height*0.5),
-                            'short'
+                            random(canvas.width*0.3, canvas.width*0.7), random(canvas.height*0.2, canvas.height*0.5), 'short'
                         ));
                     }, i * 800);
                 }
-                delayNext = 3000;
-                break;
+                delayNext = 3000; break;
             case 'show_text':
                 neonContainer.style.display = 'block';
                 setTimeout(() => { line1.style.opacity = '1'; }, 100);
@@ -448,87 +425,175 @@
                     setTimeout(() => {
                         fireworks.push(new Firework(
                             random(0, canvas.width), canvas.height,
-                            random(canvas.width*0.1, canvas.width*0.9), random(canvas.height*0.1, canvas.height*0.5),
-                            'small'
+                            random(canvas.width*0.1, canvas.width*0.9), random(canvas.height*0.1, canvas.height*0.5), 'small'
                         ));
                     }, i * 1000);
                 }
-                delayNext = 5000;
-                break;
+                delayNext = 5000; break;
             case 'mix_firework':
                 for(let i=0; i<3; i++) {
                     setTimeout(() => {
                         fireworks.push(new Firework(
                             random(canvas.width*0.1, canvas.width*0.9), canvas.height,
-                            random(canvas.width*0.2, canvas.width*0.8), random(canvas.height*0.2, canvas.height*0.6),
-                            'big'
+                            random(canvas.width*0.2, canvas.width*0.8), random(canvas.height*0.2, canvas.height*0.6), 'big'
                         ));
                     }, i * 1500);
                 }
-                delayNext = 5000;
-                break;
+                delayNext = 5000; break;
             case 'finale':
-                line1.style.opacity = '0';
-                line2.style.opacity = '0';
+                line1.style.opacity = '0'; line2.style.opacity = '0';
                 playSound('long');
-                const duration = 25000; 
+                const duration = 25000;
                 const interval = setInterval(() => {
                     const type = Math.random() < 0.5 ? 'big' : 'small';
                     fireworks.push(new Firework(
                         random(0, canvas.width), canvas.height,
-                        random(0, canvas.width), random(canvas.height*0.1, canvas.height*0.7),
-                        type
+                        random(0, canvas.width), random(canvas.height*0.1, canvas.height*0.7), type
                     ));
-                }, 300); 
+                }, 300);
                 setTimeout(() => {
                     clearInterval(interval);
-                    setTimeout(nextStage, 5000); 
-                }, duration);
-                return; 
+                    setTimeout(nextStage, 5000);
+                               }, duration);
+                return;
         }
-        if (stage !== 'finale') {
-            setTimeout(nextStage, delayNext);
-        }
+        if (stage !== 'finale') setTimeout(nextStage, delayNext);
     }
 
     function loop() {
         requestAnimationFrame(loop);
-        frame++;
         ctx.globalCompositeOperation = 'destination-out';
         ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.globalCompositeOperation = 'lighter';
-        for (let i = fireworks.length - 1; i >= 0; i--) {
-            fireworks[i].update(i);
-            fireworks[i].draw();
-        }
-        for (let i = particles.length - 1; i >= 0; i--) {
-            particles[i].update(i);
-            particles[i].draw();
-        }
+        for (let i = fireworks.length - 1; i >= 0; i--) { fireworks[i].update(i); fireworks[i].draw(); }
+        for (let i = particles.length - 1; i >= 0; i--) { particles[i].update(i); particles[i].draw(); }
     }
 
+    // CLICK BẮT ĐẦU PHÁO HOA
     overlay.addEventListener('click', () => {
-        // KIỂM TRA: Chỉ cho phép click khi đã hết giờ đếm ngược
         if (!canStart) return;
-
         overlay.style.opacity = '0';
         setTimeout(() => { 
             overlay.style.display = 'none'; 
-            luckyLink.classList.add('show');
+            luckyBtn.classList.add('show'); // Hiện nút Lì Xì
         }, 1000);
-
         isPlaying = true;
         const s = new Audio(); s.play().catch(()=>{});
         nextStage();
     });
 
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-
+    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
     loop();
+
+
+    // ============================================
+    // PHẦN 2: LOGIC GAME LÌ XÌ
+    // ============================================
+    const PASS_USER = "0879546673";
+    const PASS_ADMIN = "0347432736";
+    const MENH_GIA = ["10k", "20k", "50k", "100k", "200k", "100k", "50k", "200k", "20k"];
+    const KEY_STATUS = 'da_mo_lixi_2026';
+    const KEY_HISTORY = 'lich_su_lixi_2026';
+
+    function openGame() {
+        document.getElementById('game-modal').style.display = 'flex';
+        checkGameStatus();
+    }
+
+    function closeGame() {
+        document.getElementById('game-modal').style.display = 'none';
+    }
+
+    function checkGameStatus() {
+        if(localStorage.getItem(KEY_STATUS)) {
+            document.getElementById('game-msg').innerText = "Máy này đã mở lì xì rồi!";
+            document.getElementById('btnLoginGame').innerText = "ĐÃ MỞ RỒI";
+            document.getElementById('btnLoginGame').disabled = true;
+        } else {
+            document.getElementById('game-msg').innerText = "";
+            document.getElementById('btnLoginGame').innerText = "VÀO NHẬN LÌ XÌ";
+            document.getElementById('btnLoginGame').disabled = false;
+        }
+    }
+
+    function checkPassGame() {
+        const inp = document.getElementById('passInput').value;
+        if (inp === PASS_USER) {
+            if(localStorage.getItem(KEY_STATUS)) {
+                alert("Bạn đã mở rồi! Muốn mở lại hãy nhờ Admin reset.");
+                return;
+            }
+            document.getElementById('login-area').style.display = 'none';
+            document.getElementById('game-area').style.display = 'block';
+            taoLixi();
+        } else {
+            document.getElementById('game-msg').innerText = "Sai mật khẩu rồi! Thử lại đi.";
+        }
+    }
+
+    function taoLixi() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = "";
+        for(let i=0; i<9; i++) {
+            let box = document.createElement('div');
+            box.className = 'lixi';
+            box.onclick = function() { moLixi() };
+            grid.appendChild(box);
+        }
+    }
+
+    function moLixi() {
+        const tien = MENH_GIA[Math.floor(Math.random() * MENH_GIA.length)];
+        document.getElementById('result-popup').style.display = 'flex';
+        document.getElementById('res-money').innerText = tien;
+        localStorage.setItem(KEY_STATUS, 'true');
+        luuLichSu(tien);
+    }
+
+    function luuLichSu(tien) {
+        let history = localStorage.getItem(KEY_HISTORY);
+        let arr = history ? JSON.parse(history) : [];
+        arr.push({ "Thời Gian": new Date().toLocaleString('vi-VN'), "Mệnh Giá": tien, "Ghi Chú": "Hợp lệ" });
+        localStorage.setItem(KEY_HISTORY, JSON.stringify(arr));
+    }
+
+
+    // ============================================
+    // PHẦN 3: ADMIN
+    // ============================================
+    function openAdmin() {
+        let pass = prompt("Nhập mật khẩu Quản Trị Viên:");
+        if (pass === PASS_ADMIN) {
+            document.getElementById('admin-panel').style.display = 'block';
+        } else if (pass !== null) alert("Sai mật khẩu Admin!");
+    }
+
+    function adminUnlock() {
+        // Mở khóa đếm ngược và cho phép test game
+        unlockShow(); // Hàm của phần pháo hoa
+        document.getElementById('admin-panel').style.display = 'none';
+        alert("Đã mở khóa toàn bộ! Hãy bấm vào màn hình để bắt đầu.");
+    }
+
+    function resetLuotChoi() {
+        if(confirm("Bạn có chắc muốn cho người này chơi lại không?")) {
+            localStorage.removeItem(KEY_STATUS);
+            alert("Đã Reset! Giờ họ có thể mở lì xì lại.");
+            checkGameStatus(); // Cập nhật lại giao diện game nếu đang mở
+        }
+    }
+
+    function xuatExcel() {
+        let dataStr = localStorage.getItem(KEY_HISTORY);
+        let data = dataStr ? JSON.parse(dataStr) : [];
+        if (data.length === 0) { alert("Chưa có dữ liệu nào để xuất!"); return; }
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "DanhSachLixi");
+        XLSX.writeFile(wb, "Danh_Sach_Trung_Lixi_2026.xlsx");
+    }
+
 </script>
 </body>
 </html>
