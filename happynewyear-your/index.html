@@ -16,21 +16,6 @@
             display: block;
         }
 
-        /* --- NÚT ADMIN --- */
-        .btn-gear {
-            position: absolute;
-            top: 20px;
-            right: 20px; /* Góc phải trên cùng */
-            font-size: 24px;
-            cursor: pointer;
-            color: rgba(255, 255, 255, 0.3); /* Mờ đi để khách không để ý */
-            z-index: 2000; /* Cao hơn overlay */
-            transition: color 0.3s;
-        }
-        .btn-gear:hover {
-            color: rgba(255, 255, 255, 1);
-        }
-
         /* --- PHẦN TEXT NEON --- */
         #neon-container {
             position: absolute;
@@ -93,7 +78,7 @@
             100% { transform: scale(1.1) rotate(2deg); }
         }
 
-        /* --- NÚT LÌ XÌ --- */
+        /* --- NÚT LÌ XÌ Ở GÓC PHẢI --- */
         #lucky-money-link {
             position: fixed;
             bottom: 20px;
@@ -118,103 +103,249 @@
              pointer-events: auto;
         }
 
-        /* --- OVERLAY MỞ ĐẦU & ĐẾM NGƯỢC --- */
+        /* --- OVERLAY MỞ ĐẦU --- */
         #overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0,0,0,0.9);
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
             color: white;
             z-index: 999;
+            cursor: pointer;
             text-align: center;
             user-select: none;
             transition: opacity 1s ease;
         }
         #overlay h1 {
             color: #ffcc00;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-size: 24px;
             text-shadow: 0 0 20px #ff6600;
         }
-
-        /* Style cho đồng hồ đếm ngược */
-        #countdown {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+        #overlay p {
+            animation: pulse 1.5s infinite;
         }
-        .time-box {
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        /* --- BỘ ĐẾM NGƯỢC --- */
+        #countdown-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            z-index: 1001;
+            text-align: center;
+        }
+
+        #countdown-title {
+            color: #ffcc00;
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #ff9900;
+        }
+
+        #countdown-timer {
+            font-size: 48px;
+            font-weight: bold;
+            color: #00ffaa;
+            text-shadow: 0 0 10px #00ffaa;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .time-unit {
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 8px;
-            min-width: 60px;
-            border: 1px solid rgba(255, 204, 0, 0.3);
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            min-width: 100px;
         }
-        .time-val {
-            font-size: 30px;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 10px #ff00de;
+
+        .time-value {
+            font-size: 56px;
+            line-height: 1;
         }
+
         .time-label {
-            font-size: 12px;
+            font-size: 16px;
             color: #ccc;
             margin-top: 5px;
         }
 
-        /* Dòng chữ hướng dẫn click (ẩn ban đầu) */
-        #start-instruction {
-            color: #ccc;
-            font-size: 16px;
-            animation: pulse 1.5s infinite;
-            display: none; /* Ẩn cho đến khi hết giờ */
-            cursor: pointer;
+        #admin-bypass {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1002;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.05); opacity: 1; }
+        #admin-btn {
+            background: rgba(255, 204, 0, 0.2);
+            color: #ffcc00;
+            border: 2px solid #ffcc00;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        #admin-btn:hover {
+            background: rgba(255, 204, 0, 0.4);
+            transform: scale(1.05);
+        }
+
+        #password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1003;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #ffcc00;
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        #password-input {
+            width: 100%;
+            padding: 12px;
+            margin: 20px 0;
+            font-size: 18px;
+            text-align: center;
+            border: 2px solid #00ffaa;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            outline: none;
+        }
+
+        #password-input:focus {
+            box-shadow: 0 0 15px rgba(0, 255, 170, 0.5);
+        }
+
+        .modal-btn {
+            background: linear-gradient(45deg, #ff9900, #ffcc00);
+            color: black;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 10px;
+            transition: all 0.3s;
+        }
+
+        .modal-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+        }
+
+        #countdown-message {
+            margin-top: 20px;
+            color: #ccc;
+            font-size: 18px;
+        }
+
+        @media (max-width: 600px) {
+            #countdown-timer {
+                font-size: 32px;
+                flex-wrap: wrap;
+            }
+            .time-unit {
+                min-width: 80px;
+                padding: 8px 12px;
+            }
+            .time-value {
+                font-size: 40px;
+            }
+            #countdown-title {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="btn-gear" onclick="unlockAdmin()">⚙️</div>
-
-<div id="overlay">
-    <h1>✨ Gửi: Trương Thị Dương ✨</h1>
-
-    <div id="countdown">
-        <div class="time-box">
-            <span class="time-val" id="days">00</span>
-            <span class="time-label">Ngày</span>
+<!-- Bộ đếm ngược -->
+<div id="countdown-overlay">
+    <div id="countdown-title">🎉 CHÚC MỪNG NĂM MỚI 2026 🎉</div>
+    <div id="countdown-timer">
+        <div class="time-unit">
+            <div class="time-value" id="days">00</div>
+            <div class="time-label">NGÀY</div>
         </div>
-        <div class="time-box">
-            <span class="time-val" id="hours">00</span>
-            <span class="time-label">Giờ</span>
+        <div class="time-unit">
+            <div class="time-value" id="hours">00</div>
+            <div class="time-label">GIỜ</div>
         </div>
-        <div class="time-box">
-            <span class="time-val" id="minutes">00</span>
-            <span class="time-label">Phút</span>
+        <div class="time-unit">
+            <div class="time-value" id="minutes">00</div>
+            <div class="time-label">PHÚT</div>
         </div>
-        <div class="time-box">
-            <span class="time-val" id="seconds">00</span>
-            <span class="time-label">Giây</span>
+        <div class="time-unit">
+            <div class="time-value" id="seconds">00</div>
+            <div class="time-label">GIÂY</div>
         </div>
     </div>
+    <div id="countdown-message">Thời gian còn lại đến Giao Thừa 17/02/2026</div>
+</div>
 
-    <p id="waiting-text" style="color: #888; font-style: italic;">Sắp đến giờ nhận lì xì rồi...</p>
+<!-- Modal nhập mật khẩu -->
+<div id="password-modal">
+    <div class="modal-content">
+        <h2 style="color: #ffcc00; margin-bottom: 20px;">🔐 Nhập Mật Khẩu Admin</h2>
+        <input type="password" id="password-input" placeholder="Nhập mật khẩu...">
+        <div style="margin-top: 20px;">
+            <button class="modal-btn" onclick="checkPassword()">Xác Nhận</button>
+            <button class="modal-btn" onclick="closePasswordModal()" style="background: #666; color: white;">Hủy</button>
+        </div>
+        <p id="password-error" style="color: #ff4444; margin-top: 15px; display: none;">Mật khẩu không chính xác!</p>
+    </div>
+</div>
 
-    <p id="start-instruction">(Chạm màn hình để mở quà)</p>
+<!-- Nút admin (ẩn) -->
+<div id="admin-bypass">
+    <button id="admin-btn" onclick="showPasswordModal()">Quản Trị Viên</button>
+</div>
+
+<!-- Phần overlay chính -->
+<div id="overlay" style="display: none;">
+    <h1>✨ Gửi: Trương Thị Dương ✨</h1>
+    <p>(Chạm màn hình để bắt đầu)</p>
 </div>
 
 <div id="neon-container">
@@ -229,71 +360,7 @@
 <canvas id="canvas"></canvas>
 
 <script>
-    // --- CẤU HÌNH THỜI GIAN ---
-    const targetDate = new Date("February 17, 2026 00:00:00").getTime();
-    const ADMIN_PASS = "0347432736"; // Mật khẩu Admin
-    let canStart = false; 
-
-    // Các element đếm ngược
-    const elDays = document.getElementById('days');
-    const elHours = document.getElementById('hours');
-    const elMinutes = document.getElementById('minutes');
-    const elSeconds = document.getElementById('seconds');
-    const elCountdown = document.getElementById('countdown');
-    const elWaitingText = document.getElementById('waiting-text');
-    const elInstruction = document.getElementById('start-instruction');
-
-    // --- HÀM MỞ KHÓA ADMIN ---
-    function unlockAdmin() {
-        let pass = prompt("Nhập mật khẩu Admin để bỏ qua đếm ngược:");
-        if (pass === ADMIN_PASS) {
-            // Dừng đồng hồ
-            clearInterval(timerInterval);
-            canStart = true;
-            
-            // Cập nhật giao diện ngay lập tức
-            elCountdown.style.display = 'none';
-            elWaitingText.style.display = 'none';
-            elInstruction.style.display = 'block';
-            document.querySelector('#overlay h1').innerText = "✨ CHẾ ĐỘ ADMIN ĐÃ MỞ ✨";
-            
-            alert("Đã mở khóa! Chạm vào màn hình để bắt đầu.");
-        } else if (pass !== null) {
-            alert("Sai mật khẩu!");
-        }
-    }
-
-    // Hàm cập nhật đếm ngược
-    function updateCountdown() {
-        const now = new Date().getTime();
-        const distance = targetDate - now;
-
-        if (distance < 0) {
-            clearInterval(timerInterval);
-            canStart = true;
-            elCountdown.style.display = 'none';
-            elWaitingText.style.display = 'none';
-            elInstruction.style.display = 'block';
-            document.querySelector('#overlay h1').innerText = "✨ ĐÃ ĐẾN GIỜ HOÀNG ĐẠO ✨";
-            return;
-        }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        elDays.innerText = days < 10 ? '0' + days : days;
-        elHours.innerText = hours < 10 ? '0' + hours : hours;
-        elMinutes.innerText = minutes < 10 ? '0' + minutes : minutes;
-        elSeconds.innerText = seconds < 10 ? '0' + seconds : seconds;
-    }
-
-    const timerInterval = setInterval(updateCountdown, 1000);
-    updateCountdown();
-
-    // ---------------------------------------------------------
-
+    // Biến toàn cục
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     const overlay = document.getElementById('overlay');
@@ -301,6 +368,10 @@
     const line1 = document.getElementById('line1');
     const line2 = document.getElementById('line2');
     const luckyLink = document.getElementById('lucky-money-link');
+    const countdownOverlay = document.getElementById('countdown-overlay');
+    const passwordModal = document.getElementById('password-modal');
+    const passwordInput = document.getElementById('password-input');
+    const passwordError = document.getElementById('password-error');
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -310,9 +381,112 @@
     let frame = 0;
     let isPlaying = false;
     let currentStage = -1;
+    let targetDate = new Date('2026-02-17T00:00:00').getTime(); // 00:00 ngày 17/02/2026
+    let adminUnlocked = false;
+    let countdownInterval;
 
     const stages = ['intro', 'show_text', 'mix_firework', 'finale'];
 
+    // Hàm định dạng số với 2 chữ số
+    function formatTime(number) {
+        return number.toString().padStart(2, '0');
+    }
+
+    // Hàm cập nhật bộ đếm ngược
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const timeLeft = targetDate - now;
+
+        if (timeLeft <= 0) {
+            // Đã đến thời điểm
+            clearInterval(countdownInterval);
+            startFireworks();
+            return;
+        }
+
+        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        // Cập nhật DOM
+        document.getElementById('days').textContent = formatTime(days);
+        document.getElementById('hours').textContent = formatTime(hours);
+        document.getElementById('minutes').textContent = formatTime(minutes);
+        document.getElementById('seconds').textContent = formatTime(seconds);
+    }
+
+    // Khởi tạo bộ đếm ngược
+    updateCountdown();
+    countdownInterval = setInterval(updateCountdown, 1000);
+
+    // Hàm bắt đầu pháo hoa
+    function startFireworks() {
+        countdownOverlay.style.display = 'none';
+        overlay.style.display = 'flex';
+        isPlaying = true;
+        document.getElementById('admin-bypass').style.display = 'none';
+        
+        // Bắt đầu hiệu ứng
+        setTimeout(() => {
+            nextStage();
+        }, 1000);
+    }
+
+    // Hàm hiển thị modal mật khẩu
+    function showPasswordModal() {
+        passwordModal.style.display = 'flex';
+        passwordInput.focus();
+    }
+
+    // Hàm đóng modal mật khẩu
+    function closePasswordModal() {
+        passwordModal.style.display = 'none';
+        passwordInput.value = '';
+        passwordError.style.display = 'none';
+    }
+
+    // Hàm kiểm tra mật khẩu
+    function checkPassword() {
+        const password = passwordInput.value;
+        
+        if (password === '0347432736') {
+            adminUnlocked = true;
+            closePasswordModal();
+            clearInterval(countdownInterval);
+            startFireworks();
+        } else {
+            passwordError.style.display = 'block';
+            passwordInput.value = '';
+            passwordInput.focus();
+            
+            // Rung lắc input
+            passwordInput.style.animation = 'none';
+            setTimeout(() => {
+                passwordInput.style.animation = 'shake 0.5s';
+            }, 10);
+        }
+    }
+
+    // Thêm CSS cho hiệu ứng rung
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Xử lý phím Enter trong input mật khẩu
+    passwordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            checkPassword();
+        }
+    });
+
+    // Phần code pháo hoa (giữ nguyên từ code trước)
     function getScreenConfig() {
         const area = canvas.width * canvas.height;
         if (area < 300000) return { scale: 0.5, countMult: 0.6 };
@@ -538,9 +712,6 @@
     }
 
     overlay.addEventListener('click', () => {
-        // KIỂM TRA: Chỉ cho phép click khi đã hết giờ đếm ngược HOẶC Admin đã mở khóa
-        if (!canStart) return;
-
         overlay.style.opacity = '0';
         setTimeout(() => { 
             overlay.style.display = 'none'; 
