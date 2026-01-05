@@ -13,13 +13,27 @@
             font-family: 'Arial', sans-serif;
         }
 
-        /* Nền trời đen sâu thẳm */
+        /* Nền tối */
         #bg-canvas {
             position: absolute;
             top: 0;
             left: 0;
             z-index: 0;
-            background: radial-gradient(circle at center, #111 0%, #000 100%);
+            background: radial-gradient(circle at center, #1a0b1a 0%, #000000 100%);
+        }
+
+        /* Lớp chớp màn hình (Flash Effect) */
+        #flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 900;
+            transition: opacity 0.1s ease-out; /* Tắt nhanh */
         }
 
         /* --- SÂN KHẤU 3D --- */
@@ -42,6 +56,8 @@
             left: 0;
             transform-style: preserve-3d;
             will-change: transform;
+            opacity: 0; /* Ẩn mặc định để hiện tuần tự */
+            transition: opacity 1.5s ease;
         }
 
         /* Animation xoay */
@@ -52,7 +68,6 @@
             from { transform: rotateX(75deg) rotateZ(0deg); }
             to { transform: rotateX(75deg) rotateZ(360deg); }
         }
-
         @keyframes spinLeft {
             from { transform: rotateX(75deg) rotateZ(360deg); }
             to { transform: rotateX(75deg) rotateZ(0deg); }
@@ -70,19 +85,13 @@
             color: #fff;
             white-space: nowrap;
             transform-style: preserve-3d;
-            /* Glow rực rỡ */
-            text-shadow: 
-                0 0 5px #fff,
-                0 0 10px currentColor,
-                0 0 20px currentColor;
+            text-shadow: 0 0 5px #fff, 0 0 10px currentColor, 0 0 20px currentColor;
         }
-
         .color-cyan { color: #00ffff; }
         .color-gold { color: #ffcc00; }
 
         /* UI */
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
-
         #lucky-money-link {
             position: fixed; bottom: 30px; right: 30px; font-size: 60px; text-decoration: none; z-index: 1000;
             transition: all 0.5s ease; cursor: pointer; opacity: 0; transform: translateY(20px); pointer-events: none;
@@ -98,23 +107,16 @@
             transition: opacity 0.8s;
             cursor: pointer;
         }
-        
-        #intro-overlay h1 { 
-            color: #ffcc00; 
-            font-size: 32px; 
-            text-shadow: 0 0 20px #ff6600; 
-            animation: pulse 1s infinite alternate; 
-            margin-bottom: 15px;
-        }
-
+        #intro-overlay h1 { color: #ffcc00; font-size: 32px; text-shadow: 0 0 20px #ff6600; animation: pulse 1s infinite alternate; margin-bottom: 15px; }
         .time-box { display: inline-block; margin: 0 10px; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; min-width: 70px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); }
         .time-val { font-size: 36px; font-weight: bold; color: #00ffaa; text-shadow: 0 0 10px #00ffaa; }
         .time-lbl { font-size: 12px; color: #ccc; margin-top: 5px; letter-spacing: 1px; }
-
         @keyframes pulse { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.05); opacity: 1; } }
     </style>
 </head>
 <body>
+
+<div id="flash-overlay"></div>
 
 <div id="countdown-overlay" class="overlay-screen">
     <h2 style="color:#ffcc00; margin-bottom: 40px; font-size: 24px; letter-spacing: 2px;">⏳ SẮP ĐẾN GIAO THỪA ⏳</h2>
@@ -151,22 +153,23 @@
     let fireworks = [];
     let particles = [];
     const stageDiv = document.getElementById('stage-container');
+    const ring1 = document.getElementById('ring-1');
+    const ring2 = document.getElementById('ring-2');
     const introOverlay = document.getElementById('intro-overlay');
     const countdownOverlay = document.getElementById('countdown-overlay');
+    const flashOverlay = document.getElementById('flash-overlay');
 
-    // --- SETUP CHỮ DRONE ---
+    // --- DRONE TEXT SETUP ---
     function createRing(elementId, text, radius, colorClass, fontSize) {
         const container = document.getElementById(elementId);
         container.innerHTML = '';
         const chars = text.split('');
         const step = 360 / chars.length;
-
         chars.forEach((char, i) => {
             const angle = i * step;
             const rad = angle * (Math.PI / 180);
             const x = Math.cos(rad) * radius;
             const y = Math.sin(rad) * radius;
-
             const span = document.createElement('div');
             span.className = `drone-char ${colorClass}`;
             span.innerText = char;
@@ -184,27 +187,38 @@
         createRing('ring-2', "TRƯƠNG THỊ DƯƠNG  ★  ", rScale * 0.5, 'color-gold', isMobile ? 22 : 38);
     }
     initRings();
-
     function getScaleFactor() { return window.innerWidth < 600 ? 0.6 : 1.0; }
 
+    // --- SOUNDS ---
     const sounds = {
         launch: new Audio('https://nguyenbacson.io.vn/moi-ban.mp3'),
-        short: new Audio('https://nguyenbacson.io.vn/no-ngan.mp3'),
-        small: new Audio('https://nguyenbacson.io.vn/chum-be.mp3'),
-        big: new Audio('https://nguyenbacson.io.vn/chum-to.mp3'),
+        short: new Audio('https://nguyenbacson.io.vn/no-ngan.mp3'), // Nổ bé
+        big: new Audio('https://nguyenbacson.io.vn/chum-to.mp3'),   // Nổ to
         finale: new Audio('https://nguyenbacson.io.vn/chum-dai.mp3')
     };
     sounds.launch.volume = 0.3; 
     sounds.finale.volume = 0.8;
+    sounds.big.volume = 1.0; // Nổ to tiếng lớn nhất
 
     function playSound(type) {
         if(!isPlaying) return;
         if(type === 'finale') { sounds.finale.currentTime=0; sounds.finale.play().catch(()=>{}); return; }
-        const s = sounds[type];
+        
+        // Mapping type sang sound
+        let s;
+        if (type === 'mega') s = sounds.big; // Quả to thì dùng tiếng to
+        else s = sounds.short; // Quả bé dùng tiếng ngắn
+
         if(s) { const c = s.cloneNode(); c.volume = s.volume; c.play().catch(()=>{}); }
     }
 
-    // --- PHÁO HOA TỐI ƯU ---
+    // --- FLASH EFFECT ---
+    function triggerFlash() {
+        flashOverlay.style.opacity = 0.6; // Chớp trắng
+        setTimeout(() => { flashOverlay.style.opacity = 0; }, 80); // Tắt cực nhanh
+    }
+
+    // --- PHYSICS PHÁO HOA MỚI ---
     function random(min, max) { return Math.random() * (max - min) + min; }
 
     class Firework {
@@ -212,26 +226,24 @@
             const scale = getScaleFactor();
             this.x = random(canvas.width * 0.2, canvas.width * 0.8);
             this.y = canvas.height;
-            this.targetY = random(canvas.height * (scale < 1 ? 0.2 : 0.1), canvas.height * 0.5);
+            this.targetY = random(canvas.height * 0.1, canvas.height * 0.5);
             
-            // Bay rất nhanh
             this.vx = random(-0.5, 0.5); 
             this.vy = -random(14, 19) * (scale < 1 ? 0.85 : 1); 
             
-            this.type = type;
+            this.type = type; // 'normal' hoặc 'mega'
             this.hue = random(0, 360);
             this.dead = false;
             this.trail = [];
             playSound('launch');
         }
         update() {
-            // Đuôi cực ngắn (chỉ lưu 2 điểm) -> Tan biến ngay khi nổ
             this.trail.push({x:this.x, y:this.y});
             if(this.trail.length > 2) this.trail.shift();
 
             this.x += this.vx;
             this.y += this.vy;
-            this.vy += 0.3; // Trọng lực
+            this.vy += 0.3; 
             
             if(this.vy >= 0 || this.y <= this.targetY) {
                 this.dead = true;
@@ -243,9 +255,8 @@
             if(this.trail.length) ctx.moveTo(this.trail[0].x, this.trail[0].y);
             else ctx.moveTo(this.x, this.y+10);
             ctx.lineTo(this.x, this.y);
-            // Màu trắng pha chút màu gốc để tạo cảm giác sáng chói khi bắn
-            ctx.strokeStyle = `hsl(${this.hue}, 50%, 80%)`;
-            ctx.lineWidth = 1.5 * getScaleFactor(); // Mảnh
+            ctx.strokeStyle = `hsl(${this.hue},100%,70%)`;
+            ctx.lineWidth = (this.type === 'mega' ? 3 : 1.5) * getScaleFactor();
             ctx.stroke();
         }
     }
@@ -255,47 +266,35 @@
             const scale = getScaleFactor();
             this.x = x; this.y = y;
             const angle = random(0, Math.PI*2);
-            let baseSpeed = (type==='big') ? random(6, 12) : random(3, 8);
+            
+            // Quả to (mega) thì bung rộng hơn
+            let baseSpeed = (type === 'mega') ? random(10, 18) : random(3, 8);
             const speed = baseSpeed * scale; 
             
             this.vx = Math.cos(angle)*speed;
             this.vy = Math.sin(angle)*speed;
             
             this.alpha = 1;
-            // Decay thấp hơn một chút để hạt tồn tại lâu hơn xíu cho hiệu ứng nhấp nháy
-            this.decay = (type==='big') ? random(0.015, 0.03) : random(0.03, 0.05);
+            // Decay nhanh (0.04 - 0.08) -> Tan biến nhanh, ko rơi nhiều
+            this.decay = random(0.04, 0.08); 
+            if (type === 'mega') this.decay = random(0.02, 0.05); // Quả to tan lâu hơn xíu
             
             this.hue = hue + random(-20,20);
             this.dead = false;
-            this.gravity = 0.12; // Rơi tự nhiên
-            this.size = (type==='big' ? 2.5 : 1.5) * scale;
-            
-            // Tính năng nhấp nháy
-            this.shimmer = true; 
+            this.gravity = 0.1; // Trọng lực nhẹ để ko rơi nhanh quá
+            this.size = (type === 'mega' ? 3 : 1.5) * scale;
+            this.type = type;
         }
         update() {
             this.x += this.vx; this.y += this.vy;
-            
-            // Thêm lực cản không khí để hạt bung ra rồi rơi chậm lại
-            this.vx *= 0.92; 
-            this.vy *= 0.92;
+            this.vx *= 0.9; this.vy *= 0.9; // Ma sát không khí
             this.vy += this.gravity;
             
             this.alpha -= this.decay;
-
-            // HIỆU ỨNG NHẤP NHÁY (TWINKLE)
-            if(this.shimmer && this.alpha > 0.2) {
-                // Random làm hạt sáng lại một chút
-                if(Math.random() < 0.15) {
-                    this.alpha = Math.min(1, this.alpha + 0.3);
-                }
-            }
-
             if(this.alpha<=0) this.dead = true;
         }
         draw() {
             ctx.globalAlpha = this.alpha;
-            // Hạt sáng trắng ở tâm
             ctx.fillStyle = `hsl(${this.hue}, 100%, 60%)`;
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
@@ -305,19 +304,24 @@
     }
 
     function explode(x, y, type, hue) {
-        if(type !== 'finale') playSound(type);
+        if(type !== 'finale') playSound(type); // 'mega' hoặc 'normal'
+        
+        // Nếu là quả to -> Trigger Flash
+        if (type === 'mega') triggerFlash();
+
         let scale = getScaleFactor();
-        let count = (type==='big') ? 80 : 30; // Số lượng hạt vừa phải
+        let count = (type === 'mega') ? 120 : 30; // Quả to nhiều hạt hơn
         if (scale < 1) count = Math.floor(count * 0.7); 
+
         for(let i=0; i<count; i++) particles.push(new Particle(x, y, hue, type));
     }
 
     function loop() {
         requestAnimationFrame(loop);
         
-        // Xóa màn hình với độ mờ cao (0.5) -> Xóa vệt cũ rất nhanh -> Đỡ lag & Sạch
+        // Xóa nhanh để sạch màn hình
         ctx.globalCompositeOperation = 'destination-out';
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'; 
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'; 
         ctx.fillRect(0,0,canvas.width, canvas.height);
         
         ctx.globalCompositeOperation = 'lighter';
@@ -333,7 +337,7 @@
     }
     loop();
 
-    // --- LOGIC ---
+    // --- LOGIC SCENARIO ---
     countdownOverlay.addEventListener('click', () => {
         countdownOverlay.style.opacity = 0;
         setTimeout(() => { 
@@ -345,7 +349,6 @@
     introOverlay.addEventListener('click', () => {
         introOverlay.style.opacity = 0;
         setTimeout(() => { introOverlay.style.display = 'none'; }, 800);
-        
         isPlaying = true;
         const s = new Audio(); s.play().catch(()=>{}); 
         runScenarioLoop();
@@ -354,43 +357,54 @@
     function runScenarioLoop() {
         if(!isPlaying) return;
         
-        // 1. Chữ 3D + Bắn nhẹ
+        // Reset Opacity
         stageDiv.style.display = 'block';
-        setTimeout(() => { stageDiv.style.opacity = 1; }, 100);
+        stageDiv.style.opacity = 1;
+        ring1.style.opacity = 0;
+        ring2.style.opacity = 0;
+
+        // 1. Hiện Vòng 1 (Chúc Mừng...) trước
+        setTimeout(() => { ring1.style.opacity = 1; }, 500);
+
+        // 2. Hiện Vòng 2 (Tên...) sau 5 giây
+        setTimeout(() => { ring2.style.opacity = 1; }, 5500);
         
-        let interval1 = setInterval(() => {
-            fireworks.push(new Firework('short'));
-        }, 1200);
+        // 3. Logic bắn pháo
+        let scenarioInterval = setInterval(() => {
+            // Tỉ lệ: 90% pháo thường, 10% pháo to (mega)
+            let type = Math.random() < 0.1 ? 'mega' : 'normal';
+            fireworks.push(new Firework(type));
+        }, 1000); // 1 giây bắn 1 quả cho đỡ rối
 
-        // 2. Bắn mạnh hơn
+        // 4. Kết thúc vòng lặp này, chuyển sang Finale
         setTimeout(() => {
-            clearInterval(interval1);
-            let interval2 = setInterval(() => {
-                fireworks.push(new Firework(Math.random()<0.5 ? 'small' : 'big'));
-            }, 800);
-            setTimeout(() => clearInterval(interval2), 7500);
-        }, 10000);
+            clearInterval(scenarioInterval);
+            // Chuẩn bị Finale
+        }, 15000);
 
-        // 3. Finale
+        // 5. Finale (15s - 40s)
         setTimeout(() => {
-            stageDiv.style.opacity = 0;
+            stageDiv.style.opacity = 0; 
             playSound('finale');
             document.getElementById('lucky-money-link').className = 'show';
+            
             let finaleEndTime = Date.now() + 25000;
             function autoFireFinale() {
                 if(Date.now() > finaleEndTime) return;
+                // Finale bắn dày hơn, cũng có tỉ lệ ra quả to
                 if(Math.random() < 0.15) { 
-                    fireworks.push(new Firework(Math.random()<0.6?'big':'small'));
+                    let type = Math.random() < 0.15 ? 'mega' : 'normal';
+                    fireworks.push(new Firework(type));
                 }
                 if(isPlaying) requestAnimationFrame(autoFireFinale);
             }
             autoFireFinale();
-        }, 18000);
+        }, 16000);
 
-        // 4. Lặp lại
+        // 6. Loop lại (Sau 42s)
         setTimeout(() => {
             runScenarioLoop();
-        }, 45000);
+        }, 42000);
     }
 
     let timer = setInterval(() => {
