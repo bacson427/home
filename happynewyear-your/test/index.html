@@ -13,72 +13,131 @@
             font-family: 'Arial', sans-serif;
         }
 
-        /* Nền tối */
+        /* Nền tối sâu thẳm */
         #bg-canvas {
             position: absolute;
             top: 0;
             left: 0;
             z-index: 0;
-            background: radial-gradient(circle at center, #111 0%, #000 100%);
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
         }
 
-        /* --- SÂN KHẤU 3D TỐI ƯU --- */
+        /* --- SÂN KHẤU 3D MỚI (KHÔNG LAG) --- */
         #stage-container {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 0;
-            height: 0;
-            perspective: 800px; /* Độ sâu 3D */
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            perspective: 1000px; /* Tạo chiều sâu */
             z-index: 2;
-            display: none; /* Ẩn mặc định */
-            transition: opacity 1.5s ease;
+            display: none;
             opacity: 0;
+            transition: opacity 2s ease;
+            pointer-events: none;
         }
 
-        .drone-ring {
-            position: absolute;
-            top: 0;
-            left: 0;
+        /* Khối chứa nội dung xoay 3D */
+        .content-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
             transform-style: preserve-3d;
-            will-change: transform; /* Báo trước cho trình duyệt để tối ưu */
+            /* Animation lắc lư nhẹ 3D */
+            animation: float3D 8s ease-in-out infinite alternate;
         }
 
-        /* Animation xoay bằng CSS (Mượt hơn JS) */
-        /* Vòng 1 xoay phải */
-        #ring-1 { animation: spinRight 20s linear infinite; }
-        /* Vòng 2 xoay trái */
-        #ring-2 { animation: spinLeft 25s linear infinite; }
+        /* Vòng tròn quỹ đạo (Orbit Rings) - Thay thế cho Drone */
+        .orbit-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transform-style: preserve-3d;
+            box-sizing: border-box;
+        }
 
-        @keyframes spinRight {
+        /* Vòng 1: Xoay ngang */
+        #orbit-1 {
+            width: 80vw;
+            height: 80vw;
+            max-width: 500px;
+            max-height: 500px;
+            margin-left: -40vw; /* Căn giữa thủ công vì position absolute */
+            margin-top: -40vw;
+            border-color: rgba(0, 255, 255, 0.5);
+            animation: spinOrbit1 15s linear infinite;
+        }
+        /* Vòng 2: Xoay chéo */
+        #orbit-2 {
+            width: 60vw;
+            height: 60vw;
+            max-width: 400px;
+            max-height: 400px;
+            margin-left: -30vw;
+            margin-top: -30vw;
+            border-color: rgba(255, 204, 0, 0.5);
+            animation: spinOrbit2 20s linear infinite;
+        }
+
+        /* TEXT 3D SIÊU NHẸ (Dùng Gradient thay Shadow) */
+        .main-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%) translateZ(60px); /* Đẩy chữ nổi lên trước vòng tròn */
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 1.4;
+        }
+
+        /* Dòng 1: Gradient Xanh */
+        #line1 {
+            font-size: 40px;
+            background: linear-gradient(to right, #fff, #00ffff, #fff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent; /* Chữ trong suốt để hiện nền gradient */
+            margin-bottom: 10px;
+        }
+
+        /* Dòng 2: Gradient Vàng */
+        #line2 {
+            font-size: 50px;
+            background: linear-gradient(to right, #ffcc00, #ff6600, #ffcc00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        @media (min-width: 600px) {
+            #orbit-1 { margin-left: -250px; margin-top: -250px; }
+            #orbit-2 { margin-left: -200px; margin-top: -200px; }
+        }
+
+        @media (max-width: 600px) {
+            #line1 { font-size: 26px; }
+            #line2 { font-size: 36px; }
+        }
+
+        /* Animation */
+        @keyframes float3D {
+            0% { transform: rotateX(10deg) rotateY(-10deg); }
+            100% { transform: rotateX(-10deg) rotateY(10deg); }
+        }
+
+        @keyframes spinOrbit1 {
             from { transform: rotateX(70deg) rotateZ(0deg); }
             to { transform: rotateX(70deg) rotateZ(360deg); }
         }
-
-        @keyframes spinLeft {
-            from { transform: rotateX(70deg) rotateZ(360deg); }
-            to { transform: rotateX(70deg) rotateZ(0deg); }
+        @keyframes spinOrbit2 {
+            from { transform: rotateY(60deg) rotateX(45deg) rotateZ(0deg); }
+            to { transform: rotateY(60deg) rotateX(45deg) rotateZ(360deg); }
         }
-
-        /* Chữ cái Drone */
-        .drone-char {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            text-align: center;
-            line-height: 40px;
-            font-weight: 900;
-            font-size: 24px;
-            color: #fff;
-            white-space: nowrap;
-            transform-style: preserve-3d;
-            /* Bóng đổ tối ưu: Ít lớp hơn để đỡ lag */
-            text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
-        }
-
-        /* Màu riêng cho từng vòng */
-        .color-cyan { color: #00ffff; text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; }
-        .color-gold { color: #ffcc00; text-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00; }
 
         /* --- CÁC PHẦN UI KHÁC --- */
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
@@ -90,7 +149,6 @@
         }
         #lucky-money-link.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
-        /* Overlays */
         .overlay-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -141,16 +199,22 @@
 <button id="admin-btn" onclick="document.getElementById('password-modal').style.display='flex'">Admin</button>
 
 <div id="stage-container">
-    <div id="ring-1" class="drone-ring"></div>
-    <div id="ring-2" class="drone-ring"></div>
+    <div class="content-wrapper">
+        <div id="orbit-1" class="orbit-ring"></div>
+        <div id="orbit-2" class="orbit-ring"></div>
+        
+        <div class="main-text">
+            <div id="line1">CHÚC MỪNG NĂM MỚI 2026</div>
+            <div id="line2">TRƯƠNG THỊ DƯƠNG</div>
+        </div>
+    </div>
 </div>
 
 <canvas id="canvas"></canvas>
-
 <a href="https://nguyenbacson.io.vn/happynewyear-your/quay-li-xi" id="lucky-money-link" target="_blank">🧧</a>
 
 <script>
-    // --- SETUP CƠ BẢN ---
+    // --- SETUP ---
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -162,47 +226,6 @@
     let particles = [];
     const stageDiv = document.getElementById('stage-container');
     
-    // --- TẠO CHỮ 3D (DRONE) ---
-    function createRing(elementId, text, radius, colorClass, fontSize) {
-        const container = document.getElementById(elementId);
-        container.innerHTML = '';
-        const chars = text.split('');
-        const step = 360 / chars.length;
-
-        chars.forEach((char, i) => {
-            const angle = i * step;
-            const rad = angle * (Math.PI / 180);
-            
-            // Tính vị trí x, y trên vòng tròn
-            const x = Math.cos(rad) * radius;
-            const y = Math.sin(rad) * radius;
-
-            const span = document.createElement('div');
-            span.className = `drone-char ${colorClass}`;
-            span.innerText = char;
-            span.style.fontSize = fontSize + 'px';
-            
-            // Logic 3D: Dịch chuyển ra bán kính -> Xoay theo góc -> Xoay -90 độ để chữ hướng ra ngoài/lên trời
-            // rotateX(90deg) giúp chữ "đứng" trên vòng tròn
-            span.style.transform = `translate3d(${x}px, ${y}px, 0) rotateZ(${angle + 90}deg) rotateX(90deg)`;
-            
-            container.appendChild(span);
-        });
-    }
-
-    // Khởi tạo vòng tròn chữ (Tự động scale theo màn hình)
-    function initRings() {
-        const minDim = Math.min(window.innerWidth, window.innerHeight);
-        const rScale = minDim / 2;
-        // Nếu màn hình nhỏ thì giảm font và bán kính
-        const isMobile = window.innerWidth < 600;
-        
-        createRing('ring-1', "CHÚC MỪNG NĂM MỚI 2026  ★  ", rScale * 0.75, 'color-cyan', isMobile ? 18 : 28);
-        createRing('ring-2', "TRƯƠNG THỊ DƯƠNG  ★  ", rScale * 0.45, 'color-gold', isMobile ? 22 : 36);
-    }
-    initRings();
-
-    // --- CẤU HÌNH TỈ LỆ (SCALE) ---
     function getScaleFactor() {
         return window.innerWidth < 600 ? 0.6 : 1.0;
     }
@@ -229,7 +252,7 @@
         if(s) { const c = s.cloneNode(); c.volume = s.volume; c.play().catch(()=>{}); }
     }
 
-    // --- PHÁO HOA (Đã tối ưu scale) ---
+    // --- PHÁO HOA ---
     function random(min, max) { return Math.random() * (max - min) + min; }
 
     class Firework {
@@ -237,7 +260,6 @@
             const scale = getScaleFactor();
             this.x = random(canvas.width * 0.2, canvas.width * 0.8);
             this.y = canvas.height;
-            // Bắn thấp hơn trên màn hình bé để ko bị khuất
             this.targetY = random(canvas.height * (scale < 1 ? 0.2 : 0.1), canvas.height * 0.5);
             
             this.vx = random(-0.5, 0.5); 
@@ -254,7 +276,7 @@
             if(this.trail.length>4) this.trail.shift();
             this.x += this.vx;
             this.y += this.vy;
-            this.vy += 0.25;
+            this.vy += 0.25; 
             if(this.vy >= 0 || this.y <= this.targetY) {
                 this.dead = true;
                 explode(this.x, this.y, this.type, this.hue);
@@ -311,17 +333,13 @@
         if(type !== 'finale') playSound(type);
         let scale = getScaleFactor();
         let count = (type==='big') ? 100 : 40;
-        // GIẢM SỐ LƯỢNG HẠT TRÊN ĐIỆN THOẠI ĐỂ CHỐNG LAG
         if (scale < 1) count = Math.floor(count * 0.6); 
 
         for(let i=0; i<count; i++) particles.push(new Particle(x, y, hue, type));
     }
 
-    // --- GAME LOOP ---
     function loop() {
         requestAnimationFrame(loop);
-
-        // Vẽ pháo
         ctx.globalCompositeOperation = 'destination-out';
         ctx.fillStyle = 'rgba(0,0,0,0.15)'; 
         ctx.fillRect(0,0,canvas.width, canvas.height);
@@ -338,7 +356,7 @@
     }
     loop();
 
-    // --- LOGIC KỊCH BẢN (LOOP) ---
+    // --- KỊCH BẢN ---
     function startShow() {
         document.getElementById('countdown-overlay').style.display = 'none';
         document.getElementById('intro-overlay').style.display = 'flex';
@@ -347,7 +365,6 @@
     document.getElementById('intro-overlay').addEventListener('click', function() {
         this.style.opacity = 0;
         setTimeout(() => { this.style.display = 'none'; }, 1000);
-        
         isPlaying = true;
         const s = new Audio(); s.play().catch(()=>{}); 
         runScenarioLoop();
@@ -356,7 +373,7 @@
     function runScenarioLoop() {
         if(!isPlaying) return;
         
-        // Giai đoạn 1: Hiện Chữ 3D (10s)
+        // Hiện 3D
         stageDiv.style.display = 'block';
         setTimeout(() => { stageDiv.style.opacity = 1; }, 100);
         
@@ -364,7 +381,6 @@
             fireworks.push(new Firework('short'));
         }, 1200);
 
-        // Giai đoạn 2: Bắn mạnh hơn (Sau 10s)
         setTimeout(() => {
             clearInterval(interval1);
             let interval2 = setInterval(() => {
@@ -373,12 +389,10 @@
             setTimeout(() => clearInterval(interval2), 7500);
         }, 10000);
 
-        // Giai đoạn 3: Finale (Sau 18s)
         setTimeout(() => {
-            stageDiv.style.opacity = 0; // Ẩn chữ
+            stageDiv.style.opacity = 0; // Ẩn chữ khi cao trào
             playSound('finale');
             document.getElementById('lucky-money-link').className = 'show';
-
             let finaleEndTime = Date.now() + 25000;
             function autoFireFinale() {
                 if(Date.now() > finaleEndTime) return;
@@ -390,13 +404,12 @@
             autoFireFinale();
         }, 18000);
 
-        // Giai đoạn 4: Loop (Sau 45s)
         setTimeout(() => {
             runScenarioLoop();
         }, 45000);
     }
 
-    // --- COUNTDOWN & ADMIN ---
+    // --- UTILS ---
     let timer = setInterval(() => {
         let now = new Date().getTime();
         let t = targetDate - now;
@@ -418,7 +431,6 @@
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        initRings(); // Vẽ lại vòng chữ khi xoay màn hình
     });
 </script>
 </body>
