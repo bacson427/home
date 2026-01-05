@@ -13,7 +13,7 @@
             font-family: 'Arial', sans-serif;
         }
 
-        /* Nền tối */
+        /* Nền trời đen sâu thẳm */
         #bg-canvas {
             position: absolute;
             top: 0;
@@ -22,16 +22,16 @@
             background: radial-gradient(circle at center, #111 0%, #000 100%);
         }
 
-        /* --- SÂN KHẤU 3D TỐI ƯU --- */
+        /* --- SÂN KHẤU 3D --- */
         #stage-container {
             position: absolute;
             top: 50%;
             left: 50%;
             width: 0;
             height: 0;
-            perspective: 800px; /* Độ sâu 3D */
+            perspective: 1200px;
             z-index: 2;
-            display: none; /* Ẩn mặc định */
+            display: none;
             transition: opacity 1.5s ease;
             opacity: 0;
         }
@@ -41,26 +41,24 @@
             top: 0;
             left: 0;
             transform-style: preserve-3d;
-            will-change: transform; /* Báo trước cho trình duyệt để tối ưu */
+            will-change: transform;
         }
 
-        /* Animation xoay bằng CSS (Mượt hơn JS) */
-        /* Vòng 1 xoay phải */
+        /* Animation xoay */
         #ring-1 { animation: spinRight 20s linear infinite; }
-        /* Vòng 2 xoay trái */
         #ring-2 { animation: spinLeft 25s linear infinite; }
 
         @keyframes spinRight {
-            from { transform: rotateX(70deg) rotateZ(0deg); }
-            to { transform: rotateX(70deg) rotateZ(360deg); }
+            from { transform: rotateX(75deg) rotateZ(0deg); }
+            to { transform: rotateX(75deg) rotateZ(360deg); }
         }
 
         @keyframes spinLeft {
-            from { transform: rotateX(70deg) rotateZ(360deg); }
-            to { transform: rotateX(70deg) rotateZ(0deg); }
+            from { transform: rotateX(75deg) rotateZ(360deg); }
+            to { transform: rotateX(75deg) rotateZ(0deg); }
         }
 
-        /* Chữ cái Drone */
+        /* Chữ Drone LED */
         .drone-char {
             position: absolute;
             width: 40px;
@@ -68,19 +66,21 @@
             text-align: center;
             line-height: 40px;
             font-weight: 900;
-            font-size: 24px;
+            font-size: 26px;
             color: #fff;
             white-space: nowrap;
             transform-style: preserve-3d;
-            /* Bóng đổ tối ưu: Ít lớp hơn để đỡ lag */
-            text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+            /* Glow rực rỡ */
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px currentColor,
+                0 0 20px currentColor;
         }
 
-        /* Màu riêng cho từng vòng */
-        .color-cyan { color: #00ffff; text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; }
-        .color-gold { color: #ffcc00; text-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00; }
+        .color-cyan { color: #00ffff; }
+        .color-gold { color: #ffcc00; }
 
-        /* --- CÁC PHẦN UI KHÁC --- */
+        /* UI */
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
 
         #lucky-money-link {
@@ -90,55 +90,47 @@
         }
         #lucky-money-link.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
-        /* Overlays */
         .overlay-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 999; text-align: center; color: white;
+            background: rgba(0,0,0,0.9);
+            transition: opacity 0.8s;
+            cursor: pointer;
         }
         
-        #intro-overlay { background: rgba(0,0,0,0.9); cursor: pointer; transition: opacity 1s; }
-        #intro-overlay h1 { color: #ffcc00; font-size: 28px; text-shadow: 0 0 20px #ff6600; animation: pulse 1s infinite; margin-bottom: 10px; }
-        
-        #countdown-overlay { background: rgba(0,0,0,0.95); z-index: 1001; }
-        .time-box { display: inline-block; margin: 0 8px; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; min-width: 60px; }
-        .time-val { font-size: 32px; font-weight: bold; color: #00ffaa; }
-        .time-lbl { font-size: 12px; color: #ccc; margin-top: 5px; }
+        #intro-overlay h1 { 
+            color: #ffcc00; 
+            font-size: 32px; 
+            text-shadow: 0 0 20px #ff6600; 
+            animation: pulse 1s infinite alternate; 
+            margin-bottom: 15px;
+        }
 
-        #password-modal { background: rgba(0,0,0,0.95); z-index: 1003; display: none; }
-        #admin-btn { position: fixed; bottom: 10px; left: 10px; z-index: 1002; opacity: 0.3; font-size: 12px; background: none; border: 1px solid #555; color: #555; border-radius: 10px; padding: 5px 10px; cursor: pointer;}
+        .time-box { display: inline-block; margin: 0 10px; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; min-width: 70px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); }
+        .time-val { font-size: 36px; font-weight: bold; color: #00ffaa; text-shadow: 0 0 10px #00ffaa; }
+        .time-lbl { font-size: 12px; color: #ccc; margin-top: 5px; letter-spacing: 1px; }
 
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        @keyframes pulse { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.05); opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div id="countdown-overlay" class="overlay-screen">
-    <h2 style="color:#ffcc00; margin-bottom: 30px;">⏳ ĐẾM NGƯỢC 2026 ⏳</h2>
+    <h2 style="color:#ffcc00; margin-bottom: 40px; font-size: 24px; letter-spacing: 2px;">⏳ SẮP ĐẾN GIAO THỪA ⏳</h2>
     <div>
         <div class="time-box"><div id="d" class="time-val">00</div><div class="time-lbl">NGÀY</div></div>
         <div class="time-box"><div id="h" class="time-val">00</div><div class="time-lbl">GIỜ</div></div>
         <div class="time-box"><div id="m" class="time-val">00</div><div class="time-lbl">PHÚT</div></div>
         <div class="time-box"><div id="s" class="time-val">00</div><div class="time-lbl">GIÂY</div></div>
     </div>
-    <p style="margin-top: 30px; color: #888;">Giao thừa: 17/02/2026</p>
+    <p style="margin-top: 30px; color: #888; font-style: italic;">(Chạm vào màn hình để bỏ qua)</p>
 </div>
 
 <div id="intro-overlay" class="overlay-screen" style="display:none;">
     <h1>✨ Gửi: Trương Thị Dương ✨</h1>
-    <p style="color: #ccc; font-size: 16px;">(Chạm vào màn hình để bắt đầu)</p>
+    <p style="color: #ccc; font-size: 18px; margin-top: 10px;">(Chạm để bắt đầu)</p>
 </div>
-
-<div id="password-modal" class="overlay-screen">
-    <div style="background:#111; padding:30px; border:2px solid #ffcc00; border-radius:15px;">
-        <h3 style="color: #ffcc00; margin-top: 0;">🔐 Admin Access</h3>
-        <input type="password" id="pass-in" style="padding:10px; text-align:center; border-radius: 5px; border: 1px solid #555; background: #222; color: white; width: 80%;">
-        <br><br>
-        <button onclick="checkPass()" style="padding:8px 20px; background: #ffcc00; border:none; font-weight:bold; border-radius: 20px; cursor: pointer;">MỞ KHÓA</button>
-        <button onclick="document.getElementById('password-modal').style.display='none'" style="padding:8px 20px; background: #444; color: white; border:none; border-radius: 20px; margin-left: 10px; cursor: pointer;">HỦY</button>
-    </div>
-</div>
-<button id="admin-btn" onclick="document.getElementById('password-modal').style.display='flex'">Admin</button>
 
 <div id="stage-container">
     <div id="ring-1" class="drone-ring"></div>
@@ -146,11 +138,9 @@
 </div>
 
 <canvas id="canvas"></canvas>
-
 <a href="https://nguyenbacson.io.vn/happynewyear-your/quay-li-xi" id="lucky-money-link" target="_blank">🧧</a>
 
 <script>
-    // --- SETUP CƠ BẢN ---
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -161,8 +151,10 @@
     let fireworks = [];
     let particles = [];
     const stageDiv = document.getElementById('stage-container');
-    
-    // --- TẠO CHỮ 3D (DRONE) ---
+    const introOverlay = document.getElementById('intro-overlay');
+    const countdownOverlay = document.getElementById('countdown-overlay');
+
+    // --- SETUP CHỮ DRONE ---
     function createRing(elementId, text, radius, colorClass, fontSize) {
         const container = document.getElementById(elementId);
         container.innerHTML = '';
@@ -172,8 +164,6 @@
         chars.forEach((char, i) => {
             const angle = i * step;
             const rad = angle * (Math.PI / 180);
-            
-            // Tính vị trí x, y trên vòng tròn
             const x = Math.cos(rad) * radius;
             const y = Math.sin(rad) * radius;
 
@@ -181,33 +171,22 @@
             span.className = `drone-char ${colorClass}`;
             span.innerText = char;
             span.style.fontSize = fontSize + 'px';
-            
-            // Logic 3D: Dịch chuyển ra bán kính -> Xoay theo góc -> Xoay -90 độ để chữ hướng ra ngoài/lên trời
-            // rotateX(90deg) giúp chữ "đứng" trên vòng tròn
-            span.style.transform = `translate3d(${x}px, ${y}px, 0) rotateZ(${angle + 90}deg) rotateX(90deg)`;
-            
+            span.style.transform = `translate3d(${x}px, ${y}px, 0) rotateZ(${angle + 90}deg) rotateX(-90deg)`;
             container.appendChild(span);
         });
     }
 
-    // Khởi tạo vòng tròn chữ (Tự động scale theo màn hình)
     function initRings() {
         const minDim = Math.min(window.innerWidth, window.innerHeight);
         const rScale = minDim / 2;
-        // Nếu màn hình nhỏ thì giảm font và bán kính
         const isMobile = window.innerWidth < 600;
-        
-        createRing('ring-1', "CHÚC MỪNG NĂM MỚI 2026  ★  ", rScale * 0.75, 'color-cyan', isMobile ? 18 : 28);
-        createRing('ring-2', "TRƯƠNG THỊ DƯƠNG  ★  ", rScale * 0.45, 'color-gold', isMobile ? 22 : 36);
+        createRing('ring-1', "CHÚC MỪNG NĂM MỚI 2026  ★  ", rScale * 0.8, 'color-cyan', isMobile ? 18 : 30);
+        createRing('ring-2', "TRƯƠNG THỊ DƯƠNG  ★  ", rScale * 0.5, 'color-gold', isMobile ? 22 : 38);
     }
     initRings();
 
-    // --- CẤU HÌNH TỈ LỆ (SCALE) ---
-    function getScaleFactor() {
-        return window.innerWidth < 600 ? 0.6 : 1.0;
-    }
+    function getScaleFactor() { return window.innerWidth < 600 ? 0.6 : 1.0; }
 
-    // --- ÂM THANH ---
     const sounds = {
         launch: new Audio('https://nguyenbacson.io.vn/moi-ban.mp3'),
         short: new Audio('https://nguyenbacson.io.vn/no-ngan.mp3'),
@@ -215,21 +194,17 @@
         big: new Audio('https://nguyenbacson.io.vn/chum-to.mp3'),
         finale: new Audio('https://nguyenbacson.io.vn/chum-dai.mp3')
     };
-    sounds.launch.volume = 0.3;
+    sounds.launch.volume = 0.3; 
     sounds.finale.volume = 0.8;
 
     function playSound(type) {
         if(!isPlaying) return;
-        if(type === 'finale') { 
-            sounds.finale.currentTime=0; 
-            sounds.finale.play().catch(()=>{}); 
-            return; 
-        }
+        if(type === 'finale') { sounds.finale.currentTime=0; sounds.finale.play().catch(()=>{}); return; }
         const s = sounds[type];
         if(s) { const c = s.cloneNode(); c.volume = s.volume; c.play().catch(()=>{}); }
     }
 
-    // --- PHÁO HOA (Đã tối ưu scale) ---
+    // --- PHÁO HOA TỐI ƯU ---
     function random(min, max) { return Math.random() * (max - min) + min; }
 
     class Firework {
@@ -237,11 +212,11 @@
             const scale = getScaleFactor();
             this.x = random(canvas.width * 0.2, canvas.width * 0.8);
             this.y = canvas.height;
-            // Bắn thấp hơn trên màn hình bé để ko bị khuất
             this.targetY = random(canvas.height * (scale < 1 ? 0.2 : 0.1), canvas.height * 0.5);
             
+            // Bay rất nhanh
             this.vx = random(-0.5, 0.5); 
-            this.vy = -random(12, 17) * (scale < 1 ? 0.85 : 1); 
+            this.vy = -random(14, 19) * (scale < 1 ? 0.85 : 1); 
             
             this.type = type;
             this.hue = random(0, 360);
@@ -250,11 +225,14 @@
             playSound('launch');
         }
         update() {
+            // Đuôi cực ngắn (chỉ lưu 2 điểm) -> Tan biến ngay khi nổ
             this.trail.push({x:this.x, y:this.y});
-            if(this.trail.length>4) this.trail.shift();
+            if(this.trail.length > 2) this.trail.shift();
+
             this.x += this.vx;
             this.y += this.vy;
-            this.vy += 0.25;
+            this.vy += 0.3; // Trọng lực
+            
             if(this.vy >= 0 || this.y <= this.targetY) {
                 this.dead = true;
                 explode(this.x, this.y, this.type, this.hue);
@@ -265,8 +243,9 @@
             if(this.trail.length) ctx.moveTo(this.trail[0].x, this.trail[0].y);
             else ctx.moveTo(this.x, this.y+10);
             ctx.lineTo(this.x, this.y);
-            ctx.strokeStyle = `hsl(${this.hue},100%,70%)`;
-            ctx.lineWidth = 3 * getScaleFactor();
+            // Màu trắng pha chút màu gốc để tạo cảm giác sáng chói khi bắn
+            ctx.strokeStyle = `hsl(${this.hue}, 50%, 80%)`;
+            ctx.lineWidth = 1.5 * getScaleFactor(); // Mảnh
             ctx.stroke();
         }
     }
@@ -276,29 +255,47 @@
             const scale = getScaleFactor();
             this.x = x; this.y = y;
             const angle = random(0, Math.PI*2);
-            let baseSpeed = (type==='big') ? random(6,14) : random(3,7);
+            let baseSpeed = (type==='big') ? random(6, 12) : random(3, 8);
             const speed = baseSpeed * scale; 
-
+            
             this.vx = Math.cos(angle)*speed;
             this.vy = Math.sin(angle)*speed;
+            
             this.alpha = 1;
-            this.decay = (type==='big') ? random(0.005, 0.01) : random(0.015, 0.03);
+            // Decay thấp hơn một chút để hạt tồn tại lâu hơn xíu cho hiệu ứng nhấp nháy
+            this.decay = (type==='big') ? random(0.015, 0.03) : random(0.03, 0.05);
+            
             this.hue = hue + random(-20,20);
             this.dead = false;
-            this.gravity = 0.12;
-            this.sparkle = (type==='big');
-            this.size = (this.sparkle ? 2.5 : 2) * scale;
+            this.gravity = 0.12; // Rơi tự nhiên
+            this.size = (type==='big' ? 2.5 : 1.5) * scale;
+            
+            // Tính năng nhấp nháy
+            this.shimmer = true; 
         }
         update() {
             this.x += this.vx; this.y += this.vy;
+            
+            // Thêm lực cản không khí để hạt bung ra rồi rơi chậm lại
+            this.vx *= 0.92; 
+            this.vy *= 0.92;
             this.vy += this.gravity;
-            this.vx *= 0.93; this.vy *= 0.93;
+            
             this.alpha -= this.decay;
-            if(this.sparkle && Math.random()<0.2) this.alpha = 1; 
+
+            // HIỆU ỨNG NHẤP NHÁY (TWINKLE)
+            if(this.shimmer && this.alpha > 0.2) {
+                // Random làm hạt sáng lại một chút
+                if(Math.random() < 0.15) {
+                    this.alpha = Math.min(1, this.alpha + 0.3);
+                }
+            }
+
             if(this.alpha<=0) this.dead = true;
         }
         draw() {
             ctx.globalAlpha = this.alpha;
+            // Hạt sáng trắng ở tâm
             ctx.fillStyle = `hsl(${this.hue}, 100%, 60%)`;
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
@@ -310,21 +307,19 @@
     function explode(x, y, type, hue) {
         if(type !== 'finale') playSound(type);
         let scale = getScaleFactor();
-        let count = (type==='big') ? 100 : 40;
-        // GIẢM SỐ LƯỢNG HẠT TRÊN ĐIỆN THOẠI ĐỂ CHỐNG LAG
-        if (scale < 1) count = Math.floor(count * 0.6); 
-
+        let count = (type==='big') ? 80 : 30; // Số lượng hạt vừa phải
+        if (scale < 1) count = Math.floor(count * 0.7); 
         for(let i=0; i<count; i++) particles.push(new Particle(x, y, hue, type));
     }
 
-    // --- GAME LOOP ---
     function loop() {
         requestAnimationFrame(loop);
-
-        // Vẽ pháo
+        
+        // Xóa màn hình với độ mờ cao (0.5) -> Xóa vệt cũ rất nhanh -> Đỡ lag & Sạch
         ctx.globalCompositeOperation = 'destination-out';
-        ctx.fillStyle = 'rgba(0,0,0,0.15)'; 
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'; 
         ctx.fillRect(0,0,canvas.width, canvas.height);
+        
         ctx.globalCompositeOperation = 'lighter';
 
         for(let i=fireworks.length-1; i>=0; i--) {
@@ -338,15 +333,18 @@
     }
     loop();
 
-    // --- LOGIC KỊCH BẢN (LOOP) ---
-    function startShow() {
-        document.getElementById('countdown-overlay').style.display = 'none';
-        document.getElementById('intro-overlay').style.display = 'flex';
-    }
+    // --- LOGIC ---
+    countdownOverlay.addEventListener('click', () => {
+        countdownOverlay.style.opacity = 0;
+        setTimeout(() => { 
+            countdownOverlay.style.display = 'none'; 
+            introOverlay.style.display = 'flex';
+        }, 800);
+    });
 
-    document.getElementById('intro-overlay').addEventListener('click', function() {
-        this.style.opacity = 0;
-        setTimeout(() => { this.style.display = 'none'; }, 1000);
+    introOverlay.addEventListener('click', () => {
+        introOverlay.style.opacity = 0;
+        setTimeout(() => { introOverlay.style.display = 'none'; }, 800);
         
         isPlaying = true;
         const s = new Audio(); s.play().catch(()=>{}); 
@@ -356,7 +354,7 @@
     function runScenarioLoop() {
         if(!isPlaying) return;
         
-        // Giai đoạn 1: Hiện Chữ 3D (10s)
+        // 1. Chữ 3D + Bắn nhẹ
         stageDiv.style.display = 'block';
         setTimeout(() => { stageDiv.style.opacity = 1; }, 100);
         
@@ -364,7 +362,7 @@
             fireworks.push(new Firework('short'));
         }, 1200);
 
-        // Giai đoạn 2: Bắn mạnh hơn (Sau 10s)
+        // 2. Bắn mạnh hơn
         setTimeout(() => {
             clearInterval(interval1);
             let interval2 = setInterval(() => {
@@ -373,12 +371,11 @@
             setTimeout(() => clearInterval(interval2), 7500);
         }, 10000);
 
-        // Giai đoạn 3: Finale (Sau 18s)
+        // 3. Finale
         setTimeout(() => {
-            stageDiv.style.opacity = 0; // Ẩn chữ
+            stageDiv.style.opacity = 0;
             playSound('finale');
             document.getElementById('lucky-money-link').className = 'show';
-
             let finaleEndTime = Date.now() + 25000;
             function autoFireFinale() {
                 if(Date.now() > finaleEndTime) return;
@@ -390,35 +387,30 @@
             autoFireFinale();
         }, 18000);
 
-        // Giai đoạn 4: Loop (Sau 45s)
+        // 4. Lặp lại
         setTimeout(() => {
             runScenarioLoop();
         }, 45000);
     }
 
-    // --- COUNTDOWN & ADMIN ---
     let timer = setInterval(() => {
         let now = new Date().getTime();
         let t = targetDate - now;
-        if(t <= 0) { clearInterval(timer); startShow(); return; }
+        if(t <= 0) { 
+            clearInterval(timer);
+            if(countdownOverlay.style.display !== 'none') countdownOverlay.click();
+            return; 
+        }
         document.getElementById('d').innerText = Math.floor(t / (1000*60*60*24)).toString().padStart(2,'0');
         document.getElementById('h').innerText = Math.floor((t % (1000*60*60*24))/(1000*60*60)).toString().padStart(2,'0');
         document.getElementById('m').innerText = Math.floor((t % (1000*60*60))/(1000*60)).toString().padStart(2,'0');
         document.getElementById('s').innerText = Math.floor((t % (1000*60))/1000).toString().padStart(2,'0');
     }, 1000);
 
-    function checkPass() {
-        if(document.getElementById('pass-in').value === '0347432736') {
-            document.getElementById('password-modal').style.display='none';
-            clearInterval(timer);
-            startShow();
-        } else alert('Mật khẩu không đúng!');
-    }
-
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        initRings(); // Vẽ lại vòng chữ khi xoay màn hình
+        initRings();
     });
 </script>
 </body>
