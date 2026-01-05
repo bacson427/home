@@ -13,7 +13,7 @@
             font-family: 'Arial', sans-serif;
         }
 
-        /* Nền đỏ rượu vang chuyển động sang trọng */
+        /* Nền đỏ rượu vang chuyển động */
         #bg-canvas {
             position: absolute;
             top: 0;
@@ -31,7 +31,7 @@
             100% { background-position: 100% 50%; }
         }
 
-        /* Lớp chớp màn hình */
+        /* Flash */
         #flash-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: white; opacity: 0; pointer-events: none; z-index: 900;
@@ -41,29 +41,37 @@
         /* --- PHẦN LỜI CHÚC (MESSAGE) --- */
         #message-box {
             position: absolute;
-            top: 10%; /* Cách đỉnh 10% để nằm trên vòng Drone */
+            top: 12%; 
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
             text-align: center;
             z-index: 5;
-            display: none; /* Ẩn mặc định */
+            display: none; 
             flex-direction: column;
             align-items: center;
             pointer-events: none;
         }
 
         .wish-text {
-            font-size: 18px;
-            line-height: 1.5;
-            color: #ffe6a1; /* Màu vàng kem nhẹ */
+            font-size: 19px;
+            line-height: 1.6;
+            color: #ffe6a1;
             text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-style: italic;
-            opacity: 0;
-            transform: translateY(-20px);
-            transition: all 1.5s ease-out;
+            min-height: 80px; /* Giữ chỗ để không bị nhảy layout */
+            display: inline-block;
         }
+
+        /* Con trỏ nhấp nháy kiểu đánh máy */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 0.8s infinite;
+            color: #ffcc00;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
         .signature {
             font-size: 20px;
@@ -74,13 +82,10 @@
             letter-spacing: 2px;
             opacity: 0;
             transform: scale(0.8);
-            transition: all 1s ease-out 1s; /* Hiện sau lời chúc 1s */
+            transition: all 1s ease-out;
         }
 
-        /* Class kích hoạt hiệu ứng hiện lời chúc */
-        #message-box.visible .wish-text { opacity: 1; transform: translateY(0); }
         #message-box.visible .signature { opacity: 1; transform: scale(1); }
-
 
         /* --- SÂN KHẤU 3D --- */
         #stage-container {
@@ -92,11 +97,9 @@
             perspective: 1200px;
             z-index: 2;
             display: none;
-            /* Animation xuất hiện xoay vòng phóng to */
             transform-style: preserve-3d;
         }
         
-        /* Hiệu ứng Zoom + Xoay khi xuất hiện */
         .stage-enter {
             animation: droneEntrance 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
@@ -129,7 +132,6 @@
         .color-cyan { color: #00ffff; }
         .color-gold { color: #ffcc00; }
 
-        /* UI Elements */
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
         #lucky-money-link {
             position: fixed; bottom: 30px; right: 30px; font-size: 60px; text-decoration: none; z-index: 1000;
@@ -181,10 +183,7 @@
 </div>
 
 <div id="message-box">
-    <div class="wish-text">
-        "Tết đến rồi đó! Tớ chúc cậu cùng gia đình có thêm nhiều sức khỏe, bình an và vạn sự như ý.<br>
-        Mong rằng năm 2026 sẽ mang đến cho cậu thật nhiều niềm vui và may mắn!"
-    </div>
+    <div class="wish-text typing-cursor" id="typewriter-text"></div>
     <div class="signature">- Nguyễn Bắc Sơn -</div>
 </div>
 
@@ -207,12 +206,15 @@
     let fireworks = [];
     let particles = [];
     
-    // Elements
     const stageDiv = document.getElementById('stage-container');
     const messageBox = document.getElementById('message-box');
+    const typeWriterElement = document.getElementById('typewriter-text');
     const introOverlay = document.getElementById('intro-overlay');
     const countdownOverlay = document.getElementById('countdown-overlay');
     const flashOverlay = document.getElementById('flash-overlay');
+
+    // NỘI DUNG LỜI CHÚC (Sử dụng \n để xuống dòng)
+    const wishContent = "Tết đến rồi đó! Tớ chúc cậu cùng gia đình có thêm nhiều sức khỏe, bình an và vạn sự như ý.\nMong rằng năm 2026 sẽ mang đến cho cậu thật nhiều niềm vui và may mắn!";
 
     // --- DRONE RINGS ---
     function createRing(elementId, text, radius, colorClass, fontSize) {
@@ -229,7 +231,6 @@
             span.className = `drone-char ${colorClass}`;
             span.innerText = char;
             span.style.fontSize = fontSize + 'px';
-            // Chỉnh góc để chữ đứng đúng chiều
             span.style.transform = `translate3d(${x}px, ${y}px, 0) rotateZ(${angle + 90}deg) rotateX(-90deg)`;
             container.appendChild(span);
         });
@@ -239,7 +240,6 @@
         const minDim = Math.min(window.innerWidth, window.innerHeight);
         const rScale = minDim / 2;
         const isMobile = window.innerWidth < 600;
-        // Đẩy vòng tròn xuống thấp hơn một chút để nhường chỗ cho lời chúc
         createRing('ring-1', "CHÚC MỪNG NĂM MỚI 2026  ★  ", rScale * 0.75, 'color-cyan', isMobile ? 18 : 30);
         createRing('ring-2', "TRƯƠNG THỊ DƯƠNG  ★  ", rScale * 0.45, 'color-gold', isMobile ? 22 : 38);
     }
@@ -266,6 +266,34 @@
     function triggerFlash() {
         flashOverlay.style.opacity = 0.7;
         setTimeout(() => { flashOverlay.style.opacity = 0; }, 100); 
+    }
+
+    // --- TYPEWRITER EFFECT ---
+    let typingInterval;
+    function startTypewriter() {
+        typeWriterElement.innerHTML = ''; // Xóa chữ cũ
+        messageBox.classList.remove('visible'); // Ẩn chữ ký
+        let i = 0;
+        clearInterval(typingInterval);
+        
+        typingInterval = setInterval(() => {
+            if (i < wishContent.length) {
+                const char = wishContent.charAt(i);
+                // Nếu gặp \n thì thay bằng thẻ <br>
+                if (char === '\n') {
+                    typeWriterElement.innerHTML += '<br>';
+                } else {
+                    typeWriterElement.innerHTML += char;
+                }
+                i++;
+            } else {
+                clearInterval(typingInterval);
+                // Hiện chữ ký sau khi gõ xong
+                setTimeout(() => {
+                    messageBox.classList.add('visible');
+                }, 500);
+            }
+        }, 50); // Tốc độ gõ: 50ms/ký tự
     }
 
     // --- PHYSICS PHÁO HOA ---
@@ -381,19 +409,19 @@
     function runScenarioLoop() {
         if(!isPlaying) return;
         
-        // 1. Mở màn: 2 quả pháo MEGA nổ đùng đoàng
+        // 1. Mở màn: 2 quả pháo MEGA
         setTimeout(() => {
             fireworks.push(new Firework('mega'));
             setTimeout(() => { fireworks.push(new Firework('mega')); }, 400); 
         }, 300);
 
-        // 2. Sau khi pháo nổ -> Hiện Chữ 3D (Xoay và Phóng to) + Lời chúc
+        // 2. Hiện Drone Zoom + Chạy chữ đánh máy
         setTimeout(() => { 
             stageDiv.style.display = 'block';
-            stageDiv.classList.add('stage-enter'); // Kích hoạt animation Zoom
+            stageDiv.classList.add('stage-enter'); 
             
             messageBox.style.display = 'flex';
-            setTimeout(() => messageBox.classList.add('visible'), 100);
+            startTypewriter(); // Bắt đầu gõ chữ
         }, 1500);
         
         // 3. Bắn pháo nền
@@ -405,15 +433,15 @@
             }, 1200);
         }, 2500);
 
-        // 4. Kết thúc intro, chuẩn bị Finale (sau 16s)
+        // 4. Kết thúc intro
         setTimeout(() => {
             clearInterval(scenarioInterval);
         }, 16000);
 
-        // 5. Finale (17s - 42s)
+        // 5. Finale
         setTimeout(() => {
-            stageDiv.style.opacity = 0; // Ẩn drone
-            messageBox.style.opacity = 0; // Ẩn lời chúc
+            stageDiv.style.opacity = 0; 
+            messageBox.style.opacity = 0; // Ẩn lời chúc đi
             
             playSound('finale');
             document.getElementById('lucky-money-link').className = 'show';
@@ -432,7 +460,6 @@
 
         // 6. Reset Loop (Sau 45s)
         setTimeout(() => {
-            // Reset trạng thái để loop lại đẹp
             stageDiv.classList.remove('stage-enter');
             stageDiv.style.opacity = 1; 
             messageBox.style.opacity = 1;
