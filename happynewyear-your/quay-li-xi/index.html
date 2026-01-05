@@ -106,6 +106,7 @@
         }
         .btn-reset { background: #d90429; }
         .btn-excel { background: #217346; }
+        .btn-unlock { background: #0077b6; } /* Màu xanh dương cho nút Unlock */
         .btn-close { background: #666; margin-top: 10px; }
 
         /* --- MÀN HÌNH ĐẾM NGƯỢC --- */
@@ -142,6 +143,9 @@
     <div id="admin-panel">
         <h3>Quản Trị Viên</h3>
         <p style="font-size: 12px; margin-bottom: 10px;">Quản lý lượt chơi trên máy này:</p>
+        
+        <button class="admin-btn btn-unlock" onclick="adminUnlock()">🔓 Mở khóa (Xem trước)</button>
+        
         <button class="admin-btn btn-excel" onclick="xuatExcel()">📥 Xuất File Excel</button>
         <button class="admin-btn btn-reset" onclick="resetLuotChoi()">🔄 Cho phép mở lại</button>
         <button class="admin-btn btn-close" onclick="document.getElementById('admin-panel').style.display='none'">Đóng</button>
@@ -214,6 +218,8 @@
         const overlay = document.getElementById('countdown-overlay');
         const mainContainer = document.getElementById('main-container');
 
+        let timerInterval;
+
         function updateCountdown() {
             const now = new Date().getTime();
             const distance = targetDate - now;
@@ -239,7 +245,7 @@
             elSeconds.innerText = seconds < 10 ? '0' + seconds : seconds;
         }
 
-        const timerInterval = setInterval(updateCountdown, 1000);
+        timerInterval = setInterval(updateCountdown, 1000);
         updateCountdown(); // Chạy ngay lập tức
 
         // --- CÁC HÀM GAME CŨ ---
@@ -279,6 +285,15 @@
             } else if (pass !== null) {
                 alert("Sai mật khẩu Admin!");
             }
+        }
+
+        // --- HÀM MỚI: ADMIN BỎ QUA ĐẾM NGƯỢC ---
+        function adminUnlock() {
+            clearInterval(timerInterval); // Dừng đồng hồ
+            document.getElementById('countdown-overlay').style.display = 'none'; // Ẩn màn hình đếm ngược
+            document.getElementById('main-container').style.display = 'block'; // Hiện màn hình đăng nhập
+            document.getElementById('admin-panel').style.display = 'none'; // Đóng bảng admin
+            alert("Đã mở khóa chế độ xem trước!");
         }
 
         function resetLuotChoi() {
