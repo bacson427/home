@@ -13,13 +13,25 @@
             font-family: 'Arial', sans-serif;
         }
 
-        /* Nền tối */
+        /* --- NỀN ĐỎ RƯỢU VANG CHUYỂN ĐỘNG --- */
         #bg-canvas {
             position: absolute;
             top: 0;
             left: 0;
             z-index: 0;
-            background: radial-gradient(circle at center, #1a0b1a 0%, #000000 100%);
+            width: 100%;
+            height: 100%;
+            /* Gradient màu đỏ sẫm rượu vang */
+            background: linear-gradient(45deg, #2b0000, #5c0010, #800020, #4a000a);
+            background-size: 400% 400%;
+            /* Animation di chuyển nền */
+            animation: wineShift 15s ease infinite alternate;
+        }
+
+        @keyframes wineShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         /* Lớp chớp màn hình (Flash Effect) */
@@ -57,7 +69,7 @@
             transform-style: preserve-3d;
             will-change: transform;
             opacity: 0; /* Ẩn mặc định để hiện tuần tự */
-            transition: opacity 1.5s ease;
+            transition: opacity 2s ease; /* Hiện chậm hơn xíu cho kịch tính */
         }
 
         /* Animation xoay */
@@ -115,6 +127,8 @@
     </style>
 </head>
 <body>
+
+<div id="bg-canvas"></div>
 
 <div id="flash-overlay"></div>
 
@@ -198,27 +212,26 @@
     };
     sounds.launch.volume = 0.3; 
     sounds.finale.volume = 0.8;
-    sounds.big.volume = 1.0; // Nổ to tiếng lớn nhất
+    sounds.big.volume = 1.0; 
 
     function playSound(type) {
         if(!isPlaying) return;
         if(type === 'finale') { sounds.finale.currentTime=0; sounds.finale.play().catch(()=>{}); return; }
         
-        // Mapping type sang sound
         let s;
-        if (type === 'mega') s = sounds.big; // Quả to thì dùng tiếng to
-        else s = sounds.short; // Quả bé dùng tiếng ngắn
+        if (type === 'mega') s = sounds.big; 
+        else s = sounds.short; 
 
         if(s) { const c = s.cloneNode(); c.volume = s.volume; c.play().catch(()=>{}); }
     }
 
     // --- FLASH EFFECT ---
     function triggerFlash() {
-        flashOverlay.style.opacity = 0.6; // Chớp trắng
-        setTimeout(() => { flashOverlay.style.opacity = 0; }, 80); // Tắt cực nhanh
+        flashOverlay.style.opacity = 0.7; // Chớp trắng mạnh
+        setTimeout(() => { flashOverlay.style.opacity = 0; }, 100); 
     }
 
-    // --- PHYSICS PHÁO HOA MỚI ---
+    // --- PHYSICS PHÁO HOA ---
     function random(min, max) { return Math.random() * (max - min) + min; }
 
     class Firework {
@@ -231,7 +244,7 @@
             this.vx = random(-0.5, 0.5); 
             this.vy = -random(14, 19) * (scale < 1 ? 0.85 : 1); 
             
-            this.type = type; // 'normal' hoặc 'mega'
+            this.type = type; 
             this.hue = random(0, 360);
             this.dead = false;
             this.trail = [];
@@ -267,7 +280,6 @@
             this.x = x; this.y = y;
             const angle = random(0, Math.PI*2);
             
-            // Quả to (mega) thì bung rộng hơn
             let baseSpeed = (type === 'mega') ? random(10, 18) : random(3, 8);
             const speed = baseSpeed * scale; 
             
@@ -275,19 +287,18 @@
             this.vy = Math.sin(angle)*speed;
             
             this.alpha = 1;
-            // Decay nhanh (0.04 - 0.08) -> Tan biến nhanh, ko rơi nhiều
             this.decay = random(0.04, 0.08); 
-            if (type === 'mega') this.decay = random(0.02, 0.05); // Quả to tan lâu hơn xíu
+            if (type === 'mega') this.decay = random(0.02, 0.05);
             
             this.hue = hue + random(-20,20);
             this.dead = false;
-            this.gravity = 0.1; // Trọng lực nhẹ để ko rơi nhanh quá
+            this.gravity = 0.1; 
             this.size = (type === 'mega' ? 3 : 1.5) * scale;
             this.type = type;
         }
         update() {
             this.x += this.vx; this.y += this.vy;
-            this.vx *= 0.9; this.vy *= 0.9; // Ma sát không khí
+            this.vx *= 0.9; this.vy *= 0.9; 
             this.vy += this.gravity;
             
             this.alpha -= this.decay;
@@ -304,13 +315,13 @@
     }
 
     function explode(x, y, type, hue) {
-        if(type !== 'finale') playSound(type); // 'mega' hoặc 'normal'
+        if(type !== 'finale') playSound(type); 
         
         // Nếu là quả to -> Trigger Flash
         if (type === 'mega') triggerFlash();
 
         let scale = getScaleFactor();
-        let count = (type === 'mega') ? 120 : 30; // Quả to nhiều hạt hơn
+        let count = (type === 'mega') ? 120 : 30; 
         if (scale < 1) count = Math.floor(count * 0.7); 
 
         for(let i=0; i<count; i++) particles.push(new Particle(x, y, hue, type));
@@ -357,32 +368,41 @@
     function runScenarioLoop() {
         if(!isPlaying) return;
         
-        // Reset Opacity
+        // Reset trạng thái
         stageDiv.style.display = 'block';
         stageDiv.style.opacity = 1;
         ring1.style.opacity = 0;
         ring2.style.opacity = 0;
 
-        // 1. Hiện Vòng 1 (Chúc Mừng...) trước
-        setTimeout(() => { ring1.style.opacity = 1; }, 500);
+        // === KỊCH BẢN MỞ MÀN ===
+        // Ngay khi bắt đầu, bắn 2 quả MEGA để nháy màn hình
+        setTimeout(() => {
+            fireworks.push(new Firework('mega'));
+            setTimeout(() => { fireworks.push(new Firework('mega')); }, 400); // Bắn quả thứ 2 sau xíu
+        }, 200);
 
-        // 2. Hiện Vòng 2 (Tên...) sau 5 giây
-        setTimeout(() => { ring2.style.opacity = 1; }, 5500);
+        // 1. Hiện Vòng 1 sau khi pháo nổ (khoảng 1.5s sau khi bắt đầu)
+        setTimeout(() => { ring1.style.opacity = 1; }, 1500);
+
+        // 2. Hiện Vòng 2 sau đó 5s
+        setTimeout(() => { ring2.style.opacity = 1; }, 6500);
         
-        // 3. Logic bắn pháo
-        let scenarioInterval = setInterval(() => {
-            // Tỉ lệ: 90% pháo thường, 10% pháo to (mega)
-            let type = Math.random() < 0.1 ? 'mega' : 'normal';
-            fireworks.push(new Firework(type));
-        }, 1000); // 1 giây bắn 1 quả cho đỡ rối
+        // 3. Logic bắn pháo nền (bắn lác đác sau khi mở màn)
+        let scenarioInterval;
+        setTimeout(() => {
+             scenarioInterval = setInterval(() => {
+                let type = Math.random() < 0.08 ? 'mega' : 'normal';
+                fireworks.push(new Firework(type));
+            }, 1200);
+        }, 2000);
 
-        // 4. Kết thúc vòng lặp này, chuyển sang Finale
+
+        // 4. Kết thúc phần intro, chuẩn bị Finale
         setTimeout(() => {
             clearInterval(scenarioInterval);
-            // Chuẩn bị Finale
-        }, 15000);
+        }, 16000);
 
-        // 5. Finale (15s - 40s)
+        // 5. Finale (17s - 42s)
         setTimeout(() => {
             stageDiv.style.opacity = 0; 
             playSound('finale');
@@ -391,20 +411,19 @@
             let finaleEndTime = Date.now() + 25000;
             function autoFireFinale() {
                 if(Date.now() > finaleEndTime) return;
-                // Finale bắn dày hơn, cũng có tỉ lệ ra quả to
-                if(Math.random() < 0.15) { 
+                if(Math.random() < 0.18) { // Bắn dày hơn
                     let type = Math.random() < 0.15 ? 'mega' : 'normal';
                     fireworks.push(new Firework(type));
                 }
                 if(isPlaying) requestAnimationFrame(autoFireFinale);
             }
             autoFireFinale();
-        }, 16000);
+        }, 17000);
 
-        // 6. Loop lại (Sau 42s)
+        // 6. Loop lại (Sau 45s)
         setTimeout(() => {
             runScenarioLoop();
-        }, 42000);
+        }, 45000);
     }
 
     let timer = setInterval(() => {
