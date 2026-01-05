@@ -13,7 +13,7 @@
             font-family: 'Arial', sans-serif;
         }
 
-        /* --- NỀN ĐỎ RƯỢU VANG CHUYỂN ĐỘNG --- */
+        /* Nền đỏ rượu vang chuyển động sang trọng */
         #bg-canvas {
             position: absolute;
             top: 0;
@@ -21,32 +21,66 @@
             z-index: 0;
             width: 100%;
             height: 100%;
-            /* Gradient màu đỏ sẫm rượu vang */
-            background: linear-gradient(45deg, #2b0000, #5c0010, #800020, #4a000a);
+            background: linear-gradient(45deg, #2b0000, #4a000a, #800020, #2b0000);
             background-size: 400% 400%;
-            /* Animation di chuyển nền */
             animation: wineShift 15s ease infinite alternate;
         }
 
         @keyframes wineShift {
             0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
 
-        /* Lớp chớp màn hình (Flash Effect) */
+        /* Lớp chớp màn hình */
         #flash-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 900;
-            transition: opacity 0.1s ease-out; /* Tắt nhanh */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; opacity: 0; pointer-events: none; z-index: 900;
+            transition: opacity 0.1s ease-out;
         }
+
+        /* --- PHẦN LỜI CHÚC (MESSAGE) --- */
+        #message-box {
+            position: absolute;
+            top: 10%; /* Cách đỉnh 10% để nằm trên vòng Drone */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            text-align: center;
+            z-index: 5;
+            display: none; /* Ẩn mặc định */
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .wish-text {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #ffe6a1; /* Màu vàng kem nhẹ */
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+            margin-bottom: 10px;
+            font-style: italic;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 1.5s ease-out;
+        }
+
+        .signature {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffcc00;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px #ff6600;
+            letter-spacing: 2px;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 1s ease-out 1s; /* Hiện sau lời chúc 1s */
+        }
+
+        /* Class kích hoạt hiệu ứng hiện lời chúc */
+        #message-box.visible .wish-text { opacity: 1; transform: translateY(0); }
+        #message-box.visible .signature { opacity: 1; transform: scale(1); }
+
 
         /* --- SÂN KHẤU 3D --- */
         #stage-container {
@@ -58,8 +92,18 @@
             perspective: 1200px;
             z-index: 2;
             display: none;
-            transition: opacity 1.5s ease;
-            opacity: 0;
+            /* Animation xuất hiện xoay vòng phóng to */
+            transform-style: preserve-3d;
+        }
+        
+        /* Hiệu ứng Zoom + Xoay khi xuất hiện */
+        .stage-enter {
+            animation: droneEntrance 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes droneEntrance {
+            0% { opacity: 0; transform: scale(0) rotateZ(-180deg); }
+            100% { opacity: 1; transform: scale(1) rotateZ(0deg); }
         }
 
         .drone-ring {
@@ -68,41 +112,24 @@
             left: 0;
             transform-style: preserve-3d;
             will-change: transform;
-            opacity: 0; /* Ẩn mặc định để hiện tuần tự */
-            transition: opacity 2s ease; /* Hiện chậm hơn xíu cho kịch tính */
         }
 
-        /* Animation xoay */
         #ring-1 { animation: spinRight 20s linear infinite; }
         #ring-2 { animation: spinLeft 25s linear infinite; }
 
-        @keyframes spinRight {
-            from { transform: rotateX(75deg) rotateZ(0deg); }
-            to { transform: rotateX(75deg) rotateZ(360deg); }
-        }
-        @keyframes spinLeft {
-            from { transform: rotateX(75deg) rotateZ(360deg); }
-            to { transform: rotateX(75deg) rotateZ(0deg); }
-        }
+        @keyframes spinRight { from { transform: rotateX(75deg) rotateZ(0deg); } to { transform: rotateX(75deg) rotateZ(360deg); } }
+        @keyframes spinLeft { from { transform: rotateX(75deg) rotateZ(360deg); } to { transform: rotateX(75deg) rotateZ(0deg); } }
 
-        /* Chữ Drone LED */
         .drone-char {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            text-align: center;
-            line-height: 40px;
-            font-weight: 900;
-            font-size: 26px;
-            color: #fff;
-            white-space: nowrap;
+            position: absolute; width: 40px; height: 40px; text-align: center; line-height: 40px;
+            font-weight: 900; font-size: 26px; color: #fff; white-space: nowrap;
             transform-style: preserve-3d;
             text-shadow: 0 0 5px #fff, 0 0 10px currentColor, 0 0 20px currentColor;
         }
         .color-cyan { color: #00ffff; }
         .color-gold { color: #ffcc00; }
 
-        /* UI */
+        /* UI Elements */
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
         #lucky-money-link {
             position: fixed; bottom: 30px; right: 30px; font-size: 60px; text-decoration: none; z-index: 1000;
@@ -115,7 +142,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 999; text-align: center; color: white;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             transition: opacity 0.8s;
             cursor: pointer;
         }
@@ -124,12 +151,17 @@
         .time-val { font-size: 36px; font-weight: bold; color: #00ffaa; text-shadow: 0 0 10px #00ffaa; }
         .time-lbl { font-size: 12px; color: #ccc; margin-top: 5px; letter-spacing: 1px; }
         @keyframes pulse { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.05); opacity: 1; } }
+        
+        @media (max-width: 600px) {
+            .wish-text { font-size: 15px; width: 95%; }
+            .signature { font-size: 18px; }
+            #message-box { top: 12%; }
+        }
     </style>
 </head>
 <body>
 
 <div id="bg-canvas"></div>
-
 <div id="flash-overlay"></div>
 
 <div id="countdown-overlay" class="overlay-screen">
@@ -146,6 +178,14 @@
 <div id="intro-overlay" class="overlay-screen" style="display:none;">
     <h1>✨ Gửi: Trương Thị Dương ✨</h1>
     <p style="color: #ccc; font-size: 18px; margin-top: 10px;">(Chạm để bắt đầu)</p>
+</div>
+
+<div id="message-box">
+    <div class="wish-text">
+        "Tết đến rồi đó! Tớ chúc cậu cùng gia đình có thêm nhiều sức khỏe, bình an và vạn sự như ý.<br>
+        Mong rằng năm 2026 sẽ mang đến cho cậu thật nhiều niềm vui và may mắn!"
+    </div>
+    <div class="signature">- Nguyễn Bắc Sơn -</div>
 </div>
 
 <div id="stage-container">
@@ -166,14 +206,15 @@
     let isPlaying = false;
     let fireworks = [];
     let particles = [];
+    
+    // Elements
     const stageDiv = document.getElementById('stage-container');
-    const ring1 = document.getElementById('ring-1');
-    const ring2 = document.getElementById('ring-2');
+    const messageBox = document.getElementById('message-box');
     const introOverlay = document.getElementById('intro-overlay');
     const countdownOverlay = document.getElementById('countdown-overlay');
     const flashOverlay = document.getElementById('flash-overlay');
 
-    // --- DRONE TEXT SETUP ---
+    // --- DRONE RINGS ---
     function createRing(elementId, text, radius, colorClass, fontSize) {
         const container = document.getElementById(elementId);
         container.innerHTML = '';
@@ -188,6 +229,7 @@
             span.className = `drone-char ${colorClass}`;
             span.innerText = char;
             span.style.fontSize = fontSize + 'px';
+            // Chỉnh góc để chữ đứng đúng chiều
             span.style.transform = `translate3d(${x}px, ${y}px, 0) rotateZ(${angle + 90}deg) rotateX(-90deg)`;
             container.appendChild(span);
         });
@@ -197,37 +239,32 @@
         const minDim = Math.min(window.innerWidth, window.innerHeight);
         const rScale = minDim / 2;
         const isMobile = window.innerWidth < 600;
-        createRing('ring-1', "CHÚC MỪNG NĂM MỚI 2026  ★  ", rScale * 0.8, 'color-cyan', isMobile ? 18 : 30);
-        createRing('ring-2', "TRƯƠNG THỊ DƯƠNG  ★  ", rScale * 0.5, 'color-gold', isMobile ? 22 : 38);
+        // Đẩy vòng tròn xuống thấp hơn một chút để nhường chỗ cho lời chúc
+        createRing('ring-1', "CHÚC MỪNG NĂM MỚI 2026  ★  ", rScale * 0.75, 'color-cyan', isMobile ? 18 : 30);
+        createRing('ring-2', "TRƯƠNG THỊ DƯƠNG  ★  ", rScale * 0.45, 'color-gold', isMobile ? 22 : 38);
     }
     initRings();
+    
     function getScaleFactor() { return window.innerWidth < 600 ? 0.6 : 1.0; }
 
     // --- SOUNDS ---
     const sounds = {
         launch: new Audio('https://nguyenbacson.io.vn/moi-ban.mp3'),
-        short: new Audio('https://nguyenbacson.io.vn/no-ngan.mp3'), // Nổ bé
-        big: new Audio('https://nguyenbacson.io.vn/chum-to.mp3'),   // Nổ to
+        short: new Audio('https://nguyenbacson.io.vn/no-ngan.mp3'),
+        big: new Audio('https://nguyenbacson.io.vn/chum-to.mp3'),
         finale: new Audio('https://nguyenbacson.io.vn/chum-dai.mp3')
     };
-    sounds.launch.volume = 0.3; 
-    sounds.finale.volume = 0.8;
-    sounds.big.volume = 1.0; 
+    sounds.launch.volume = 0.3; sounds.finale.volume = 0.8; sounds.big.volume = 1.0; 
 
     function playSound(type) {
         if(!isPlaying) return;
         if(type === 'finale') { sounds.finale.currentTime=0; sounds.finale.play().catch(()=>{}); return; }
-        
-        let s;
-        if (type === 'mega') s = sounds.big; 
-        else s = sounds.short; 
-
+        let s = (type === 'mega') ? sounds.big : sounds.short;
         if(s) { const c = s.cloneNode(); c.volume = s.volume; c.play().catch(()=>{}); }
     }
 
-    // --- FLASH EFFECT ---
     function triggerFlash() {
-        flashOverlay.style.opacity = 0.7; // Chớp trắng mạnh
+        flashOverlay.style.opacity = 0.7;
         setTimeout(() => { flashOverlay.style.opacity = 0; }, 100); 
     }
 
@@ -240,10 +277,8 @@
             this.x = random(canvas.width * 0.2, canvas.width * 0.8);
             this.y = canvas.height;
             this.targetY = random(canvas.height * 0.1, canvas.height * 0.5);
-            
             this.vx = random(-0.5, 0.5); 
             this.vy = -random(14, 19) * (scale < 1 ? 0.85 : 1); 
-            
             this.type = type; 
             this.hue = random(0, 360);
             this.dead = false;
@@ -253,11 +288,7 @@
         update() {
             this.trail.push({x:this.x, y:this.y});
             if(this.trail.length > 2) this.trail.shift();
-
-            this.x += this.vx;
-            this.y += this.vy;
-            this.vy += 0.3; 
-            
+            this.x += this.vx; this.y += this.vy; this.vy += 0.3; 
             if(this.vy >= 0 || this.y <= this.targetY) {
                 this.dead = true;
                 explode(this.x, this.y, this.type, this.hue);
@@ -279,17 +310,12 @@
             const scale = getScaleFactor();
             this.x = x; this.y = y;
             const angle = random(0, Math.PI*2);
-            
             let baseSpeed = (type === 'mega') ? random(10, 18) : random(3, 8);
             const speed = baseSpeed * scale; 
-            
             this.vx = Math.cos(angle)*speed;
             this.vy = Math.sin(angle)*speed;
-            
             this.alpha = 1;
-            this.decay = random(0.04, 0.08); 
-            if (type === 'mega') this.decay = random(0.02, 0.05);
-            
+            this.decay = (type === 'mega') ? random(0.02, 0.05) : random(0.04, 0.08);
             this.hue = hue + random(-20,20);
             this.dead = false;
             this.gravity = 0.1; 
@@ -298,9 +324,7 @@
         }
         update() {
             this.x += this.vx; this.y += this.vy;
-            this.vx *= 0.9; this.vy *= 0.9; 
-            this.vy += this.gravity;
-            
+            this.vx *= 0.9; this.vy *= 0.9; this.vy += this.gravity;
             this.alpha -= this.decay;
             if(this.alpha<=0) this.dead = true;
         }
@@ -316,27 +340,19 @@
 
     function explode(x, y, type, hue) {
         if(type !== 'finale') playSound(type); 
-        
-        // Nếu là quả to -> Trigger Flash
         if (type === 'mega') triggerFlash();
-
         let scale = getScaleFactor();
         let count = (type === 'mega') ? 120 : 30; 
         if (scale < 1) count = Math.floor(count * 0.7); 
-
         for(let i=0; i<count; i++) particles.push(new Particle(x, y, hue, type));
     }
 
     function loop() {
         requestAnimationFrame(loop);
-        
-        // Xóa nhanh để sạch màn hình
         ctx.globalCompositeOperation = 'destination-out';
         ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'; 
         ctx.fillRect(0,0,canvas.width, canvas.height);
-        
         ctx.globalCompositeOperation = 'lighter';
-
         for(let i=fireworks.length-1; i>=0; i--) {
             fireworks[i].update(); fireworks[i].draw();
             if(fireworks[i].dead) fireworks.splice(i,1);
@@ -348,13 +364,10 @@
     }
     loop();
 
-    // --- LOGIC SCENARIO ---
+    // --- SCENARIO CONTROL ---
     countdownOverlay.addEventListener('click', () => {
         countdownOverlay.style.opacity = 0;
-        setTimeout(() => { 
-            countdownOverlay.style.display = 'none'; 
-            introOverlay.style.display = 'flex';
-        }, 800);
+        setTimeout(() => { countdownOverlay.style.display = 'none'; introOverlay.style.display = 'flex'; }, 800);
     });
 
     introOverlay.addEventListener('click', () => {
@@ -368,50 +381,47 @@
     function runScenarioLoop() {
         if(!isPlaying) return;
         
-        // Reset trạng thái
-        stageDiv.style.display = 'block';
-        stageDiv.style.opacity = 1;
-        ring1.style.opacity = 0;
-        ring2.style.opacity = 0;
-
-        // === KỊCH BẢN MỞ MÀN ===
-        // Ngay khi bắt đầu, bắn 2 quả MEGA để nháy màn hình
+        // 1. Mở màn: 2 quả pháo MEGA nổ đùng đoàng
         setTimeout(() => {
             fireworks.push(new Firework('mega'));
-            setTimeout(() => { fireworks.push(new Firework('mega')); }, 400); // Bắn quả thứ 2 sau xíu
-        }, 200);
+            setTimeout(() => { fireworks.push(new Firework('mega')); }, 400); 
+        }, 300);
 
-        // 1. Hiện Vòng 1 sau khi pháo nổ (khoảng 1.5s sau khi bắt đầu)
-        setTimeout(() => { ring1.style.opacity = 1; }, 1500);
-
-        // 2. Hiện Vòng 2 sau đó 5s
-        setTimeout(() => { ring2.style.opacity = 1; }, 6500);
+        // 2. Sau khi pháo nổ -> Hiện Chữ 3D (Xoay và Phóng to) + Lời chúc
+        setTimeout(() => { 
+            stageDiv.style.display = 'block';
+            stageDiv.classList.add('stage-enter'); // Kích hoạt animation Zoom
+            
+            messageBox.style.display = 'flex';
+            setTimeout(() => messageBox.classList.add('visible'), 100);
+        }, 1500);
         
-        // 3. Logic bắn pháo nền (bắn lác đác sau khi mở màn)
+        // 3. Bắn pháo nền
         let scenarioInterval;
         setTimeout(() => {
              scenarioInterval = setInterval(() => {
                 let type = Math.random() < 0.08 ? 'mega' : 'normal';
                 fireworks.push(new Firework(type));
             }, 1200);
-        }, 2000);
+        }, 2500);
 
-
-        // 4. Kết thúc phần intro, chuẩn bị Finale
+        // 4. Kết thúc intro, chuẩn bị Finale (sau 16s)
         setTimeout(() => {
             clearInterval(scenarioInterval);
         }, 16000);
 
         // 5. Finale (17s - 42s)
         setTimeout(() => {
-            stageDiv.style.opacity = 0; 
+            stageDiv.style.opacity = 0; // Ẩn drone
+            messageBox.style.opacity = 0; // Ẩn lời chúc
+            
             playSound('finale');
             document.getElementById('lucky-money-link').className = 'show';
             
             let finaleEndTime = Date.now() + 25000;
             function autoFireFinale() {
                 if(Date.now() > finaleEndTime) return;
-                if(Math.random() < 0.18) { // Bắn dày hơn
+                if(Math.random() < 0.18) { 
                     let type = Math.random() < 0.15 ? 'mega' : 'normal';
                     fireworks.push(new Firework(type));
                 }
@@ -420,8 +430,13 @@
             autoFireFinale();
         }, 17000);
 
-        // 6. Loop lại (Sau 45s)
+        // 6. Reset Loop (Sau 45s)
         setTimeout(() => {
+            // Reset trạng thái để loop lại đẹp
+            stageDiv.classList.remove('stage-enter');
+            stageDiv.style.opacity = 1; 
+            messageBox.style.opacity = 1;
+            
             runScenarioLoop();
         }, 45000);
     }
