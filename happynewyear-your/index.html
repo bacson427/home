@@ -13,7 +13,6 @@
             font-family: 'Arial', sans-serif;
         }
 
-        /* Nền tối sâu thẳm */
         #bg-canvas {
             position: absolute;
             top: 0;
@@ -22,7 +21,7 @@
             background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
         }
 
-        /* --- SÂN KHẤU 3D MỚI (KHÔNG LAG) --- */
+        /* --- SÂN KHẤU 3D MỚI (ORBIT) --- */
         #stage-container {
             position: absolute;
             top: 50%;
@@ -30,118 +29,87 @@
             transform: translate(-50%, -50%);
             width: 100%;
             height: 100%;
-            perspective: 1000px; /* Tạo chiều sâu */
+            perspective: 1000px;
             z-index: 2;
             display: none;
             opacity: 0;
-            transition: opacity 2s ease;
+            transition: opacity 1s ease; /* Hiện nhanh hơn chút */
             pointer-events: none;
         }
 
-        /* Khối chứa nội dung xoay 3D */
         .content-wrapper {
             position: relative;
             width: 100%;
             height: 100%;
             transform-style: preserve-3d;
-            /* Animation lắc lư nhẹ 3D */
-            animation: float3D 8s ease-in-out infinite alternate;
+            animation: float3D 10s ease-in-out infinite alternate;
         }
 
-        /* Vòng tròn quỹ đạo (Orbit Rings) - Thay thế cho Drone */
         .orbit-ring {
             position: absolute;
             top: 50%;
             left: 50%;
             border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Mờ đi chút cho đỡ rối */
             transform-style: preserve-3d;
             box-sizing: border-box;
         }
 
-        /* Vòng 1: Xoay ngang */
         #orbit-1 {
-            width: 80vw;
-            height: 80vw;
-            max-width: 500px;
-            max-height: 500px;
-            margin-left: -40vw; /* Căn giữa thủ công vì position absolute */
-            margin-top: -40vw;
-            border-color: rgba(0, 255, 255, 0.5);
+            width: 80vw; height: 80vw; max-width: 500px; max-height: 500px;
+            margin-left: -40vw; margin-top: -40vw;
+            border-color: rgba(0, 255, 255, 0.4);
             animation: spinOrbit1 15s linear infinite;
         }
-        /* Vòng 2: Xoay chéo */
         #orbit-2 {
-            width: 60vw;
-            height: 60vw;
-            max-width: 400px;
-            max-height: 400px;
-            margin-left: -30vw;
-            margin-top: -30vw;
-            border-color: rgba(255, 204, 0, 0.5);
+            width: 60vw; height: 60vw; max-width: 400px; max-height: 400px;
+            margin-left: -30vw; margin-top: -30vw;
+            border-color: rgba(255, 204, 0, 0.4);
             animation: spinOrbit2 20s linear infinite;
         }
 
-        /* TEXT 3D SIÊU NHẸ (Dùng Gradient thay Shadow) */
         .main-text {
             position: absolute;
             width: 100%;
             text-align: center;
             top: 50%;
             left: 0;
-            transform: translateY(-50%) translateZ(60px); /* Đẩy chữ nổi lên trước vòng tròn */
+            transform: translateY(-50%) translateZ(60px);
             font-weight: 900;
             text-transform: uppercase;
             line-height: 1.4;
         }
 
-        /* Dòng 1: Gradient Xanh */
         #line1 {
             font-size: 40px;
             background: linear-gradient(to right, #fff, #00ffff, #fff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent; /* Chữ trong suốt để hiện nền gradient */
+            -webkit-background-clip: text; background-clip: text; color: transparent;
             margin-bottom: 10px;
         }
-
-        /* Dòng 2: Gradient Vàng */
         #line2 {
             font-size: 50px;
             background: linear-gradient(to right, #ffcc00, #ff6600, #ffcc00);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            -webkit-background-clip: text; background-clip: text; color: transparent;
         }
 
         @media (min-width: 600px) {
             #orbit-1 { margin-left: -250px; margin-top: -250px; }
             #orbit-2 { margin-left: -200px; margin-top: -200px; }
         }
-
         @media (max-width: 600px) {
             #line1 { font-size: 26px; }
             #line2 { font-size: 36px; }
         }
 
-        /* Animation */
         @keyframes float3D {
-            0% { transform: rotateX(10deg) rotateY(-10deg); }
-            100% { transform: rotateX(-10deg) rotateY(10deg); }
+            0% { transform: rotateX(5deg) rotateY(-5deg); }
+            100% { transform: rotateX(-5deg) rotateY(5deg); }
         }
+        @keyframes spinOrbit1 { from { transform: rotateX(70deg) rotateZ(0deg); } to { transform: rotateX(70deg) rotateZ(360deg); } }
+        @keyframes spinOrbit2 { from { transform: rotateY(60deg) rotateX(45deg) rotateZ(0deg); } to { transform: rotateY(60deg) rotateX(45deg) rotateZ(360deg); } }
 
-        @keyframes spinOrbit1 {
-            from { transform: rotateX(70deg) rotateZ(0deg); }
-            to { transform: rotateX(70deg) rotateZ(360deg); }
-        }
-        @keyframes spinOrbit2 {
-            from { transform: rotateY(60deg) rotateX(45deg) rotateZ(0deg); }
-            to { transform: rotateY(60deg) rotateX(45deg) rotateZ(360deg); }
-        }
-
-        /* --- CÁC PHẦN UI KHÁC --- */
+        /* UI */
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
-
         #lucky-money-link {
             position: fixed; bottom: 30px; right: 30px; font-size: 60px; text-decoration: none; z-index: 1000;
             transition: all 0.5s ease; cursor: pointer; opacity: 0; transform: translateY(20px); pointer-events: none;
@@ -154,18 +122,14 @@
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 999; text-align: center; color: white;
         }
-        
         #intro-overlay { background: rgba(0,0,0,0.9); cursor: pointer; transition: opacity 1s; }
         #intro-overlay h1 { color: #ffcc00; font-size: 28px; text-shadow: 0 0 20px #ff6600; animation: pulse 1s infinite; margin-bottom: 10px; }
-        
         #countdown-overlay { background: rgba(0,0,0,0.95); z-index: 1001; }
         .time-box { display: inline-block; margin: 0 8px; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; min-width: 60px; }
         .time-val { font-size: 32px; font-weight: bold; color: #00ffaa; }
         .time-lbl { font-size: 12px; color: #ccc; margin-top: 5px; }
-
         #password-modal { background: rgba(0,0,0,0.95); z-index: 1003; display: none; }
         #admin-btn { position: fixed; bottom: 10px; left: 10px; z-index: 1002; opacity: 0.3; font-size: 12px; background: none; border: 1px solid #555; color: #555; border-radius: 10px; padding: 5px 10px; cursor: pointer;}
-
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
     </style>
 </head>
@@ -202,7 +166,6 @@
     <div class="content-wrapper">
         <div id="orbit-1" class="orbit-ring"></div>
         <div id="orbit-2" class="orbit-ring"></div>
-        
         <div class="main-text">
             <div id="line1">CHÚC MỪNG NĂM MỚI 2026</div>
             <div id="line2">TRƯƠNG THỊ DƯƠNG</div>
@@ -214,7 +177,6 @@
 <a href="https://nguyenbacson.io.vn/happynewyear-your/quay-li-xi" id="lucky-money-link" target="_blank">🧧</a>
 
 <script>
-    // --- SETUP ---
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -226,11 +188,8 @@
     let particles = [];
     const stageDiv = document.getElementById('stage-container');
     
-    function getScaleFactor() {
-        return window.innerWidth < 600 ? 0.6 : 1.0;
-    }
+    function getScaleFactor() { return window.innerWidth < 600 ? 0.6 : 1.0; }
 
-    // --- ÂM THANH ---
     const sounds = {
         launch: new Audio('https://nguyenbacson.io.vn/moi-ban.mp3'),
         short: new Audio('https://nguyenbacson.io.vn/no-ngan.mp3'),
@@ -238,21 +197,16 @@
         big: new Audio('https://nguyenbacson.io.vn/chum-to.mp3'),
         finale: new Audio('https://nguyenbacson.io.vn/chum-dai.mp3')
     };
-    sounds.launch.volume = 0.3;
-    sounds.finale.volume = 0.8;
+    sounds.launch.volume = 0.3; sounds.finale.volume = 0.8;
 
     function playSound(type) {
         if(!isPlaying) return;
-        if(type === 'finale') { 
-            sounds.finale.currentTime=0; 
-            sounds.finale.play().catch(()=>{}); 
-            return; 
-        }
+        if(type === 'finale') { sounds.finale.currentTime=0; sounds.finale.play().catch(()=>{}); return; }
         const s = sounds[type];
         if(s) { const c = s.cloneNode(); c.volume = s.volume; c.play().catch(()=>{}); }
     }
 
-    // --- PHÁO HOA ---
+    // --- CẤU HÌNH VẬT LÝ MỚI (NHANH - GỌN) ---
     function random(min, max) { return Math.random() * (max - min) + min; }
 
     class Firework {
@@ -263,7 +217,8 @@
             this.targetY = random(canvas.height * (scale < 1 ? 0.2 : 0.1), canvas.height * 0.5);
             
             this.vx = random(-0.5, 0.5); 
-            this.vy = -random(12, 17) * (scale < 1 ? 0.85 : 1); 
+            // TĂNG TỐC ĐỘ BAY (Bay vút lên)
+            this.vy = -random(16, 22) * (scale < 1 ? 0.85 : 1); 
             
             this.type = type;
             this.hue = random(0, 360);
@@ -272,11 +227,13 @@
             playSound('launch');
         }
         update() {
+            // Giảm độ dài đuôi bằng cách chỉ lưu ít tọa độ
             this.trail.push({x:this.x, y:this.y});
-            if(this.trail.length>4) this.trail.shift();
+            if(this.trail.length > 2) this.trail.shift(); // Đuôi cực ngắn
+
             this.x += this.vx;
             this.y += this.vy;
-            this.vy += 0.25; 
+            this.vy += 0.35; // Trọng lực mạnh hơn để bay dứt khoát
             if(this.vy >= 0 || this.y <= this.targetY) {
                 this.dead = true;
                 explode(this.x, this.y, this.type, this.hue);
@@ -288,7 +245,7 @@
             else ctx.moveTo(this.x, this.y+10);
             ctx.lineTo(this.x, this.y);
             ctx.strokeStyle = `hsl(${this.hue},100%,70%)`;
-            ctx.lineWidth = 3 * getScaleFactor();
+            ctx.lineWidth = 2 * getScaleFactor();
             ctx.stroke();
         }
     }
@@ -298,23 +255,28 @@
             const scale = getScaleFactor();
             this.x = x; this.y = y;
             const angle = random(0, Math.PI*2);
-            let baseSpeed = (type==='big') ? random(6,14) : random(3,7);
+            // Nổ bung ra nhanh
+            let baseSpeed = (type==='big') ? random(8,16) : random(4,9);
             const speed = baseSpeed * scale; 
 
             this.vx = Math.cos(angle)*speed;
             this.vy = Math.sin(angle)*speed;
             this.alpha = 1;
-            this.decay = (type==='big') ? random(0.005, 0.01) : random(0.015, 0.03);
+            
+            // TĂNG TỐC ĐỘ BIẾN MẤT (DECAY)
+            // Giá trị càng cao biến mất càng nhanh
+            this.decay = (type==='big') ? random(0.02, 0.04) : random(0.04, 0.08);
+            
             this.hue = hue + random(-20,20);
             this.dead = false;
-            this.gravity = 0.12;
+            this.gravity = 0.15; // Rơi nhanh hơn chút
             this.sparkle = (type==='big');
-            this.size = (this.sparkle ? 2.5 : 2) * scale;
+            this.size = (this.sparkle ? 2 : 1.5) * scale;
         }
         update() {
             this.x += this.vx; this.y += this.vy;
             this.vy += this.gravity;
-            this.vx *= 0.93; this.vy *= 0.93;
+            this.vx *= 0.9; this.vy *= 0.9; // Ma sát lớn để dừng nhanh
             this.alpha -= this.decay;
             if(this.sparkle && Math.random()<0.2) this.alpha = 1; 
             if(this.alpha<=0) this.dead = true;
@@ -332,17 +294,20 @@
     function explode(x, y, type, hue) {
         if(type !== 'finale') playSound(type);
         let scale = getScaleFactor();
-        let count = (type==='big') ? 100 : 40;
+        let count = (type==='big') ? 80 : 30;
         if (scale < 1) count = Math.floor(count * 0.6); 
-
         for(let i=0; i<count; i++) particles.push(new Particle(x, y, hue, type));
     }
 
     function loop() {
         requestAnimationFrame(loop);
+        
+        // QUAN TRỌNG: Làm sạch màn hình cực nhanh (0.4 thay vì 0.15)
+        // Số càng lớn (max 1) thì vệt đuôi càng biến mất nhanh -> Đỡ rối
         ctx.globalCompositeOperation = 'destination-out';
-        ctx.fillStyle = 'rgba(0,0,0,0.15)'; 
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'; 
         ctx.fillRect(0,0,canvas.width, canvas.height);
+        
         ctx.globalCompositeOperation = 'lighter';
 
         for(let i=fireworks.length-1; i>=0; i--) {
@@ -373,7 +338,6 @@
     function runScenarioLoop() {
         if(!isPlaying) return;
         
-        // Hiện 3D
         stageDiv.style.display = 'block';
         setTimeout(() => { stageDiv.style.opacity = 1; }, 100);
         
@@ -390,7 +354,7 @@
         }, 10000);
 
         setTimeout(() => {
-            stageDiv.style.opacity = 0; // Ẩn chữ khi cao trào
+            stageDiv.style.opacity = 0; 
             playSound('finale');
             document.getElementById('lucky-money-link').className = 'show';
             let finaleEndTime = Date.now() + 25000;
@@ -409,7 +373,6 @@
         }, 45000);
     }
 
-    // --- UTILS ---
     let timer = setInterval(() => {
         let now = new Date().getTime();
         let t = targetDate - now;
