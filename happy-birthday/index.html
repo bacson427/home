@@ -3,78 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sinh Nhật Bắc Sơn 19th</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    
     <style>
-        /* CSS để báo hiệu: Sai là viền đỏ, Đúng là viền xanh */
-        input {
-            padding: 10px;
-            font-size: 16px;
-            outline: none;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            width: 250px;
-            transition: 0.3s;
+        :root { 
+            --primary: #ff4757; 
+            --glass: rgba(255, 255, 255, 0.1); 
+            --border: rgba(255, 255, 255, 0.2);
+            --neon: #feca57;
+        }
+        
+        body {
+            margin: 0; padding: 0; font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle at top right, #2c3e50, #000000);
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; color: white; overflow-x: hidden;
         }
 
-        /* Class khi sai (chưa đủ 10 số) */
-        .invalid {
-            border-color: red;
-            background-color: #ffe6e6; /* Màu nền đỏ nhạt */
+        body::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+            opacity: 0.3; pointer-events: none;
         }
 
-        /* Class khi đúng (đủ 10 số) */
-        .valid {
-            border-color: green;
-            background-color: #e6fffa; /* Màu nền xanh nhạt */
+        .container {
+            background: rgba(30, 30, 30, 0.6); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border); border-radius: 24px;
+            padding: 30px; width: 85%; max-width: 380px; text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            position: relative; z-index: 10;
+            animation: popUp 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
 
-        .error-msg {
-            color: red;
-            font-size: 13px;
-            margin-top: 5px;
-            display: none; /* Mặc định ẩn */
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        h1 { 
+            color: var(--neon); margin: 10px 0 5px; font-size: 1.8rem; text-transform: uppercase; letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(254, 202, 87, 0.5);
         }
+        .cake-icon { font-size: 3rem; display: block; margin-bottom: 5px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        p.subtitle { color: #a4b0be; font-size: 0.9rem; margin-bottom: 20px; font-style: italic; }
+
+        .countdown-container {
+            display: flex; justify-content: space-between; margin-bottom: 25px;
+            gap: 8px;
+        }
+        .time-box {
+            background: rgba(0, 0, 0, 0.4); border: 1px solid var(--primary);
+            border-radius: 8px; padding: 8px 5px; flex: 1;
+            display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 0 10px rgba(255, 71, 87, 0.2);
+        }
+        .time-val { font-size: 1.4rem; font-weight: bold; color: white; line-height: 1; }
+        .time-label { font-size: 0.6rem; text-transform: uppercase; color: #a4b0be; margin-top: 5px; }
+
+        .map-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: linear-gradient(90deg, #1e90ff, #0984e3);
+            color: white; text-decoration: none; padding: 12px; border-radius: 12px;
+            margin-bottom: 20px; font-weight: bold; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(30, 144, 255, 0.3);
+        }
+        .map-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(30, 144, 255, 0.5); }
+
+        .deadline {
+            background: rgba(255, 71, 87, 0.15); color: #ff6b81; 
+            padding: 8px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 20px;
+            border: 1px dashed #ff4757;
+        }
+
+        input, select {
+            width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px;
+            border: 1px solid var(--border); background: rgba(0, 0, 0, 0.3); 
+            color: white; font-family: inherit; box-sizing: border-box; transition: 0.3s;
+        }
+        input:focus { border-color: var(--neon); background: rgba(0, 0, 0, 0.5); outline: none; }
+
+        .btn-submit {
+            width: 100%; padding: 15px; border-radius: 12px; border: none;
+            background: linear-gradient(90deg, #ff4757, #ff6b81);
+            color: white; font-weight: bold; font-size: 1rem; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4); transition: 0.3s;
+        }
+        .btn-submit:active { transform: scale(0.98); }
+
+        .footer-admin { margin-top: 25px; opacity: 0.4; font-size: 0.8rem; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <label>Nhập SĐT (Chỉ nhận số, tối đa 10):</label><br>
-    
-    <input type="tel" id="mobile" placeholder="0xxxxxxxxx" autocomplete="off">
-    <div id="msg" class="error-msg">Vui lòng nhập đủ 10 số!</div>
+    <div class="container">
+        <div class="cake-icon">🎂</div>
+        <h1>Sinh Nhật Bắc Sơn</h1>
+        <p class="subtitle">19 Tuổi bẻ gãy sừng trâu - Anh em tụ họp!</p>
+
+        <div class="countdown-container">
+            <div class="time-box">
+                <span class="time-val" id="days">00</span>
+                <span class="time-label">Ngày</span>
+            </div>
+            <div class="time-box">
+                <span class="time-val" id="hours">00</span>
+                <span class="time-label">Giờ</span>
+            </div>
+            <div class="time-box">
+                <span class="time-val" id="minutes">00</span>
+                <span class="time-label">Phút</span>
+            </div>
+            <div class="time-box">
+                <span class="time-val" id="seconds">00</span>
+                <span class="time-label">Giây</span>
+            </div>
+        </div>
+
+        <a href="Https://maps.app.goo.gl/umHDmXwsPcK7hKYC9" target="_blank" class="map-btn">
+            <span>🗺️</span> <span>Lẩu Wang - 134 Trần Đại Nghĩa</span> <span>↗</span>
+        </a>
+
+        <div class="deadline">
+            🔥 Chốt đơn trước ngày <b>01/02/2026</b> nha!
+        </div>
+
+        <div class="form-area">
+            <input type="text" id="ten" placeholder="Nhập tên của cậu..." required>
+            <input type="number" id="sdt" placeholder="Số điện thoại (Bắt buộc 10 số)" required>
+            <select id="trang_thai">
+                <option value="CÓ">✅ Chắc chắn đi (CÓ)</option>
+                <option value="KHÔNG">❌ Bận mất rồi (KHÔNG)</option>
+            </select>
+            <button class="btn-submit" onclick="luuThongTin()">GỬI ĐĂNG KÝ 🚀</button>
+        </div>
+
+        <div class="footer-admin" onclick="xuatExcel()">🔒 Admin Panel</div>
+    </div>
 
     <script>
-        const input = document.getElementById('mobile');
-        const msg = document.getElementById('msg');
+        // --- LOGIC ĐẾM NGƯỢC ---
+        const countdown = () => {
+            const countDate = new Date("Feb 4, 2026 19:30:00").getTime();
+            const now = new Date().getTime();
+            const gap = countDate - now;
 
-        input.addEventListener('input', function() {
-            // 1. CHẶN KÝ TỰ LẠ: Thay thế tất cả cái gì KHÔNG phải số thành rỗng
-            this.value = this.value.replace(/[^0-9]/g, '');
-
-            // 2. CHẶN ĐỘ DÀI: Nếu quá 10 ký tự, cắt phăng đi chỉ lấy 10 cái đầu
-            if (this.value.length > 10) {
-                this.value = this.value.slice(0, 10);
+            if (gap < 0) {
+                document.querySelector(".countdown-container").innerHTML = "<div style='width:100%; color:#feca57; font-weight:bold;'>🎉 PARTY STARTED! 🎉</div>";
+                return;
             }
 
-            // 3. KIỂM TRA ĐỂ ĐỔI MÀU
-            if (this.value.length === 10) {
-                // Đủ 10 số -> Xanh
-                this.classList.remove('invalid');
-                this.classList.add('valid');
-                msg.style.display = 'none';
-            } else {
-                // Chưa đủ -> Đỏ
-                this.classList.remove('valid');
-                this.classList.add('invalid');
-                
-                // Nếu ô trống thì không hiện lỗi, có nhập dở dang mới hiện
-                if (this.value.length > 0) {
-                    msg.style.display = 'block';
-                } else {
-                    msg.style.display = 'none';
-                }
+            const second = 1000;
+            const minute = second * 60;
+            const hour = minute * 60;
+            const day = hour * 24;
+
+            const d = Math.floor(gap / day);
+            const h = Math.floor((gap % day) / hour);
+            const m = Math.floor((gap % hour) / minute);
+            const s = Math.floor((gap % minute) / second);
+
+            document.getElementById('days').innerText = d < 10 ? '0' + d : d;
+            document.getElementById('hours').innerText = h < 10 ? '0' + h : h;
+            document.getElementById('minutes').innerText = m < 10 ? '0' + m : m;
+            document.getElementById('seconds').innerText = s < 10 ? '0' + s : s;
+        };
+        setInterval(countdown, 1000);
+
+        window.onload = function() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) { return clearInterval(interval); }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
+            }, 250);
+        };
+
+        let danhSachDangKy = [];
+
+        function luuThongTin() {
+            var ten = document.getElementById("ten").value;
+            var sdt = document.getElementById("sdt").value;
+            var trangThai = document.getElementById("trang_thai").value;
+            var thoiGian = new Date().toLocaleString('vi-VN');
+
+            // --- KIỂM TRA DỮ LIỆU ---
+            if(ten == "") { 
+                alert("⚠️ Cậu quên nhập tên kìa!"); 
+                return; 
             }
-        });
+            
+            // Logic bắt buộc 10 số
+            // Kiểm tra: Phải là số VÀ độ dài đúng bằng 10
+            if (sdt.length !== 10) {
+                alert("⛔ Số điện thoại phải đúng 10 số nha! (Hiện tại: " + sdt.length + " số)");
+                return;
+            }
+
+            // Hiệu ứng pháo hoa khi thành công
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
+            danhSachDangKy.push({ "Thời Gian": thoiGian, "Tên": ten, "SĐT": "'" + sdt, "Trạng Thái": trangThai });
+            // Lưu ý: "'" + sdt giúp Excel hiểu đây là chuỗi số, không bị mất số 0 ở đầu
+            
+            setTimeout(() => {
+                alert("✅ Đã nhận đơn của " + ten + "! Hẹn 04/02 nhé!");
+                document.getElementById("ten").value = "";
+                document.getElementById("sdt").value = "";
+            }, 500);
+        }
+
+        function xuatExcel() {
+            if (danhSachDangKy.length === 0) { alert("Chưa có ai đăng ký cả!"); return; }
+            var pass = prompt("Nhập mật khẩu Admin:");
+            if (pass === "04022007") {
+                var ws = XLSX.utils.json_to_sheet(danhSachDangKy);
+                var wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Danh Sach Sinh Nhat");
+                XLSX.writeFile(wb, "DanhSach_SN_BacSon.xlsx");
+            } else if (pass !== null) { alert("⛔ Sai mật khẩu rồi!"); }
+        }
     </script>
-
 </body>
 </html>
