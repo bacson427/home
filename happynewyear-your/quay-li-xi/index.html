@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lì Xì Tết 2026 - Nguyễn Bắc Sơn</title>
+    <title>Lì Xì Tết 2026 - Gửi Dương</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap');
 
         body {
             margin: 0; padding: 0;
@@ -16,28 +16,37 @@
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
             color: white; overflow: hidden;
+            position: relative;
         }
 
-        /* Nút Admin - Luôn hiển thị trên cùng */
+        /* --- HIỆU ỨNG HOA RƠI (CHỈ MÀN HÌNH CHỜ) --- */
+        .flower {
+            position: absolute; top: -10px;
+            background: #ffea00; border-radius: 50%;
+            opacity: 0.8; z-index: 999;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+
+        /* Nút Admin */
         .btn-gear {
             position: absolute; top: 15px; left: 15px;
-            font-size: 24px; cursor: pointer; opacity: 0.5;
-            z-index: 2000; /* Cao hơn cả overlay đếm ngược */
+            font-size: 24px; cursor: pointer; opacity: 0.5; z-index: 2000;
         }
-        .btn-gear:hover { opacity: 1; }
+        .btn-gear:hover { opacity: 1; transform: rotate(90deg); transition: 0.5s; }
 
         /* Container Chính */
         .container {
             text-align: center;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 20px;
+            padding: 30px; border-radius: 20px;
             border: 2px solid #fca311;
             box-shadow: 0 0 30px rgba(217, 4, 41, 0.5);
             width: 90%; max-width: 450px;
-            position: relative;
-            z-index: 10;
+            position: relative; z-index: 10;
         }
 
         h1 {
@@ -54,85 +63,99 @@
 
         .btn-main {
             background: linear-gradient(to right, #fca311, #ffb703);
-            border: none; padding: 10px 30px;
-            border-radius: 20px; color: #8d0801;
+            border: none; padding: 12px 35px;
+            border-radius: 25px; color: #8d0801;
             font-weight: bold; cursor: pointer; font-size: 16px;
-            transition: 0.2s;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(252, 163, 17, 0.4);
+            transition: 0.3s;
         }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(252, 163, 17, 0.6); }
         .btn-main:active { transform: scale(0.95); }
-        .btn-main:disabled { background: #ccc; cursor: not-allowed; }
 
         /* Lưới Lì xì */
         #game-area { display: none; }
         .grid-container {
             display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 10px; margin-top: 20px;
+            gap: 15px; margin-top: 20px;
         }
         .lixi {
-            background-color: #d90429; border: 1px solid #fca311;
-            border-radius: 8px; aspect-ratio: 2/3;
+            background-color: #d90429; border: 2px solid #fca311;
+            border-radius: 10px; aspect-ratio: 2/3;
             display: flex; justify-content: center; align-items: center;
-            font-size: 2em; cursor: pointer;
-            transition: transform 0.2s; position: relative;
+            font-size: 2.5em; cursor: pointer;
+            transition: all 0.3s; position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
-        .lixi:hover { transform: translateY(-3px); }
+        .lixi:hover { transform: translateY(-5px); background-color: #ef233c; }
         .lixi::after { content: "🧧"; }
 
         /* Modal Kết quả */
         #result-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); display: none;
+            background: rgba(0,0,0,0.9); display: none;
             flex-direction: column; justify-content: center; align-items: center; z-index: 200;
         }
-        .money { font-size: 4em; color: #fca311; font-weight: bold; margin: 20px; animation: pop 0.5s; }
-        @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        .money { font-size: 4.5em; color: #ffd166; font-family: 'Dancing Script', cursive; margin: 20px; animation: pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* Bảng Admin (Ẩn) */
+        /* Bảng Admin */
         #admin-panel {
-            display: none;
-            position: absolute; top: 50px; left: 15px;
-            background: #fff; color: #333;
-            padding: 15px; border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            text-align: left; width: 250px; z-index: 2001;
+            display: none; position: absolute; top: 50px; left: 15px;
+            background: #fff; padding: 15px; border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5); width: 250px; z-index: 2001;
+            text-align: left; color: #333;
         }
-        #admin-panel h3 { margin-top: 0; color: #d90429; }
-        .admin-btn {
-            display: block; width: 100%; margin-bottom: 10px;
-            padding: 8px; border: none; border-radius: 5px; cursor: pointer; color: white;
-        }
-        .btn-reset { background: #d90429; }
+        .admin-btn { display: block; width: 100%; margin-bottom: 8px; padding: 10px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; }
+        .btn-unlock { background: #0077b6; }
         .btn-excel { background: #217346; }
-        .btn-unlock { background: #0077b6; } /* Màu xanh dương cho nút Unlock */
-        .btn-close { background: #666; margin-top: 10px; }
+        .btn-reset { background: #d90429; }
+        .btn-close { background: #6c757d; margin-top: 10px; }
 
-        /* --- MÀN HÌNH ĐẾM NGƯỢC --- */
+        /* --- MÀN HÌNH ĐẾM NGƯỢC (ĐÃ SỬA ĐỔI) --- */
         #countdown-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
+            /* Nền Gradient Đỏ - Tím than sang trọng */
+            background: linear-gradient(135deg, #370617 0%, #6a040f 50%, #9d0208 100%);
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            z-index: 1000; /* Cao hơn container nhưng thấp hơn nút Admin */
-            text-align: center;
+            z-index: 1000; text-align: center;
         }
-        #countdown-overlay h2 {
-            color: #fca311; margin-bottom: 30px;
-            font-size: 2em; text-transform: uppercase;
+
+        /* Trang trí tên và tiêu đề */
+        .title-tet {
+            font-family: 'Dancing Script', cursive;
+            color: #ffba08; font-size: 3em; margin: 0;
+            text-shadow: 0 0 10px rgba(255, 186, 8, 0.5);
         }
-        #countdown {
-            display: flex; gap: 15px;
+        .name-highlight {
+            font-family: 'Playfair Display', serif;
+            color: #fff; font-size: 2em; margin-top: 10px; margin-bottom: 40px;
+            text-transform: uppercase; letter-spacing: 2px;
+            border-bottom: 2px solid #ffba08; display: inline-block; padding-bottom: 5px;
         }
+
+        #countdown { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        
         .time-box {
-            display: flex; flex-direction: column; align-items: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             background: rgba(255, 255, 255, 0.1);
-            padding: 15px; border-radius: 10px; min-width: 60px;
-            border: 1px solid #fca311;
+            backdrop-filter: blur(5px);
+            width: 80px; height: 90px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 186, 8, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: float 3s ease-in-out infinite;
         }
-        .time-val { font-size: 2.5em; font-weight: bold; color: #fff; }
-        .time-label { font-size: 0.9em; color: #ccc; margin-top: 5px; }
+        /* Tạo hiệu ứng nhấp nhô nhẹ cho các ô thời gian */
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0px); } }
+        
+        .time-val { font-size: 2.2em; font-weight: bold; color: #ffba08; line-height: 1; }
+        .time-label { font-size: 0.8em; color: #e9ecef; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .welcome-msg {
+            color: #e9ecef; font-style: italic; margin-top: 30px; font-size: 1.1em;
+            max-width: 80%; line-height: 1.5;
+        }
 
     </style>
 </head>
@@ -141,19 +164,20 @@
     <div class="btn-gear" onclick="openAdmin()">⚙️</div>
 
     <div id="admin-panel">
-        <h3>Quản Trị Viên</h3>
-        <p style="font-size: 12px; margin-bottom: 10px;">Quản lý lượt chơi trên máy này:</p>
-        
-        <button class="admin-btn btn-unlock" onclick="adminUnlock()">🔓 Mở khóa (Xem trước)</button>
-        
-        <button class="admin-btn btn-excel" onclick="xuatExcel()">📥 Xuất File Excel</button>
-        <button class="admin-btn btn-reset" onclick="resetLuotChoi()">🔄 Cho phép mở lại</button>
+        <h3 style="color: #d90429; margin-top:0;">Quản Trị Viên</h3>
+        <p style="font-size: 13px;">Xin chào Sơn! Điều khiển hệ thống tại đây:</p>
+        <button class="admin-btn btn-unlock" onclick="adminUnlock()">🔓 Mở khóa ngay</button>
+        <button class="admin-btn btn-excel" onclick="xuatExcel()">📥 Tải danh sách Excel</button>
+        <button class="admin-btn btn-reset" onclick="resetLuotChoi()">🔄 Reset lượt chơi này</button>
         <button class="admin-btn btn-close" onclick="document.getElementById('admin-panel').style.display='none'">Đóng</button>
     </div>
 
     <div id="countdown-overlay">
-        <h2>૮꒰ ˶• ༝ •˶꒱ალở-£ì-✘ì-2026(⁠ ⁠◜⁠‿⁠◝⁠ ⁠)⁠♡</h2>
-  <h2>꧁༒ʈɾươɳɡ•ʈɧị•ɖươɳɡ༒꧂</h2>
+        <div id="flowers-container"></div>
+
+        <h1 class="title-tet">Chờ Đón Tết 2026</h1>
+        <div class="name-highlight">Trương Thị Dương</div>
+        
         <div id="countdown">
             <div class="time-box">
                 <span class="time-val" id="days">00</span>
@@ -172,48 +196,66 @@
                 <span class="time-label">Giây</span>
             </div>
         </div>
-        <p style="color: #888; font-style: italic; margin-top: 20px;">Chào Mừng Dương Đã Đến Sự Kiện Dành Riêng Cho Cậu!</p>
-    </div>
- <p style="color: #999; font-style: italic; margin-top: 20px;">Welcome, Duong, to this event made especially for you!</p>
+        <p class="welcome-msg">Sơn đã chuẩn bị một món quà nhỏ dành riêng cho Dương.<br>Quay lại đây khi đồng hồ điểm số 0 nhé!</p>
     </div>
 
     <div class="container" id="main-container" style="display: none;">
         <div id="login-area">
-            <h1>Lì Xì 2026</h1>
-            <p>Nhập mật khẩu để mở (SĐT của Dương)</p>
+            <h1>Lì Xì May Mắn</h1>
+            <p style="margin-bottom: 20px;">Nhập số điện thoại của Dương để mở:</p>
             <input type="password" id="passInput" placeholder="Nhập mật khẩu...">
             <br>
-            <button class="btn-main" id="btnLogin" onclick="checkPass()">VÀO NHẬN LÌ XÌ</button>
+            <button class="btn-main" id="btnLogin" onclick="checkPass()">MỞ QUÀ NGAY</button>
             <p id="msg" style="color: #ff6b6b; min-height: 20px; font-size: 0.9em; margin-top: 10px;"></p>
         </div>
 
         <div id="game-area">
-            <h1>Chọn 1 Bao Nhé</h1>
+            <h1 style="font-size: 2em;">Chọn 1 Bao Lì Xì</h1>
             <div class="grid-container" id="grid"></div>
         </div>
     </div>
 
     <div id="result-modal">
-        <h2 style="color: red;">Chúc Mừng Năm Mới!</h2>
+        <h2 style="color: #ffba08; font-family: 'Dancing Script'; font-size: 3em; margin-bottom: 0;">Chúc Mừng Năm Mới!</h2>
         <div class="money" id="res-money"></div>
-        <p style="color: white;">Nếu mở xong thì báo cho tớ nhé để tớ xuất file excel</p>
-        <a href="https://nguyenbacson.io.vn" target="_blank" class="btn-main">LIÊN HỆ</a>
+        <p style="color: white; text-align: center; max-width: 80%;">Chụp ảnh màn hình lại gửi cho Sơn để nhận tiền ting ting nha! 💸</p>
+        <a href="https://nguyenbacson.io.vn" target="_blank" class="btn-main" style="margin-top: 20px;">LIÊN HỆ FACEBOOK</a>
     </div>
 
     <script>
         // === CẤU HÌNH ===
-        const PASS_USER = "0879546673";
-        const PASS_ADMIN = "0347432736";
+        const PASS_USER = "0879546673"; // Mật khẩu của Dương
+        const PASS_ADMIN = "0347432736"; // Mật khẩu của Sơn
         const MENH_GIA = ["10k", "20k", "50k", "100k", "200k", "100k", "50k", "200k", "20k"];
         
-        // --- CẤU HÌNH THỜI GIAN ĐẾM NGƯỢC ---
+        // Thời gian đếm ngược: Ngày 17/02/2026 (Mùng 1 Tết Âm 2026)
         const targetDate = new Date("February 17, 2026 00:00:00").getTime();
 
-        // Key lưu trữ
         const KEY_STATUS = 'da_mo_lixi_2026';
         const KEY_HISTORY = 'lich_su_lixi_2026';
 
-        // --- HÀM ĐẾM NGƯỢC ---
+        // --- HÀM TẠO HOA RƠI ---
+        function createFlowers() {
+            const container = document.getElementById('flowers-container');
+            const flowerCount = 20; // Số lượng hoa
+            for (let i = 0; i < flowerCount; i++) {
+                let div = document.createElement('div');
+                div.className = 'flower';
+                // Kích thước ngẫu nhiên
+                let size = Math.random() * 10 + 5; 
+                div.style.width = size + 'px';
+                div.style.height = size + 'px';
+                // Vị trí ngẫu nhiên
+                div.style.left = Math.random() * 100 + 'vw';
+                // Thời gian rơi ngẫu nhiên
+                div.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                div.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(div);
+            }
+        }
+        createFlowers(); // Chạy hiệu ứng
+
+        // --- LOGIC ĐẾM NGƯỢC ---
         const elDays = document.getElementById('days');
         const elHours = document.getElementById('hours');
         const elMinutes = document.getElementById('minutes');
@@ -228,20 +270,17 @@
             const distance = targetDate - now;
 
             if (distance < 0) {
-                // Đã đến giờ: Ẩn đếm ngược, hiện game
                 clearInterval(timerInterval);
                 overlay.style.display = 'none';
                 mainContainer.style.display = 'block';
                 return;
             }
 
-            // Tính toán
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            // Hiển thị
             elDays.innerText = days < 10 ? '0' + days : days;
             elHours.innerText = hours < 10 ? '0' + hours : hours;
             elMinutes.innerText = minutes < 10 ? '0' + minutes : minutes;
@@ -249,20 +288,17 @@
         }
 
         timerInterval = setInterval(updateCountdown, 1000);
-        updateCountdown(); // Chạy ngay lập tức
+        updateCountdown();
 
-        // --- CÁC HÀM GAME CŨ ---
+        // --- LOGIC GAME & ADMIN ---
         checkStatus();
 
         function checkStatus() {
             if(localStorage.getItem(KEY_STATUS)) {
-                document.getElementById('msg').innerText = "Máy này đã mở lì xì rồi. Hệ thống chỉ ghi nhận 1 người lưu vào excel. Hãy liên hệ với quản trị viên để được giúp đỡ. Thankyou!☺️";
-                document.getElementById('btnLogin').innerText = "ĐÃ MỞ RỒI";
+                document.getElementById('msg').innerText = "Bạn đã nhận lì xì rồi nhé! Đừng tham lam ^^";
+                document.getElementById('btnLogin').innerText = "ĐÃ NHẬN QUÀ";
                 document.getElementById('btnLogin').disabled = true;
-            } else {
-                document.getElementById('msg').innerText = "";
-                document.getElementById('btnLogin').innerText = "VÀO NHẬN LÌ XÌ";
-                document.getElementById('btnLogin').disabled = false;
+                document.getElementById('btnLogin').style.background = "#ccc";
             }
         }
 
@@ -270,19 +306,22 @@
             const inp = document.getElementById('passInput').value;
             if (inp === PASS_USER) {
                 if(localStorage.getItem(KEY_STATUS)) {
-                    alert("Bạn đã mở rồi! Muốn mở lại hãy nhờ Admin reset.");
+                    alert("Bạn đã mở lì xì rồi mà! Liên hệ Sơn nếu có sự nhầm lẫn.");
                     return;
                 }
                 document.getElementById('login-area').style.display = 'none';
                 document.getElementById('game-area').style.display = 'block';
                 taoLixi();
             } else {
-                document.getElementById('msg').innerText = "Sai mật khẩu rồi! Thử lại đi.";
+                document.getElementById('msg').innerText = "Sai mật khẩu rồi! Gợi ý: Số điện thoại của Dương";
+                // Hiệu ứng rung nhẹ input khi sai
+                document.getElementById('passInput').style.border = "2px solid red";
+                setTimeout(() => document.getElementById('passInput').style.border = "none", 500);
             }
         }
 
         function openAdmin() {
-            let pass = prompt("Nhập mật khẩu Quản Trị Viên:");
+            let pass = prompt("Nhập mật khẩu Admin (Dành cho Sơn):");
             if (pass === PASS_ADMIN) {
                 document.getElementById('admin-panel').style.display = 'block';
             } else if (pass !== null) {
@@ -290,19 +329,17 @@
             }
         }
 
-        // --- HÀM MỚI: ADMIN BỎ QUA ĐẾM NGƯỢC ---
         function adminUnlock() {
-            clearInterval(timerInterval); // Dừng đồng hồ
-            document.getElementById('countdown-overlay').style.display = 'none'; // Ẩn màn hình đếm ngược
-            document.getElementById('main-container').style.display = 'block'; // Hiện màn hình đăng nhập
-            document.getElementById('admin-panel').style.display = 'none'; // Đóng bảng admin
-            alert("Đã mở khóa chế độ xem trước!");
+            clearInterval(timerInterval);
+            document.getElementById('countdown-overlay').style.display = 'none';
+            document.getElementById('main-container').style.display = 'block';
+            document.getElementById('admin-panel').style.display = 'none';
         }
 
         function resetLuotChoi() {
-            if(confirm("Bạn có chắc muốn cho người này chơi lại không?")) {
+            if(confirm("Xác nhận: Cho phép Dương chơi lại?")) {
                 localStorage.removeItem(KEY_STATUS);
-                alert("Đã Reset! Giờ họ có thể mở lì xì lại.");
+                alert("Đã Reset thành công!");
                 location.reload(); 
             }
         }
@@ -311,13 +348,13 @@
             let dataStr = localStorage.getItem(KEY_HISTORY);
             let data = dataStr ? JSON.parse(dataStr) : [];
             if (data.length === 0) {
-                alert("Chưa có dữ liệu nào để xuất!");
+                alert("Chưa có dữ liệu!");
                 return;
             }
             const ws = XLSX.utils.json_to_sheet(data);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "DanhSachLixi");
-            XLSX.writeFile(wb, "Danh_Sach_Trung_Lixi_2026.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "Lixi_2026");
+            XLSX.writeFile(wb, "Danh_Sach_Lixi_Tet.xlsx");
         }
 
         function taoLixi() {
@@ -336,16 +373,14 @@
             document.getElementById('result-modal').style.display = 'flex';
             document.getElementById('res-money').innerText = tien;
             localStorage.setItem(KEY_STATUS, 'true');
-            luuLichSu(tien);
-        }
-
-        function luuLichSu(tien) {
+            
+            // Lưu lịch sử
             let history = localStorage.getItem(KEY_HISTORY);
             let arr = history ? JSON.parse(history) : [];
             arr.push({
+                "Người Chơi": "Trương Thị Dương",
                 "Thời Gian": new Date().toLocaleString('vi-VN'),
-                "Mệnh Giá": tien,
-                "Ghi Chú": "Hợp lệ"
+                "Số Tiền": tien
             });
             localStorage.setItem(KEY_HISTORY, JSON.stringify(arr));
         }
