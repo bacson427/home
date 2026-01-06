@@ -3,93 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bắc Sơn Party 04/02</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <title>Sinh Nhật Bắc Sơn 19th</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    
     <style>
-        :root { --primary: #ff4757; --glass: rgba(255, 255, 255, 0.15); }
+        :root { 
+            --primary: #ff4757; 
+            --glass: rgba(255, 255, 255, 0.1); 
+            --border: rgba(255, 255, 255, 0.2);
+        }
+        
         body {
             margin: 0; padding: 0; font-family: 'Quicksand', sans-serif;
-            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-            display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white;
-        }
-        .container {
-            background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;
-            padding: 30px; width: 90%; max-width: 400px; text-align: center;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            position: relative;
-        }
-        h1 { color: #feca57; margin-top: 0; }
-        .info { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: left; font-size: 0.95rem;}
-        .info a { color: #feca57; text-decoration: none; font-weight: bold; transition: color 0.3s; }
-        .info a:hover { color: #ff6b81; }
-        
-        /* Dòng thông báo Deadline mới thêm */
-        .deadline-box {
-            background: rgba(255, 71, 87, 0.2);
-            border: 1px solid #ff4757;
-            color: #ff6b81;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
+            background: radial-gradient(circle at top right, #2c3e50, #000000);
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; color: white; overflow-x: hidden;
         }
 
+        /* Hiệu ứng nền nhẹ */
+        body::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+            opacity: 0.3; pointer-events: none;
+        }
+
+        .container {
+            background: rgba(30, 30, 30, 0.6); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border); border-radius: 24px;
+            padding: 30px; width: 85%; max-width: 380px; text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            position: relative; z-index: 10;
+            animation: popUp 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Tiêu đề & Bánh sinh nhật */
+        h1 { 
+            color: #feca57; margin: 10px 0 5px; font-size: 1.8rem; text-transform: uppercase; letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(254, 202, 87, 0.5);
+        }
+        .cake-icon { font-size: 3rem; display: block; margin-bottom: 5px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        p.subtitle { color: #a4b0be; font-size: 0.9rem; margin-bottom: 25px; font-style: italic; }
+
+        /* Layout thông tin dạng Grid gọn gàng */
+        .info-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;
+        }
+        .info-box {
+            background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .info-label { font-size: 0.75rem; color: #a4b0be; text-transform: uppercase; margin-bottom: 4px; }
+        .info-val { font-weight: bold; font-size: 1rem; color: #fff; }
+
+        /* Nút bản đồ đẹp */
+        .map-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: linear-gradient(90deg, #1e90ff, #0984e3);
+            color: white; text-decoration: none; padding: 12px; border-radius: 12px;
+            margin-bottom: 20px; font-weight: bold; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(30, 144, 255, 0.3);
+        }
+        .map-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(30, 144, 255, 0.5); }
+
+        /* Hạn chốt */
+        .deadline {
+            background: rgba(255, 71, 87, 0.15); color: #ff6b81; 
+            padding: 8px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 20px;
+            border: 1px dashed #ff4757;
+        }
+
+        /* Form nhập liệu */
         input, select {
-            width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: none; outline: none;
-            background: rgba(255, 255, 255, 0.9); font-family: 'Quicksand', sans-serif;
+            width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px;
+            border: 1px solid var(--border); background: rgba(0, 0, 0, 0.3); 
+            color: white; font-family: inherit; box-sizing: border-box; transition: 0.3s;
         }
-        .btn-guest {
-            width: 100%; padding: 15px; margin-top: 15px; border-radius: 8px; border: none;
-            background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 16px;
-            transition: transform 0.3s, background 0.3s;
+        input:focus { border-color: #feca57; background: rgba(0, 0, 0, 0.5); outline: none; }
+
+        /* Nút gửi xịn sò */
+        .btn-submit {
+            width: 100%; padding: 15px; border-radius: 12px; border: none;
+            background: linear-gradient(90deg, #ff4757, #ff6b81);
+            color: white; font-weight: bold; font-size: 1rem; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4); transition: 0.3s;
         }
-        .btn-guest:hover { background: #ff6b81; transform: scale(1.02); }
-        .btn-admin {
-            margin-top: 20px; background: none; border: 1px solid rgba(255,255,255,0.3); 
-            color: rgba(255,255,255,0.6); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8rem;
-            transition: background 0.3s, color 0.3s;
-        }
-        .btn-admin:hover { background: rgba(255,255,255,0.1); color: white; }
+        .btn-submit:active { transform: scale(0.98); }
+
+        /* Nút Admin ẩn */
+        .footer-admin { margin-top: 25px; opacity: 0.4; font-size: 0.8rem; cursor: pointer; }
+        .footer-admin:hover { opacity: 1; color: #feca57; text-decoration: underline; }
+
     </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>Sinh Nhật Bắc Sơn 🎂</h1>
-        <p>Học xong qua luôn nhé anh em!</p>
+        <div class="cake-icon">🎂</div>
+        <h1>Sinh Nhật Bắc Sơn</h1>
+        <p class="subtitle">19 Tuổi bẻ gãy sừng trâu - Anh em tụ họp!</p>
 
-        <div class="info">
-            <div>📅 04/02/2026 (Thứ Tư)</div>
-            <div>⏰ 19:30 (Sau giờ học)</div>
-            <div>📍 <a href="https://maps.app.goo.gl/5aB2zGjK4mN4tQhG9" target="_blank">Lẩu Wang - 134 Trần Đại Nghĩa</a></div>
+        <div class="info-grid">
+            <div class="info-box">
+                <span class="info-label">Thời gian</span>
+                <span class="info-val">19:30</span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">Ngày</span>
+                <span class="info-val">04/02/2026</span>
+            </div>
         </div>
 
-        <div class="deadline-box">
-            ⚠️ Hạn chốt: 01/02/2026 để Sơn đặt bàn!
+        <a href="Https://maps.app.goo.gl/umHDmXwsPcK7hKYC9" target="_blank" class="map-btn">
+            <span>🗺️</span> 
+            <span>Lẩu Wang - 134 Trần Đại Nghĩa</span>
+            <span>↗</span>
+        </a>
+
+        <div class="deadline">
+            🔥 Chốt đơn trước ngày <b>01/02/2026</b> nha!
         </div>
 
-        <div>
-            <input type="text" id="ten" placeholder="Tên cậu là gì?" required>
-            <input type="tel" id="sdt" placeholder="Số điện thoại" required>
+        <div class="form-area">
+            <input type="text" id="ten" placeholder="Nhập tên của cậu..." required>
+            <input type="tel" id="sdt" placeholder="Số điện thoại (để gọi nếu lạc)" required>
             <select id="trang_thai">
-                <option value="CÓ">✅ Chiến luôn (CÓ)</option>
+                <option value="CÓ">✅ Chắc chắn đi (CÓ)</option>
                 <option value="KHÔNG">❌ Bận mất rồi (KHÔNG)</option>
             </select>
-            <button class="btn-guest" onclick="luuThongTin()">GỬI ĐĂNG KÝ 🚀</button>
+            <button class="btn-submit" onclick="luuThongTin()">GỬI ĐĂNG KÝ 🚀</button>
         </div>
 
-        <button class="btn-admin" onclick="xuatExcel()">🔒 Admin: Tải danh sách</button>
+        <div class="footer-admin" onclick="xuatExcel()">🔒 Admin Panel (Sơn Only)</div>
     </div>
 
     <script>
+        // Bắn pháo giấy khi mở trang
+        window.onload = function() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) { return clearInterval(interval); }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        };
+        function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+        // --- Logic cũ giữ nguyên ---
         let danhSachDangKy = [];
 
         function luuThongTin() {
@@ -98,31 +170,32 @@
             var trangThai = document.getElementById("trang_thai").value;
             var thoiGian = new Date().toLocaleString('vi-VN');
 
-            // Logic kiểm tra hạn chốt (Tùy chọn: Nếu muốn chặn luôn sau ngày 1/2 thì mở comment dòng dưới)
-            // var currentDay = new Date();
-            // var deadline = new Date("2026-02-01");
-            // if(currentDay > deadline) { alert("Hết hạn đăng ký rồi nha!"); return; }
-
             if(ten == "" || sdt == "") {
-                alert("Vui lòng điền đủ tên và số điện thoại!");
+                alert("⚠️ Vui lòng điền đủ Tên và SĐT nhé!");
                 return;
             }
+
+            // Hiệu ứng pháo hoa nhỏ khi bấm nút
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
             danhSachDangKy.push({ "Thời Gian": thoiGian, "Tên": ten, "SĐT": sdt, "Trạng Thái": trangThai });
-            alert("✅ Đã nhận đơn của " + ten + "! Hẹn gặp cậu hôm đó nhé.");
-            document.getElementById("ten").value = "";
-            document.getElementById("sdt").value = "";
-            document.getElementById("trang_thai").value = "CÓ";
+            
+            setTimeout(() => {
+                alert("✅ Đã nhận đơn của " + ten + "! Hẹn 04/02 không say không về!");
+                document.getElementById("ten").value = "";
+                document.getElementById("sdt").value = "";
+            }, 500);
         }
 
         function xuatExcel() {
             if (danhSachDangKy.length === 0) { alert("Chưa có ai đăng ký cả!"); return; }
-            var pass = prompt("Nhập mật khẩu quản trị viên:");
+            var pass = prompt("Nhập mật khẩu Admin:");
             if (pass === "04022007") {
                 var ws = XLSX.utils.json_to_sheet(danhSachDangKy);
                 var wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Danh Sach");
-                XLSX.writeFile(wb, "DanhSach_SN_BacSon_" + new Date().getTime() + ".xlsx");
-            } else if (pass !== null) { alert("⛔ SAI MẬT KHẨU!"); }
+                XLSX.utils.book_append_sheet(wb, ws, "Danh Sach Sinh Nhat");
+                XLSX.writeFile(wb, "DanhSach_SN_BacSon.xlsx");
+            } else if (pass !== null) { alert("⛔ Sai mật khẩu rồi!"); }
         }
     </script>
 </body>
