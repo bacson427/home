@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sinh Nhật Bắc Sơn 19th - Red Alert 🚨</title>
+    <title>Sinh Nhật Bắc Sơn 19th - Balloon Party 🎈</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
     
@@ -32,14 +32,34 @@
         }
         @keyframes bgScroll { from { background-position: 0 0; } to { background-position: 0 -400px; } }
 
-        /* --- STYLE CHO GIAI ĐOẠN 2: 00h00 - 19h30 (MÀU ĐỎ NHẤP NHÁY) --- */
+        /* --- STYLE CHO BÓNG BAY 3D (CỰC NHẸ) --- */
+        .balloon-3d {
+            position: fixed; width: 40px; height: 50px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            z-index: 5; pointer-events: none;
+            /* Animation bay lên */
+            animation: floatUp 4s linear forwards;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.2); /* Tạo khối */
+        }
+        /* Dây bóng */
+        .balloon-3d::after {
+            content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+            width: 1px; height: 15px; background: rgba(255,255,255,0.6);
+        }
+        /* Hiệu ứng bay lên và mờ dần */
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            10% { opacity: 1; transform: translateY(-20px) scale(1); }
+            100% { transform: translateY(-110vh) rotate(10deg); opacity: 0.8; }
+        }
+        /* ------------------------------------------- */
+
+        /* STYLE BÁO ĐỘNG ĐỎ (00h00 - 19h30) */
         @keyframes red-alarm {
             0% { color: #ff0000; text-shadow: 0 0 10px red; transform: scale(1); }
             50% { color: #ff4d4d; text-shadow: 0 0 20px gold; transform: scale(1.05); }
             100% { color: #ff0000; text-shadow: 0 0 10px red; transform: scale(1); }
         }
-        
-        /* Class này sẽ được JS thêm vào khi đến 00h00 */
         .urgent-mode .time-val {
             animation: red-alarm 0.8s infinite !important;
             color: #ff3838 !important;
@@ -48,17 +68,6 @@
             border-color: #ff3838 !important;
             background: rgba(255, 0, 0, 0.2);
             box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
-        }
-        /* ----------------------------------------------------------- */
-
-        .piggy-fountain {
-            position: fixed; z-index: 20; font-size: 20px; pointer-events: none;
-            transform: translate(-50%, -50%);
-            animation: pigExplode 2s ease-out forwards;
-        }
-        @keyframes pigExplode {
-            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.3); }
-            100% { opacity: 0; transform: translate(var(--tx), -80vh) scale(1.8) rotate(var(--tr)); }
         }
 
         .container {
@@ -107,8 +116,6 @@
             border-radius: 8px; padding: 8px 5px; flex: 1;
             display: flex; flex-direction: column; align-items: center; transition: all 0.5s;
         }
-        #seconds-box { border-color: var(--neon); box-shadow: 0 0 10px rgba(254, 202, 87, 0.3); }
-
         .time-val { font-size: 1.3rem; font-weight: bold; color: white; line-height: 1; transition: color 0.5s; }
         .time-label { font-size: 0.6rem; text-transform: uppercase; color: #bdc3c7; margin-top: 5px; }
 
@@ -163,10 +170,10 @@
         </div>
 
         <div class="countdown-container">
-            <div class="time-box"><span class="time-val" id="days">00</span><span class="time-label">Ngày</span></div>
-            <div class="time-box"><span class="time-val" id="hours">00</span><span class="time-label">Giờ</span></div>
-            <div class="time-box"><span class="time-val" id="minutes">00</span><span class="time-label">Phút</span></div>
-            <div class="time-box" id="seconds-box"><span class="time-val" id="seconds">00</span><span class="time-label">Giây</span></div>
+            <div class="time-box" id="box-days"><span class="time-val" id="days">00</span><span class="time-label">Ngày</span></div>
+            <div class="time-box" id="box-hours"><span class="time-val" id="hours">00</span><span class="time-label">Giờ</span></div>
+            <div class="time-box" id="box-minutes"><span class="time-val" id="minutes">00</span><span class="time-label">Phút</span></div>
+            <div class="time-box" id="box-seconds"><span class="time-val" id="seconds">00</span><span class="time-label">Giây</span></div>
         </div>
 
         <a href="Https://maps.app.goo.gl/TrJb9AgCEhkkEa1JA" target="_blank" class="map-btn">
@@ -206,44 +213,38 @@
         let isPartyMode = false;
 
         const countdown = () => {
-            // MỐC 1: Sáng ngày sinh nhật (Bắt đầu báo động đỏ)
             const date0H = new Date("Feb 4, 2026 00:00:00").getTime();
-            // MỐC 2: Giờ G nhập tiệc (Hiệu ứng heo)
             const dateParty = new Date("Feb 4, 2026 19:30:00").getTime();
-            
             const now = new Date().getTime();
-            
-            // Đếm ngược đến giờ tiệc (19:30)
             const gap = dateParty - now;
 
-            // LOGIC QUAN TRỌNG
+            // --- GIAI ĐOẠN 2: BÁO ĐỘNG ĐỎ (00h00 -> 19h30) ---
             if (now >= date0H && now < dateParty) {
-                // Đang trong ngày sinh nhật (00:00 -> 19:30)
-                // THÊM CLASS ĐỂ CHUYỂN MÀU ĐỎ NHẤP NHÁY
                 document.querySelector(".countdown-container").classList.add("urgent-mode");
             } else {
-                // Chưa đến ngày hoặc đã qua giờ tiệc
                 document.querySelector(".countdown-container").classList.remove("urgent-mode");
             }
 
-            // Khi đến giờ tiệc (19:30)
+            // --- GIAI ĐOẠN 3: ĐẾN GIỜ G (19h30) ---
             if (gap < 0) {
-                // Đưa về 00
+                // Về 00
                 document.getElementById('days').innerText = "00";
                 document.getElementById('hours').innerText = "00";
                 document.getElementById('minutes').innerText = "00";
                 document.getElementById('seconds').innerText = "00";
                 
-                // Kích hoạt Heo phun trào (chỉ 1 lần để set interval)
+                // Tắt chế độ đỏ
+                document.querySelector(".countdown-container").classList.remove("urgent-mode");
+
+                // Kích hoạt thả bóng (Chỉ chạy 1 lần để set Interval)
                 if(!isPartyMode) {
                     isPartyMode = true;
-                    // Phun heo liên tục
-                    setInterval(createPigFountain, 150); 
+                    // Mỗi 1 giây thả bóng 1 lần
+                    setInterval(releaseBalloons, 1000);
                 }
                 return;
             }
 
-            // Hiển thị thời gian đếm ngược
             const second = 1000; const minute = second * 60; const hour = minute * 60; const day = hour * 24;
             document.getElementById('days').innerText = Math.floor(gap / day);
             document.getElementById('hours').innerText = Math.floor((gap % day) / hour);
@@ -252,39 +253,45 @@
         };
         setInterval(countdown, 1000);
 
-        // HIỆU ỨNG HEO PHUN TRÀO (TỪ Ô GIÂY)
-        function createPigFountain() {
-            let startX, startY;
+        // --- HÀM THẢ 4 BÓNG BAY TỪ 4 Ô ---
+        function releaseBalloons() {
+            // Danh sách ID của 4 ô
+            const boxIds = ['box-days', 'box-hours', 'box-minutes', 'box-seconds'];
             
-            if(isPartyMode) {
-                // Nếu đã đến giờ G (19:30) thì phun từ GIỮA MÀN HÌNH
-                startX = window.innerWidth / 2;
-                startY = window.innerHeight / 2;
-            } else {
-                // Nếu chưa đến giờ thì logic phun khi bấm nút vẫn lấy từ ô giây
-                const secondsBox = document.getElementById('seconds-box');
-                if (!secondsBox) return;
-                const rect = secondsBox.getBoundingClientRect();
-                startX = rect.left + rect.width / 2;
-                startY = rect.top + rect.height / 2;
-            }
+            // 4 Màu sắc khác nhau (Sử dụng Gradient 3D)
+            const colors = [
+                'radial-gradient(circle at 30% 30%, #fff, #ff4757)', // Đỏ
+                'radial-gradient(circle at 30% 30%, #fff, #2ed573)', // Xanh lá
+                'radial-gradient(circle at 30% 30%, #fff, #1e90ff)', // Xanh dương
+                'radial-gradient(circle at 30% 30%, #fff, #ffa502)'  // Vàng cam
+            ];
 
-            const pig = document.createElement('div');
-            pig.classList.add('piggy-fountain');
-            pig.innerText = '🐷';
-            pig.style.left = `${startX}px`;
-            pig.style.top = `${startY}px`;
+            boxIds.forEach((id, index) => {
+                const box = document.getElementById(id);
+                if(box) {
+                    const rect = box.getBoundingClientRect();
+                    
+                    // Tạo bóng bay
+                    const balloon = document.createElement('div');
+                    balloon.classList.add('balloon-3d');
+                    
+                    // Gán màu 3D
+                    balloon.style.background = colors[index];
+                    
+                    // Vị trí xuất phát: Giữa ô (tính toán dựa trên vị trí hiện tại của ô)
+                    // left = vị trí trái của ô + nửa chiều rộng
+                    balloon.style.left = (rect.left + rect.width / 2 - 20) + 'px'; // Trừ 20 vì width bóng là 40
+                    balloon.style.top = (rect.top - 20) + 'px';
 
-            const randomX = (Math.random() - 0.5) * 600; 
-            pig.style.setProperty('--tx', `${randomX}px`);
-            const randomR = (Math.random() - 0.5) * 720;
-            pig.style.setProperty('--tr', `${randomR}deg`);
+                    document.body.appendChild(balloon);
 
-            document.body.appendChild(pig);
-            setTimeout(() => { pig.remove(); }, 2000);
+                    // Xóa bóng sau 4s (khi đã bay khỏi màn hình) để nhẹ máy
+                    setTimeout(() => { balloon.remove(); }, 4000);
+                }
+            });
         }
 
-        // XỬ LÝ FORM
+        // XỬ LÝ FORM (GIỮ NGUYÊN)
         let danhSachDangKy = [];
         function luuThongTin() {
             var ten = document.getElementById("ten").value;
@@ -295,7 +302,9 @@
             if(ten == "") { alert("⚠️ Cậu quên nhập tên kìa!"); return; }
             if (sdt.length !== 10) { alert("⛔ Số điện thoại phải đúng 10 số nha!"); return; }
 
-            for(let i=0; i<15; i++) setTimeout(createPigFountain, i*50);
+            // Thả 1 đợt bóng khi bấm nút cho vui
+            releaseBalloons();
+
             danhSachDangKy.push({ "Thời Gian": thoiGian, "Tên": ten, "SĐT": "'" + sdt, "Trạng Thái": trangThai });
             setTimeout(() => {
                 alert("✅ Đã nhận đơn của " + ten + "! Hẹn 04/02 tại Dookki nhé!");
