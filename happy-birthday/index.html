@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sinh Nhật Bắc Sơn 19th - Piggy Edition 🐷</title>
+    <title>Sinh Nhật Bắc Sơn 19th - Piggy Fountain 🐷</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    
     <style>
         :root { 
             --primary: #ff4757; 
-            --glass: rgba(255, 255, 255, 0.1); 
-            --border: rgba(255, 255, 255, 0.2);
+            --glass: rgba(20, 20, 30, 0.75); 
+            --border: rgba(255, 255, 255, 0.15);
             --neon: #feca57;
             --rule-bg: rgba(46, 204, 113, 0.15);
             --rule-border: #2ecc71;
@@ -18,36 +19,46 @@
         
         body {
             margin: 0; padding: 0; font-family: 'Quicksand', sans-serif;
-            background: radial-gradient(circle at top right, #2c3e50, #000000);
+            /* Nền Gradient sinh nhật mới */
+            background: linear-gradient(135deg, #2b1055, #7597de);
             display: flex; justify-content: center; align-items: center; 
             min-height: 100vh; color: white; overflow-x: hidden; position: relative;
         }
 
+        /* Họa tiết Bóng bay & Pháo giấy làm nền */
         body::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
-            opacity: 0.3; pointer-events: none;
+            /* Sử dụng pattern bóng bay mờ */
+            background-image: url("https://www.transparenttextures.com/patterns/confetti.png");
+            background-size: 400px;
+            opacity: 0.2; pointer-events: none;
+            animation: bgScroll 60s linear infinite;
         }
+        /* Hiệu ứng nền trôi nhẹ */
+        @keyframes bgScroll { from { background-position: 0 0; } to { background-position: 0 -400px; } }
 
-        /* --- CSS CHO HIỆU ỨNG HEO RƠI --- */
-        .piggy {
-            position: fixed; top: -50px; z-index: 1;
-            font-size: 24px; pointer-events: none;
-            animation: pigFall linear forwards;
+        /* --- CSS CHO HIỆU ỨNG HEO PHUN TRÀO TỪ Ô GIÂY --- */
+        .piggy-fountain {
+            position: fixed; z-index: 20; font-size: 20px; pointer-events: none;
+            transform: translate(-50%, -50%); /* Căn giữa điểm xuất phát */
+            animation: pigExplode 2s ease-out forwards;
         }
-        @keyframes pigFall {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            70% { opacity: 0.8; }
-            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        @keyframes pigExplode {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.3); }
+            100% {
+                opacity: 0;
+                /* Bay lên trên (Y âm), tản ra 2 bên (X random), xoay và phóng to */
+                transform: translate(var(--tx), -80vh) scale(1.8) rotate(var(--tr));
+            }
         }
-        /* ------------------------------- */
+        /* ----------------------------------------------- */
 
         .container {
-            background: rgba(30, 30, 30, 0.75); 
+            background: var(--glass);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border); border-radius: 24px;
             padding: 30px; width: 85%; max-width: 400px; text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             position: relative; z-index: 10;
             margin-bottom: 60px; /* Để khoảng trống cho footer */
             animation: popUp 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
@@ -61,21 +72,19 @@
         .cake-icon { font-size: 3rem; display: block; margin-bottom: 5px; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        p.subtitle { color: #a4b0be; font-size: 0.9rem; margin-bottom: 10px; font-style: italic; }
+        p.subtitle { color: #dcdde1; font-size: 0.9rem; margin-bottom: 10px; font-style: italic; }
 
-        /* --- THỜI GIAN RÕ RÀNG (MỚI) --- */
         .explicit-time {
             background: rgba(254, 202, 87, 0.15); color: var(--neon);
             font-weight: bold; font-size: 1.1rem;
             padding: 12px; border-radius: 12px; border: 1px solid var(--neon);
             margin-bottom: 20px; text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
-        /* ------------------------------- */
 
         .rules-box {
             background: var(--rule-bg); border: 1px dashed var(--rule-border);
             border-radius: 12px; padding: 15px; margin-bottom: 20px;
-            text-align: left; font-size: 0.9rem;
+            text-align: left; font-size: 0.9rem; color: #ecf0f1;
         }
         .rules-box h3 { margin: 0 0 10px 0; color: #2ecc71; text-align: center; text-transform: uppercase; font-size: 1rem; }
         .rules-box ul { margin: 0; padding-left: 20px; list-style-type: none; }
@@ -84,14 +93,18 @@
 
         .countdown-container {
             display: flex; justify-content: space-between; margin-bottom: 20px; gap: 8px;
+            position: relative; /* Quan trọng để tính vị trí */
         }
         .time-box {
-            background: rgba(0, 0, 0, 0.4); border: 1px solid var(--primary);
+            background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 71, 87, 0.5);
             border-radius: 8px; padding: 8px 5px; flex: 1;
             display: flex; flex-direction: column; align-items: center;
         }
+        /* ID riêng cho ô giây để làm mốc */
+        #seconds-box { border-color: var(--neon); box-shadow: 0 0 10px rgba(254, 202, 87, 0.3); }
+
         .time-val { font-size: 1.3rem; font-weight: bold; color: white; line-height: 1; }
-        .time-label { font-size: 0.6rem; text-transform: uppercase; color: #a4b0be; margin-top: 5px; }
+        .time-label { font-size: 0.6rem; text-transform: uppercase; color: #bdc3c7; margin-top: 5px; }
 
         .map-btn {
             display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -121,18 +134,15 @@
         }
         .btn-submit:active { transform: scale(0.98); }
 
-        .footer-admin { margin-top: 20px; opacity: 0.3; font-size: 0.8rem; cursor: pointer; margin-bottom: 10px;}
+        .footer-admin { margin-top: 20px; opacity: 0.3; font-size: 0.8rem; cursor: pointer; margin-bottom: 10px; color: #bdc3c7;}
         
-        /* --- BẢN QUYỀN ĐƯỢC GHIM (MỚI) --- */
         .fixed-copyright {
-            position: fixed;
-            bottom: 0; left: 0; width: 100%;
-            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px);
             padding: 10px; text-align: center; font-size: 0.7rem; color: #bdc3c7;
             border-top: 1px solid rgba(255,255,255,0.1); z-index: 100;
         }
         .fixed-copyright span { color: #feca57; font-weight: bold; }
-        /* -------------------------------- */
     </style>
 </head>
 <body>
@@ -150,7 +160,7 @@
             <div class="time-box"><span class="time-val" id="days">00</span><span class="time-label">Ngày</span></div>
             <div class="time-box"><span class="time-val" id="hours">00</span><span class="time-label">Giờ</span></div>
             <div class="time-box"><span class="time-val" id="minutes">00</span><span class="time-label">Phút</span></div>
-            <div class="time-box"><span class="time-val" id="seconds">00</span><span class="time-label">Giây</span></div>
+            <div class="time-box" id="seconds-box"><span class="time-val" id="seconds">00</span><span class="time-label">Giây</span></div>
         </div>
 
         <a href="Https://maps.app.goo.gl/TrJb9AgCEhkkEa1JA" target="_blank" class="map-btn">
@@ -205,28 +215,40 @@
         };
         setInterval(countdown, 1000);
 
-        // --- HIỆU ỨNG MƯA HEO 🐷 (MỚI) ---
-        function createPig() {
+        // --- HIỆU ỨNG HEO PHUN TRÀO TỪ Ô GIÂY (MỚI) ---
+        function createPigFountain() {
+            // 1. Tìm vị trí ô giây
+            const secondsBox = document.getElementById('seconds-box');
+            if (!secondsBox) return;
+            const rect = secondsBox.getBoundingClientRect();
+            
+            // 2. Tính tâm của ô giây
+            const startX = rect.left + rect.width / 2;
+            const startY = rect.top + rect.height / 2;
+
             const pig = document.createElement('div');
-            pig.classList.add('piggy');
+            pig.classList.add('piggy-fountain');
             pig.innerText = '🐷';
-            // Vị trí ngẫu nhiên theo chiều ngang
-            pig.style.left = Math.random() * 100 + 'vw';
-            // Thời gian rơi ngẫu nhiên (từ 3s đến 6s)
-            const duration = Math.random() * 3 + 3;
-            pig.style.animationDuration = duration + 's';
-            // Kích thước ngẫu nhiên
-            pig.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            // Đặt vị trí xuất phát tại tâm ô giây
+            pig.style.left = `${startX}px`;
+            pig.style.top = `${startY}px`;
+
+            // 3. Tạo hướng bay ngẫu nhiên (tản ra 2 bên)
+            // Random từ -250px (trái) đến +250px (phải)
+            const randomX = (Math.random() - 0.5) * 500; 
+            pig.style.setProperty('--tx', `${randomX}px`);
+            
+            // 4. Tạo góc xoay ngẫu nhiên
+            const randomR = (Math.random() - 0.5) * 720;
+            pig.style.setProperty('--tr', `${randomR}deg`);
 
             document.body.appendChild(pig);
 
-            // Xóa heo sau khi rơi xong
-            setTimeout(() => {
-                pig.remove();
-            }, duration * 1000);
+            // Xóa heo sau khi bay xong
+            setTimeout(() => { pig.remove(); }, 2000);
         }
-        // Tạo mưa heo liên tục
-        setInterval(createPig, 500);
+        // Bắn heo liên tục mỗi 0.4 giây
+        setInterval(createPigFountain, 400);
         // --------------------------------
 
         // XỬ LÝ FORM
@@ -240,8 +262,8 @@
             if(ten == "") { alert("⚠️ Cậu quên nhập tên kìa!"); return; }
             if (sdt.length !== 10) { alert("⛔ Số điện thoại phải đúng 10 số nha!"); return; }
 
-            // Bắn thêm nhiều heo khi bấm nút
-            for(let i=0; i<10; i++) setTimeout(createPig, i*100);
+            // Bắn một tràng heo khi bấm nút
+            for(let i=0; i<15; i++) setTimeout(createPigFountain, i*50);
 
             danhSachDangKy.push({ "Thời Gian": thoiGian, "Tên": ten, "SĐT": "'" + sdt, "Trạng Thái": trangThai });
             
