@@ -14,6 +14,8 @@
             --glass: rgba(255, 255, 255, 0.1); 
             --border: rgba(255, 255, 255, 0.2);
             --neon: #feca57;
+            --rule-bg: rgba(46, 204, 113, 0.15);
+            --rule-border: #2ecc71;
         }
         
         body {
@@ -30,19 +32,19 @@
         }
 
         .container {
-            background: rgba(30, 30, 30, 0.6); 
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            background: rgba(30, 30, 30, 0.75); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border); border-radius: 24px;
-            padding: 30px; width: 85%; max-width: 380px; text-align: center;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            padding: 30px; width: 85%; max-width: 400px; text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
             position: relative; z-index: 10;
+            margin: 20px 0;
             animation: popUp 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
-
         @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         h1 { 
-            color: var(--neon); margin: 10px 0 5px; font-size: 1.8rem; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--neon); margin: 5px 0; font-size: 1.8rem; text-transform: uppercase; 
             text-shadow: 0 0 10px rgba(254, 202, 87, 0.5);
         }
         .cake-icon { font-size: 3rem; display: block; margin-bottom: 5px; animation: bounce 2s infinite; }
@@ -50,32 +52,41 @@
 
         p.subtitle { color: #a4b0be; font-size: 0.9rem; margin-bottom: 20px; font-style: italic; }
 
+        /* QUY ĐỊNH */
+        .rules-box {
+            background: var(--rule-bg); border: 1px dashed var(--rule-border);
+            border-radius: 12px; padding: 15px; margin-bottom: 20px;
+            text-align: left; font-size: 0.9rem;
+        }
+        .rules-box h3 { margin: 0 0 10px 0; color: #2ecc71; text-align: center; text-transform: uppercase; font-size: 1rem; }
+        .rules-box ul { margin: 0; padding-left: 20px; list-style-type: none; }
+        .rules-box li { margin-bottom: 8px; position: relative; }
+        .rules-box li::before { content: '👉'; position: absolute; left: -25px; }
+
+        /* ĐẾM NGƯỢC */
         .countdown-container {
-            display: flex; justify-content: space-between; margin-bottom: 25px;
-            gap: 8px;
+            display: flex; justify-content: space-between; margin-bottom: 20px; gap: 8px;
         }
         .time-box {
             background: rgba(0, 0, 0, 0.4); border: 1px solid var(--primary);
             border-radius: 8px; padding: 8px 5px; flex: 1;
             display: flex; flex-direction: column; align-items: center;
-            box-shadow: 0 0 10px rgba(255, 71, 87, 0.2);
         }
-        .time-val { font-size: 1.4rem; font-weight: bold; color: white; line-height: 1; }
+        .time-val { font-size: 1.3rem; font-weight: bold; color: white; line-height: 1; }
         .time-label { font-size: 0.6rem; text-transform: uppercase; color: #a4b0be; margin-top: 5px; }
 
+        /* NÚT BẢN ĐỒ */
         .map-btn {
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            background: linear-gradient(90deg, #1e90ff, #0984e3);
+            background: linear-gradient(90deg, #e17055, #d63031);
             color: white; text-decoration: none; padding: 12px; border-radius: 12px;
-            margin-bottom: 20px; font-weight: bold; transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(30, 144, 255, 0.3);
+            margin-bottom: 20px; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 15px rgba(214, 48, 49, 0.3);
         }
-        .map-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(30, 144, 255, 0.5); }
+        .map-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(214, 48, 49, 0.5); }
 
         .deadline {
             background: rgba(255, 71, 87, 0.15); color: #ff6b81; 
-            padding: 8px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 20px;
-            border: 1px dashed #ff4757;
+            padding: 8px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 20px; border: 1px dashed #ff4757;
         }
 
         input, select {
@@ -93,7 +104,14 @@
         }
         .btn-submit:active { transform: scale(0.98); }
 
-        .footer-admin { margin-top: 25px; opacity: 0.4; font-size: 0.8rem; cursor: pointer; }
+        .footer-admin { margin-top: 20px; opacity: 0.3; font-size: 0.8rem; cursor: pointer; margin-bottom: 10px;}
+        
+        /* COPYRIGHT AI MỚI */
+        .copyright-ai {
+            font-size: 0.65rem; color: #7f8c8d; border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 10px; margin-top: 10px; font-style: italic;
+        }
+        .copyright-ai span { color: #feca57; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -101,38 +119,34 @@
     <div class="container">
         <div class="cake-icon">🎂</div>
         <h1>Sinh Nhật Bắc Sơn</h1>
-        <p class="subtitle">19 Tuổi bẻ gãy sừng trâu - Anh em tụ họp!</p>
+        <p class="subtitle">19 Tuổi - Dookki Times City thẳng tiến!</p>
 
         <div class="countdown-container">
-            <div class="time-box">
-                <span class="time-val" id="days">00</span>
-                <span class="time-label">Ngày</span>
-            </div>
-            <div class="time-box">
-                <span class="time-val" id="hours">00</span>
-                <span class="time-label">Giờ</span>
-            </div>
-            <div class="time-box">
-                <span class="time-val" id="minutes">00</span>
-                <span class="time-label">Phút</span>
-            </div>
-            <div class="time-box">
-                <span class="time-val" id="seconds">00</span>
-                <span class="time-label">Giây</span>
-            </div>
+            <div class="time-box"><span class="time-val" id="days">00</span><span class="time-label">Ngày</span></div>
+            <div class="time-box"><span class="time-val" id="hours">00</span><span class="time-label">Giờ</span></div>
+            <div class="time-box"><span class="time-val" id="minutes">00</span><span class="time-label">Phút</span></div>
+            <div class="time-box"><span class="time-val" id="seconds">00</span><span class="time-label">Giây</span></div>
         </div>
 
-        <a href="Https://maps.app.goo.gl/umHDmXwsPcK7hKYC9" target="_blank" class="map-btn">
-            <span>🗺️</span> <span>Lẩu Wang - 134 Trần Đại Nghĩa</span> <span>↗</span>
+        <a href="Https://maps.app.goo.gl/TrJb9AgCEhkkEa1JA" target="_blank" class="map-btn">
+            <span>🗺️</span> <span>Dookki Times City - Tầng B1</span> <span>↗</span>
         </a>
 
-        <div class="deadline">
-            🔥 Chốt đơn trước ngày <b>01/02/2026</b> nha!
+        <div class="rules-box">
+            <h3>📜 Quy Định "Nhập Tiệc"</h3>
+            <ul>
+                <li><b>Đúng giờ (19:30):</b> Đừng để cả hội chờ nha!</li>
+                <li><b>Thời gian chiến:</b> Quán giới hạn ăn trong 90 phút.</li>
+                <li><b>Vét sạch nồi:</b> Lấy vừa đủ ăn, tránh để thừa (Quán có quy định phạt thừa đồ đó).</li>
+                <li><b>Dresscode:</b> Gọn gàng, đẹp trai xinh gái là được!</li>
+            </ul>
         </div>
+
+        <div class="deadline">🔥 Chốt đơn trước ngày <b>01/02/2026</b> nha!</div>
 
         <div class="form-area">
             <input type="text" id="ten" placeholder="Nhập tên của cậu..." required>
-            <input type="number" id="sdt" placeholder="Số điện thoại (Bắt buộc 10 số)" required>
+            <input type="number" id="sdt" placeholder="Số điện thoại (Đủ 10 số)" required>
             <select id="trang_thai">
                 <option value="CÓ">✅ Chắc chắn đi (CÓ)</option>
                 <option value="KHÔNG">❌ Bận mất rồi (KHÔNG)</option>
@@ -141,10 +155,14 @@
         </div>
 
         <div class="footer-admin" onclick="xuatExcel()">🔒 Admin Panel</div>
+        
+        <div class="copyright-ai">
+            🤖 Bản quyền 100% tạo bằng AI do <span>Nguyễn Bắc Sơn</span> giám sát thực hiện
+        </div>
     </div>
 
     <script>
-        // --- LOGIC ĐẾM NGƯỢC ---
+        // LOGIC ĐẾM NGƯỢC
         const countdown = () => {
             const countDate = new Date("Feb 4, 2026 19:30:00").getTime();
             const now = new Date().getTime();
@@ -154,27 +172,17 @@
                 document.querySelector(".countdown-container").innerHTML = "<div style='width:100%; color:#feca57; font-weight:bold;'>🎉 PARTY STARTED! 🎉</div>";
                 return;
             }
-
-            const second = 1000;
-            const minute = second * 60;
-            const hour = minute * 60;
-            const day = hour * 24;
-
-            const d = Math.floor(gap / day);
-            const h = Math.floor((gap % day) / hour);
-            const m = Math.floor((gap % hour) / minute);
-            const s = Math.floor((gap % minute) / second);
-
-            document.getElementById('days').innerText = d < 10 ? '0' + d : d;
-            document.getElementById('hours').innerText = h < 10 ? '0' + h : h;
-            document.getElementById('minutes').innerText = m < 10 ? '0' + m : m;
-            document.getElementById('seconds').innerText = s < 10 ? '0' + s : s;
+            const second = 1000; const minute = second * 60; const hour = minute * 60; const day = hour * 24;
+            document.getElementById('days').innerText = Math.floor(gap / day);
+            document.getElementById('hours').innerText = Math.floor((gap % day) / hour);
+            document.getElementById('minutes').innerText = Math.floor((gap % hour) / minute);
+            document.getElementById('seconds').innerText = Math.floor((gap % minute) / second);
         };
         setInterval(countdown, 1000);
 
+        // HIỆU ỨNG NỀN
         window.onload = function() {
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
+            var duration = 3 * 1000; var animationEnd = Date.now() + duration;
             var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
             var interval = setInterval(function() {
                 var timeLeft = animationEnd - Date.now();
@@ -184,35 +192,22 @@
             }, 250);
         };
 
+        // XỬ LÝ FORM
         let danhSachDangKy = [];
-
         function luuThongTin() {
             var ten = document.getElementById("ten").value;
             var sdt = document.getElementById("sdt").value;
             var trangThai = document.getElementById("trang_thai").value;
             var thoiGian = new Date().toLocaleString('vi-VN');
 
-            // --- KIỂM TRA DỮ LIỆU ---
-            if(ten == "") { 
-                alert("⚠️ Cậu quên nhập tên kìa!"); 
-                return; 
-            }
-            
-            // Logic bắt buộc 10 số
-            // Kiểm tra: Phải là số VÀ độ dài đúng bằng 10
-            if (sdt.length !== 10) {
-                alert("⛔ Số điện thoại phải đúng 10 số nha! (Hiện tại: " + sdt.length + " số)");
-                return;
-            }
+            if(ten == "") { alert("⚠️ Cậu quên nhập tên kìa!"); return; }
+            if (sdt.length !== 10) { alert("⛔ Số điện thoại phải đúng 10 số nha!"); return; }
 
-            // Hiệu ứng pháo hoa khi thành công
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-
             danhSachDangKy.push({ "Thời Gian": thoiGian, "Tên": ten, "SĐT": "'" + sdt, "Trạng Thái": trangThai });
-            // Lưu ý: "'" + sdt giúp Excel hiểu đây là chuỗi số, không bị mất số 0 ở đầu
             
             setTimeout(() => {
-                alert("✅ Đã nhận đơn của " + ten + "! Hẹn 04/02 nhé!");
+                alert("✅ Đã nhận đơn của " + ten + "! Hẹn 04/02 tại Dookki nhé!");
                 document.getElementById("ten").value = "";
                 document.getElementById("sdt").value = "";
             }, 500);
@@ -224,7 +219,7 @@
             if (pass === "04022007") {
                 var ws = XLSX.utils.json_to_sheet(danhSachDangKy);
                 var wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Danh Sach Sinh Nhat");
+                XLSX.utils.book_append_sheet(wb, ws, "Danh Sach");
                 XLSX.writeFile(wb, "DanhSach_SN_BacSon.xlsx");
             } else if (pass !== null) { alert("⛔ Sai mật khẩu rồi!"); }
         }
