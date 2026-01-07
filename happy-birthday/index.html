@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sinh Nhật Bắc Sơn 19th</title>
+    <title>Sinh Nhật Bắc Sơn 19th - Piggy Edition 🐷</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    
     <style>
         :root { 
             --primary: #ff4757; 
@@ -22,7 +20,7 @@
             margin: 0; padding: 0; font-family: 'Quicksand', sans-serif;
             background: radial-gradient(circle at top right, #2c3e50, #000000);
             display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; color: white; overflow-x: hidden;
+            min-height: 100vh; color: white; overflow-x: hidden; position: relative;
         }
 
         body::before {
@@ -31,6 +29,19 @@
             opacity: 0.3; pointer-events: none;
         }
 
+        /* --- CSS CHO HIỆU ỨNG HEO RƠI --- */
+        .piggy {
+            position: fixed; top: -50px; z-index: 1;
+            font-size: 24px; pointer-events: none;
+            animation: pigFall linear forwards;
+        }
+        @keyframes pigFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            70% { opacity: 0.8; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+        /* ------------------------------- */
+
         .container {
             background: rgba(30, 30, 30, 0.75); 
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
@@ -38,7 +49,7 @@
             padding: 30px; width: 85%; max-width: 400px; text-align: center;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
             position: relative; z-index: 10;
-            margin: 20px 0;
+            margin-bottom: 60px; /* Để khoảng trống cho footer */
             animation: popUp 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
         @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -50,9 +61,17 @@
         .cake-icon { font-size: 3rem; display: block; margin-bottom: 5px; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        p.subtitle { color: #a4b0be; font-size: 0.9rem; margin-bottom: 20px; font-style: italic; }
+        p.subtitle { color: #a4b0be; font-size: 0.9rem; margin-bottom: 10px; font-style: italic; }
 
-        /* QUY ĐỊNH */
+        /* --- THỜI GIAN RÕ RÀNG (MỚI) --- */
+        .explicit-time {
+            background: rgba(254, 202, 87, 0.15); color: var(--neon);
+            font-weight: bold; font-size: 1.1rem;
+            padding: 12px; border-radius: 12px; border: 1px solid var(--neon);
+            margin-bottom: 20px; text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        /* ------------------------------- */
+
         .rules-box {
             background: var(--rule-bg); border: 1px dashed var(--rule-border);
             border-radius: 12px; padding: 15px; margin-bottom: 20px;
@@ -63,7 +82,6 @@
         .rules-box li { margin-bottom: 8px; position: relative; }
         .rules-box li::before { content: '👉'; position: absolute; left: -25px; }
 
-        /* ĐẾM NGƯỢC */
         .countdown-container {
             display: flex; justify-content: space-between; margin-bottom: 20px; gap: 8px;
         }
@@ -75,7 +93,6 @@
         .time-val { font-size: 1.3rem; font-weight: bold; color: white; line-height: 1; }
         .time-label { font-size: 0.6rem; text-transform: uppercase; color: #a4b0be; margin-top: 5px; }
 
-        /* NÚT BẢN ĐỒ */
         .map-btn {
             display: flex; align-items: center; justify-content: center; gap: 10px;
             background: linear-gradient(90deg, #e17055, #d63031);
@@ -106,12 +123,16 @@
 
         .footer-admin { margin-top: 20px; opacity: 0.3; font-size: 0.8rem; cursor: pointer; margin-bottom: 10px;}
         
-        /* COPYRIGHT AI MỚI */
-        .copyright-ai {
-            font-size: 0.65rem; color: #7f8c8d; border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 10px; margin-top: 10px; font-style: italic;
+        /* --- BẢN QUYỀN ĐƯỢC GHIM (MỚI) --- */
+        .fixed-copyright {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            padding: 10px; text-align: center; font-size: 0.7rem; color: #bdc3c7;
+            border-top: 1px solid rgba(255,255,255,0.1); z-index: 100;
         }
-        .copyright-ai span { color: #feca57; font-weight: bold; }
+        .fixed-copyright span { color: #feca57; font-weight: bold; }
+        /* -------------------------------- */
     </style>
 </head>
 <body>
@@ -120,6 +141,10 @@
         <div class="cake-icon">🎂</div>
         <h1>Sinh Nhật Bắc Sơn</h1>
         <p class="subtitle">19 Tuổi - Dookki Times City thẳng tiến!</p>
+
+        <div class="explicit-time">
+            ⏰ 19h30 ngày 04/02/2026
+        </div>
 
         <div class="countdown-container">
             <div class="time-box"><span class="time-val" id="days">00</span><span class="time-label">Ngày</span></div>
@@ -137,7 +162,7 @@
             <ul>
                 <li><b>Đúng giờ (19:30):</b> Đừng để cả hội chờ nha!</li>
                 <li><b>Thời gian chiến:</b> Quán giới hạn ăn trong 90 phút.</li>
-                <li><b>Vét sạch nồi:</b> Lấy vừa đủ ăn, tránh để thừa (Quán có quy định phạt thừa đồ đó).</li>
+                <li><b>Vét sạch nồi:</b> Lấy vừa đủ ăn, tránh để thừa (Quán phạt đó).</li>
                 <li><b>Dresscode:</b> Gọn gàng, đẹp trai xinh gái là được!</li>
             </ul>
         </div>
@@ -155,10 +180,10 @@
         </div>
 
         <div class="footer-admin" onclick="xuatExcel()">🔒 Admin Panel</div>
-        
-        <div class="copyright-ai">
-            🤖 Bản quyền 100% tạo bằng AI do <span>Nguyễn Bắc Sơn</span> giám sát thực hiện
-        </div>
+    </div>
+
+    <div class="fixed-copyright">
+        🤖 Bản quyền 100% tạo bằng AI do <span>Nguyễn Bắc Sơn</span> giám sát thực hiện
     </div>
 
     <script>
@@ -180,17 +205,29 @@
         };
         setInterval(countdown, 1000);
 
-        // HIỆU ỨNG NỀN
-        window.onload = function() {
-            var duration = 3 * 1000; var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) { return clearInterval(interval); }
-                var particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
-            }, 250);
-        };
+        // --- HIỆU ỨNG MƯA HEO 🐷 (MỚI) ---
+        function createPig() {
+            const pig = document.createElement('div');
+            pig.classList.add('piggy');
+            pig.innerText = '🐷';
+            // Vị trí ngẫu nhiên theo chiều ngang
+            pig.style.left = Math.random() * 100 + 'vw';
+            // Thời gian rơi ngẫu nhiên (từ 3s đến 6s)
+            const duration = Math.random() * 3 + 3;
+            pig.style.animationDuration = duration + 's';
+            // Kích thước ngẫu nhiên
+            pig.style.fontSize = (Math.random() * 20 + 15) + 'px';
+
+            document.body.appendChild(pig);
+
+            // Xóa heo sau khi rơi xong
+            setTimeout(() => {
+                pig.remove();
+            }, duration * 1000);
+        }
+        // Tạo mưa heo liên tục
+        setInterval(createPig, 500);
+        // --------------------------------
 
         // XỬ LÝ FORM
         let danhSachDangKy = [];
@@ -203,7 +240,9 @@
             if(ten == "") { alert("⚠️ Cậu quên nhập tên kìa!"); return; }
             if (sdt.length !== 10) { alert("⛔ Số điện thoại phải đúng 10 số nha!"); return; }
 
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            // Bắn thêm nhiều heo khi bấm nút
+            for(let i=0; i<10; i++) setTimeout(createPig, i*100);
+
             danhSachDangKy.push({ "Thời Gian": thoiGian, "Tên": ten, "SĐT": "'" + sdt, "Trạng Thái": trangThai });
             
             setTimeout(() => {
