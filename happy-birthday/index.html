@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sinh Nhật Bắc Sơn 19th - Piggy Shot 🐷</title>
+    <title>Sinh Nhật Bắc Sơn 19th - Piggy Relay 🐷</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
     
     <style>
         :root { 
             --primary: #ff4757; 
-            --glass: rgba(20, 20, 30, 0.75); 
+            --glass: rgba(20, 20, 30, 0.8); 
             --border: rgba(255, 255, 255, 0.15);
             --neon: #feca57;
             --rule-bg: rgba(46, 204, 113, 0.15);
@@ -32,25 +32,63 @@
         }
         @keyframes bgScroll { from { background-position: 0 0; } to { background-position: 0 -400px; } }
 
-        /* --- STYLE CON LỢN BẮN RA --- */
-        .pig-shot {
-            position: fixed; z-index: 20; font-size: 24px; pointer-events: none;
-            /* Animation đúng 1 giây như yêu cầu */
-            animation: pigFade 1s ease-out forwards;
+        /* --- CSS CHO LỢN BAY CHUYỀN (RELAY) --- */
+        .pig-fly {
+            position: fixed; z-index: 20; font-size: 20px; pointer-events: none;
+            /* Animation di chuyển theo biến CSS tính toán bằng JS */
+            animation: flightPath 0.8s ease-in-out forwards;
         }
 
-        @keyframes pigFade {
+        @keyframes flightPath {
             0% { 
+                transform: translate(0, 0) scale(0.5); 
+                opacity: 0.5;
+            }
+            50% { 
+                transform: translate(var(--mid-x), -50px) scale(1.2); /* Bay vòng lên trên */
                 opacity: 1; 
-                transform: translate(-50%, -50%) scale(0.5); /* Bắt đầu nhỏ */
             }
             100% { 
-                opacity: 0; /* Tan biến hết */
-                /* Bay lên trên và tản ra theo biến random */
-                transform: translate(var(--tx), -120px) scale(1.5) rotate(var(--tr)); 
+                transform: translate(var(--dest-x), 0) scale(1); 
+                opacity: 0; /* Biến mất khi chạm đích */
             }
         }
-        /* --------------------------- */
+        /* -------------------------------------- */
+
+        /* --- HIỆU ỨNG VỠ (EXPLOSION) --- */
+        @keyframes shake-hard {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        
+        .shaking {
+            animation: shake-hard 0.5s infinite;
+            border-color: red !important;
+            color: red !important;
+        }
+
+        .broken {
+            visibility: hidden; /* Ẩn đi khi vỡ */
+            transition: visibility 0.1s;
+        }
+        
+        /* Chữ Happy Birthday hiện ra sau khi vỡ */
+        .final-message {
+            display: none; font-size: 2rem; color: #feca57; font-weight: bold;
+            text-shadow: 0 0 20px #ff4757;
+            animation: zoomIn 1s forwards;
+        }
+        @keyframes zoomIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* -------------------------------- */
 
         .container {
             background: var(--glass);
@@ -98,9 +136,6 @@
             border-radius: 8px; padding: 8px 5px; flex: 1;
             display: flex; flex-direction: column; align-items: center; transition: all 0.5s;
         }
-        /* ID riêng cho ô Giây để xác định vị trí bắn */
-        #seconds-box { border-color: var(--neon); box-shadow: 0 0 10px rgba(254, 202, 87, 0.3); }
-
         .time-val { font-size: 1.3rem; font-weight: bold; color: white; line-height: 1; transition: color 0.5s; }
         .time-label { font-size: 0.6rem; text-transform: uppercase; color: #bdc3c7; margin-top: 5px; }
 
@@ -154,11 +189,15 @@
             ⏰ 19h30 ngày 04/02/2026
         </div>
 
-        <div class="countdown-container">
-            <div class="time-box"><span class="time-val" id="days">00</span><span class="time-label">Ngày</span></div>
-            <div class="time-box"><span class="time-val" id="hours">00</span><span class="time-label">Giờ</span></div>
-            <div class="time-box"><span class="time-val" id="minutes">00</span><span class="time-label">Phút</span></div>
-            <div class="time-box" id="seconds-box"><span class="time-val" id="seconds">00</span><span class="time-label">Giây</span></div>
+        <div class="countdown-container" id="countdown-box">
+            <div class="time-box" id="box-days"><span class="time-val" id="days">00</span><span class="time-label">Ngày</span></div>
+            <div class="time-box" id="box-hours"><span class="time-val" id="hours">00</span><span class="time-label">Giờ</span></div>
+            <div class="time-box" id="box-minutes"><span class="time-val" id="minutes">00</span><span class="time-label">Phút</span></div>
+            <div class="time-box" id="box-seconds"><span class="time-val" id="seconds">00</span><span class="time-label">Giây</span></div>
+        </div>
+        
+        <div class="final-message" id="final-msg">
+            🎉 HAPPY BIRTHDAY! 🎉
         </div>
 
         <a href="Https://maps.app.goo.gl/TrJb9AgCEhkkEa1JA" target="_blank" class="map-btn">
@@ -195,68 +234,130 @@
     </div>
 
     <script>
+        let isExploded = false;
+
         const countdown = () => {
             const countDate = new Date("Feb 4, 2026 19:30:00").getTime();
             const now = new Date().getTime();
             const gap = countDate - now;
 
+            // XỬ LÝ LÚC HẾT GIỜ (19:30)
             if (gap < 0) {
-                // Về 00
-                document.getElementById('days').innerText = "00";
-                document.getElementById('hours').innerText = "00";
-                document.getElementById('minutes').innerText = "00";
-                document.getElementById('seconds').innerText = "00";
+                if (!isExploded) {
+                    isExploded = true;
+                    triggerExplosion();
+                }
                 return;
+            }
+            
+            // Xử lý báo hiệu sắp vỡ (Còn 10 giây cuối thì rung lắc)
+            if (gap < 10000 && gap > 0) {
+                document.querySelectorAll('.time-box').forEach(box => box.classList.add('shaking'));
             }
 
             const second = 1000; const minute = second * 60; const hour = minute * 60; const day = hour * 24;
-            document.getElementById('days').innerText = Math.floor(gap / day);
-            document.getElementById('hours').innerText = Math.floor((gap % day) / hour);
-            document.getElementById('minutes').innerText = Math.floor((gap % hour) / minute);
-            
-            // Cập nhật số giây
-            const currentSeconds = Math.floor((gap % minute) / second);
-            document.getElementById('seconds').innerText = currentSeconds;
-        };
-        setInterval(countdown, 1000);
 
-        // --- HÀM BẮN HEO TỪ Ô GIÂY ---
-        // Chạy mỗi 1 giây (1000ms) để khớp với nhịp đồng hồ
-        function shootPig() {
-            // Xác định vị trí ô giây
-            const secondsBox = document.getElementById('seconds-box');
-            if (!secondsBox) return;
-            const rect = secondsBox.getBoundingClientRect();
+            const d = Math.floor(gap / day);
+            const h = Math.floor((gap % day) / hour);
+            const m = Math.floor((gap % hour) / minute);
+            const s = Math.floor((gap % minute) / second);
+
+            document.getElementById('days').innerText = d < 10 ? '0' + d : d;
+            document.getElementById('hours').innerText = h < 10 ? '0' + h : h;
+            document.getElementById('minutes').innerText = m < 10 ? '0' + m : m;
+            document.getElementById('seconds').innerText = s < 10 ? '0' + s : s;
+
+            // --- LOGIC LỢN BAY (RELAY) ---
+            // 1. Luôn bay từ Giây -> Phút (mỗi giây)
+            flyPig('box-seconds', 'box-minutes', 1);
+
+            // 2. Phút -> Giờ (Khi giây = 00)
+            if (s === 0) {
+                flyPig('box-minutes', 'box-hours', 1.5); // Bay chậm hơn tí, lợn to hơn
+            }
+
+            // 3. Giờ -> Ngày (Khi phút = 00 và giây = 00)
+            if (m === 0 && s === 0) {
+                flyPig('box-hours', 'box-days', 2); // Bay chậm hẳn, lợn bự
+            }
+        };
+
+        // HÀM XỬ LÝ BAY
+        function flyPig(fromId, toId, sizeScale) {
+            const fromBox = document.getElementById(fromId);
+            const toBox = document.getElementById(toId);
             
-            // Tính tâm ô giây
-            const startX = rect.left + rect.width / 2;
-            const startY = rect.top + rect.height / 2;
+            if(!fromBox || !toBox) return;
+
+            const fromRect = fromBox.getBoundingClientRect();
+            const toRect = toBox.getBoundingClientRect();
+
+            // Tính tọa độ bắt đầu (tâm ô nguồn)
+            const startX = fromRect.left + fromRect.width / 2;
+            const startY = fromRect.top + fromRect.height / 2;
+
+            // Tính khoảng cách đích đến (Delta)
+            // Đích là tâm ô đích
+            const destX = (toRect.left + toRect.width / 2) - startX;
+            // Điểm giữa đường bay (để tạo đường cong)
+            const midX = destX / 2;
 
             const pig = document.createElement('div');
-            pig.classList.add('pig-shot');
+            pig.classList.add('pig-fly');
             pig.innerText = '🐷';
             pig.style.left = `${startX}px`;
             pig.style.top = `${startY}px`;
+            // Chỉnh kích thước lợn tùy loại
+            pig.style.fontSize = `${20 * sizeScale}px`; 
 
-            // Random góc bay ngang một chút cho tự nhiên (-30px đến +30px)
-            const randomX = (Math.random() - 0.5) * 60; 
-            pig.style.setProperty('--tx', `${randomX}px`);
-            
-            // Random xoay vòng
-            const randomR = (Math.random() - 0.5) * 360;
-            pig.style.setProperty('--tr', `${randomR}deg`);
+            // Gán biến CSS để animation hiểu đích đến
+            pig.style.setProperty('--dest-x', `${destX}px`);
+            pig.style.setProperty('--mid-x', `${midX}px`);
 
             document.body.appendChild(pig);
-
-            // Xóa sau 1s (trùng với thời gian animation)
-            setTimeout(() => { pig.remove(); }, 1000);
+            setTimeout(() => { pig.remove(); }, 800);
         }
-        
-        // Kích hoạt vòng lặp bắn heo mỗi giây
-        setInterval(shootPig, 1000);
-        // -----------------------------
 
-        // XỬ LÝ FORM
+        // HÀM NỔ TUNG (VỠ)
+        function triggerExplosion() {
+            // 1. Ẩn các ô thời gian (như bị vỡ)
+            document.getElementById('countdown-box').style.display = 'none';
+            
+            // 2. Hiện chữ Happy Birthday
+            document.getElementById('final-msg').style.display = 'block';
+
+            // 3. Tạo hiệu ứng nổ lợn tứ tung tại vị trí đồng hồ
+            const container = document.querySelector('.container');
+            const rect = container.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            for (let i = 0; i < 50; i++) {
+                const pig = document.createElement('div');
+                pig.innerText = '🐷';
+                pig.style.position = 'fixed';
+                pig.style.left = centerX + 'px';
+                pig.style.top = centerY + 'px';
+                pig.style.fontSize = Math.random() * 30 + 10 + 'px';
+                pig.style.transition = 'all 1s ease-out';
+                pig.style.zIndex = 100;
+                document.body.appendChild(pig);
+
+                // Cho nổ ra xung quanh
+                setTimeout(() => {
+                    const randX = (Math.random() - 0.5) * window.innerWidth;
+                    const randY = (Math.random() - 0.5) * window.innerHeight;
+                    pig.style.transform = `translate(${randX}px, ${randY}px) rotate(${Math.random()*720}deg)`;
+                    pig.style.opacity = 0;
+                }, 10);
+
+                setTimeout(() => pig.remove(), 1000);
+            }
+        }
+
+        setInterval(countdown, 1000);
+
+        // XỬ LÝ FORM (GIỮ NGUYÊN)
         let danhSachDangKy = [];
         function luuThongTin() {
             var ten = document.getElementById("ten").value;
@@ -266,9 +367,6 @@
 
             if(ten == "") { alert("⚠️ Cậu quên nhập tên kìa!"); return; }
             if (sdt.length !== 10) { alert("⛔ Số điện thoại phải đúng 10 số nha!"); return; }
-
-            // Bắn thêm 1 đàn heo khi bấm nút
-            for(let i=0; i<5; i++) setTimeout(shootPig, i*100);
 
             danhSachDangKy.push({ "Thời Gian": thoiGian, "Tên": ten, "SĐT": "'" + sdt, "Trạng Thái": trangThai });
             setTimeout(() => {
