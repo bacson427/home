@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lời Mời Sinh Nhật - Nguyễn Bắc Sơn - Times City</title>
+    <title>Sinh Nhật Bắc Sơn 19th - Red Alert 🚨</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
     
@@ -19,39 +19,47 @@
         
         body {
             margin: 0; padding: 0; font-family: 'Quicksand', sans-serif;
-            /* Nền Gradient sinh nhật mới */
             background: linear-gradient(135deg, #2b1055, #7597de);
             display: flex; justify-content: center; align-items: center; 
             min-height: 100vh; color: white; overflow-x: hidden; position: relative;
         }
 
-        /* Họa tiết Bóng bay & Pháo giấy làm nền */
         body::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            /* Sử dụng pattern bóng bay mờ */
             background-image: url("https://www.transparenttextures.com/patterns/confetti.png");
-            background-size: 400px;
-            opacity: 0.2; pointer-events: none;
+            background-size: 400px; opacity: 0.2; pointer-events: none;
             animation: bgScroll 60s linear infinite;
         }
-        /* Hiệu ứng nền trôi nhẹ */
         @keyframes bgScroll { from { background-position: 0 0; } to { background-position: 0 -400px; } }
 
-        /* --- CSS CHO HIỆU ỨNG HEO PHUN TRÀO TỪ Ô GIÂY --- */
+        /* --- STYLE CHO GIAI ĐOẠN 2: 00h00 - 19h30 (MÀU ĐỎ NHẤP NHÁY) --- */
+        @keyframes red-alarm {
+            0% { color: #ff0000; text-shadow: 0 0 10px red; transform: scale(1); }
+            50% { color: #ff4d4d; text-shadow: 0 0 20px gold; transform: scale(1.05); }
+            100% { color: #ff0000; text-shadow: 0 0 10px red; transform: scale(1); }
+        }
+        
+        /* Class này sẽ được JS thêm vào khi đến 00h00 */
+        .urgent-mode .time-val {
+            animation: red-alarm 0.8s infinite !important;
+            color: #ff3838 !important;
+        }
+        .urgent-mode .time-box {
+            border-color: #ff3838 !important;
+            background: rgba(255, 0, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+        }
+        /* ----------------------------------------------------------- */
+
         .piggy-fountain {
             position: fixed; z-index: 20; font-size: 20px; pointer-events: none;
-            transform: translate(-50%, -50%); /* Căn giữa điểm xuất phát */
+            transform: translate(-50%, -50%);
             animation: pigExplode 2s ease-out forwards;
         }
         @keyframes pigExplode {
             0% { opacity: 1; transform: translate(-50%, -50%) scale(0.3); }
-            100% {
-                opacity: 0;
-                /* Bay lên trên (Y âm), tản ra 2 bên (X random), xoay và phóng to */
-                transform: translate(var(--tx), -80vh) scale(1.8) rotate(var(--tr));
-            }
+            100% { opacity: 0; transform: translate(var(--tx), -80vh) scale(1.8) rotate(var(--tr)); }
         }
-        /* ----------------------------------------------- */
 
         .container {
             background: var(--glass);
@@ -60,7 +68,7 @@
             padding: 30px; width: 85%; max-width: 400px; text-align: center;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             position: relative; z-index: 10;
-            margin-bottom: 60px; /* Để khoảng trống cho footer */
+            margin-bottom: 60px;
             animation: popUp 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
         @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -92,18 +100,16 @@
         .rules-box li::before { content: '👉'; position: absolute; left: -25px; }
 
         .countdown-container {
-            display: flex; justify-content: space-between; margin-bottom: 20px; gap: 8px;
-            position: relative; /* Quan trọng để tính vị trí */
+            display: flex; justify-content: space-between; margin-bottom: 20px; gap: 8px; position: relative;
         }
         .time-box {
             background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 71, 87, 0.5);
             border-radius: 8px; padding: 8px 5px; flex: 1;
-            display: flex; flex-direction: column; align-items: center;
+            display: flex; flex-direction: column; align-items: center; transition: all 0.5s;
         }
-        /* ID riêng cho ô giây để làm mốc */
         #seconds-box { border-color: var(--neon); box-shadow: 0 0 10px rgba(254, 202, 87, 0.3); }
 
-        .time-val { font-size: 1.3rem; font-weight: bold; color: white; line-height: 1; }
+        .time-val { font-size: 1.3rem; font-weight: bold; color: white; line-height: 1; transition: color 0.5s; }
         .time-label { font-size: 0.6rem; text-transform: uppercase; color: #bdc3c7; margin-top: 5px; }
 
         .map-btn {
@@ -197,16 +203,47 @@
     </div>
 
     <script>
-        // LOGIC ĐẾM NGƯỢC
-        const countdown = () => {
-            const countDate = new Date("Feb 4, 2026 19:30:00").getTime();
-            const now = new Date().getTime();
-            const gap = countDate - now;
+        let isPartyMode = false;
 
+        const countdown = () => {
+            // MỐC 1: Sáng ngày sinh nhật (Bắt đầu báo động đỏ)
+            const date0H = new Date("Feb 4, 2026 00:00:00").getTime();
+            // MỐC 2: Giờ G nhập tiệc (Hiệu ứng heo)
+            const dateParty = new Date("Feb 4, 2026 19:30:00").getTime();
+            
+            const now = new Date().getTime();
+            
+            // Đếm ngược đến giờ tiệc (19:30)
+            const gap = dateParty - now;
+
+            // LOGIC QUAN TRỌNG
+            if (now >= date0H && now < dateParty) {
+                // Đang trong ngày sinh nhật (00:00 -> 19:30)
+                // THÊM CLASS ĐỂ CHUYỂN MÀU ĐỎ NHẤP NHÁY
+                document.querySelector(".countdown-container").classList.add("urgent-mode");
+            } else {
+                // Chưa đến ngày hoặc đã qua giờ tiệc
+                document.querySelector(".countdown-container").classList.remove("urgent-mode");
+            }
+
+            // Khi đến giờ tiệc (19:30)
             if (gap < 0) {
-                document.querySelector(".countdown-container").innerHTML = "<div style='width:100%; color:#feca57; font-weight:bold;'>🎉 PARTY STARTED! 🎉</div>";
+                // Đưa về 00
+                document.getElementById('days').innerText = "00";
+                document.getElementById('hours').innerText = "00";
+                document.getElementById('minutes').innerText = "00";
+                document.getElementById('seconds').innerText = "00";
+                
+                // Kích hoạt Heo phun trào (chỉ 1 lần để set interval)
+                if(!isPartyMode) {
+                    isPartyMode = true;
+                    // Phun heo liên tục
+                    setInterval(createPigFountain, 150); 
+                }
                 return;
             }
+
+            // Hiển thị thời gian đếm ngược
             const second = 1000; const minute = second * 60; const hour = minute * 60; const day = hour * 24;
             document.getElementById('days').innerText = Math.floor(gap / day);
             document.getElementById('hours').innerText = Math.floor((gap % day) / hour);
@@ -215,41 +252,37 @@
         };
         setInterval(countdown, 1000);
 
-        // --- HIỆU ỨNG HEO PHUN TRÀO TỪ Ô GIÂY (MỚI) ---
+        // HIỆU ỨNG HEO PHUN TRÀO (TỪ Ô GIÂY)
         function createPigFountain() {
-            // 1. Tìm vị trí ô giây
-            const secondsBox = document.getElementById('seconds-box');
-            if (!secondsBox) return;
-            const rect = secondsBox.getBoundingClientRect();
+            let startX, startY;
             
-            // 2. Tính tâm của ô giây
-            const startX = rect.left + rect.width / 2;
-            const startY = rect.top + rect.height / 2;
+            if(isPartyMode) {
+                // Nếu đã đến giờ G (19:30) thì phun từ GIỮA MÀN HÌNH
+                startX = window.innerWidth / 2;
+                startY = window.innerHeight / 2;
+            } else {
+                // Nếu chưa đến giờ thì logic phun khi bấm nút vẫn lấy từ ô giây
+                const secondsBox = document.getElementById('seconds-box');
+                if (!secondsBox) return;
+                const rect = secondsBox.getBoundingClientRect();
+                startX = rect.left + rect.width / 2;
+                startY = rect.top + rect.height / 2;
+            }
 
             const pig = document.createElement('div');
             pig.classList.add('piggy-fountain');
             pig.innerText = '🐷';
-            // Đặt vị trí xuất phát tại tâm ô giây
             pig.style.left = `${startX}px`;
             pig.style.top = `${startY}px`;
 
-            // 3. Tạo hướng bay ngẫu nhiên (tản ra 2 bên)
-            // Random từ -250px (trái) đến +250px (phải)
-            const randomX = (Math.random() - 0.5) * 500; 
+            const randomX = (Math.random() - 0.5) * 600; 
             pig.style.setProperty('--tx', `${randomX}px`);
-            
-            // 4. Tạo góc xoay ngẫu nhiên
             const randomR = (Math.random() - 0.5) * 720;
             pig.style.setProperty('--tr', `${randomR}deg`);
 
             document.body.appendChild(pig);
-
-            // Xóa heo sau khi bay xong
             setTimeout(() => { pig.remove(); }, 2000);
         }
-        // Bắn heo liên tục mỗi 0.4 giây
-        setInterval(createPigFountain, 400);
-        // --------------------------------
 
         // XỬ LÝ FORM
         let danhSachDangKy = [];
@@ -262,11 +295,8 @@
             if(ten == "") { alert("⚠️ Cậu quên nhập tên kìa!"); return; }
             if (sdt.length !== 10) { alert("⛔ Số điện thoại phải đúng 10 số nha!"); return; }
 
-            // Bắn một tràng heo khi bấm nút
             for(let i=0; i<15; i++) setTimeout(createPigFountain, i*50);
-
             danhSachDangKy.push({ "Thời Gian": thoiGian, "Tên": ten, "SĐT": "'" + sdt, "Trạng Thái": trangThai });
-            
             setTimeout(() => {
                 alert("✅ Đã nhận đơn của " + ten + "! Hẹn 04/02 tại Dookki nhé!");
                 document.getElementById("ten").value = "";
