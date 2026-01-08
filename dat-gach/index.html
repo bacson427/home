@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Blast Clone</title>
+    <style>
+        :root {
+            --bg-color: #1a1a2e;
+            --grid-bg: #16213e;
+            --cell-empty: #0f3460;
+            --cell-filled: #e94560;
+            --text-color: #fff;
+            --cell-size: 40px;
+            --gap: 4px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            user-select: none; /* Ngăn bôi đen văn bản khi kéo thả */
+            touch-action: none; /* Ngăn cuộn trang trên mobile */
+        }
+
+        h1 { margin-bottom: 10px; font-size: 24px; }
+
+        #score-board {
+            font-size: 20px;
+            margin-bottom: 20px;
+            background: #0f3460;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+
+        /* Bàn cờ chính */
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(8, var(--cell-size));
+            grid-template-rows: repeat(8, var(--cell-size));
+            gap: var(--gap);
+            background-color: var(--grid-bg);
+            padding: 10px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .cell {
+            width: var(--cell-size);
+            height: var(--cell-size);
+            background-color: var(--cell-empty);
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        /* Hiệu ứng khi kéo khối vào vị trí hợp lệ */
+        .cell.hovered {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Khu vực chứa 3 khối gạch để chọn */
+        #shapes-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            min-height: 100px;
+        }
+
+        .shape-preview {
+            display: grid;
+            gap: 2px;
+            cursor: grab;
+            transition: transform 0.1s;
+        }
+
+        .shape-preview:active {
+            cursor: grabbing;
+            transform: scale(1.1);
+        }
+
+        .block {
+            width: 20px; /* Nhỏ hơn trên bàn cờ để vừa khung */
+            height: 20px;
+            border-radius: 2px;
+            pointer-events: none; /* Để event chuột đi xuyên qua block bắt vào cell */
+        }
+
+        /* Khối đang được kéo (Draggable) */
+        .dragging {
+            position: absolute;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0.9;
+        }
+
+        .hidden { visibility: hidden; }
+
+        /* Modal Game Over */
+        #game-over {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        button:hover { background: #ff6b81; }
+
+    </style>
+</head>
+<body>
+
+    <h1>Block Blast Lite</h1>
+    <div id="score-board">Điểm: <span id="score">0</span></div>
+
+    <div id="game-board">
+        </div>
+
+    <div id="shapes-container">
+        </div>
+
+    <div id="game-over">
+        <h2>GAME OVER</h2>
+        <p>Điểm của bạn: <span id="final-score">0</span></p>
+        <button onclick="restartGame()">Chơi Lại</button>
+    </div>
+
+    <script>
+        const BOARD_SIZE = 8;
+        const CELL_SIZE_PX = 40; // Khớp với CSS
+        const GAP_PX = 4;
+        const boardElement = document.getElementById('game-board');
+        const shapesContainer = document.getElementById('shapes-container');
+        const scoreElement = document.getElementById('score');
+        const gameOverModal = document.getElementById('game-over');
+        const finalScoreElement = document.getElementById('final-score');
+
+        let grid = []; // Lưu trạng thái 0 (trống) hoặc 1 (đầy)
+        let score = 0;
+        let currentShapes = [];
+
+        // Định nghĩa các hình dạng (Tetrominoes và biến thể)
+        const SHAPES_DB = [
+            { shape: [[1]], color: '#FFD700' }, // 1 ô
+            { shape: [[1, 1]], color: '#00FFFF' }, // 2 ô ngang
+            { shape: [[1], [1]], color: '#00FFFF' }, // 2 ô dọc
+            { shape: [[1, 1, 1]], color: '#FF4500' }, // 3 ô ngang
+            { shape: [[1], [1], [1]], color: '#FF4500' }, // 3 ô dọc
+            { shape: [[1, 1], [1, 1]], color: '#32CD32' }, // Vuông 2x2
+            { shape: [[1, 1, 1], [0, 1, 0]], color: '#8A2BE2' }, // Chữ T
+            { shape: [[1, 0], [1, 1]], color: '#FF1493' }, // Chữ L nhỏ
+            { shape: [[1, 1, 1], [1, 0, 0]], color: '#1E90FF' } // Chữ L lớn
+        ];
+
+        // --- KHỞI TẠO ---
+        function initGame() {
+            grid = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(null));
+            score = 0;
+            scoreElement.innerText = score;
+            boardElement.innerHTML = '';
+            shapesContainer.innerHTML = '';
+            gameOverModal.style.display = 'none';
+
+            // Vẽ lưới
+            for (let r = 0; r < BOARD_SIZE; r++) {
+                for (let c = 0; c < BOARD_SIZE; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    boardElement.appendChild(cell);
+                }
+            }
+
+            spawnShapes();
+        }
+
+        // --- LOGIC SINH KHỐI ---
+        function spawnShapes() {
+            currentShapes = [];
+            shapesContainer.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                const random = SHAPES_DB[Math.floor(Math.random() * SHAPES_DB.length)];
+                createShapeElement(random, i);
+            }
+        }
+
+        function createShapeElement(shapeObj, index) {
+            const container = document.createElement('div');
+            container.classList.add('shape-preview');
+            // Tạo grid nhỏ cho shape preview
+            container.style.gridTemplateColumns = `repeat(${shapeObj.shape[0].length}, 20px)`;
+            
+            // Vẽ các block con
+            shapeObj.shape.forEach(row => {
+                row.forEach(val => {
+                    const block = document.createElement('div');
+                    if (val === 1) {
+                        block.classList.add('block');
+                        block.style.backgroundColor = shapeObj.color;
+                    }
+                    container.appendChild(block);
+                });
+            });
+
+            // Gắn sự kiện kéo thả
+            setupDragEvents(container, shapeObj);
+            
+            shapesContainer.appendChild(container);
+            currentShapes.push(container);
+        }
+
+        // --- XỬ LÝ KÉO THẢ (DRAG & DROP) ---
+        let draggedElement = null;
+        let dragShapeData = null;
+        let originalPos = { x: 0, y: 0 };
+        let clone = null;
+
+        function setupDragEvents(element, shapeObj) {
+            const startDrag = (e) => {
+                if(element.classList.contains('hidden')) return;
+
+                e.preventDefault();
+                const touch = e.touches ? e.touches[0] : e;
+                
+                draggedElement = element;
+                dragShapeData = shapeObj;
+                
+                // Tạo bản sao để kéo
+                clone = element.cloneNode(true);
+                clone.classList.add('dragging');
+                // Phóng to clone cho giống kích thước thật trên bàn cờ (20px -> 40px)
+                const scale = CELL_SIZE_PX / 20; 
+                clone.style.transform = `scale(${scale})`;
+                clone.style.transformOrigin = 'top left';
+                
+                // Tính vị trí bắt đầu
+                const rect = element.getBoundingClientRect();
+                clone.style.left = rect.left + 'px';
+                clone.style.top = rect.top + 'px';
+                
+                // Offset để chuột nằm giữa khối
+                originalPos.x = touch.clientX - rect.left;
+                originalPos.y = touch.clientY - rect.top;
+
+                document.body.appendChild(clone);
+                
+                document.addEventListener('mousemove', onDrag);
+                document.addEventListener('mouseup', onStopDrag);
+                document.addEventListener('touchmove', onDrag, {passive: false});
+                document.addEventListener('touchend', onStopDrag);
+            };
+
+            element.addEventListener('mousedown', startDrag);
+            element.addEventListener('touchstart', startDrag, {passive: false});
+        }
+
+        function onDrag(e) {
+            if (!clone) return;
+            e.preventDefault(); // Ngăn cuộn trang mobile
+            const touch = e.touches ? e.touches[0] : e;
+
+            // Di chuyển clone theo chuột
+            clone.style.left = (touch.clientX - originalPos.x) + 'px';
+            clone.style.top = (touch.clientY - originalPos.y) + 'px';
+
+            // Highlight vùng dự kiến thả
+            highlightBoard(touch.clientX, touch.clientY);
+        }
+
+        function onStopDrag(e) {
+            document.removeEventListener('mousemove', onDrag);
+            document.removeEventListener('mouseup', onStopDrag);
+            document.removeEventListener('touchmove', onDrag);
+            document.removeEventListener('touchend', onStopDrag);
+
+            const touch = e.changedTouches ? e.changedTouches[0] : e;
+            const dropSuccess = tryPlaceShape(touch.clientX, touch.clientY);
+
+            if (dropSuccess) {
+                draggedElement.classList.add('hidden'); // Ẩn khối gốc
+                checkBoard(); // Kiểm tra ăn điểm
+                
+                // Kiểm tra xem đã dùng hết 3 khối chưa
+                if (Array.from(shapesContainer.children).every(c => c.classList.contains('hidden'))) {
+                    spawnShapes();
+                }
+
+                checkGameOver();
+            }
+
+            if (clone) {
+                clone.remove();
+                clone = null;
+            }
+            clearHighlight();
+        }
+
+        // --- LOGIC GAME ---
+        
+        // Xác định vị trí thả trên lưới
+        function getGridPos(x, y) {
+            const boardRect = boardElement.getBoundingClientRect();
+            
+            // Tính toán vị trí tương đối so với bàn cờ
+            // Chỉnh offset một chút để chính xác hơn (ngón tay che khuất)
+            const relX = x - boardRect.left;
+            const relY = y - boardRect.top; // -50px nếu muốn khối nằm trên ngón tay
+
+            const col = Math.floor(relX / (CELL_SIZE_PX + GAP_PX));
+            const row = Math.floor(relY / (CELL_SIZE_PX + GAP_PX));
+
+                  const row = Math.floor(relY / (CELL_SIZE_PX + GAP_PX));
+
+            return { row, col };
+        }
+
+        function highlightBoard(x, y) {
+            clearHighlight();
+            const { row, col } = getGridPos(x, y);
+            if (canPlace(row, col, dragShapeData.shape)) {
+                drawPreview(row, col, dragShapeData.shape);
+            }
+        }
+
+        function canPlace(startRow, startCol, shapeMatrix) {
+            for (let r = 0; r < shapeMatrix.length; r++) {
+                for (let c = 0; c < shapeMatrix[r].length; c++) {
+                    if (shapeMatrix[r][c] === 1) {
+                        const boardR = startRow + r;
+                        const boardC = startCol + c;
+
+                        // Ra ngoài biên hoặc ô đã có gạch
+                        if (boardR < 0 || boardR >= BOARD_SIZE || 
+                            boardC < 0 || boardC >= BOARD_SIZE || 
+                            grid[boardR][boardC] !== null) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        function drawPreview(startRow, startCol, shapeMatrix) {
+            for (let r = 0; r < shapeMatrix.length; r++) {
+                for (let c = 0; c < shapeMatrix[r].length; c++) {
+                    if (shapeMatrix[r][c] === 1) {
+                        const cell = getCell(startRow + r, startCol + c);
+                        if (cell) cell.classList.add('hovered');
+                    }
+                }
+            }
+        }
+
+        function tryPlaceShape(x, y) {
+            const { row, col } = getGridPos(x, y);
+            if (canPlace(row, col, dragShapeData.shape)) {
+                placeShape(row, col, dragShapeData);
+                return true;
+            }
+            return false;
+        }
+
+        function placeShape(startRow, startCol, shapeData) {
+            const matrix = shapeData.shape;
+            for (let r = 0; r < matrix.length; r++) {
+                for (let c = 0; c < matrix[r].length; c++) {
+                    if (matrix[r][c] === 1) {
+                        const boardR = startRow + r;
+                        const boardC = startCol + c;
+                        grid[boardR][boardC] = shapeData.color;
+                        
+                        const cell = getCell(boardR, boardC);
+                        cell.style.backgroundColor = shapeData.color;
+                    }
+                }
+            }
+            score += 10;
+            updateScore();
+        }
+
+        // --- XỬ LÝ ĂN ĐIỂM ---
+        function checkBoard() {
+            let rowsClear = [];
+            let colsClear = [];
+
+            // Check Hàng
+            for (let r = 0; r < BOARD_SIZE; r++) {
+                if (grid[r].every(val => val !== null)) rowsClear.push(r);
+            }
+
+            // Check Cột
+            for (let c = 0; c < BOARD_SIZE; c++) {
+                let isFull = true;
+                for (let r = 0; r < BOARD_SIZE; r++) {
+                    if (grid[r][c] === null) isFull = false;
+                }
+                if (isFull) colsClear.push(c);
+            }
+
+            if (rowsClear.length > 0 || colsClear.length > 0) {
+                clearLines(rowsClear, colsClear);
+            }
+        }
+
+        function clearLines(rows, cols) {
+            // Hiệu ứng và xóa dữ liệu
+            rows.forEach(r => {
+                for (let c = 0; c < BOARD_SIZE; c++) {
+                    grid[r][c] = null; // Mark delete but careful with intersections
+                }
+            });
+            cols.forEach(c => {
+                for (let r = 0; r < BOARD_SIZE; r++) {
+                    grid[r][c] = null;
+                }
+            });
+
+            // Update UI sau một chút delay để mượt hơn (hoặc làm ngay)
+            setTimeout(() => {
+                for (let r = 0; r < BOARD_SIZE; r++) {
+                    for (let c = 0; c < BOARD_SIZE; c++) {
+                        const cell = getCell(r, c);
+                        if (grid[r][c] === null) {
+                            cell.style.backgroundColor = 'var(--cell-empty)';
+                        }
+                    }
+                }
+            }, 100);
+
+            // Tính điểm: Combo càng nhiều điểm càng cao
+            const totalLines = rows.length + cols.length;
+            score += totalLines * 100 * totalLines; 
+            updateScore();
+        }
+
+        // --- GAME OVER CHECK ---
+        function checkGameOver() {
+            // Lấy các shape chưa dùng
+            const remainingShapes = [];
+            const containerChildren = Array.from(shapesContainer.children);
+            
+            // Tìm trong currentShapes những cái chưa bị ẩn (dựa trên index DOM)
+            containerChildren.forEach((el, index) => {
+                if (!el.classList.contains('hidden')) {
+                    // Chúng ta cần lấy lại dữ liệu shape gốc. 
+                    // Cách đơn giản nhất là regenerate lại hoặc lưu vào mảng lúc spawn.
+                    // Ở đây ta dùng trick: lấy lại từ sự kiện drag cũ hoặc lưu state global tốt hơn.
+                    // Để đơn giản, ta sẽ không check quá sâu, chỉ check xem CÓ THỂ ĐẶT ĐƯỢC KHÔNG.
+                    // Tuy nhiên, do data shape nằm trong closure của event listener, ta cần cách truy cập.
+                    // Fix: Lưu data vào property của element.
+                }
+            });
+
+            // Logic đơn giản hóa: Check từng vị trí trống trên bàn cờ với từng shape còn lại
+            // Do cấu trúc code trên hơi khó lấy lại shape data từ DOM, ta sửa spawnShapes 1 chút để lưu data vào mảng global song song.
+            
+            // Re-check logic:
+            // Ta cần check xem CÓ BẤT KỲ shape nào còn lại trong khay có thể đặt vào BẤT KỲ đâu trên bàn cờ không.
+            
+            // Lấy danh sách shape còn lại
+            const visibleShapes = [];
+            Array.from(shapesContainer.children).forEach((el) => {
+                 if (!el.classList.contains('hidden')) {
+                     // Lấy data shape từ event listener là không thể.
+                     // Ta dùng biến global map với index
+                     // Sửa logic spawn để gán index
+                 }
+            });
+            
+            // (Thực hiện ở phiên bản nâng cao, ở bản này ta tạm bỏ qua check Game Over phức tạp 
+            // mà chỉ check cơ bản hoặc để người chơi tự nhận ra).
+            
+            // Cập nhật: Để code hoàn chỉnh, tôi sẽ thêm logic check Game Over đơn giản ở đây:
+            // Chúng ta cần biết shape data của các khối còn lại.
+            // Sửa hàm spawnShapes để lưu reference.
+        }
+
+        // Ghi đè lại logic spawn để hỗ trợ check Game Over
+        let currentShapeDataList = [];
+        const oldSpawn = spawnShapes;
+        spawnShapes = function() {
+            currentShapes = [];
+            currentShapeDataList = [];
+            shapesContainer.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                const random = SHAPES_DB[Math.floor(Math.random() * SHAPES_DB.length)];
+                currentShapeDataList.push(random); // Lưu data
+                
+                const container = document.createElement('div');
+                container.classList.add('shape-preview');
+                container.dataset.index = i; // Lưu index
+                container.style.gridTemplateColumns = `repeat(${random.shape[0].length}, 20px)`;
+                
+                random.shape.forEach(row => {
+                    row.forEach(val => {
+                        const block = document.createElement('div');
+                        if (val === 1) {
+                            block.classList.add('block');
+                            block.style.backgroundColor = random.color;
+                        }
+                        container.appendChild(block);
+                    });
+                });
+
+                setupDragEvents(container, random);
+                shapesContainer.appendChild(container);
+            }
+            
+            // Check ngay khi sinh ra xem có bị game over ngay lập tức không
+            if (isGameOver()) showGameOver();
+        }
+        
+        // Hàm kiểm tra Game Over thực sự
+        function isGameOver() {
+            // Lấy các shape còn tồn tại
+            const activeIndices = [];
+            Array.from(shapesContainer.children).forEach((el, idx) => {
+                if (!el.classList.contains('hidden')) activeIndices.push(idx);
+            });
+
+            if (activeIndices.length === 0) return false; // Hết shape thì sẽ spawn mới, ko thua
+
+            // Với mỗi shape còn lại
+            for (let idx of activeIndices) {
+                const shape = currentShapeDataList[idx].shape;
+                // Thử đặt vào mọi ô trên bàn cờ
+                for (let r = 0; r < BOARD_SIZE; r++) {
+                    for (let c = 0; c < BOARD_SIZE; c++) {
+                        if (canPlace(r, c, shape)) {
+                            return false; // Còn chỗ đặt
+                        }
+                    }
+                }
+            }
+            return true; // Không còn chỗ nào
+        }
+
+        // Gọi hàm check này sau mỗi lần đặt gạch thành công
+        const oldOnStopDrag = onStopDrag; // Monkey patch logic local
+        // (Đã tích hợp vào hàm onStopDrag phía trên: gọi checkGameOver())
+        
+        // Viết lại hàm checkGameOver để gọi từ onStopDrag
+        checkGameOver = function() {
+             if (isGameOver()) {
+                 showGameOver();
+             }
+        }
+
+        function showGameOver() {
+            finalScoreElement.innerText = score;
+            gameOverModal.style.display = 'flex';
+        }
+
+        function restartGame() {
+            initGame();
+        }
+
+        // --- HELPER ---
+        function getCell(r, c) {
+            return document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+        }
+
+        function clearHighlight() {
+            document.querySelectorAll('.cell.hovered').forEach(c => c.classList.remove('hovered'));
+        }
+
+        function updateScore() {
+            scoreElement.innerText = score;
+        }
+
+        // Start
+        initGame();
+
+    </script>
+</body>
+</html>
+               
