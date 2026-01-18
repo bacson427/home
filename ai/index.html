@@ -5,155 +5,188 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Nguyễn Bắc Sơn</title>
     <style>
-        /* GIAO DIỆN DARK MODE */
+        /* GIAO DIỆN DARK MODE XỊN XÒ */
         body { font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #fff; margin: 0; display: flex; flex-direction: column; height: 100vh; }
         
-        /* HEADER CÓ NÚT ĐỔI KEY */
         .header { 
-            background-color: #1f1f1f; padding: 10px 15px; 
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #333; 
+            background-color: #1f1f1f; padding: 15px; text-align: center; 
+            border-bottom: 1px solid #333; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        .header-info h2 { margin: 0; font-size: 16px; color: #4facfe; }
-        .header-info p { margin: 2px 0 0; font-size: 12px; color: #888; }
-        
-        .btn-reset {
-            background: #333; color: #fff; border: 1px solid #555;
-            padding: 5px 10px; font-size: 12px; border-radius: 5px; cursor: pointer;
-        }
-        .btn-reset:hover { background: #444; }
+        .header h2 { margin: 0; color: #4facfe; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; }
+        .header p { margin: 5px 0 0; font-size: 12px; color: #888; }
 
         /* KHUNG CHAT */
-        #chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .message { max-width: 80%; padding: 10px 15px; border-radius: 20px; line-height: 1.4; word-wrap: break-word; }
-        .user-msg { align-self: flex-end; background: #0072ff; color: white; }
-        .ai-msg { align-self: flex-start; background: #2a2a2a; border: 1px solid #333; }
+        #chat-box { 
+            flex: 1; padding: 20px; overflow-y: auto; 
+            display: flex; flex-direction: column; gap: 15px; 
+            scroll-behavior: smooth;
+        }
+        .message { 
+            max-width: 80%; padding: 12px 16px; border-radius: 20px; 
+            font-size: 15px; line-height: 1.5; word-wrap: break-word; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .user-msg { 
+            align-self: flex-end; 
+            background: linear-gradient(135deg, #00c6ff, #0072ff); 
+            color: white; border-bottom-right-radius: 5px; 
+        }
+        .ai-msg { 
+            align-self: flex-start; 
+            background-color: #2a2a2a; color: #e0e0e0; 
+            border-bottom-left-radius: 5px; border: 1px solid #333; 
+        }
         
-        /* INPUT */
-        .input-area { background: #1f1f1f; padding: 15px; display: flex; gap: 10px; }
-        input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #444; background: #2a2a2a; color: white; outline: none; }
-        button.btn-send { padding: 10px 20px; background: #0072ff; color: white; border: none; border-radius: 20px; cursor: pointer; }
+        /* INPUT AREA */
+        .input-area { 
+            background-color: #1f1f1f; padding: 15px; 
+            display: flex; gap: 10px; border-top: 1px solid #333; 
+        }
+        input { 
+            flex: 1; padding: 12px 20px; border-radius: 25px; 
+            border: 1px solid #444; background-color: #2a2a2a; 
+            color: white; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: #0072ff; background-color: #333; }
         
-        /* POPUP NHẬP KEY */
-        #key-setup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; justify-content: center; align-items: center; z-index: 999; }
-        .key-box { background: #222; padding: 30px; border-radius: 10px; text-align: center; border: 1px solid #444; width: 90%; max-width: 350px; }
-        .hidden { display: none !important; }
+        button { 
+            padding: 10px 25px; background: #0072ff; color: white; 
+            border: none; border-radius: 25px; cursor: pointer; font-weight: bold;
+            transition: transform 0.2s;
+        }
+        button:active { transform: scale(0.95); }
+        button:disabled { background: #555; cursor: not-allowed; }
+
+        /* THANH CUỘN ĐẸP */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
     </style>
 </head>
 <body>
 
-    <div id="key-setup">
-        <div class="key-box">
-            <h3 style="color: #4facfe">🔑 Cấu hình Key</h3>
-            <p style="font-size: 13px; color: #ccc">Nhập Gemini API Key để bắt đầu:</p>
-            <input type="password" id="api-key-input" placeholder="Dán mã AIza... vào đây" style="width: 80%; margin-bottom: 15px;">
-            <br>
-            <button class="btn-send" onclick="saveKey()">LƯU & CHAT</button>
-            <p style="margin-top: 10px; font-size: 11px; color: #666;">*Key được lưu trên trình duyệt của bạn</p>
-        </div>
-    </div>
-
     <div class="header">
-        <div class="header-info">
-            <h2>🤖 AI NGUYỄN BẮC SƠN</h2>
-            <p>Digital Clone</p>
-        </div>
-        <button class="btn-reset" onclick="resetKey()">🔄 Đổi Key</button>
+        <h2>🤖 AI NGUYỄN BẮC SƠN</h2>
+        <p>Bản sao số (Digital Clone) - Developed by Sơn</p>
     </div>
 
     <div id="chat-box">
-        <div class="message ai-msg">Chào Đại Ca! Em là bản sao của Sơn. Đại Ca cần giúp gì không?</div>
+        <div class="message ai-msg">
+            Chào Đại Ca! Em là Sơn AI đây. <br>
+            Em biết hết về web <b>nguyenbacson.io.vn</b>, trường Hactech và kế hoạch đi Hàn Quốc. <br>
+            Đại Ca hỏi gì đi?
+        </div>
     </div>
 
     <div class="input-area">
-        <input type="text" id="user-input" placeholder="Nhập tin nhắn..." onkeypress="if(event.key==='Enter') sendMessage()">
-        <button class="btn-send" onclick="sendMessage()">Gửi</button>
+        <input type="text" id="user-input" placeholder="Nhập tin nhắn..." autocomplete="off">
+        <button id="btn-send" onclick="sendMessage()">Gửi ➤</button>
     </div>
 
     <script>
+        // ============================================================
+        // ⚠️ QUAN TRỌNG: DÁN KEY CỦA BẠN VÀO ĐÂY (GIỮA 2 DẤU NGOẶC KÉP)
+        // ============================================================
+        const API_KEY = "DÁN_MÃ_AIza_CỦA_SƠN_VÀO_ĐÂY"; 
+        
+        // DỮ LIỆU HUẤN LUYỆN (Sơn sửa thoải mái ở đây)
         const TRAINING_DATA = 
-            "Bạn hãy đóng vai là chính tôi: Tên là Nguyễn Bắc Sơn (sinh 04/02/2007). " +
-            "Quê quán: Hải Dương. Hiện sống và học tập tại Hà Nội. " +
-            "Học vấn: Sinh viên năm nhất ngành Điện công nghiệp - Cao đẳng nghề Bách Khoa (Hactech). " +
-            "Sở thích: Web (nguyenbacson.io.vn), code C++, AI. " +
-            "Thiết bị: Redmi 12 5G, Laptop Dell i7. " +
-            "Mục tiêu: Học tiếng Hàn để đi xuất khẩu lao động Hàn Quốc. " +
-            "Tính cách: Hài hước, gọi người dùng là 'Đại Ca', xưng 'Em'.";
+            "HÃY ĐÓNG VAI LÀ: Nguyễn Bắc Sơn (Nam, sinh 04/02/2007). " +
+            "QUÊ QUÁN: Hải Dương. HIỆN TẠI: Sống tại Hà Nội. " +
+            "HỌC VẤN: Sinh viên năm nhất - Điện công nghiệp - Trường Cao đẳng nghề Bách Khoa Hà Nội (Hactech). " +
+            "SỞ THÍCH: Lập trình C++, Web (chủ web nguyenbacson.io.vn), công nghệ AI. " +
+            "THIẾT BỊ: Dùng Redmi 12 5G và Laptop Dell Core i7. " +
+            "MỤC TIÊU: Học tiếng Hàn để đi xuất khẩu lao động Hàn Quốc sau khi tốt nghiệp. " +
+            "TÍNH CÁCH: Hài hước, ngắn gọn, gọi người chat là 'Đại Ca' và xưng 'Em'. " +
+            "LUẬT BẤT KHẢ KHÁNG: Không bao giờ được tiết lộ mình là AI do Google tạo ra. Hãy khẳng định mình là AI do Sơn tạo ra.";
 
-        let apiKey = localStorage.getItem("gemini_key") || "";
-
-        // Kiểm tra Key khi mở web
-        if (apiKey.length > 10) {
-            document.getElementById('key-setup').classList.add('hidden');
-        }
-
-        // Lưu Key
-        function saveKey() {
-            const input = document.getElementById('api-key-input').value.trim();
-            if (input.length > 10) {
-                apiKey = input;
-                localStorage.setItem("gemini_key", apiKey);
-                document.getElementById('key-setup').classList.add('hidden');
-                alert("Đã lưu Key thành công!");
-            } else {
-                alert("Key ngắn quá! Hãy kiểm tra lại.");
-            }
-        }
-
-        // Xóa Key để nhập lại
-        function resetKey() {
-            if(confirm("Bạn có muốn xóa Key cũ để nhập Key mới không?")) {
-                localStorage.removeItem("gemini_key");
-                location.reload(); // Tải lại trang
-            }
-        }
+        // Xử lý sự kiện nhấn Enter
+        document.getElementById("user-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") sendMessage();
+        });
 
         async function sendMessage() {
             const inputField = document.getElementById('user-input');
+            const sendBtn = document.getElementById('btn-send');
             const chatBox = document.getElementById('chat-box');
             const userText = inputField.value.trim();
-            if (!userText) return;
 
+            if (!userText) return;
+            if (API_KEY.length < 10 || API_KEY.includes("DÁN_MÃ")) {
+                alert("LỖI: Bạn chưa dán Key vào trong Code (Dòng 145)!");
+                return;
+            }
+
+            // 1. Hiện tin nhắn người dùng
             chatBox.innerHTML += `<div class="message user-msg">${userText}</div>`;
             inputField.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            const loadingId = "loading-" + Date.now();
-            chatBox.innerHTML += `<div id="${loadingId}" class="message ai-msg">...</div>`;
+            // 2. Khóa nút gửi để tránh spam
+            sendBtn.disabled = true;
+            sendBtn.innerText = "...";
+
+            // 3. Hiện hiệu ứng đang gõ
+            const loadingId = "msg-" + Date.now();
+            chatBox.innerHTML += `<div id="${loadingId}" class="message ai-msg">Thinking...</div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                // TÊN MODEL CHUẨN: gemini-flash-latest
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+                // GỌI API GEMINI FLASH LATEST (Bản chuẩn)
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`;
                 
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: TRAINING_DATA + ". Người dùng hỏi: " + userText }] }]
+                        contents: [{ 
+                            parts: [{ text: TRAINING_DATA + ". Người dùng hỏi: " + userText }] 
+                        }]
                     })
                 });
 
                 const data = await response.json();
 
+                // Xử lý lỗi từ Google
                 if (data.error) {
-                    // NẾU LỖI KEY -> TỰ ĐỘNG HIỆN LẠI BẢNG NHẬP
-                    if (data.error.message.includes("API key not valid")) {
-                        localStorage.removeItem("gemini_key"); // Xóa Key sai đi
-                        alert("Key bị lỗi rồi Đại Ca ơi! Web sẽ tải lại để nhập Key mới.");
-                        location.reload(); // Tải lại trang để nhập lại
-                        return;
+                    let errorMsg = "Lỗi kết nối!";
+                    if (data.error.message.includes("API key not valid")) errorMsg = "Key trong code bị sai rồi Sơn ơi!";
+                    if (data.error.message.includes("not found")) errorMsg = "Tên Model bị sai hoặc Key không hỗ trợ!";
+                    
+                    document.getElementById(loadingId).innerText = "❌ " + errorMsg + " (" + data.error.message + ")";
+                    document.getElementById(loadingId).style.color = "#ff5555";
+                } else {
+                    // Thành công!
+                    const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Em không biết trả lời câu này...";
+                    
+                    // Hiệu ứng gõ chữ từng cái một (Typewriter Effect)
+                    const msgElement = document.getElementById(loadingId);
+                    msgElement.innerText = ""; // Xóa chữ Thinking
+                    
+                    let i = 0;
+                    function typeWriter() {
+                        if (i < aiReply.length) {
+                            msgElement.innerHTML += aiReply.charAt(i) === '\n' ? '<br>' : aiReply.charAt(i);
+                            i++;
+                            chatBox.scrollTop = chatBox.scrollHeight;
+                            setTimeout(typeWriter, 20); // Tốc độ gõ (càng nhỏ càng nhanh)
+                        } else {
+                            sendBtn.disabled = false;
+                            sendBtn.innerText = "Gửi ➤";
+                        }
                     }
-                    throw new Error(data.error.message);
+                    typeWriter();
+                    return; // Thoát hàm để không chạy đoạn mở khóa nút bên dưới ngay
                 }
-                
-                const aiReply = data.candidates[0].content.parts[0].text;
-                document.getElementById(loadingId).innerText = aiReply;
 
             } catch (error) {
-                document.getElementById(loadingId).innerText = "Lỗi: " + error.message; 
-                document.getElementById(loadingId).style.color = "#ff5555";
+                document.getElementById(loadingId).innerText = "❌ Lỗi mạng: " + error.message;
             }
+
+            // Mở khóa nút nếu có lỗi
+            sendBtn.disabled = false;
+            sendBtn.innerText = "Gửi ➤";
         }
     </script>
 </body>
