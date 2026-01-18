@@ -8,79 +8,58 @@
     <style>
         /* === GIAO DIỆN HỌC TẬP (ACADEMIC THEME) === */
         :root {
-            --bg-color: #f4e8d6; /* Màu giấy cũ */
-            --header-bg: #5c4b3e; /* Màu gỗ tối */
-            --text-color: #3d2b1f; /* Màu nâu đậm */
-            --user-msg-bg: #4a7c59; /* Màu xanh bảng đen */
-            --ai-msg-bg: #fffaf0; /* Màu trang sách sáng */
-            --accent-color: #d4af37; /* Màu vàng cổ điển */
+            --bg-color: #f4e8d6;
+            --header-bg: #5c4b3e;
+            --text-color: #3d2b1f;
+            --user-msg-bg: #4a7c59;
+            --ai-msg-bg: #fffaf0;
+            --accent-color: #d4af37;
         }
 
         body { 
-            font-family: 'Merriweather', 'Segoe UI', serif; /* Dùng font có chân trông tri thức hơn */
+            font-family: 'Merriweather', 'Segoe UI', serif; 
             background-color: var(--bg-color);
-            /* Tạo hiệu ứng nền giấy cũ nhẹ nhàng */
             background-image: linear-gradient(to bottom, #f4e8d6, #eaddc5);
             color: var(--text-color); 
             margin: 0; display: flex; flex-direction: column; height: 100vh; 
         }
 
-        /* Header kiểu bảng hiệu */
         .header { 
             background-color: var(--header-bg); 
             padding: 15px; text-align: center; 
             border-bottom: 3px solid var(--accent-color); 
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        .header h2 { margin: 0; color: var(--accent-color); font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+        .header h2 { margin: 0; color: var(--accent-color); font-size: 20px; font-weight: 700; }
         .header p { margin: 5px 0 0; font-size: 12px; color: #d1c4b4; font-style: italic; }
 
-        /* Khung chat */
         #chat-box { 
             flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; 
-            /* Thanh cuộn đẹp hơn */
             scrollbar-width: thin; scrollbar-color: var(--header-bg) transparent;
         }
         
-        /* Tin nhắn */
         .message { 
             max-width: 80%; padding: 14px 18px; border-radius: 12px; font-size: 16px; line-height: 1.6; word-wrap: break-word; 
             box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
         }
-        .user-msg { 
-            align-self: flex-end; 
-            background-color: var(--user-msg-bg); 
-            color: white; 
-            border-bottom-right-radius: 2px;
-        }
-        .ai-msg { 
-            align-self: flex-start; 
-            background-color: var(--ai-msg-bg); 
-            border: 1px solid #e0d5c0; 
-            color: var(--text-color);
-            border-bottom-left-radius: 2px;
-        }
+        .user-msg { align-self: flex-end; background-color: var(--user-msg-bg); color: white; border-bottom-right-radius: 2px;}
+        .ai-msg { align-self: flex-start; background-color: var(--ai-msg-bg); border: 1px solid #e0d5c0; color: var(--text-color); border-bottom-left-radius: 2px;}
 
-        /* Khu vực nhập liệu */
         .input-area { 
-            background-color: #eaddc5; 
-            padding: 15px; display: flex; gap: 10px; 
-            border-top: 1px solid #d0c0a0; 
+            background-color: #eaddc5; padding: 15px; display: flex; gap: 10px; border-top: 1px solid #d0c0a0; 
         }
         input { 
             flex: 1; padding: 12px 20px; border-radius: 25px; 
             border: 2px solid var(--header-bg); background: #fffaf0; 
             color: var(--text-color); outline: none; font-family: inherit;
-            transition: border-color 0.3s;
         }
         input:focus { border-color: var(--accent-color); }
         button { 
             padding: 10px 30px; background-color: var(--header-bg); color: var(--accent-color); 
             border: none; border-radius: 25px; cursor: pointer; font-weight: bold; font-family: inherit;
-            transition: background-color 0.3s;
         }
         button:hover { background-color: #4a3a30; }
-        button:disabled { background: #888; color: #ccc; cursor: not-allowed; }
+        button:disabled { background: #888; color: #ccc; }
     </style>
 </head>
 <body>
@@ -105,15 +84,10 @@
 
     <script>
         // =================================================================
-        // ⚠️ CẢNH BÁO BẢO MẬT: DÁN KEY Ở ĐÂY LÀ RẤT RỦI RO NẾU PUBLIC WEB.
-        // NẾU CHỈ DÙNG CÁ NHÂN HOẶC DEMO THÌ TẠM CHẤP NHẬN ĐƯỢC.
+        // DÁN KEY CỦA BẠN VÀO ĐÂY
         // =================================================================
-        const API_KEY = "AIzaSyC_8HJC_A5HvlCrkINtBb3xSxN6qDe9JuE"; 
+        const API_KEY = "DÁN_LẠI_KEY_CỦA_BẠN_VÀO_ĐÂY"; 
         
-        // =================================================================
-        // DỮ LIỆU HUẤN LUYỆN ĐÃ ĐƯỢC TỐI ƯU (Sử dụng dấu backtick ` `)
-        // Giúp viết nhiều dòng dễ dàng mà không cần dấu +
-        // =================================================================
         const TRAINING_DATA = `
 HÃY ĐÓNG VAI LÀ: AI trợ giảng ngữ pháp tiếng Anh, được lập trình bởi nguyenbacson.io.vn.
 ĐỐI TƯỢNG GIAO TIẾP: Trương Thị Dương - Sinh viên năm nhất Ngôn ngữ Anh - ĐH Phương Đông.
@@ -205,9 +179,6 @@ Ví dụ: By next month, we will have been living here for 5 years.
 Lưu ý ký hiệu: V (nguyên thể), V-ing (thêm ing), V2/ed (Quá khứ), V3/ed (Phân từ 2).
 `;
 
-        // =================================================================
-        // PHẦN XỬ LÝ LOGIC (JAVASCRIPT)
-        // =================================================================
         async function sendMessage() {
             const inputField = document.getElementById('user-input');
             const sendBtn = document.getElementById('btn-send');
@@ -216,35 +187,31 @@ Lưu ý ký hiệu: V (nguyên thể), V-ing (thêm ing), V2/ed (Quá khứ), V3
 
             if (!userText) return;
 
-            // Kiểm tra Key (đơn giản)
             if (API_KEY.length < 10 || API_KEY.includes("DÁN_LẠI_KEY")) {
                 alert("Bạn chưa điền API Key vào code!");
                 return;
             }
 
-            // Hiện tin nhắn người dùng
             chatBox.innerHTML += `<div class="message user-msg">${userText}</div>`;
             inputField.value = "";
             scrollToBottom();
 
-            // Khóa nút gửi và hiện hiệu ứng chờ
             sendBtn.disabled = true;
             const loadingId = "msg-" + Date.now();
             chatBox.innerHTML += `<div id="${loadingId}" class="message ai-msg" style="font-style: italic; color: #888;">Đang tra cứu ngữ pháp...</div>`;
             scrollToBottom();
 
             try {
-                // Sử dụng model gemini-1.5-flash cho nhanh và ổn định
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+                // === ĐÂY LÀ CHỖ QUAN TRỌNG ĐÃ SỬA: gemini-flash-latest ===
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`;
                 
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{ parts: [{ text: TRAINING_DATA + ". Yêu cầu của sinh viên: " + userText }] }],
-                         // Thêm cấu hình để AI trả lời tập trung hơn
                         generationConfig: {
-                            temperature: 0.3, // Giảm độ sáng tạo để câu trả lời chính xác về kiến thức
+                            temperature: 0.3,
                             maxOutputTokens: 1000,
                         }
                     })
@@ -255,10 +222,9 @@ Lưu ý ký hiệu: V (nguyên thể), V-ing (thêm ing), V2/ed (Quá khứ), V3
 
                 if (data.error) {
                     loadingElement.innerHTML = `❌ <b>Lỗi:</b> ${data.error.message}`;
-                    loadingElement.style.color = "#d9534f"; // Màu đỏ báo lỗi
+                    loadingElement.style.color = "#d9534f"; 
                 } else {
                     const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Xin lỗi, tôi chưa tìm thấy thông tin về phần này.";
-                    // Định dạng lại câu trả lời (thay thế xuống dòng bằng thẻ <br>)
                     loadingElement.innerHTML = aiReply.replace(/\n/g, '<br>');
                     loadingElement.style.fontStyle = "normal"; loadingElement.style.color = "var(--text-color)";
                 }
@@ -266,12 +232,10 @@ Lưu ý ký hiệu: V (nguyên thể), V-ing (thêm ing), V2/ed (Quá khứ), V3
                 document.getElementById(loadingId).innerText = "❌ Lỗi kết nối mạng!";
             }
             
-            // Mở khóa nút gửi
             sendBtn.disabled = false;
             scrollToBottom();
         }
 
-        // Hàm cuộn xuống cuối khung chat
         function scrollToBottom() {
             const chatBox = document.getElementById('chat-box');
             chatBox.scrollTop = chatBox.scrollHeight;
