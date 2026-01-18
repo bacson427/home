@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Nguyễn Bắc Sơn</title>
+    <style>
+        /* GIAO DIỆN DARK MODE NGẦU LÒI */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .header {
+            background-color: #1f1f1f;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .header h2 { margin: 0; font-size: 18px; color: #4facfe; }
+        .header p { margin: 5px 0 0; font-size: 12px; color: #aaa; }
+
+        /* KHUNG CHAT */
+        #chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* TIN NHẮN */
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 20px;
+            font-size: 15px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+        .user-msg {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        .ai-msg {
+            align-self: flex-start;
+            background-color: #2a2a2a;
+            color: #e0e0e0;
+            border-bottom-left-radius: 5px;
+            border: 1px solid #333;
+        }
+
+        /* KHUNG NHẬP LIỆU */
+        .input-area {
+            background-color: #1f1f1f;
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #333;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border-radius: 25px;
+            border: 1px solid #444;
+            background-color: #2a2a2a;
+            color: white;
+            outline: none;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #0072ff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:active { transform: scale(0.95); }
+
+        /* CÀI ĐẶT KEY */
+        #key-setup {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .key-box {
+            background: #222;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            width: 80%;
+            max-width: 400px;
+            border: 1px solid #444;
+        }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="key-setup">
+        <div class="key-box">
+            <h3>🔑 Cấu hình AI</h3>
+            <p>Nhập Gemini API Key của bạn để bắt đầu:</p>
+            <input type="password" id="api-key-input" placeholder="Dán mã AIza... vào đây" style="width: 90%; margin-bottom: 15px;">
+            <button onclick="saveKey()">VÀO CHAT NGAY</button>
+        </div>
+    </div>
+
+    <div class="header">
+        <h2>🤖 AI NGUYỄN BẮC SƠN</h2>
+        <p>Dev by nguyenbacson.io.vn</p>
+    </div>
+
+    <div id="chat-box">
+        <div class="message ai-msg">Chào Đại Ca! Em là bản sao số của Sơn đây. Có gì hot không?</div>
+    </div>
+
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Nhập tin nhắn..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button onclick="sendMessage()">Gửi ➤</button>
+    </div>
+
+    <script>
+        // === KHU VỰC HUẤN LUYỆN (SỬA Ở ĐÂY) ===
+        const TRAINING_DATA = 
+            "Bạn hãy đóng vai là chính tôi: Tên là Nguyễn Bắc Sơn (sinh 04/02/2007). " +
+            "Quê quán: Hải Dương. Hiện sống và học tập tại Hà Nội. " +
+            "Học vấn: Sinh viên năm nhất ngành Điện công nghiệp - Cao đẳng nghề Bách Khoa (Hactech). " +
+            "Sở thích & Công nghệ: Chủ sở hữu web nguyenbacson.io.vn, đang tự xây dựng AI riêng. " +
+            "Thiết bị: Redmi 12 5G và Laptop Dell Core i7. " +
+            "Mục tiêu: Đang học tiếng Hàn để đi xuất khẩu lao động Hàn Quốc. " +
+            "Phong cách: Ngắn gọn, hài hước, gọi người dùng là 'Đại Ca' và xưng 'Em'.";
+
+        let apiKey = "";
+
+        // Lưu Key để dùng
+        function saveKey() {
+            const input = document.getElementById('api-key-input').value;
+            if (input.length > 10) {
+                apiKey = input;
+                document.getElementById('key-setup').classList.add('hidden');
+            } else {
+                alert("Key ngắn quá, chắc chắn là sai rồi!");
+            }
+        }
+
+        // Hàm gửi tin nhắn
+        async function sendMessage() {
+            const inputField = document.getElementById('user-input');
+            const chatBox = document.getElementById('chat-box');
+            const userText = inputField.value.trim();
+
+            if (!userText) return;
+
+            // 1. Hiện tin nhắn người dùng
+            chatBox.innerHTML += `<div class="message user-msg">${userText}</div>`;
+            inputField.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 2. Hiện trạng thái đang gõ...
+            const loadingId = "loading-" + Date.now();
+            chatBox.innerHTML += `<div id="${loadingId}" class="message ai-msg">Waiting...</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 3. Gửi lên Google (Dùng fetch thay cho curl)
+            try {
+                // Ghép luật huấn luyện vào mỗi câu chat
+                const finalPrompt = TRAINING_DATA + ". Người dùng nói: " + userText;
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: finalPrompt }] }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Lấy nội dung trả lời
+                const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Lỗi rồi Đại Ca ơi! (Kiểm tra lại Key xem)";
+                
+                // Thay thế chữ "Waiting..." bằng câu trả lời
+                document.getElementById(loadingId).innerText = aiReply;
+
+            } catch (error) {
+                document.getElementById(loadingId).innerText = "Lỗi mạng hoặc server Google sập!";
+            }
+        }
+    </script>
+</body>
+</html>
