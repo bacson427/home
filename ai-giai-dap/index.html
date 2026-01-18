@@ -3,137 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Giải Đáp</title>
+    <title>Góc Học Tập AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Segoe+UI&display=swap" rel="stylesheet">
     <style>
-        /* GIAO DIỆN DARK MODE */
-        body { font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #fff; margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        .header { background-color: #1f1f1f; padding: 15px; text-align: center; border-bottom: 1px solid #333; }
-        .header h2 { margin: 0; color: #4facfe; font-size: 18px; }
-        .header p { margin: 5px 0 0; font-size: 12px; color: #888; }
-        #chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .message { max-width: 80%; padding: 12px 16px; border-radius: 20px; font-size: 15px; line-height: 1.5; word-wrap: break-word; }
-        .user-msg { align-self: flex-end; background: #0072ff; color: white; }
-        .ai-msg { align-self: flex-start; background: #2a2a2a; border: 1px solid #333; color: #e0e0e0; }
-        .input-area { background: #1f1f1f; padding: 15px; display: flex; gap: 10px; border-top: 1px solid #333; }
-        input { flex: 1; padding: 12px; border-radius: 25px; border: 1px solid #444; background: #2a2a2a; color: white; outline: none; }
-        button { padding: 10px 25px; background: #0072ff; color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: bold; }
-        button:disabled { background: #555; }
+        /* === GIAO DIỆN HỌC TẬP (ACADEMIC THEME) === */
+        :root {
+            --bg-color: #f4e8d6; /* Màu giấy cũ */
+            --header-bg: #5c4b3e; /* Màu gỗ tối */
+            --text-color: #3d2b1f; /* Màu nâu đậm */
+            --user-msg-bg: #4a7c59; /* Màu xanh bảng đen */
+            --ai-msg-bg: #fffaf0; /* Màu trang sách sáng */
+            --accent-color: #d4af37; /* Màu vàng cổ điển */
+        }
+
+        body { 
+            font-family: 'Merriweather', 'Segoe UI', serif; /* Dùng font có chân trông tri thức hơn */
+            background-color: var(--bg-color);
+            /* Tạo hiệu ứng nền giấy cũ nhẹ nhàng */
+            background-image: linear-gradient(to bottom, #f4e8d6, #eaddc5);
+            color: var(--text-color); 
+            margin: 0; display: flex; flex-direction: column; height: 100vh; 
+        }
+
+        /* Header kiểu bảng hiệu */
+        .header { 
+            background-color: var(--header-bg); 
+            padding: 15px; text-align: center; 
+            border-bottom: 3px solid var(--accent-color); 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .header h2 { margin: 0; color: var(--accent-color); font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+        .header p { margin: 5px 0 0; font-size: 12px; color: #d1c4b4; font-style: italic; }
+
+        /* Khung chat */
+        #chat-box { 
+            flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; 
+            /* Thanh cuộn đẹp hơn */
+            scrollbar-width: thin; scrollbar-color: var(--header-bg) transparent;
+        }
+        
+        /* Tin nhắn */
+        .message { 
+            max-width: 80%; padding: 14px 18px; border-radius: 12px; font-size: 16px; line-height: 1.6; word-wrap: break-word; 
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+        }
+        .user-msg { 
+            align-self: flex-end; 
+            background-color: var(--user-msg-bg); 
+            color: white; 
+            border-bottom-right-radius: 2px;
+        }
+        .ai-msg { 
+            align-self: flex-start; 
+            background-color: var(--ai-msg-bg); 
+            border: 1px solid #e0d5c0; 
+            color: var(--text-color);
+            border-bottom-left-radius: 2px;
+        }
+
+        /* Khu vực nhập liệu */
+        .input-area { 
+            background-color: #eaddc5; 
+            padding: 15px; display: flex; gap: 10px; 
+            border-top: 1px solid #d0c0a0; 
+        }
+        input { 
+            flex: 1; padding: 12px 20px; border-radius: 25px; 
+            border: 2px solid var(--header-bg); background: #fffaf0; 
+            color: var(--text-color); outline: none; font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        input:focus { border-color: var(--accent-color); }
+        button { 
+            padding: 10px 30px; background-color: var(--header-bg); color: var(--accent-color); 
+            border: none; border-radius: 25px; cursor: pointer; font-weight: bold; font-family: inherit;
+            transition: background-color 0.3s;
+        }
+        button:hover { background-color: #4a3a30; }
+        button:disabled { background: #888; color: #ccc; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h2>🤖 AI GIẢI ĐÁP</h2>
-        <p>Được tạo bởi nguyenbacson.io.vn</p>
+        <h2>📚 GÓC HỌC TẬP AI</h2>
+        <p>Trợ lý Ngữ Pháp - Powered by nguyenbacson.io.vn</p>
     </div>
 
     <div id="chat-box">
         <div class="message ai-msg">
-            Hello <br>
-           Trương Thị Dương.<br>
-            Bạn cần hỏi gì không?
+            Xin chào bạn <b>Trương Thị Dương</b>! <br>
+            Tôi là trợ lý AI chuyên về Ngữ pháp Tiếng Anh của bạn.<br><br>
+            Bạn đang gặp khó khăn ở thì nào? Hãy hỏi tôi nhé!
         </div>
     </div>
 
     <div class="input-area">
-        <input type="text" id="user-input" placeholder="Nhập tin nhắn..." onkeypress="if(event.key==='Enter') sendMessage()">
-        <button id="btn-send" onclick="sendMessage()">Gửi</button>
+        <input type="text" id="user-input" placeholder="Ví dụ: Giải thích thì hiện tại hoàn thành..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button id="btn-send" onclick="sendMessage()">Gửi ➤</button>
     </div>
 
     <script>
         // =================================================================
-        // MÌNH ĐÃ ĐIỀN SẴN KEY CỦA SƠN VÀO ĐÂY RỒI (DỰA THEO ẢNH)
+        // ⚠️ CẢNH BÁO BẢO MẬT: DÁN KEY Ở ĐÂY LÀ RẤT RỦI RO NẾU PUBLIC WEB.
+        // NẾU CHỈ DÙNG CÁ NHÂN HOẶC DEMO THÌ TẠM CHẤP NHẬN ĐƯỢC.
         // =================================================================
         const API_KEY = "AIzaSyC_8HJC_A5HvlCrkINtBb3xSxN6qDe9JuE"; 
         
-        const TRAINING_DATA = 
-            "HÃY ĐÓNG VAI LÀ: AI lập trình bởi nguyenbacson.io.vn . " +
-            "QUÊ QUÁN: Hà Nam. HIỆN TẠI: Sống tại Hà Nội. " +
-            "HỌC VẤN: Sinh viên năm nhất - Ngôn ngữ Anh - Đại Học Phương Đông. " +
-            "THIẾT BỊ: Iphone XR. " +
-            "MỤC TIÊU: Học tiếng Anh. " +
-            "TÍNH CÁCH: Hài hước, ngắn gọn, gọi người chat là 'Bạn' và xưng 'Tôi'."+
-          "Cần được hỗ trợ về học tập:
-          I. Nhóm thì Hiện Tại (Present Tenses)
+        // =================================================================
+        // DỮ LIỆU HUẤN LUYỆN ĐÃ ĐƯỢC TỐI ƯU (Sử dụng dấu backtick ` `)
+        // Giúp viết nhiều dòng dễ dàng mà không cần dấu +
+        // =================================================================
+        const TRAINING_DATA = `
+HÃY ĐÓNG VAI LÀ: AI trợ giảng ngữ pháp tiếng Anh, được lập trình bởi nguyenbacson.io.vn.
+ĐỐI TƯỢNG GIAO TIẾP: Trương Thị Dương - Sinh viên năm nhất Ngôn ngữ Anh - ĐH Phương Đông.
+TÍNH CÁCH: Học thuật nhưng dễ hiểu, kiên nhẫn, gọi người chat là 'Bạn' và xưng 'Tôi'. Giải thích rõ ràng, đưa ví dụ cụ thể.
+
+NHIỆM VỤ CHÍNH: Hỗ trợ kiến thức về 12 thì trong tiếng Anh dựa trên dữ liệu sau:
+
+I. Nhóm thì Hiện Tại (Present Tenses)
 1. Thì Hiện tại đơn (Present Simple) 
-Công thức:
-S + V(s/es) (Khẳng định) 
-S + do/does + not + V (Phủ định) 
-Do/Does + S + V? (Nghi vấn) 
+Công thức: S + V(s/es) (Khẳng định) | S + do/does + not + V (Phủ định) | Do/Does + S + V? (Nghi vấn) 
 Cách dùng: Diễn tả thói quen, sự thật hiển nhiên, chân lý hoặc lịch trình.
 Dấu hiệu: always, usually, often, sometimes, every day/week... 
-Ví dụ: The sun rises in the east. 
+Ví dụ: The sun rises in the east. / She often goes to school by bus.
+
 2. Thì Hiện tại tiếp diễn (Present Continuous) 
 Công thức: S + am/is/are + (not) + V-ing 
-Cách dùng: Hành động đang xảy ra lúc nói hoặc kế hoạch tương lai gần.
+Cách dùng: Hành động đang xảy ra lúc nói hoặc kế hoạch tương lai gần cụ thể.
 Dấu hiệu: now, at the moment, look!, listen! 
-Ví dụ: I am studying English now. 
+Ví dụ: I am studying English now. / Listen! Someone is singing.
+
 3. Thì Hiện tại hoàn thành (Present Perfect) 
 Công thức: S + have/has + (not) + V3/ed 
-Cách dùng: Hành động xảy ra trong quá khứ không rõ thời gian, vừa mới xảy ra, hoặc kéo dài từ quá khứ đến hiện tại.
-Dấu hiệu: just, already, yet, since, for, recently... 
-Ví dụ: She has lived here for 10 years. 
+Cách dùng: Hành động xảy ra trong quá khứ không rõ thời gian, vừa mới xảy ra, hoặc kéo dài từ quá khứ đến hiện tại, hoặc trải nghiệm.
+Dấu hiệu: just, already, yet, since, for, recently, so far, up to now... 
+Ví dụ: She has lived here for 10 years. / I have just finished my homework.
+
 4. Thì Hiện tại hoàn thành tiếp diễn (Present Perfect Continuous) 
 Công thức: S + have/has + (not) + been + V-ing 
-Cách dùng: Nhấn mạnh tính liên tục của hành động từ quá khứ đến hiện tại.
+Cách dùng: Nhấn mạnh tính liên tục, kéo dài của hành động từ quá khứ đến hiện tại (thường có kết quả ở hiện tại).
 Dấu hiệu: for, since, all morning/day/week... 
-Ví dụ: It has been raining since morning. 
+Ví dụ: It has been raining since morning (và đường vẫn đang ướt).
+
 II. Nhóm thì Quá Khứ (Past Tenses)
 5. Thì Quá khứ đơn (Past Simple) 
-Công thức:
-S + V2/ed (Khẳng định) 
-S + did + not + V (Phủ định) 
-Cách dùng: Hành động đã kết thúc trong quá khứ, có thời gian cụ thể.
+Công thức: S + V2/ed (Khẳng định) | S + did + not + V (Phủ định) 
+Cách dùng: Hành động đã kết thúc hoàn toàn trong quá khứ, có thời gian cụ thể.
 Dấu hiệu: yesterday, last week/month, ago, in 2020... 
-Ví dụ: I went to Ha Noi last year. 
+Ví dụ: I went to Ha Noi last year.
+
 6. Thì Quá khứ tiếp diễn (Past Continuous) 
 Công thức: S + was/were + (not) + V-ing 
-Cách dùng: Hành động đang xảy ra tại thời điểm cụ thể trong quá khứ hoặc đang xảy ra thì hành động khác xen vào.
+Cách dùng: Hành động đang xảy ra tại một thời điểm cụ thể trong quá khứ, hoặc hành động dài đang xảy ra thì hành động ngắn xen vào.
 Dấu hiệu: at 5 p.m yesterday, while, when... 
-Ví dụ: I was sleeping when you called. 
+Ví dụ: I was sleeping at 10pm last night. / I was studying when you called.
+
 7. Thì Quá khứ hoàn thành (Past Perfect) 
 Công thức: S + had + (not) + V3/ed 
-Cách dùng: Hành động xảy ra trước một hành động khác hoặc trước một thời điểm trong quá khứ.
+Cách dùng: Hành động xảy ra và hoàn thành trước một hành động khác hoặc trước một thời điểm trong quá khứ.
 Dấu hiệu: before, after, by the time... 
-Ví dụ: She had left before I arrived. 
+Ví dụ: She had left before I arrived. (Cô ấy đi rồi tôi mới tới).
+
 8. Thì Quá khứ hoàn thành tiếp diễn (Past Perfect Continuous) 
 Công thức: S + had + (not) + been + V-ing 
 Cách dùng: Nhấn mạnh quá trình kéo dài liên tục trước một hành động khác trong quá khứ.
 Dấu hiệu: for, since, before... 
-Ví dụ: He had been waiting for 2 hours before she came. 
+Ví dụ: He had been waiting for 2 hours before she came.
+
 III. Nhóm thì Tương Lai (Future Tenses)
 9. Thì Tương lai đơn (Future Simple) 
 Công thức: S + will + (not) + V 
-Cách dùng: Quyết định ngay lúc nói, lời hứa, dự đoán không có căn cứ.
-Dấu hiệu: tomorrow, next week, soon... 
-Ví dụ: I will call you tomorrow. 
+Cách dùng: Quyết định ngay lúc nói, lời hứa, dự đoán không có căn cứ, hy vọng.
+Dấu hiệu: tomorrow, next week, soon, I think, I hope... 
+Ví dụ: I think it will rain. / I will call you tomorrow.
+
 10. Thì Tương lai gần (Near Future - Be going to) 
 Công thức: S + am/is/are + (not) + going to + V 
-Cách dùng: Kế hoạch có dự định từ trước hoặc dự đoán có căn cứ.
+Cách dùng: Kế hoạch có dự định từ trước hoặc dự đoán có căn cứ rõ ràng ở hiện tại.
 Dấu hiệu: plan, intend, look at...! 
-Ví dụ: Look at the clouds! It is going to rain. 
+Ví dụ: Look at the clouds! It is going to rain.
+
 11. Thì Tương lai tiếp diễn (Future Continuous) 
 Công thức: S + will + (not) + be + V-ing 
 Cách dùng: Hành động sẽ đang xảy ra tại một thời điểm cụ thể trong tương lai.
 Dấu hiệu: at this time tomorrow, at 10 a.m next Monday... 
-Ví dụ: At 8 p.m tonight, I will be watching a movie. 
+Ví dụ: At 8 p.m tonight, I will be watching a movie.
+
 12. Thì Tương lai hoàn thành (Future Perfect) 
 Công thức: S + will + (not) + have + V3/ed 
 Cách dùng: Hành động sẽ hoàn thành trước một thời điểm/hành động khác trong tương lai.
-Dấu hiệu: by, by the time, by the end of... 
-Ví dụ: By next year, I will have graduated from university. 
+Dấu hiệu: by + mốc thời gian tương lai, by the time... 
+Ví dụ: By next year, I will have graduated from university.
+
 13. Thì Tương lai hoàn thành tiếp diễn (Future Perfect Continuous) 
 Công thức: S + will + (not) + have + been + V-ing 
-Cách dùng: Nhấn mạnh hành động sẽ kéo dài liên tục đến một thời điểm trong tương lai.
-Dấu hiệu: by... for, by the time... 
-Ví dụ: By March, we will have been living here for 5 years. 
-Lưu ý quan trọng về ký hiệu:
-V: Động từ nguyên thể 
-V-s/es: Động từ chia ngôi thứ 3 số ít (hiện tại đơn) 
-V2/ed: Quá khứ đơn (cột 2 hoặc thêm -ed) 
-V3/ed: Quá khứ phân từ (cột 3 hoặc thêm -ed) 
-V-ing: Động từ thêm đuôi -ing;
+Cách dùng: Nhấn mạnh hành động sẽ kéo dài liên tục tính đến một thời điểm trong tương lai.
+Dấu hiệu: by... for...
+Ví dụ: By next month, we will have been living here for 5 years.
 
+Lưu ý ký hiệu: V (nguyên thể), V-ing (thêm ing), V2/ed (Quá khứ), V3/ed (Phân từ 2).
+`;
+
+        // =================================================================
+        // PHẦN XỬ LÝ LOGIC (JAVASCRIPT)
+        // =================================================================
         async function sendMessage() {
             const inputField = document.getElementById('user-input');
             const sendBtn = document.getElementById('btn-send');
@@ -142,45 +216,65 @@ V-ing: Động từ thêm đuôi -ing;
 
             if (!userText) return;
 
+            // Kiểm tra Key (đơn giản)
+            if (API_KEY.length < 10 || API_KEY.includes("DÁN_LẠI_KEY")) {
+                alert("Bạn chưa điền API Key vào code!");
+                return;
+            }
+
+            // Hiện tin nhắn người dùng
             chatBox.innerHTML += `<div class="message user-msg">${userText}</div>`;
             inputField.value = "";
-            chatBox.scrollTop = chatBox.scrollHeight;
+            scrollToBottom();
 
+            // Khóa nút gửi và hiện hiệu ứng chờ
             sendBtn.disabled = true;
-            sendBtn.innerText = "...";
-            
             const loadingId = "msg-" + Date.now();
-            chatBox.innerHTML += `<div id="${loadingId}" class="message ai-msg">Thinking...</div>`;
-            chatBox.scrollTop = chatBox.scrollHeight;
+            chatBox.innerHTML += `<div id="${loadingId}" class="message ai-msg" style="font-style: italic; color: #888;">Đang tra cứu ngữ pháp...</div>`;
+            scrollToBottom();
 
             try {
-                // TÊN MODEL CHUẨN XÁC: gemini-flash-latest
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`;
+                // Sử dụng model gemini-1.5-flash cho nhanh và ổn định
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
                 
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: TRAINING_DATA + ". Người dùng hỏi: " + userText }] }]
+                        contents: [{ parts: [{ text: TRAINING_DATA + ". Yêu cầu của sinh viên: " + userText }] }],
+                         // Thêm cấu hình để AI trả lời tập trung hơn
+                        generationConfig: {
+                            temperature: 0.3, // Giảm độ sáng tạo để câu trả lời chính xác về kiến thức
+                            maxOutputTokens: 1000,
+                        }
                     })
                 });
 
                 const data = await response.json();
+                const loadingElement = document.getElementById(loadingId);
 
                 if (data.error) {
-                    let err = "Lỗi kết nối!";
-                    if (data.error.message.includes("API key")) err = "Key bị lỗi rồi Sơn ơi!";
-                    document.getElementById(loadingId).innerText = "❌ " + err + " (" + data.error.message + ")";
-                    document.getElementById(loadingId).style.color = "#ff5555";
+                    loadingElement.innerHTML = `❌ <b>Lỗi:</b> ${data.error.message}`;
+                    loadingElement.style.color = "#d9534f"; // Màu đỏ báo lỗi
                 } else {
-                    const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Em chưa hiểu ý Đại Ca...";
-                    document.getElementById(loadingId).innerText = aiReply;
+                    const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Xin lỗi, tôi chưa tìm thấy thông tin về phần này.";
+                    // Định dạng lại câu trả lời (thay thế xuống dòng bằng thẻ <br>)
+                    loadingElement.innerHTML = aiReply.replace(/\n/g, '<br>');
+                    loadingElement.style.fontStyle = "normal"; loadingElement.style.color = "var(--text-color)";
                 }
             } catch (error) {
-                document.getElementById(loadingId).innerText = "❌ Lỗi mạng: " + error.message;
+                document.getElementById(loadingId).innerText = "❌ Lỗi kết nối mạng!";
             }
+            
+            // Mở khóa nút gửi
             sendBtn.disabled = false;
-            sendBtn.innerText = "Gửi";
+            scrollToBottom();
+        }
+
+        // Hàm cuộn xuống cuối khung chat
+        function scrollToBottom() {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
     </script>
 </body>
