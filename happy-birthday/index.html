@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mời Sinh Nhật Bắc Sơn 🐷</title>
     
     <meta property="og:title" content="Mời dự tiệc Sinh Nhật Bắc Sơn 19 Tuổi! 🎂">
@@ -18,15 +18,15 @@
         body { 
             margin: 0; padding: 0; 
             font-family: 'Quicksand', sans-serif; 
-            /* --- NỀN MỚI: Deep Night Gradient --- */
+            /* Nền Galaxy tối ưu */
             background: linear-gradient(-45deg, #0f0518, #1a1a2e, #16213e, #240b36);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; color: white; overflow-x: hidden; position: relative; 
+            min-height: 100vh; color: white; overflow: hidden; position: relative; 
+            touch-action: manipulation; /* Tối ưu cảm ứng */
         }
 
-        /* Animation cho nền chuyển màu */
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -34,39 +34,58 @@
         }
 
         body::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url("https://www.transparenttextures.com/patterns/confetti.png"); background-size: 400px; opacity: 0.2; pointer-events: none; animation: bgScroll 60s linear infinite; z-index: 1; }
-
         @keyframes bgScroll { from { background-position: 0 0; } to { background-position: 0 -400px; } }
         
-        /* --- STYLE CHO BÓNG BAY --- */
-        .balloon-float {
+        /* --- BÓNG BAY 3D (CSS THUẦN - KHÔNG LAG) --- */
+        .balloon-3d {
             position: fixed;
-            bottom: -50px;
-            font-size: 2rem;
+            bottom: -120px;
+            width: 60px;
+            height: 75px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            z-index: 2;
+            box-shadow: inset -5px -5px 12px rgba(0,0,0,0.3);
             animation: floatUp linear forwards;
-            z-index: 2; /* Nổi hơn nền nhưng chìm hơn bảng thông tin */
-            opacity: 0.7;
+            will-change: transform, opacity; /* Kích hoạt GPU để mượt hơn */
             pointer-events: none;
         }
+        
+        /* Dây bóng */
+        .balloon-3d::before {
+            content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
+            width: 2px; height: 40px; background: rgba(255,255,255,0.4);
+        }
+        /* Điểm sáng bóng loáng tạo hiệu ứng 3D */
+        .balloon-3d::after {
+            content: ''; position: absolute; top: 15%; left: 20%;
+            width: 12px; height: 24px; border-radius: 50%;
+            background: rgba(255,255,255,0.8); transform: rotate(45deg);
+        }
+
+        /* Các màu bóng */
+        .b-red { background: radial-gradient(circle at 50% 50%, #ff6b81, #c0392b); }
+        .b-blue { background: radial-gradient(circle at 50% 50%, #74b9ff, #0984e3); }
+        .b-gold { background: radial-gradient(circle at 50% 50%, #ffeaa7, #fdcb6e); }
+        .b-purple { background: radial-gradient(circle at 50% 50%, #a29bfe, #6c5ce7); }
 
         @keyframes floatUp {
             0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.8; }
-            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(-130vh) rotate(10deg); opacity: 0; }
         }
 
-        /* Hiệu ứng lợn bay cũ */
+        /* --- CÁC HIỆU ỨNG KHÁC --- */
         .pig-fly { position: fixed; z-index: 20; font-size: 20px; pointer-events: none; animation: flightPath 0.8s ease-in-out forwards; }
         @keyframes flightPath { 0% { transform: translate(0, 0) scale(0.5); opacity: 0.5; } 50% { transform: translate(var(--mid-x), -50px) scale(1.2); opacity: 1; } 100% { transform: translate(var(--dest-x), 0) scale(1); opacity: 0; } }
         
-        /* Hiệu ứng rung lắc */
-        @keyframes shake-hard { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
         .shaking { animation: shake-hard 0.5s infinite; border-color: red !important; color: red !important; }
+        @keyframes shake-hard { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -2px); } 100% { transform: translate(1px, -2px); } }
         
-        .final-message { display: none; font-size: 2rem; color: #feca57; font-weight: bold; text-shadow: 0 0 20px #ff4757; animation: zoomIn 1s forwards; }
+        .final-message { display: none; font-size: 2.5rem; color: #feca57; font-weight: bold; text-shadow: 0 0 20px #ff4757; animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; margin: 20px 0; }
         @keyframes zoomIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* Container chính */
-        .container { background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 24px; padding: 20px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); position: relative; z-index: 10; margin: 40px 0; animation: popUp 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+        /* Container */
+        .container { background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 24px; padding: 20px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); position: relative; z-index: 10; margin: 40px 0; animation: popUp 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); transition: transform 0.2s; }
         @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         h1 { color: var(--neon); margin: 5px 0; font-size: 1.8rem; text-transform: uppercase; text-shadow: 0 0 10px rgba(254, 202, 87, 0.5); }
@@ -92,11 +111,20 @@
         
         .fixed-copyright { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); padding: 10px; text-align: center; font-size: 0.7rem; color: #bdc3c7; border-top: 1px solid rgba(255,255,255,0.1); z-index: 100; }
         .fixed-copyright span { color: #feca57; font-weight: bold; }
+        
+        /* Hint nhỏ để người dùng biết tính năng ẩn */
+        .tap-hint { position: fixed; top: 10px; right: 10px; font-size: 0.7rem; color: rgba(255,255,255,0.3); font-style: italic; z-index: 5; }
    </style>     
 </head>
 <body>
+    
+    <audio id="birthday-audio" loop>
+        <source src="https://nguyenbacson.io.vn/Happy-Birthday-To-You-Happy-Birthday-Happy-Birthday-Happy-Birthday-To-You..._-YouTube.mp3" type="audio/mpeg">
+    </audio>
 
-    <div class="container">
+    <div class="tap-hint">(Double tap to surprise)</div>
+
+    <div class="container" id="main-card">
         <div class="cake-icon">🎂</div>
         <h1>Sinh Nhật Bắc Sơn</h1>
         <p class="subtitle">19 Tuổi - Dookki Times City thẳng tiến!</p>
@@ -110,9 +138,12 @@
             <div class="time-box" id="box-seconds"><span class="time-val" id="seconds">00</span><span class="time-label">Giây</span></div>
         </div>
         
-        <div class="final-message" id="final-msg">🎉 HAPPY BIRTHDAY! 🎉</div>
+        <div class="final-message" id="final-msg">
+            🎉 HAPPY BIRTHDAY! 🎉<br>
+            <span style="font-size: 1rem; color: white; font-weight: normal;">(Quẩy lên nào!)</span>
+        </div>
 
-        <a href="https://maps.app.goo.gl/xxxx" target="_blank" class="map-btn">
+        <a href="Https://maps.app.goo.gl/TrJb9AgCEhkkEa1JA" target="_blank" class="map-btn">
             <span>🗺️</span> <span>Dookki Times City - Tầng B1</span> <span>↗</span>
         </a>
 
@@ -130,19 +161,50 @@
     <div class="fixed-copyright">🤖 Website được tạo bởi AI do <span>Nguyễn Bắc Sơn</span> giám sát thực hiện</div>
 
     <script>
-        // --- 1. LOGIC ĐẾM NGƯỢC CŨ ---
+        // --- CẤU HÌNH ---
+        const audio = document.getElementById('birthday-audio');
         let isExploded = false;
+        
+        // --- 1. XỬ LÝ DOUBLE TAP (CHẠM 2 LẦN) ---
+        // Sử dụng dblclick hoạt động tốt trên cả Mobile (nếu user-scalable=no) và PC
+        document.body.addEventListener('dblclick', (e) => {
+            // Hiệu ứng rung nhẹ khi chạm
+            const card = document.getElementById('main-card');
+            card.style.transform = "scale(1.05)";
+            setTimeout(() => card.style.transform = "scale(1)", 200);
 
+            // Bật nhạc (Cần tương tác người dùng mới bật được)
+            audio.play().catch(err => console.log("Chặn autoplay: " + err));
+
+            // Kích hoạt chế độ sinh nhật ngay lập tức
+            if (!isExploded) {
+                isExploded = true;
+                triggerExplosion();
+            } else {
+                // Nếu đã nổ rồi thì chạm 2 lần để bắn thêm pháo hoa
+                createConfettiBurst(e.clientX, e.clientY);
+            }
+        });
+
+        // --- 2. LOGIC ĐẾM NGƯỢC ---
         const countdown = () => {
+            if(isExploded) return; // Nếu đã nổ tiệc thì dừng đếm
+
             const countDate = new Date("Feb 4, 2026 19:30:00").getTime();
             const now = new Date().getTime();
             const gap = countDate - now;
 
             if (gap < 0) {
-                if (!isExploded) { isExploded = true; triggerExplosion(); }
+                isExploded = true; 
+                triggerExplosion();
+                audio.play().catch(() => {}); // Cố gắng bật nhạc nếu có thể
                 return;
             }
-            if (gap < 10000 && gap > 0) { document.querySelectorAll('.time-box').forEach(box => box.classList.add('shaking')); }
+
+            // Rung lắc khi còn dưới 10 giây
+            if (gap < 10000 && gap > 0) { 
+                document.querySelectorAll('.time-box').forEach(box => box.classList.add('shaking')); 
+            }
 
             const second = 1000; const minute = second * 60; const hour = minute * 60; const day = hour * 24;
             const d = Math.floor(gap / day); const h = Math.floor((gap % day) / hour);
@@ -153,6 +215,7 @@
             document.getElementById('minutes').innerText = m < 10 ? '0' + m : m;
             document.getElementById('seconds').innerText = s < 10 ? '0' + s : s;
 
+            // Logic lợn bay chuyển số (Giữ nguyên vì đẹp)
             flyPig('box-seconds', 'box-minutes', 1);
             if (s === 0) flyPig('box-minutes', 'box-hours', 1.5);
             if (m === 0 && s === 0) flyPig('box-hours', 'box-days', 2);
@@ -162,8 +225,12 @@
             const fromBox = document.getElementById(fromId); const toBox = document.getElementById(toId);
             if(!fromBox || !toBox) return;
             const fromRect = fromBox.getBoundingClientRect(); const toRect = toBox.getBoundingClientRect();
-            const startX = fromRect.left + fromRect.width / 2; const startY = fromRect.top + fromRect.height / 2;
-            const destX = (toRect.left + toRect.width / 2) - startX; const midX = destX / 2;
+            
+            // Tính toán tọa độ tương đối
+            const startX = fromRect.left + fromRect.width / 2; 
+            const startY = fromRect.top + fromRect.height / 2;
+            const destX = (toRect.left + toRect.width / 2) - startX; 
+            const midX = destX / 2;
 
             const pig = document.createElement('div');
             pig.classList.add('pig-fly'); pig.innerText = '🐷';
@@ -174,42 +241,79 @@
             setTimeout(() => { pig.remove(); }, 800);
         }
 
+        // --- 3. XỬ LÝ KHI "NỔ TIỆC" ---
         function triggerExplosion() {
             document.getElementById('countdown-box').style.display = 'none';
             document.getElementById('final-msg').style.display = 'block';
-            // Code nổ lợn (giữ nguyên logic của bạn)
+            
+            // Bắn pháo bông liên tục
+            let burstInterval = setInterval(() => {
+                createConfettiBurst(window.innerWidth / 2, window.innerHeight / 2);
+            }, 300);
+
+            // Dừng bắn sau 5 giây để đỡ lag
+            setTimeout(() => clearInterval(burstInterval), 5000);
         }
+
+        function createConfettiBurst(x, y) {
+            for (let i = 0; i < 30; i++) {
+                const pig = document.createElement('div');
+                pig.innerText = Math.random() > 0.5 ? '🐷' : '🎉'; 
+                pig.style.position = 'fixed'; 
+                pig.style.left = x + 'px'; 
+                pig.style.top = y + 'px';
+                pig.style.fontSize = Math.random() * 20 + 10 + 'px'; 
+                pig.style.transition = 'all 1s cubic-bezier(0.25, 1, 0.5, 1)'; 
+                pig.style.zIndex = 100;
+                document.body.appendChild(pig);
+                
+                // Random hướng bay
+                setTimeout(() => {
+                    const randX = (Math.random() - 0.5) * 400; 
+                    const randY = (Math.random() - 0.5) * 400;
+                    pig.style.transform = `translate(${randX}px, ${randY}px) rotate(${Math.random()*720}deg)`; 
+                    pig.style.opacity = 0;
+                }, 10);
+                
+                setTimeout(() => pig.remove(), 1000);
+            }
+        }
+        
         setInterval(countdown, 1000);
 
-        // --- 2. TÍNH NĂNG MỚI: BÓNG BAY ---
-        function createBalloon() {
-            const balloons = ['🎈', '🔵', '🟣', '🟡', '✨'];
+        // --- 4. TÍNH NĂNG MỚI: BÓNG BAY 3D CSS (OPTIMIZED) ---
+        function create3DBalloon() {
+            // Giới hạn số lượng bóng trên màn hình để không lag (Max 15 bóng)
+            if (document.querySelectorAll('.balloon-3d').length > 15) return;
+
+            const colors = ['b-red', 'b-blue', 'b-gold', 'b-purple'];
             const balloon = document.createElement('div');
-            balloon.classList.add('balloon-float');
             
-            // Random icon
-            balloon.innerText = balloons[Math.floor(Math.random() * balloons.length)];
+            // Add class cơ bản và màu ngẫu nhiên
+            balloon.classList.add('balloon-3d');
+            balloon.classList.add(colors[Math.floor(Math.random() * colors.length)]);
             
             // Random vị trí xuất hiện (trái -> phải màn hình)
-            balloon.style.left = Math.random() * 100 + 'vw';
+            balloon.style.left = Math.random() * 90 + 5 + 'vw'; // Tránh sát mép quá
             
-            // Random tốc độ bay (5s đến 10s)
-            const duration = Math.random() * 5 + 5;
+            // Random tốc độ bay (6s đến 12s)
+            const duration = Math.random() * 6 + 6;
             balloon.style.animationDuration = duration + 's';
             
-            // Random kích thước
-            balloon.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+            // Random kích thước (0.8x đến 1.2x)
+            const scale = Math.random() * 0.4 + 0.8;
+            balloon.style.transform = `scale(${scale})`;
 
             document.body.appendChild(balloon);
 
-            // Xóa bóng sau khi bay xong để nhẹ web
+            // Tự động xóa bóng khi bay xong
             setTimeout(() => {
-                balloon.remove();
+                if(balloon.parentNode) balloon.parentNode.removeChild(balloon);
             }, duration * 1000);
         }
 
-        // Tạo bóng bay mỗi 800ms
-        setInterval(createBalloon, 800);
+        // Tạo bóng bay thưa hơn (1.2s một quả) để nhẹ máy
+        setInterval(create3DBalloon, 1200);
 
     </script>
 </body>
