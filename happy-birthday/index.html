@@ -55,11 +55,26 @@
             position: fixed;
             pointer-events: none;
             z-index: 100;
-            will-change: transform, opacity; /* Tối ưu GPU */
+            will-change: transform, opacity;
         }
 
-        /* Container */
-        .container { background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 24px; padding: 20px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); position: relative; z-index: 10; margin: 40px 0; animation: popUp 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); transition: transform 0.2s; }
+        /* Container - Đã chỉnh sửa Margin để xóa khoảng trống thừa */
+        .container { 
+            background: var(--glass); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
+            border: 1px solid var(--border); 
+            border-radius: 24px; 
+            padding: 20px; 
+            width: 90%; 
+            max-width: 450px; 
+            text-align: center; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); 
+            position: relative; 
+            z-index: 10; 
+            margin: 10px; /* Giảm khoảng cách để sát viền hơn */
+            animation: popUp 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); 
+            transition: transform 0.2s; 
+        }
         @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         h1 { color: var(--neon); margin: 5px 0; font-size: 1.8rem; text-transform: uppercase; text-shadow: 0 0 10px rgba(254, 202, 87, 0.5); }
@@ -85,7 +100,6 @@
         
         .fixed-copyright { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); padding: 10px; text-align: center; font-size: 0.7rem; color: #bdc3c7; border-top: 1px solid rgba(255,255,255,0.1); z-index: 100; }
         .fixed-copyright span { color: #feca57; font-weight: bold; }
-        .tap-hint { position: fixed; top: 10px; right: 10px; font-size: 0.7rem; color: rgba(255,255,255,0.3); font-style: italic; z-index: 5; }
 
         /* Tin nhắn cuối cùng */
         .final-message { 
@@ -104,8 +118,6 @@
     <audio id="birthday-audio" loop>
         <source src="https://nguyenbacson.io.vn/Happy-Birthday-To-You-Happy-Birthday-Happy-Birthday-Happy-Birthday-To-You..._-YouTube.mp3" type="audio/mpeg">
     </audio>
-
-    <div class="tap-hint">(Double tap to surprise)</div>
 
     <div class="container" id="main-card">
         <div class="cake-icon">🎂</div>
@@ -127,7 +139,7 @@
         </div>
 
         <a href="Https://maps.app.goo.gl/TrJb9AgCEhkkEa1JA" target="_blank" class="map-btn">
-            <span>🗺️</span> <span>Dookki Times City - Xem Vị Trí</span> <span>↗</span>
+            <span>🗺️</span> <span>Dookki Times City - Tầng B1</span> <span>↗</span>
         </a>
 
         <div class="rules-box">
@@ -196,17 +208,15 @@
             document.getElementById('countdown-box').style.display = 'none';
             document.getElementById('final-msg').style.display = 'block';
             
-            // Chỉ bắn 4 đợt, mỗi đợt cách nhau 800ms (Thay vì bắn liên tục gây lag)
             let count = 0;
             const burstInterval = setInterval(() => {
                 createConfettiBurst(window.innerWidth / 2, window.innerHeight / 2);
                 count++;
-                if(count > 4) clearInterval(burstInterval); // Dừng lại sau 5 đợt
+                if(count > 4) clearInterval(burstInterval);
             }, 800);
         }
 
         function createConfettiBurst(x, y) {
-            // Giảm số lượng hạt từ 30 -> 12 hạt để nhẹ máy
             const particleCount = 12; 
 
             for (let i = 0; i < particleCount; i++) {
@@ -214,25 +224,22 @@
                 p.classList.add('confetti-piece');
                 p.innerText = Math.random() > 0.5 ? '🐷' : '🎉'; 
                 
-                // Đặt vị trí ban đầu
                 p.style.left = x + 'px'; 
                 p.style.top = y + 'px';
                 p.style.fontSize = (Math.random() * 15 + 15) + 'px'; 
                 
-                // Random hướng bay
                 const angle = Math.random() * Math.PI * 2;
-                const velocity = Math.random() * 200 + 100; // Tốc độ bay
+                const velocity = Math.random() * 200 + 100;
                 const tx = Math.cos(angle) * velocity;
                 const ty = Math.sin(angle) * velocity;
                 
-                // Sử dụng Animation Web API thay vì CSS transition để mượt hơn
                 p.animate([
                     { transform: 'translate(0, 0) scale(1)', opacity: 1 },
                     { transform: `translate(${tx}px, ${ty}px) scale(0.5) rotate(${Math.random()*360}deg)`, opacity: 0 }
                 ], {
                     duration: 1000,
                     easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
-                }).onfinish = () => p.remove(); // Tự xóa sau khi bay xong
+                }).onfinish = () => p.remove(); 
 
                 document.body.appendChild(p);
             }
@@ -242,7 +249,6 @@
 
         // --- 4. BÓNG BAY 3D (ĐÃ TỐI ƯU) ---
         function create3DBalloon() {
-            // Giới hạn tối đa 10 bóng cùng lúc trên màn hình
             if (document.querySelectorAll('.balloon-3d').length >= 10) return;
 
             const colors = ['b-red', 'b-blue', 'b-gold', 'b-purple'];
@@ -251,7 +257,7 @@
             
             balloon.style.left = Math.random() * 90 + 5 + 'vw'; 
             
-            const duration = Math.random() * 5 + 8; // Bay chậm (8-13s)
+            const duration = Math.random() * 5 + 8;
             balloon.style.animationDuration = duration + 's';
             balloon.style.transform = `scale(${Math.random() * 0.4 + 0.8})`;
 
@@ -262,7 +268,7 @@
             }, duration * 1000);
         }
 
-        setInterval(create3DBalloon, 1500); // Sinh bóng thưa hơn (1.5s/quả)
+        setInterval(create3DBalloon, 1500);
 
     </script>
 </body>
