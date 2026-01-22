@@ -23,7 +23,7 @@
             padding-bottom: 100px;
         }
 
-        /* --- CSS CHO PHẦN HIỂN THỊ EMAIL/PASS (MỚI) --- */
+        /* --- CSS CHO PHẦN HIỂN THỊ EMAIL/PASS --- */
         .credential-box {
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -52,7 +52,7 @@
             border: 1px solid #334155;
             border-radius: 8px;
             color: #fff;
-            font-family: monospace; /* Font chữ kiểu code cho dễ nhìn */
+            font-family: monospace;
             font-size: 1.1rem;
             letter-spacing: 1px;
             box-sizing: border-box;
@@ -63,38 +63,207 @@
             border-color: var(--primary);
         }
 
-        /* --- CÁC CSS CŨ --- */
+        /* --- CSS CHO OVERLAY BẢO MẬT --- */
         #security-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.98); z-index: 9999;
-            display: flex; justify-content: center; align-items: center; flex-direction: column;
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98); 
+            z-index: 9999;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            flex-direction: column;
         }
-        .login-box {
-            background: rgba(30, 41, 59, 0.9); padding: 40px; border-radius: 24px; 
-            border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; width: 90%; max-width: 400px;
-        }
-        .hidden { display: none !important; }
-        .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; margin: 5px; font-size: 1rem; }
-        .btn-yes { background: var(--primary); color: white; }
-        .btn-no { background: #334155; color: white; }
-        .form-control { width: 100%; padding: 14px; margin-top: 15px; border-radius: 10px; border: 1px solid #475569; background: #0f172a; color: white; box-sizing: border-box; }
-        .error-msg { color: var(--google-red); margin-top: 15px; font-weight: bold; }
-
-        #main-content { display: none; }
-        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
-        header h1 { text-align: center; font-size: 2.5rem; background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; color: transparent; }
-        header p { text-align: center; color: #94a3b8; }
         
-        .phase-block { background: var(--card-bg); border-radius: 20px; padding: 30px; margin-bottom: 40px; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .phase-badge { display: inline-block; padding: 6px 14px; border-radius: 50px; color: white; font-weight: 800; font-size: 0.75rem; margin-bottom: 15px; text-transform: uppercase; }
-        .footer { text-align: center; color: #64748b; margin-top: 60px; padding-top: 20px; border-top: 1px solid #334155; }
+        .login-box {
+            background: rgba(30, 41, 59, 0.9); 
+            padding: 40px; 
+            border-radius: 24px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            text-align: center; 
+            width: 90%; 
+            max-width: 400px;
+        }
+        
+        .hidden { 
+            display: none !important; 
+        }
+        
+        .btn { 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            border: none; 
+            font-weight: 700; 
+            cursor: pointer; 
+            margin: 5px; 
+            font-size: 1rem; 
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-yes { 
+            background: linear-gradient(135deg, var(--primary), #1d4ed8); 
+            color: white; 
+        }
+        
+        .btn-no { 
+            background: #334155; 
+            color: white; 
+        }
+        
+        .btn-no:hover {
+            background: #475569;
+        }
+        
+        .form-control { 
+            width: 100%; 
+            padding: 14px; 
+            margin-top: 15px; 
+            border-radius: 10px; 
+            border: 1px solid #475569; 
+            background: #0f172a; 
+            color: white; 
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        
+        .error-msg { 
+            color: var(--google-red); 
+            margin-top: 15px; 
+            font-weight: bold; 
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* --- CSS CHO NỘI DUNG CHÍNH --- */
+        #main-content { 
+            display: none; 
+        }
+        
+        .container { 
+            max-width: 800px; 
+            margin: 40px auto; 
+            padding: 0 20px; 
+        }
+        
+        header h1 { 
+            text-align: center; 
+            font-size: 2.5rem; 
+            background: linear-gradient(to right, #60a5fa, #a78bfa); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+        }
+        
+        header p { 
+            text-align: center; 
+            color: #94a3b8; 
+        }
+        
+        .phase-block { 
+            background: var(--card-bg); 
+            border-radius: 20px; 
+            padding: 30px; 
+            margin-bottom: 40px; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .phase-block:hover {
+            transform: translateY(-5px);
+        }
+        
+        .phase-badge { 
+            display: inline-block; 
+            padding: 6px 14px; 
+            border-radius: 50px; 
+            color: white; 
+            font-weight: 800; 
+            font-size: 0.75rem; 
+            margin-bottom: 15px; 
+            text-transform: uppercase; 
+        }
+        
+        .footer { 
+            text-align: center; 
+            color: #64748b; 
+            margin-top: 60px; 
+            padding-top: 20px; 
+            border-top: 1px solid #334155; 
+        }
+
+        /* --- CSS CHO ICON LỚN --- */
+        .icon-large {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* --- CSS CHO USER PROFILE --- */
+        .user-profile {
+            background: rgba(0,0,0,0.3); 
+            padding:15px; 
+            border-radius:12px; 
+            display:flex; 
+            align-items:center; 
+            gap:15px;
+            margin: 15px 0;
+        }
+        
+        .user-avatar {
+            width:50px; 
+            height:50px; 
+            border-radius:50%;
+            border: 2px solid var(--primary);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .phase-block {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .login-box {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+        }
     </style>
 </head>
 <body>
 
+    <!-- PHẦN BẢO MẬT OVERLAY (GIỮ NGUYÊN) -->
     <div id="security-overlay">
         <div id="screen-1" class="login-box">
-            <div style="font-size: 4rem; margin-bottom: 15px;">🛡️</div>
+            <div class="icon-large">🛡️</div>
             <h2>Xác thực danh tính</h2>
             <p style="font-size: 1.2rem; font-weight: bold; margin-bottom: 30px;">Bạn có phải là <span style="color: var(--primary);">Dương</span> không?</p>
             <div id="group-btns-main">
@@ -108,16 +277,26 @@
         </div>
 
         <div id="screen-2" class="login-box hidden">
-            <div style="font-size: 3rem; margin-bottom: 10px;">🔐</div>
+            <div class="icon-large">🔐</div>
             <h2>Thông tin bảo mật</h2>
+            
+            <label style="display: block; text-align: left; color: #94a3b8; margin-top: 15px; font-size: 0.9rem;">
+                📅 Ngày sinh:
+            </label>
             <input type="date" id="input-dob" class="form-control">
+            
+            <label style="display: block; text-align: left; color: #94a3b8; margin-top: 15px; font-size: 0.9rem;">
+                📱 Số điện thoại:
+            </label>
             <input type="number" id="input-phone" class="form-control" placeholder="Nhập số điện thoại...">
+            
             <button class="btn btn-yes" style="width:100%; margin-top:25px;" onclick="checkLogin()">MỞ KHÓA</button>
-            <p id="msg-error" class="error-msg hidden">❌ Sai thông tin!</p>
+            <p id="msg-error" class="error-msg hidden">❌ Sai thông tin! Vui lòng thử lại.</p>
             <button class="btn btn-no" style="background:none; margin-top:15px; width: 100%;" onclick="clickBack()">Quay lại</button>
         </div>
     </div>
 
+    <!-- NỘI DUNG CHÍNH -->
     <div id="main-content">
         <div class="container">
             <header>
@@ -125,47 +304,58 @@
                 <p>Thiết bị: <strong>Dell Latitude 5491</strong> • User: <strong>Nguyen-Bac-Son</strong></p>
             </header>
 
+            <!-- Giai đoạn 1 -->
             <div class="phase-block" style="border-left: 5px solid var(--primary);">
                 <span class="phase-badge" style="background: var(--primary);">Giai đoạn 1</span>
                 <h3>🖥️ Đăng nhập Windows</h3>
                 <p style="color:#94a3b8;">Chọn đúng tài khoản Admin:</p>
-                <div style="background: rgba(0,0,0,0.3); padding:15px; border-radius:12px; display:flex; align-items:center; gap:15px;">
-                    <img src="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png" style="width:50px; height:50px; border-radius:50%;" onerror="this.src='https://via.placeholder.com/50'">
+                
+                <div class="user-profile">
+                    <img src="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Nguyen+Bac+Son&background=3b82f6&color=fff'">
                     <div>
-                        <div style="font-weight:700;">Nguyễn Bắc Sơn</div>
-                        <div style="font-size:0.85rem; color:#94a3b8;">Mã PIN: <span style="color:var(--primary); font-family:monospace; font-size:1.1rem;">04022007</span></div>
+                        <div style="font-weight:700; font-size: 1.1rem;">Nguyễn Bắc Sơn</div>
+                        <div style="font-size:0.9rem; color:#94a3b8;">
+                            Mã PIN: <span style="color:var(--primary); font-family:monospace; font-size:1.1rem; font-weight: bold;">04022007</span>
+                        </div>
                     </div>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 10px;">
+                    <p style="margin: 0; color: #93c5fd; font-size: 0.9rem;">
+                        💡 <strong>Ghi chú:</strong> Đây là tài khoản chính để truy cập hệ thống
+                    </p>
                 </div>
             </div>
 
-            <div class="phase-block" style="border-left: 5px solid var(--google-red); background: linear-gradient(145deg, #1e293b, #2d1b1b);">
+            <!-- Giai đoạn 2 -->
+            <div class="phase-block" style="border-left: 5px solid var(--google-red); background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(45, 27, 27, 0.9));">
                 <span class="phase-badge" style="background: var(--google-red);">Giai đoạn 2: Quan trọng nhất</span>
                 <h3 style="color: #fca5a5;">🔐 Thông tin Tài khoản Google</h3>
                 <p style="color:#fca5a5;">Sử dụng thông tin dưới đây để đăng nhập:</p>
                 
                 <div class="credential-box">
-                    
                     <div class="cred-group">
                         <label class="cred-label">📧 Địa chỉ Gmail:</label>
-                        <input type="text" class="cred-input" value="bacson20062007@gmail.com" readonly>
+                        <input type="text" class="cred-input" value="bacson20062007@gmail.com" readonly onclick="this.select()">
                     </div>
 
                     <div class="cred-group">
                         <label class="cred-label">🔑 Mật khẩu:</label>
-                        <input type="text" class="cred-input" value="@Son2007" readonly>
+                        <input type="text" class="cred-input" value="@Son2007" readonly onclick="this.select()">
                     </div>
-
                 </div>
 
-                <div style="margin-top:20px; font-size:0.9rem; color:#cbd5e1;">
+                <div style="margin-top:20px; font-size:0.9rem; color:#cbd5e1; background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 10px;">
                     <p>⚠️ <strong>Lưu ý:</strong></p>
                     <ul>
                         <li>Khi đăng nhập, hãy để ý điện thoại để bấm <strong>"Yes, it's me"</strong>.</li>
                         <li>Nếu cần mã OTP, mở ứng dụng <strong>Google Authenticator</strong>.</li>
+                        <li>Không chia sẻ thông tin đăng nhập với người khác.</li>
                     </ul>
                 </div>
             </div>
 
+            <!-- Giai đoạn 3 -->
             <div class="phase-block" style="border-left: 5px solid var(--coccoc-green);">
                 <span class="phase-badge" style="background: var(--coccoc-green);">Giai đoạn 3: Học tập</span>
                 <h3>🍃 Trình duyệt Cốc Cốc</h3>
@@ -173,52 +363,122 @@
                     <img src="https://img-cache.coccoc.com/image2?i=2&l=30/329005927" width="30">
                     <span>Mở icon "Làn sóng xanh".</span>
                 </div>
-                <img src="https://nguyenbacson.io.vn/giao-dien-trang-chu-coc-coc.png" style="width:100%; border-radius:12px; border:2px solid #334155;" onerror="this.src='https://via.placeholder.com/600x300?text=Anh+Minh+Hoa'">
+                <img src="https://nguyenbacson.io.vn/giao-dien-trang-chu-coc-coc.png" 
+                     style="width:100%; border-radius:12px; border:2px solid #334155;" 
+                     onerror="this.src='https://images.unsplash.com/photo-1556075798-4825dfaaf498?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80'"
+                     alt="Giao diện trình duyệt Cốc Cốc">
             </div>
 
-            <div class="footer">© 2026 Nguyễn Bắc Sơn</div>
+            <!-- Footer -->
+            <div class="footer">
+                <p>© 2026 Nguyễn Bắc Sơn</p>
+                <p style="font-size: 0.8rem; margin-top: 5px; color: #475569;">
+                    Lưu ý: Bảo mật thông tin đăng nhập và không chia sẻ với người khác
+                </p>
+            </div>
         </div>
     </div>
 
     <script>
-        // LOGIC BẢO MẬT (SĐT & NGÀY SINH)
-        const DATA_DOB = "2007-03-01";
-        const DATA_PHONE = "0879546673";
+        // DỮ LIỆU BẢO MẬT (SĐT & NGÀY SINH)
+        const DATA_DOB = "2007-03-01";      // Ngày sinh: 01/03/2007
+        const DATA_PHONE = "0879546673";    // Số điện thoại
         const STORAGE_KEY = "device_unlocked_final_v5";
 
+        // Kiểm tra nếu đã đăng nhập trước đó
         if(localStorage.getItem(STORAGE_KEY) === "true") {
             document.getElementById('security-overlay').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
         }
 
+        // Hàm xử lý khi bấm "Không"
         function clickNo() {
             document.getElementById('group-btns-main').classList.add('hidden');
             document.getElementById('group-deny-msg').classList.remove('hidden');
         }
+
+        // Hàm xử lý khi bấm "Thử lại"
         function clickRetry() {
             document.getElementById('group-btns-main').classList.remove('hidden');
             document.getElementById('group-deny-msg').classList.add('hidden');
         }
+
+        // Hàm xử lý khi bấm "Đúng, là tôi"
         function clickYes() {
             document.getElementById('screen-1').classList.add('hidden');
             document.getElementById('screen-2').classList.remove('hidden');
+            // Tự động focus vào ô ngày sinh
+            setTimeout(() => {
+                document.getElementById('input-dob').focus();
+            }, 100);
         }
+
+        // Hàm quay lại màn hình trước
         function clickBack() {
             document.getElementById('screen-2').classList.add('hidden');
             document.getElementById('screen-1').classList.remove('hidden');
             document.getElementById('msg-error').classList.add('hidden');
+            // Reset các ô input
+            document.getElementById('input-dob').value = '';
+            document.getElementById('input-phone').value = '';
         }
+
+        // Hàm kiểm tra thông tin đăng nhập
         function checkLogin() {
             const dob = document.getElementById('input-dob').value;
             const phone = document.getElementById('input-phone').value;
+            
+            // Kiểm tra thông tin
             if (dob === DATA_DOB && phone === DATA_PHONE) {
+                // Đúng thông tin
                 localStorage.setItem(STORAGE_KEY, "true");
                 document.getElementById('security-overlay').style.display = 'none';
                 document.getElementById('main-content').style.display = 'block';
             } else {
+                // Sai thông tin
                 document.getElementById('msg-error').classList.remove('hidden');
+                
+                // Thêm hiệu ứng shake cho ô input sai
+                if (dob !== DATA_DOB) {
+                    document.getElementById('input-dob').style.borderColor = '#ef4444';
+                    document.getElementById('input-dob').style.animation = 'shake 0.5s';
+                }
+                if (phone !== DATA_PHONE) {
+                    document.getElementById('input-phone').style.borderColor = '#ef4444';
+                    document.getElementById('input-phone').style.animation = 'shake 0.5s';
+                }
+                
+                // Reset animation sau 0.5s
+                setTimeout(() => {
+                    document.getElementById('input-dob').style.animation = '';
+                    document.getElementById('input-phone').style.animation = '';
+                }, 500);
             }
         }
+
+        // Thêm animation shake cho CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Cho phép nhấn Enter để đăng nhập ở màn hình 2
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !document.getElementById('screen-2').classList.contains('hidden')) {
+                checkLogin();
+            }
+        });
+
+        // Hướng dẫn đăng nhập trong console
+        console.log('🔐 Thông tin đăng nhập:');
+        console.log('📅 Ngày sinh:', DATA_DOB);
+        console.log('📱 Số điện thoại:', DATA_PHONE);
+        console.log('💡 Gợi ý: Nhập đúng thông tin trên để truy cập');
     </script>
 </body>
 </html>
