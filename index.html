@@ -184,6 +184,22 @@
             }
         }
 
+        /* Fallback nếu ảnh không tải được */
+        .profile-img-wrapper .fallback-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #FF0000, #FFCC00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 50px;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+        }
+
         /* Viền xoay Tết */
         .profile-img-wrapper::before {
             content: ''; 
@@ -219,6 +235,7 @@
             z-index: 2;
             border: 4px solid rgba(255, 255, 255, 0.95);
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+            display: block;
         }
 
         /* Tên với gradient Tết */
@@ -359,15 +376,40 @@
             border-color: rgba(255, 204, 0, 0.5); 
         }
         
-        .link-icon { 
+        /* Icon container với fallback */
+        .link-icon-container {
             width: 40px; 
             height: 40px; 
             border-radius: 50%; 
             padding: 2px; 
             background: linear-gradient(45deg, #FF3300, #FFCC00); 
-            object-fit: contain; 
             margin-right: 15px; 
             border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .link-icon { 
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+        
+        /* Fallback cho icon */
+        .link-icon-fallback {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF3300;
+            font-weight: bold;
+            font-size: 14px;
         }
         
         .link-text { 
@@ -523,7 +565,12 @@
     <div class="container">
         <div class="profile-card">
             <div class="profile-img-wrapper">
-                <img src="nguyen-bac-son-cover.png" alt="Avatar" class="profile-img">
+                <!-- Avatar với fallback nếu ảnh không tải được -->
+                <img src="nguyen-bac-son-cover.png" alt="Avatar Nguyen Bac Son" class="profile-img" 
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="fallback-avatar" style="display: none;">
+                    NBS
+                </div>
             </div>
             <h1 class="profile-name">NGUYEN BAC SON</h1>
             <div class="profile-description">⚡ CHÚC MỪNG NĂM MỚI ⚡</div>
@@ -533,48 +580,93 @@
 
         <div class="music-container">
             <div class="music-section">
-                <h4>🎧 Bật nhạc lên để xem pháo hoa 🎆</h4>
+                <h4>🎧 BẬT NHẠC LÊN ĐỂ XEM PHÁO HOA 🎆</h4>
                 <audio controls id="main-audio">
                     <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
                 </audio>
             </div>
         </div>
 
         <div class="links-container">
             <a href="https://drive.google.com/file/d/14Wbb0Nm4LveABnwLsz0x39aqwsmBZR2g/view?usp=drivesdk" class="link-button color-1">
-                <img src="a6cef8fb-f306-492b-8e7a-76e533d3582c_image.jpeg" class="link-icon"><span class="link-text">High school yearbook</span>
+                <div class="link-icon-container">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Yearbook" class="link-icon" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="link-icon-fallback" style="display: none;">YB</div>
+                </div>
+                <span class="link-text">High school yearbook</span>
             </a>
             <a href="https://www.facebook.com/bacson.427" class="link-button color-12">
-                <img src="6aa41df5-0183-4ade-9361-637adf912356_image.jpeg" class="link-icon"><span class="link-text">Facebook</span>
+                <div class="link-icon-container">
+                    <img src="https://cdn-icons-png.flaticon.com/512/124/124010.png" alt="Facebook" class="link-icon"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="link-icon-fallback" style="display: none;">FB</div>
+                </div>
+                <span class="link-text">Facebook</span>
             </a>
             <a href="https://www.threads.com/@nguyenbacson427" class="link-button color-15">
-                <img src="Screenshot_2025-10-25-00-42-16-241_com.android.vending-edit.jpg" class="link-icon"><span class="link-text">Threads</span>
+                <div class="link-icon-container">
+                    <img src="https://static.vecteezy.com/system/resources/previews/027/573/672/non_2x/threads-app-icon-threads-logo-threads-app-logo-free-png.png" alt="Threads" class="link-icon"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="link-icon-fallback" style="display: none;">TH</div>
+                </div>
+                <span class="link-text">Threads</span>
             </a>
             <a href="mailto:bacson20062007@gmail.com" class="link-button color-3">
-                <img src="ee560656-c979-4486-b84d-5cdb83ba1ce2_image.jpeg" class="link-icon"><span class="link-text">Gmail</span>
+                <div class="link-icon-container">
+                    <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Gmail" class="link-icon"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="link-icon-fallback" style="display: none;">GM</div>
+                </div>
+                <span class="link-text">Gmail</span>
             </a>
             <a href="https://www.tiktok.com/@bacson_427" class="link-button color-5">
-                <img src="1f9a419d-f112-4727-824b-784f4c164253_image.jpeg" class="link-icon"><span class="link-text">TikTok</span>
+                <div class="link-icon-container">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3046/3046126.png" alt="TikTok" class="link-icon"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="link-icon-fallback" style="display: none;">TT</div>
+                </div>
+                <span class="link-text">TikTok</span>
             </a>
             <a href="https://locket.cam/bacson.427" class="link-button color-6">
-                <img src="a4da9cc0-6c4d-4dd5-97b8-67840fe2f8d8_image.jpeg" class="link-icon"><span class="link-text">Locket</span>
+                <div class="link-icon-container">
+                    <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/c9/01/51/c90151ab-6bf7-6d48-31be-b0c7bc8581c1/AppIcon-0-0-1x_U007epad-0-0-0-0-0-0-sRGB-85-220.png/246x0w.webp" alt="Locket" class="link-icon"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="link-icon-fallback" style="display: none;">LC</div>
+                </div>
+                <span class="link-text">Locket</span>
             </a>
             <a href="https://zaloapp.com/qr/p/13gt23dbftkk0" class="link-button color-9">
-                <img src="image2 (1).jpeg" class="link-icon"><span class="link-text">Zalo</span>
+                <div class="link-icon-container">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Zalo" class="link-icon"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="link-icon-fallback" style="display: none;">ZL</div>
+                </div>
+                <span class="link-text">Zalo</span>
             </a>
             <a href="http://t.me/bacson_427" class="link-button color-11">
-                <img src="00fb1b75-6f9b-478c-83ef-157b0c4c643a_image.jpeg" class="link-icon"><span class="link-text">Telegram</span>
+                <div class="link-icon-container">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111644.png" alt="Telegram" class="link-icon"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="link-icon-fallback" style="display: none;">TG</div>
+                </div>
+                <span class="link-text">Telegram</span>
             </a>
             <a href="https://nguyenbacson427.blogspot.com/2025/05/bacson.427.html" class="link-button color-14">
-                <img src="a7d0a7ad-a0cc-4f12-beed-67213000f013_og-image.jpeg" class="link-icon"><span class="link-text">Grade 12 Learning Process</span>
+                <div class="link-icon-container">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5968/5968853.png" alt="Blog" class="link-icon"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="link-icon-fallback" style="display: none;">BL</div>
+                </div>
+                <span class="link-text">Grade 12 Learning Process</span>
             </a>
         </div>
     </div>
 
-    <div class="footer">© 2026 Nguyen Bac Son | <a href="#">Privacy Policy</a></div>
+    <div class="footer">© 2026 Nguyen Bac Son | <a href="https://nguyenbacson.io.vn/privacy-policy.html">Privacy Policy</a></div>
     <div id="ai-assistant-widget"><button class="ai-button" onclick="alert('Chúc mừng năm mới 2026! 🎉')">💬</button></div>
 
-    <!-- JavaScript giữ nguyên từ phiên bản trước -->
     <script>
         // Slot machine effect
         document.addEventListener('DOMContentLoaded', () => {
