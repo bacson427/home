@@ -19,79 +19,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        /* --- 1. CẤU HÌNH NỀN TẾT RADIAL GRADIENT --- */
+        /* --- 1. CẤU HÌNH NỀN MỚI (MỊN & CÓ CHIỀU SÂU) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            /* Radial Gradient màu Tết: Đỏ thẫm -> Đỏ rực -> Vàng -> Cam */
-            background: radial-gradient(
-                ellipse at center,
-                #FF0000 0%,     /* Đỏ tươi ở trung tâm */
-                #CC0000 15%,    /* Đỏ đậm */
-                #B30000 30%,    /* Đỏ thẫm */
-                #FF3300 45%,    /* Cam đỏ */
-                #FF6600 60%,    /* Cam */
-                #FF9900 75%,    /* Cam vàng */
-                #FFCC00 90%,    /* Vàng cam */
-                #8B0000 100%    /* Đỏ đậm ở viền */
-            );
-            background-size: 150% 150%;
+            /* Sử dụng Radial Gradient tạo chiều sâu, tối dần ra viền */
+            background: radial-gradient(ellipse at bottom center, #1b2735 0%, #090a0f 80%, #000000 100%);
+            background-size: 120% 120%;
             min-height: 100vh;
             color: #fff;
             padding-bottom: 80px;
             overflow-x: hidden;
-            /* Hiệu ứng "thở" cho không khí Tết sống động */
-            animation: tetBackgroundPulse 20s ease-in-out infinite alternate;
-            position: relative;
+            /* Hiệu ứng "thở" nhẹ nhàng thay vì đổi màu thô */
+            animation: deepSpaceBreathe 15s ease-in-out infinite alternate;
         }
-
-        /* Thêm lớp phủ ánh sáng lấp lánh */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.15) 2px, transparent 3px),
-                radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.2) 1px, transparent 2px),
-                radial-gradient(circle at 80% 50%, rgba(255, 69, 0, 0.1) 3px, transparent 4px),
-                radial-gradient(circle at 60% 70%, rgba(255, 255, 255, 0.15) 2px, transparent 3px);
-            background-size: 300px 300px, 200px 200px, 400px 400px, 250px 250px;
-            z-index: 0;
-            pointer-events: none;
-            animation: sparkleShift 25s linear infinite;
-        }
-
-        @keyframes tetBackgroundPulse {
-            0% { 
-                background-size: 150% 150%; 
-                background-position: 0% 0%;
-            }
-            25% { 
-                background-size: 160% 160%; 
-                background-position: 10% 20%;
-            }
-            50% { 
-                background-size: 155% 155%; 
-                background-position: 20% 10%;
-            }
-            75% { 
-                background-size: 165% 165%; 
-                background-position: 10% 30%;
-            }
-            100% { 
-                background-size: 150% 150%; 
-                background-position: 0% 0%;
-            }
-        }
-
-        @keyframes sparkleShift {
-            0% { background-position: 0px 0px, 0px 0px, 0px 0px, 0px 0px; }
-            100% { background-position: 300px 300px, 200px 200px, 400px 400px, 250px 250px; }
+        @keyframes deepSpaceBreathe {
+            0% { background-size: 120% 120%; }
+            100% { background-size: 135% 135%; }
         }
 
         #fireworks-canvas { 
@@ -100,452 +46,109 @@
             left: 0; 
             width: 100%; 
             height: 100%; 
-            z-index: 2; 
+            z-index: 9999; 
             pointer-events: none; 
         }
-        
-        .container { 
-            position: relative; 
-            z-index: 10; 
-            max-width: 480px; 
-            margin: 30px auto; 
-            padding: 0 15px; 
-        }
+        .container { position: relative; z-index: 10; max-width: 480px; margin: 30px auto; padding: 0 15px; }
 
         /* --- 2. AVATAR NEON "SIÊU PHẨM" MỚI --- */
         .profile-card {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(8px);
             border-radius: 25px;
-            padding: 40px 20px 30px;
+            padding: 40px 20px 30px; /* Tăng padding trên để chứa avatar lớn */
             margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            margin-top: 60px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Viền đỏ vàng quanh card để hợp với không khí Tết */
-        .profile-card::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, 
-                #FF0000, #FF3300, #FF6600, #FF9900, #FFCC00,
-                #FF9900, #FF6600, #FF3300, #FF0000);
-            border-radius: 27px;
-            z-index: -1;
-            animation: borderRotate 8s linear infinite;
-            background-size: 400% 400%;
-        }
-
-        @keyframes borderRotate {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 400% 50%; }
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-top: 60px; /* Đẩy card xuống để avatar nổi lên trên */
         }
 
         .profile-img-wrapper {
             position: relative;
-            width: 160px; 
-            height: 160px;
-            margin: -80px auto 25px auto;
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
+            width: 160px; height: 160px; /* Kích thước lớn hơn */
+            margin: -80px auto 25px auto; /* Đẩy avatar lên khỏi card */
+            display: flex; justify-content: center; align-items: center;
             border-radius: 50%;
-            /* Hào quang Tết: Vàng và Đỏ */
-            box-shadow: 
-                0 0 30px rgba(255, 204, 0, 0.8), 
-                0 0 60px rgba(255, 51, 0, 0.6),
-                0 0 90px rgba(255, 0, 0, 0.4);
-            animation: tetNeonPulse 2.5s ease-in-out infinite alternate;
+            /* Hào quang Neon kép (Xanh Cyan + Hồng Tím) */
+            box-shadow: 0 0 25px rgba(0, 255, 242, 0.6), 
+                        0 0 50px rgba(204, 0, 255, 0.4);
+            animation: neonPulse 3s ease-in-out infinite alternate;
         }
-        
-        @keyframes tetNeonPulse {
-            from { 
-                box-shadow: 
-                    0 0 30px rgba(255, 204, 0, 0.8), 
-                    0 0 60px rgba(255, 51, 0, 0.6),
-                    0 0 90px rgba(255, 0, 0, 0.4); 
-                transform: scale(1); 
-            }
-            to { 
-                box-shadow: 
-                    0 0 40px rgba(255, 221, 0, 1), 
-                    0 0 80px rgba(255, 102, 0, 0.8),
-                    0 0 120px rgba(255, 0, 0, 0.6); 
-                transform: scale(1.05); 
-            }
+        @keyframes neonPulse {
+            from { box-shadow: 0 0 25px rgba(0, 255, 242, 0.6), 0 0 50px rgba(204, 0, 255, 0.4); scale: 1; }
+            to   { box-shadow: 0 0 40px rgba(0, 255, 242, 0.8), 0 0 70px rgba(204, 0, 255, 0.6); scale: 1.03; }
         }
 
-        /* Fallback nếu ảnh không tải được */
-        .profile-img-wrapper .fallback-avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #FF0000, #FFCC00);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 50px;
-            font-weight: bold;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Viền xoay Tết */
+        /* Viền sáng xoay nhẹ bên ngoài hào quang */
         .profile-img-wrapper::before {
-            content: ''; 
-            position: absolute; 
-            inset: -4px;
+            content: ''; position: absolute; inset: -4px;
             border-radius: 50%;
-            background: linear-gradient(45deg, 
-                #FF0000, #FF9900, #FFCC00, #FF9900, #FF0000);
-            background-size: 300% 300%;
-            animation: tetSpin 4s linear infinite;
-            z-index: 0; 
-            filter: blur(8px);
-            opacity: 0.8;
+            background: linear-gradient(45deg, transparent, #00fff2, transparent, #cc00ff);
+            background-size: 200% 200%;
+            animation: smoothSpin 6s linear infinite;
+            z-index: 0; filter: blur(6px);
         }
-        
-        @keyframes tetSpin { 
-            0% { 
-                transform: rotate(0deg); 
-                background-position: 0% 50%; 
-            } 
-            100% { 
-                transform: rotate(360deg); 
-                background-position: 100% 50%; 
-            } 
+        @keyframes smoothSpin { 
+            0% { transform: rotate(0deg); background-position: 0% 50%; } 
+            100% { transform: rotate(360deg); background-position: 100% 50%; } 
         }
 
         .profile-img {
-            width: 150px; 
-            height: 150px;
-            border-radius: 50%; 
-            object-fit: cover;
-            position: relative; 
-            z-index: 2;
-            border: 4px solid rgba(255, 255, 255, 0.95);
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
-            display: block;
+            width: 150px; height: 150px;
+            border-radius: 50%; object-fit: cover;
+            position: relative; z-index: 2;
+            border: 3px solid rgba(255,255,255,0.9); /* Viền trắng sắc nét bên trong */
         }
 
-        /* Tên với gradient Tết */
+        /* Tên & Chữ (Giữ nguyên độ chất) */
         .profile-name {
-            font-size: 32px; 
-            font-weight: 900; 
-            margin-bottom: 15px;
-            background: linear-gradient(to right, 
-                #FF0000, #FF3300, #FF6600, #FFCC00, #FF6600, #FF3300, #FF0000);
-            background-size: 300% auto; 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent;
-            animation: tetTextShine 3s linear infinite; 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 32px; font-weight: 900; margin-bottom: 15px;
+            background: linear-gradient(to right, #ff00cc, #333399, #00ffcc, #ffcc00);
+            background-size: 300% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: textShine 4s linear infinite; text-transform: uppercase; letter-spacing: 1px;
         }
-        
-        @keyframes tetTextShine { 
-            to { background-position: 200% center; } 
-        }
+        @keyframes textShine { to { background-position: 200% center; } }
 
-        /* Chữ chúc mừng năm mới */
         .profile-description {
-            font-size: 18px; 
-            font-weight: bold; 
-            color: #FFCC00;
-            padding: 12px 30px; 
-            background: rgba(178, 34, 34, 0.3);
-            border: 2px solid #FFCC00; 
-            border-radius: 50px;
-            display: inline-block; 
-            text-transform: uppercase;
-            box-shadow: 
-                0 0 15px #FF3300, 
-                0 0 30px rgba(255, 204, 0, 0.5),
-                inset 0 0 10px rgba(255, 255, 255, 0.2);
-            animation: tetNeonPulseRed 1.2s ease-in-out infinite alternate;
-            letter-spacing: 1px;
+            font-size: 18px; font-weight: bold; color: #fff;
+            padding: 12px 30px; background: rgba(255, 0, 55, 0.15);
+            border: 2px solid #ff0037; border-radius: 50px;
+            display: inline-block; text-transform: uppercase;
+            box-shadow: 0 0 15px #ff0037, 0 0 30px #ff0037;
+            animation: pulseNeonRed 1.5s ease-in-out infinite alternate;
         }
-        
-        @keyframes tetNeonPulseRed {
-            from { 
-                box-shadow: 
-                    0 0 15px #FF3300, 
-                    0 0 30px rgba(255, 204, 0, 0.5),
-                    inset 0 0 10px rgba(255, 255, 255, 0.2); 
-                transform: scale(1); 
-            }
-            to { 
-                box-shadow: 
-                    0 0 25px #FF0000, 
-                    0 0 50px rgba(255, 204, 0, 0.7),
-                    inset 0 0 15px rgba(255, 255, 255, 0.3); 
-                transform: scale(1.05); 
-            }
+        @keyframes pulseNeonRed {
+            from { box-shadow: 0 0 15px #ff0037, 0 0 30px #ff0037; transform: scale(1); }
+            to { box-shadow: 0 0 25px #ff4d4d, 0 0 50px #ff4d4d; transform: scale(1.05); }
         }
 
-        /* Slot machine với màu Tết */
-        .slot-machine { 
-            font-family: 'Courier New', monospace; 
-            font-size: 1.8rem; 
-            font-weight: bold; 
-            color: #FFCC00; 
-            text-shadow: 
-                0 0 10px #FF6600,
-                0 0 20px rgba(255, 102, 0, 0.5); 
-            margin: 25px 0; 
-            letter-spacing: 2px; 
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 204, 0, 0.3);
-        }
+        /* Các phần khác giữ nguyên */
+        .slot-machine { font-family: 'Courier New', monospace; font-size: 1.8rem; font-weight: bold; color: #00ffea; text-shadow: 0 0 10px #00ffea; margin: 25px 0; letter-spacing: 2px; }
+        .music-container { margin-bottom: 25px; position: relative; z-index: 20; }
+        .music-section { background: rgba(255, 255, 255, 0.07); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.15); padding: 15px; border-radius: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        .music-section h4 { color: #eee; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        audio { width: 100%; height: 35px; opacity: 0.8; border-radius: 20px; mix-blend-mode: screen;}
 
-        .music-container { 
-            margin-bottom: 25px; 
-            position: relative; 
-            z-index: 20; 
-        }
-        
-        .music-section { 
-            background: rgba(0, 0, 0, 0.4); 
-            backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 204, 0, 0.2); 
-            padding: 15px; 
-            border-radius: 25px; 
-            box-shadow: 
-                0 8px 25px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1); 
-        }
-        
-        .music-section h4 { 
-            color: #FFCC00; 
-            margin-bottom: 8px; 
-            font-size: 14px; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-        
-        audio { 
-            width: 100%; 
-            height: 35px; 
-            opacity: 0.9; 
-            border-radius: 20px; 
-            filter: sepia(1) hue-rotate(330deg) saturate(3);
-        }
+        /* Links */
+        .links-container { display: flex; flex-direction: column; gap: 15px; }
+        .link-button { display: flex; align-items: center; text-decoration: none; color: white; padding: 14px 20px; border-radius: 18px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(4px); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden; }
+        .link-button:hover { transform: translateY(-5px) scale(1.02); background: rgba(255, 255, 255, 0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 0 15px rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.3); }
+        .link-icon { width: 40px; height: 40px; border-radius: 50%; padding: 2px; background: #fff; object-fit: contain; margin-right: 15px; }
+        .link-text { font-weight: 600; font-size: 16px; letter-spacing: 0.5px; }
+        .link-button::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
+        .color-1::before { background: #FF512F; } .color-12::before { background: #1877F2; } .color-15::before { background: #000; } .color-3::before { background: #EA4335; } .color-5::before { background: #00f2ea; } .color-6::before { background: #FFCC00; } .color-9::before { background: #0068FF; } .color-11::before { background: #0088cc; } .color-14::before { background: #ffa502; }
 
-        /* Links với màu Tết */
-        .links-container { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 15px; 
-        }
-        
-        .link-button { 
-            display: flex; 
-            align-items: center; 
-            text-decoration: none; 
-            color: white; 
-            padding: 14px 20px; 
-            border-radius: 18px; 
-            background: rgba(0, 0, 0, 0.4); 
-            border: 1px solid rgba(255, 204, 0, 0.2); 
-            backdrop-filter: blur(4px); 
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
-            position: relative; 
-            overflow: hidden; 
-        }
-        
-        .link-button:hover { 
-            transform: translateY(-5px) scale(1.02); 
-            background: rgba(178, 34, 34, 0.4); 
-            box-shadow: 
-                0 10px 30px rgba(178, 34, 34, 0.4), 
-                inset 0 0 15px rgba(255, 255, 255, 0.1); 
-            border-color: rgba(255, 204, 0, 0.5); 
-        }
-        
-        /* Icon container với fallback */
-        .link-icon-container {
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            padding: 2px; 
-            background: linear-gradient(45deg, #FF3300, #FFCC00); 
-            margin-right: 15px; 
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        
-        .link-icon { 
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 50%;
-        }
-        
-        /* Fallback cho icon */
-        .link-icon-fallback {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #FF3300;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        
-        .link-text { 
-            font-weight: 600; 
-            font-size: 16px; 
-            letter-spacing: 0.5px; 
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-        
-        .link-button::before { 
-            content: ''; 
-            position: absolute; 
-            left: 0; 
-            top: 0; 
-            bottom: 0; 
-            width: 6px; 
-            background: linear-gradient(to bottom, #FF0000, #FFCC00);
-        }
-        
-        /* Màu sắc Tết cho các link */
-        .color-1::before { background: linear-gradient(to bottom, #FF0000, #FF6600); } 
-        .color-12::before { background: linear-gradient(to bottom, #FF3300, #FF9900); } 
-        .color-15::before { background: linear-gradient(to bottom, #FF6600, #FFCC00); } 
-        .color-3::before { background: linear-gradient(to bottom, #CC0000, #FF3300); } 
-        .color-5::before { background: linear-gradient(to bottom, #FF9900, #FFCC00); } 
-        .color-6::before { background: linear-gradient(to bottom, #FFCC00, #FFFF00); } 
-        .color-9::before { background: linear-gradient(to bottom, #FF0000, #FF9900); } 
-        .color-11::before { background: linear-gradient(to bottom, #FF6600, #FFCC00); } 
-        .color-14::before { background: linear-gradient(to bottom, #CC3300, #FF9933); }
+        /* Footer & Menu */
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.85); padding: 12px; font-size: 12px; z-index: 100; border-top: 1px solid rgba(255,255,255,0.1); }
+        .footer a { color: #00ffea; text-decoration: none; }
+        .hamburger-menu { position: fixed; top: 20px; right: 20px; width: 42px; height: 42px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; z-index: 200; cursor: pointer; padding: 10px; backdrop-filter: blur(5px); }
+        .hamburger-menu span { display: block; width: 100%; height: 3px; background: #fff; margin-bottom: 5px; border-radius: 2px; }
+        .menu-dropdown { position: fixed; top: 75px; right: 20px; background: rgba(20, 20, 30, 0.95); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; display: none; z-index: 200; text-align: left; backdrop-filter: blur(10px); }
+        .menu-dropdown a { display: block; padding: 10px 20px; color: #eee; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; }
+        .menu-dropdown a:hover { background: rgba(255,255,255,0.1); color: #00ffea; }
 
-        /* Footer & Menu với màu Tết */
-        .footer { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            background: rgba(178, 34, 34, 0.9); 
-            padding: 12px; 
-            font-size: 12px; 
-            z-index: 100; 
-            border-top: 2px solid #FFCC00;
-            color: #FFCC00;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-        
-        .footer a { 
-            color: #FFFFFF; 
-            text-decoration: none; 
-            font-weight: bold;
-        }
-        
-        .hamburger-menu { 
-            position: fixed; 
-            top: 20px; 
-            right: 20px; 
-            width: 42px; 
-            height: 42px; 
-            background: rgba(178, 34, 34, 0.8); 
-            border: 1px solid rgba(255, 204, 0, 0.5); 
-            border-radius: 10px; 
-            z-index: 200; 
-            cursor: pointer; 
-            padding: 10px; 
-            backdrop-filter: blur(5px); 
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .hamburger-menu span { 
-            display: block; 
-            width: 100%; 
-            height: 3px; 
-            background: #FFCC00; 
-            margin-bottom: 5px; 
-            border-radius: 2px; 
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
-        
-        .menu-dropdown { 
-            position: fixed; 
-            top: 75px; 
-            right: 20px; 
-            background: rgba(178, 34, 34, 0.95); 
-            color: #fff; 
-            border: 1px solid rgba(255, 204, 0, 0.3); 
-            border-radius: 12px; 
-            padding: 10px; 
-            display: none; 
-            z-index: 200; 
-            text-align: left; 
-            backdrop-filter: blur(10px); 
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-        }
-        
-        .menu-dropdown a { 
-            display: block; 
-            padding: 10px 20px; 
-            color: #FFCC00; 
-            text-decoration: none; 
-            border-bottom: 1px solid rgba(255, 204, 0, 0.2); 
-            transition: 0.2s; 
-        }
-        
-        .menu-dropdown a:hover { 
-            background: rgba(255, 204, 0, 0.2); 
-            color: #FFFFFF; 
-        }
-
-        #ai-assistant-widget { 
-            position: fixed; 
-            bottom: 70px; 
-            right: 20px; 
-            z-index: 999; 
-        }
-        
-        .ai-button { 
-            width: 55px; 
-            height: 55px; 
-            border-radius: 50%; 
-            background: linear-gradient(45deg, #FF0000, #FFCC00); 
-            color: white; 
-            border: none; 
-            font-size: 22px; 
-            cursor: pointer; 
-            box-shadow: 
-                0 0 20px rgba(255, 0, 0, 0.7),
-                0 0 40px rgba(255, 204, 0, 0.5); 
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.3s;
-        }
-        
-        .ai-button:hover {
-            transform: scale(1.1);
-            box-shadow: 
-                0 0 30px rgba(255, 0, 0, 0.9),
-                0 0 60px rgba(255, 204, 0, 0.7);
-        }
+        #ai-assistant-widget { position: fixed; bottom: 70px; right: 20px; z-index: 999; }
+        .ai-button { width: 55px; height: 55px; border-radius: 50%; background: linear-gradient(45deg, #ff00cc, #333399); color: white; border: none; font-size: 22px; cursor: pointer; box-shadow: 0 0 20px rgba(255, 0, 204, 0.5); }
     </style>
 </head>
 <body>
@@ -565,12 +168,7 @@
     <div class="container">
         <div class="profile-card">
             <div class="profile-img-wrapper">
-                <!-- Avatar với fallback nếu ảnh không tải được -->
-                <img src="nguyen-bac-son-cover.png" alt="Avatar Nguyen Bac Son" class="profile-img" 
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div class="fallback-avatar" style="display: none;">
-                    NBS
-                </div>
+                <img src="nguyen-bac-son-cover.png" alt="Avatar" class="profile-img">
             </div>
             <h1 class="profile-name">NGUYEN BAC SON</h1>
             <div class="profile-description">⚡ CHÚC MỪNG NĂM MỚI ⚡</div>
@@ -580,95 +178,49 @@
 
         <div class="music-container">
             <div class="music-section">
-                <h4>🎧 BẬT NHẠC LÊN ĐỂ XEM PHÁO HOA 🎆</h4>
+                <h4>🎧 Bật nhạc lên để xem pháo hoa 🎆</h4>
                 <audio controls id="main-audio">
                     <source src="https://nguyenbacson.io.vn/nguyenbacson-music.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
                 </audio>
             </div>
         </div>
 
         <div class="links-container">
             <a href="https://drive.google.com/file/d/14Wbb0Nm4LveABnwLsz0x39aqwsmBZR2g/view?usp=drivesdk" class="link-button color-1">
-                <div class="link-icon-container">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Yearbook" class="link-icon" 
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="link-icon-fallback" style="display: none;">YB</div>
-                </div>
-                <span class="link-text">High school yearbook</span>
+                <img src="a6cef8fb-f306-492b-8e7a-76e533d3582c_image.jpeg" class="link-icon"><span class="link-text">High school yearbook</span>
             </a>
             <a href="https://www.facebook.com/bacson.427" class="link-button color-12">
-                <div class="link-icon-container">
-                    <img src="https://cdn-icons-png.flaticon.com/512/124/124010.png" alt="Facebook" class="link-icon"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="link-icon-fallback" style="display: none;">FB</div>
-                </div>
-                <span class="link-text">Facebook</span>
+                <img src="6aa41df5-0183-4ade-9361-637adf912356_image.jpeg" class="link-icon"><span class="link-text">Facebook</span>
             </a>
             <a href="https://www.threads.com/@nguyenbacson427" class="link-button color-15">
-                <div class="link-icon-container">
-                    <img src="https://static.vecteezy.com/system/resources/previews/027/573/672/non_2x/threads-app-icon-threads-logo-threads-app-logo-free-png.png" alt="Threads" class="link-icon"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="link-icon-fallback" style="display: none;">TH</div>
-                </div>
-                <span class="link-text">Threads</span>
+                <img src="Screenshot_2025-10-25-00-42-16-241_com.android.vending-edit.jpg" class="link-icon"><span class="link-text">Threads</span>
             </a>
             <a href="mailto:bacson20062007@gmail.com" class="link-button color-3">
-                <div class="link-icon-container">
-                    <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Gmail" class="link-icon"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="link-icon-fallback" style="display: none;">GM</div>
-                </div>
-                <span class="link-text">Gmail</span>
+                <img src="ee560656-c979-4486-b84d-5cdb83ba1ce2_image.jpeg" class="link-icon"><span class="link-text">Gmail</span>
             </a>
             <a href="https://www.tiktok.com/@bacson_427" class="link-button color-5">
-                <div class="link-icon-container">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3046/3046126.png" alt="TikTok" class="link-icon"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="link-icon-fallback" style="display: none;">TT</div>
-                </div>
-                <span class="link-text">TikTok</span>
+                <img src="1f9a419d-f112-4727-824b-784f4c164253_image.jpeg" class="link-icon"><span class="link-text">TikTok</span>
             </a>
             <a href="https://locket.cam/bacson.427" class="link-button color-6">
-                <div class="link-icon-container">
-                    <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/c9/01/51/c90151ab-6bf7-6d48-31be-b0c7bc8581c1/AppIcon-0-0-1x_U007epad-0-0-0-0-0-0-sRGB-85-220.png/246x0w.webp" alt="Locket" class="link-icon"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="link-icon-fallback" style="display: none;">LC</div>
-                </div>
-                <span class="link-text">Locket</span>
+                <img src="a4da9cc0-6c4d-4dd5-97b8-67840fe2f8d8_image.jpeg" class="link-icon"><span class="link-text">Locket</span>
             </a>
             <a href="https://zaloapp.com/qr/p/13gt23dbftkk0" class="link-button color-9">
-                <div class="link-icon-container">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Zalo" class="link-icon"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="link-icon-fallback" style="display: none;">ZL</div>
-                </div>
-                <span class="link-text">Zalo</span>
+                <img src="image2 (1).jpeg" class="link-icon"><span class="link-text">Zalo</span>
             </a>
             <a href="http://t.me/bacson_427" class="link-button color-11">
-                <div class="link-icon-container">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111644.png" alt="Telegram" class="link-icon"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="link-icon-fallback" style="display: none;">TG</div>
-                </div>
-                <span class="link-text">Telegram</span>
+                <img src="00fb1b75-6f9b-478c-83ef-157b0c4c643a_image.jpeg" class="link-icon"><span class="link-text">Telegram</span>
             </a>
-            <a href="https://nguyenbacson427.blogspot.com/2025/05/bacson.427.html" class="link-button color-14">
-                <div class="link-icon-container">
-                    <img src="https://cdn-icons-png.flaticon.com/512/5968/5968853.png" alt="Blog" class="link-icon"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="link-icon-fallback" style="display: none;">BL</div>
-                </div>
-                <span class="link-text">Grade 12 Learning Process</span>
+             <a href="https://nguyenbacson427.blogspot.com/2025/05/bacson.427.html" class="link-button color-14">
+                <img src="a7d0a7ad-a0cc-4f12-beed-67213000f013_og-image.jpeg" class="link-icon"><span class="link-text">Grade 12 Learning Process</span>
             </a>
         </div>
     </div>
 
-    <div class="footer">© 2026 Nguyen Bac Son | <a href="https://nguyenbacson.io.vn/privacy-policy.html">Privacy Policy</a></div>
-    <div id="ai-assistant-widget"><button class="ai-button" onclick="alert('Chúc mừng năm mới 2026! 🎉')">💬</button></div>
+    <div class="footer">© 2026 Nguyen Bac Son | <a href="#">Privacy Policy</a></div>
+    <div id="ai-assistant-widget"><button class="ai-button" onclick="alert('Tính năng AI đang bảo trì')">💬</button></div>
 
     <script>
-        // Slot machine effect
+        // Slot machine effect giữ nguyên
         document.addEventListener('DOMContentLoaded', () => {
             const el = document.querySelector('.slot-machine'); 
             let count = 0;
@@ -688,7 +240,7 @@
             m.style.display = m.style.display === 'block' ? 'none' : 'block'; 
         });
 
-        // --- HIỆU ỨNG PHÁO HOA ---
+        // --- HIỆU ỨNG PHÁO HOA (lấy từ phiên bản thứ hai) ---
         const canvas = document.getElementById('fireworks-canvas');
         const ctx = canvas.getContext('2d');
         let particles = []; 
@@ -706,13 +258,9 @@
         window.addEventListener('resize', resize); 
         resize();
 
-        // Màu sắc Tết cho pháo hoa
-        function tetColor() {
-            const colors = [
-                '#FF0000', '#FF3300', '#FF6600', '#FF9900', '#FFCC00',
-                '#FF0000', '#FF3300', '#FF6600', '#FF9900', '#FFCC00'
-            ];
-            return colors[Math.floor(Math.random() * colors.length)];
+        function randomColor() {
+            const hue = Math.floor(Math.random() * 360);
+            return `hsl(${hue}, 100%, 80%)`;
         }
 
         // --- CÁNH HOA RƠI (Blossom) ---
@@ -721,8 +269,7 @@
                 this.x = Math.random() * canvas.width;
                 this.y = -20;
                 this.size = (Math.random() * 5 + 3) * scaleFactor;
-                // Màu hoa đào và hoa mai
-                this.color = Math.random() < 0.5 ? '#FFB6C1' : '#FFD700';
+                this.color = Math.random() < 0.5 ? '#FFC0CB' : '#FFD700'; // Đào & Mai
                 this.speedY = (Math.random() * 1 + 0.5) * scaleFactor;
                 this.swaySpeed = Math.random() * 0.02 + 0.01;
                 this.swayRange = Math.random() * 2 + 1;
@@ -752,13 +299,13 @@
         class Particle {
             constructor(x, y, color, customVelocity, isBig) {
                 this.x = x; this.y = y; this.color = color;
-                if (customVelocity) {
+                if (customVelocity) { // Pháo Phụt
                     this.vx = (Math.random() - 0.5) * 3 * scaleFactor;
                     this.vy = (Math.random() * -8 - 4) * scaleFactor;
                     this.gravity = 0.2 * scaleFactor; 
                     this.decayMultiplier = 0.9; 
                     this.size = 2.5 * scaleFactor;
-                } else {
+                } else { // Pháo Nổ
                     const angle = Math.random() * Math.PI * 2;
                     const speed = (Math.random() * (isBig ? 8 : 4) + 1) * scaleFactor;
                     this.vx = Math.cos(angle) * speed; 
@@ -791,7 +338,7 @@
                 this.targetY = Math.random() * (canvas.height * 0.5);
                 this.isBig = Math.random() < 0.1;
                 this.speed = (Math.random() * 3 + 7) * scaleFactor; 
-                this.color = tetColor();
+                this.color = randomColor();
                 this.exploded = false; 
                 this.size = (this.isBig ? 5 : 3.5) * scaleFactor;
             }
@@ -813,7 +360,7 @@
             }
             explode() {
                 if (this.isBig) { 
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; 
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; 
                     ctx.fillRect(0, 0, canvas.width, canvas.height); 
                 }
                 let particleCount = this.isBig ? 120 : 40;
@@ -840,9 +387,9 @@
                 ctx.globalCompositeOperation = 'lighter'; 
                 if (Math.random() < 0.05) { fireworks.push(new Firework()); }
                 if (Math.random() < 0.25) { 
-                    particles.push(new Particle(0, canvas.height, tetColor(), true)); 
-                    particles.push(new Particle(canvas.width, canvas.height, tetColor(), true));
-                    particles.push(new Particle(canvas.width / 2, canvas.height, tetColor(), true));
+                    particles.push(new Particle(0, canvas.height, randomColor(), true)); 
+                    particles.push(new Particle(canvas.width, canvas.height, randomColor(), true));
+                    particles.push(new Particle(canvas.width / 2, canvas.height, randomColor(), true));
                 }
                 for (let i = fireworks.length - 1; i >= 0; i--) {
                     fireworks[i].update(); 
@@ -863,7 +410,7 @@
         audio.addEventListener('pause', () => { isPlaying = false; });
         audio.addEventListener('ended', () => { isPlaying = false; });
         
-        animate();
+        animate(); // Bắt đầu animation ngay lập tức
     </script>
 </body>
 </html>
