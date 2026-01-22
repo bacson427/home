@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảo mật hệ thống - Nguyễn Bắc Sơn</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        /* --- GIAO DIỆN BẢO MẬT --- */
+        #security-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a;
+            color: #fff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .login-box {
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            border-top: 4px solid #d9534f;
+        }
+
+        .login-box h2 { margin-top: 0; color: #d9534f; }
+
+        .btn {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn-yes { background-color: #0078D7; color: white; }
+        .btn-no { background-color: #555; color: white; }
+        .btn-retry { background-color: #f0ad4e; color: white; margin-top: 10px; } /* Nút thử lại */
+        .btn-submit { background-color: #28a745; color: white; width: 100%; margin-top: 15px; }
+        
+        .btn:hover { opacity: 0.9; }
+
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.9em; color: #ccc; }
+        .form-control {
+            width: 100%; padding: 10px; border: 1px solid #444;
+            border-radius: 4px; background: #333; color: #fff; box-sizing: border-box;
+        }
+
+        .hidden { display: none !important; }
+        .error-msg { color: #d9534f; margin-top: 10px; font-size: 0.9em; font-weight: bold; }
+
+        /* --- GIAO DIỆN NỘI DUNG --- */
+        #main-content { display: none; }
+        .container {
+            max-width: 800px; margin: 20px auto; background: #fff;
+            padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        header {
+            background-color: #0078D7; color: #fff; padding: 20px;
+            text-align: center; border-radius: 8px 8px 0 0;
+        }
+        h1 { margin: 0; font-size: 24px; }
+        .specs-box {
+            background-color: #eef2f5; border-left: 5px solid #0078D7;
+            padding: 15px; margin: 20px 0;
+        }
+        .specs-box h3 { margin-top: 0; }
+        .step { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        .step:last-child { border-bottom: none; }
+        .step-number {
+            font-weight: bold; color: #0078D7; font-size: 1.2em;
+            display: block; margin-bottom: 10px;
+        }
+        .account-selection {
+            background-color: #fff; border: 1px solid #ddd; padding: 10px;
+            border-radius: 5px; display: inline-block; margin-top: 5px;
+        }
+        .user-highlight {
+            font-weight: bold; color: #d9534f; display: inline-flex;
+            align-items: center; vertical-align: middle;
+        }
+        .avatar-small {
+            width: 24px; height: 24px; border-radius: 50%;
+            margin-right: 8px; object-fit: cover; border: 1px solid #ccc;
+        }
+        footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #777; }
+        code { background-color: #eee; padding: 2px 5px; border-radius: 3px; font-family: monospace; }
+    </style>
+</head>
+<body>
+
+    <div id="security-overlay">
+        <div id="step-identity" class="login-box">
+            <h2>🔒 Kiểm soát truy cập</h2>
+            <p>Hệ thống yêu cầu xác thực danh tính.</p>
+            <p style="font-size: 1.1em; font-weight: bold;">Bạn có phải là Dương không?</p>
+            
+            <div id="identity-buttons" style="margin-top: 20px;">
+                <button class="btn btn-no" onclick="denyAccess()">Không</button>
+                <button class="btn btn-yes" onclick="showAuthForm()">Đúng</button>
+            </div>
+
+            <div id="deny-message" class="hidden">
+                <p class="error-msg">⛔ Truy cập bị từ chối.</p>
+                <p style="font-size: 0.9em; color: #ccc;">(Hệ thống không cho phép người lạ truy cập)</p>
+                <button class="btn btn-retry" onclick="retryAccess()">Tôi bấm nhầm (Thử lại)</button>
+            </div>
+        </div>
+
+        <div id="step-auth" class="login-box hidden">
+            <h2>🔐 Xác thực nghiêm ngặt</h2>
+            <p>Vui lòng nhập thông tin cá nhân của Dương.</p>
+            
+            <div class="form-group">
+                <label>Ngày tháng năm sinh:</label>
+                <input type="date" id="input-dob" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Số điện thoại:</label>
+                <input type="number" id="input-phone" class="form-control" placeholder="Nhập số điện thoại...">
+            </div>
+
+            <button class="btn btn-submit" onclick="verifyCredentials()">Xác nhận truy cập</button>
+            <p id="msg-error" class="error-msg hidden">❌ Thông tin không chính xác!</p>
+            <button class="btn btn-no" style="margin-top:10px; width:100%;" onclick="backToIdentity()">Quay lại</button>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div class="container">
+            <header>
+                <h1>Hướng dẫn đăng nhập Workstation</h1>
+                <p>Thiết bị: Dell Latitude 5491 - User: Nguyen-Bac-Son</p>
+            </header>
+
+            <div class="specs-box">
+                <h3>ℹ️ Thông số hệ thống</h3>
+                <ul>
+                    <li><strong>CPU:</strong> Intel Core i7-8850H</li>
+                    <li><strong>RAM:</strong> 16.0 GB</li>
+                    <li><strong>OS:</strong> Windows 10 Pro Workstation</li>
+                </ul>
+            </div>
+
+            <section>
+                <h2>Quy trình đăng nhập</h2>
+                
+                <div class="step">
+                    <span class="step-number">Bước 1: Bật nguồn</span>
+                    <p>Nhấn nút nguồn và đợi Windows tải xong.</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">Bước 2: Chọn tài khoản</span>
+                    <p>Ở góc dưới bên trái màn hình khóa, chọn tài khoản chính:</p>
+                    
+                    <div class="account-selection">
+                        Tài khoản: 
+                        <span class="user-highlight">
+                            <img src="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png" alt="Avatar" class="avatar-small">
+                            Nguyễn Bắc Sơn
+                        </span>
+                    </div>
+                    <p style="margin-top: 10px; font-style: italic; color: #666;">(Tuyệt đối không chọn tài khoản phụ)</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">Bước 3: Xác thực</span>
+                    <p>Nhập mật khẩu/PIN và nhấn <code>Enter</code>.</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">Bước 4: Kiểm tra</span>
+                    <p>Đảm bảo đã kết nối Wi-Fi và kiểm tra pin trước khi sử dụng.</p>
+                </div>
+            </section>
+
+            <footer>
+                <p>© 2026 Nguyễn Bắc Sơn. Website hướng dẫn nội bộ.</p>
+                <button onclick="logout()" style="margin-top:10px; background:none; border:none; color:#999; cursor:pointer; text-decoration:underline;">[Reset/Đăng xuất khỏi thiết bị này]</button>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // --- CẤU HÌNH BẢO MẬT ---
+        const CORRECT_DOB = "2007-03-01"; 
+        const CORRECT_PHONE = "0879546673";
+        const SECURITY_KEY = "device_authorized_by_duong"; 
+
+        // 1. Kiểm tra cookie khi mở trang
+        document.addEventListener("DOMContentLoaded", function() {
+            if (localStorage.getItem(SECURITY_KEY) === "true") {
+                document.getElementById('security-overlay').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            }
+        });
+
+        // 2. Xử lý nút "Không" (Chặn + Hiện nút thử lại)
+        function denyAccess() {
+            // Ẩn 2 nút chọn
+            document.getElementById('identity-buttons').classList.add('hidden');
+            // Hiện thông báo lỗi và nút Bấm nhầm
+            document.getElementById('deny-message').classList.remove('hidden');
+        }
+
+        // 3. Xử lý nút "Tôi bấm nhầm" (Khôi phục lại)
+        function retryAccess() {
+            document.getElementById('identity-buttons').classList.remove('hidden');
+            document.getElementById('deny-message').classList.add('hidden');
+        }
+
+        // 4. Xử lý nút "Đúng" -> Hiện form nhập liệu
+        function showAuthForm() {
+            document.getElementById('step-identity').classList.add('hidden');
+            document.getElementById('step-auth').classList.remove('hidden');
+        }
+
+        // 5. Nút Quay lại (từ bước nhập liệu về bước chọn Identity)
+        function backToIdentity() {
+            document.getElementById('step-auth').classList.add('hidden');
+            document.getElementById('step-identity').classList.remove('hidden');
+            document.getElementById('msg-error').classList.add('hidden');
+        }
+
+        // 6. Xử lý Xác thực thông tin
+        function verifyCredentials() {
+            const inputDob = document.getElementById('input-dob').value;
+            const inputPhone = document.getElementById('input-phone').value;
+            const errorMsg = document.getElementById('msg-error');
+
+            if (inputDob === CORRECT_DOB && inputPhone === CORRECT_PHONE) {
+                // ĐÚNG -> Lưu và Mở
+                localStorage.setItem(SECURITY_KEY, "true");
+                document.getElementById('security-overlay').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                // SAI
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        // 7. Hàm Reset (Đăng xuất)
+        function logout() {
+            localStorage.removeItem(SECURITY_KEY);
+            location.reload();
+        }
+    </script>
+
+</body>
+</html>
