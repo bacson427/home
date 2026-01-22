@@ -3,162 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workstation Hub - Nguyễn Bắc Sơn</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Quy trình truy cập - Nguyễn Bắc Sơn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0066FF;
-            --secondary-color: #64748b;
-            --danger-color: #FF3B30;
-            --success-color: #10b981;
-            --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            --primary: #0066FF;
+            --google-red: #EA4335;
+            --coccoc-green: #4db367;
+            --dark-bg: #0f172a;
             --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --text-main: #334155;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            margin: 0; padding: 0;
-            background: var(--bg-gradient);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); /* Nền tối chuyên nghiệp */
             color: var(--text-main);
+            margin: 0; padding: 0;
             min-height: 100vh;
-            padding-bottom: 70px;
+            padding-bottom: 100px;
         }
 
-        /* --- 1. SECURITY OVERLAY (Giữ nguyên logic) --- */
+        /* --- SECURITY OVERLAY (GIỮ NGUYÊN) --- */
         #security-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.96);
-            backdrop-filter: blur(8px);
-            z-index: 9999;
+            background: rgba(0, 0, 0, 0.95); z-index: 9999;
             display: flex; justify-content: center; align-items: center; flex-direction: column;
+            color: white;
         }
-
         .login-box {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 40px; border-radius: 16px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            text-align: center; width: 90%; max-width: 420px;
-            border: 1px solid rgba(255, 255, 255, 0.1); color: white;
-            animation: slideUp 0.4s ease-out;
+            background: #1e293b; padding: 40px; border-radius: 16px; border: 1px solid #334155;
+            text-align: center; width: 90%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .btn {
-            padding: 12px 24px; margin: 10px 5px; border: none; border-radius: 8px;
-            cursor: pointer; font-size: 15px; font-weight: 600; transition: all 0.2s;
-        }
-        .btn-yes { background-color: var(--primary-color); color: white; }
-        .btn-no { background-color: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
-        .btn-retry { background-color: #F59E0B; color: white; width: 100%; margin-top: 15px; }
-        .btn-submit { background-color: var(--success-color); color: white; width: 100%; margin-top: 20px; }
-        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
-
-        .form-group { margin-bottom: 20px; text-align: left; }
-        .form-control {
-            width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px; background: rgba(0,0,0,0.3); color: #fff; box-sizing: border-box;
-        }
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; margin: 5px; }
+        .btn-yes { background: var(--primary); color: white; }
+        .btn-no { background: #334155; color: white; }
+        .form-control { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: white; box-sizing: border-box;}
         .hidden { display: none !important; }
-        .error-msg { color: var(--danger-color); margin-top: 15px; font-weight: 600; background: rgba(255, 59, 48, 0.1); padding: 10px; border-radius: 6px; }
+        .error-msg { color: var(--google-red); margin-top: 10px; font-weight: bold; }
 
-        /* --- 2. MAIN CONTENT --- */
-        #main-content { display: none; animation: fadeIn 0.6s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* --- MAIN CONTENT --- */
+        #main-content { display: none; animation: fadeIn 0.8s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .container {
-            max-width: 900px; margin: 40px auto; background: var(--card-bg);
-            padding: 40px; border-radius: 24px; box-shadow: var(--shadow);
+            max-width: 800px; margin: 40px auto; padding: 0 20px;
         }
 
-        header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; }
-        header h1 { color: var(--primary-color); margin-bottom: 5px; letter-spacing: -0.5px; }
-        header p { color: var(--secondary-color); font-size: 0.95rem; }
+        header { text-align: center; margin-bottom: 50px; color: white; }
+        header h1 { margin-bottom: 5px; font-weight: 800; letter-spacing: -1px; }
+        header p { color: #94a3b8; }
 
-        /* Specs Grid */
-        .specs-box {
-            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
-            padding: 20px; margin-bottom: 30px;
-        }
-        .specs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center; }
-        .spec-item { display: flex; flex-direction: column; }
-        .spec-label { font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.5px; }
-        .spec-value { font-weight: 600; color: #334155; font-size: 1.1rem; }
-
-        /* Instructions */
-        .section-title {
-            font-size: 1.2rem; font-weight: 700; color: #1e293b;
-            margin: 40px 0 20px 0; padding-left: 15px; border-left: 4px solid var(--primary-color);
+        /* --- TIMELINE DESIGN --- */
+        .phase-block {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-left: 6px solid #ccc; /* Màu mặc định */
         }
 
-        .step {
-            display: flex; gap: 20px; margin-bottom: 20px; padding: 20px;
-            background: #fff; border-radius: 12px; border: 1px solid #eee;
-            align-items: flex-start;
+        .phase-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
         }
-        .step-number {
-            background: var(--primary-color); color: white; width: 28px; height: 28px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; flex-shrink: 0; font-size: 0.9rem;
-        }
-        .user-card {
-            display: inline-flex; align-items: center; background: #fff0f0;
-            padding: 6px 14px; border-radius: 30px; border: 1px solid #ffe0e0; margin-top: 8px;
-        }
-        .user-highlight { font-weight: 700; color: #d9534f; margin-left: 8px; font-size: 0.95rem; }
-        .avatar-small { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
 
-        /* --- NEW: TOOLS & CONNECTIVITY GRID --- */
-        .tools-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;
+        .phase-title {
+            font-size: 1.5rem; font-weight: 800; margin: 0 0 15px 0; color: #1e293b;
+            display: flex; align-items: center; gap: 10px;
         }
+
+        /* PHASE 1: WINDOWS */
+        .phase-win { border-color: var(--primary); }
+        .badge-win { background: var(--primary); }
         
-        .tool-card {
-            background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
-            padding: 20px; transition: transform 0.2s, box-shadow 0.2s;
+        .user-highlight {
+            background: #f1f5f9; padding: 10px 15px; border-radius: 12px;
+            display: inline-flex; align-items: center; gap: 10px; margin-top: 10px;
+            border: 1px solid #cbd5e1;
         }
-        .tool-card:hover {
-            transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-            border-color: var(--primary-color);
-        }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
 
-        .tool-header { display: flex; align-items: center; margin-bottom: 12px; gap: 10px; }
-        .tool-icon { font-size: 1.5rem; }
-        .tool-title { font-weight: 700; color: #334155; }
-        .tool-desc { font-size: 0.9rem; color: #64748b; margin-bottom: 10px; }
+        /* PHASE 2: GOOGLE (CRITICAL) */
+        .phase-google { border-color: var(--google-red); background: #fff5f5; } /* Nền đỏ nhạt cảnh báo */
+        .badge-google { background: var(--google-red); }
         
-        .tag-group { display: flex; gap: 8px; flex-wrap: wrap; }
-        .tag {
-            font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; font-weight: 600;
+        .alert-box {
+            background: white; padding: 20px; border-radius: 12px;
+            border: 1px dashed var(--google-red);
+            margin-top: 15px;
         }
-        .tag-gg { background: #e8f0fe; color: #1a73e8; }
-        .tag-win { background: #e0f2f1; color: #00897b; }
-        .tag-chat { background: #e3f2fd; color: #0288d1; }
-        .tag-drive { background: #fce4ec; color: #c2185b; }
+        .google-steps li { margin-bottom: 10px; }
 
-        /* --- FOOTER --- */
-        .fixed-footer {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            border-top: 1px solid #eee; padding: 12px 0;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 1000;
+        /* PHASE 3: COC COC */
+        .phase-coccoc { border-color: var(--coccoc-green); }
+        .badge-coccoc { background: var(--coccoc-green); }
+        
+        .browser-preview {
+            width: 100%; border-radius: 8px; margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;
         }
-        .footer-content {
-            width: 90%; max-width: 1200px; display: flex; justify-content: space-between; font-size: 0.85rem;
-        }
-        .status-dot {
-            height: 8px; width: 8px; background-color: var(--success-color);
-            border-radius: 50%; display: inline-block; margin-right: 6px;
-            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        .hover-tip {
+            background: #ecfdf5; color: #065f46; padding: 15px;
+            border-radius: 8px; margin-top: 15px; font-size: 0.95rem;
         }
 
-        @media (max-width: 700px) {
-            .specs-grid { grid-template-columns: 1fr; text-align: left; }
-            .tools-grid { grid-template-columns: 1fr; }
-            .footer-content { flex-direction: column; text-align: center; gap: 5px; }
+        /* Footer */
+        .footer {
+            text-align: center; color: #64748b; font-size: 0.9rem; margin-top: 50px;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 0 15px; }
+            .phase-block { padding: 20px; }
         }
     </style>
 </head>
@@ -167,169 +132,118 @@
     <div id="security-overlay">
         <div id="step-identity" class="login-box">
             <div style="font-size: 3rem; margin-bottom: 10px;">🛡️</div>
-            <h2>Kiểm soát truy cập</h2>
-            <p>Hệ thống yêu cầu xác thực danh tính chủ sở hữu.</p>
-            <p style="font-size: 1.1em; font-weight: 700; margin: 20px 0; color: #bfdbfe;">Bạn có phải là Dương không?</p>
-            <div id="identity-buttons">
+            <h2>Xác thực người dùng</h2>
+            <p>Bạn có phải là <strong>Dương</strong> không?</p>
+            <div style="margin-top: 20px;">
                 <button class="btn btn-no" onclick="denyAccess()">Không</button>
-                <button class="btn btn-yes" onclick="showAuthForm()">Đúng, là tôi</button>
+                <button class="btn btn-yes" onclick="showAuthForm()">Đúng</button>
             </div>
-            <div id="deny-message" class="hidden">
-                <p class="error-msg">⛔ ACCESS DENIED</p>
-                <button class="btn btn-retry" onclick="retryAccess()">Bấm nhầm (Thử lại)</button>
-            </div>
+            <p id="msg-deny" class="hidden" style="color:#ef4444; margin-top:15px; font-weight:bold;">⛔ Truy cập bị từ chối.</p>
+            <button id="btn-retry" class="btn btn-no hidden" style="width:100%; margin-top:10px;" onclick="retryAccess()">Bấm nhầm (Thử lại)</button>
         </div>
 
         <div id="step-auth" class="login-box hidden">
-            <div style="font-size: 3rem; margin-bottom: 10px;">🔐</div>
-            <h2>Xác thực bảo mật</h2>
-            <div class="form-group">
-                <label>Ngày sinh (DOB)</label>
-                <input type="date" id="input-dob" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>Số điện thoại xác thực</label>
-                <input type="number" id="input-phone" class="form-control" placeholder="0xxxxxxxxx">
-            </div>
-            <button class="btn btn-submit" onclick="verifyCredentials()">MỞ HỆ THỐNG</button>
-            <p id="msg-error" class="error-msg hidden">❌ Thông tin sai lệch!</p>
-            <button class="btn btn-no" style="margin-top:15px; width:100%; border:none; background:transparent;" onclick="backToIdentity()">Quay lại</button>
+            <h2>Nhập thông tin bảo mật</h2>
+            <input type="date" id="input-dob" class="form-control">
+            <input type="number" id="input-phone" class="form-control" placeholder="Số điện thoại...">
+            <button class="btn btn-yes" style="width:100%; margin-top:20px;" onclick="verifyCredentials()">MỞ KHÓA</button>
+            <p id="msg-error" class="error-msg hidden">Thông tin không chính xác!</p>
+            <button class="btn btn-no" style="background:none; margin-top:10px;" onclick="backToIdentity()">Quay lại</button>
         </div>
     </div>
 
     <div id="main-content">
         <div class="container">
             <header>
-                <h1>TRUNG TÂM ĐIỀU HÀNH</h1>
-                <p>Thiết bị: <strong>Dell Latitude 5491</strong> • User: <strong>Nguyen-Bac-Son</strong></p>
+                <h1>QUY TRÌNH ĐĂNG NHẬP</h1>
+                <p>Thiết bị: Dell Latitude 5491 • User: Nguyen-Bac-Son</p>
             </header>
 
-            <div class="specs-box">
-                <div class="specs-grid">
-                    <div class="spec-item">
-                        <span class="spec-label">Processor</span>
-                        <span class="spec-value">Core i7-8850H</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Memory</span>
-                        <span class="spec-value">16.0 GB RAM</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Operating System</span>
-                        <span class="spec-value">Windows 10 Pro</span>
-                    </div>
-                </div>
-            </div>
-
-            <h3 class="section-title">1. Quy trình Khởi động & Đăng nhập</h3>
-            <div class="instruction-flow">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div>
-                        <strong>Chọn tài khoản chính</strong><br>
-                        <span style="font-size: 0.9em; color: #666;">Bỏ qua tài khoản phụ. Chọn đúng thông tin:</span><br>
-                        <div class="user-card">
-                            <img src="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png" alt="Avatar" class="avatar-small">
-                            <span class="user-highlight">Nguyễn Bắc Sơn</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div>
-                        <strong>Xác thực mật khẩu</strong><br>
-                        <span style="font-size: 0.9em; color: #666;">Nhập mã PIN hoặc Password quản trị để vào Desktop.</span>
-                    </div>
-                </div>
-            </div>
-
-            <h3 class="section-title">2. Đồng bộ hóa & Chia sẻ dữ liệu</h3>
-            <div class="tools-grid">
+            <div class="phase-block phase-win">
+                <span class="phase-badge badge-win">Giai đoạn 1: Mở máy</span>
+                <h3 class="phase-title">🖥️ Đăng nhập Windows</h3>
+                <p>Bước đầu tiên để vào màn hình chính (Desktop). Lưu ý máy có 2 tài khoản.</p>
                 
-                <div class="tool-card">
-                    <div class="tool-header">
-                        <span class="tool-icon">🛡️</span>
-                        <span class="tool-title">Google Security</span>
-                    </div>
-                    <p class="tool-desc">Yêu cầu đăng nhập tài khoản Google chính chủ. Bắt buộc sử dụng xác thực 2 bước.</p>
-                    <div class="tag-group">
-                        <span class="tag tag-gg">Email & Password</span>
-                        <span class="tag tag-gg">Authenticator (OTP)</span>
+                <div class="user-highlight">
+                    <img src="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png" alt="Avatar" class="avatar">
+                    <div>
+                        <div style="font-weight:700; color:#334155;">Nguyễn Bắc Sơn</div>
+                        <div style="font-size:0.85rem; color:#64748b;">Tài khoản chính (Admin)</div>
                     </div>
                 </div>
+                <ul style="margin-top: 15px; padding-left: 20px; color: #475569;">
+                    <li>Bỏ qua tài khoản phụ.</li>
+                    <li>Mã PIN là<span>04022007</span></li>
+                </ul>
+            </div>
 
-                <div class="tool-card">
-                    <div class="tool-header">
-                        <span class="tool-icon">📱</span>
-                        <span class="tool-title">Phone Link (Windows)</span>
-                    </div>
-                    <p class="tool-desc">Sử dụng ứng dụng "Liên kết điện thoại" có sẵn để đồng bộ thông báo, ảnh và copy/paste giữa PC & Mobile.</p>
-                    <div class="tag-group">
-                        <span class="tag tag-win">Đồng bộ ảnh</span>
-                        <span class="tag tag-win">Gửi link nhanh</span>
-                    </div>
+            <div class="phase-block phase-google">
+                <span class="phase-badge badge-google">Giai đoạn 2: Quan trọng nhất</span>
+                <h3 class="phase-title" style="color: var(--google-red);">🔐 Xác thực Google</h3>
+                <p style="font-weight: 600;">Đây là bước BẮT BUỘC. Nếu không làm bước này, bạn sẽ không thể truy cập dữ liệu.</p>
+                
+                <div class="alert-box">
+                    <strong>⚠️ Yêu cầu điện thoại của chủ sở hữu:</strong>
+                    <span>Gmail : bacson20062007@gmail.com</span>
+                    <span>Mật khẩu : @Son2007</span><span>Đây là thông tin rất nhạy cảm. Hãy liên hệ chủ sở hữu để được hỗ trợ</span></span>
+                    <ul class="google-steps" style="margin-top:10px; padding-left:20px;">
+                        <li>Hệ thống sẽ yêu cầu đăng nhập tài khoản Google để đồng bộ.</li>
+                        <li>Mở điện thoại, kiểm tra thông báo từ <strong>Google</strong> hoặc <strong>Gmail</strong>.</li>
+                        <li>Chọn <strong>"Yes, it's me" (Đúng là tôi)</strong> hoặc nhập số hiển thị trên màn hình máy tính vào điện thoại.</li>
+                        <li>Nếu cần, xác thực bằng ứng dụng thì tải<strong>Google Authenticator</strong> để lấy mã 6 số.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="phase-block phase-coccoc">
+                <span class="phase-badge badge-coccoc">Giai đoạn 3: Học tập</span>
+                <h3 class="phase-title">🍃 Trình duyệt Cốc Cốc</h3>
+                <p>Sau khi máy đã thông suốt, hãy mở Cốc Cốc để bắt đầu học.</p>
+
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
+                    <img src="https://img-cache.coccoc.com/image2?i=2&l=30/329005927" width="32">
+                    <span>Tìm icon "Cốc Cốc" và mở lên.</span>
                 </div>
 
-                <div class="tool-card">
-                    <div class="tool-header">
-                        <span class="tool-icon">⚡</span>
-                        <span class="tool-title">Chia sẻ nhanh</span>
-                    </div>
-                    <p class="tool-desc">Sử dụng mục "Cloud của tôi" để truyền tải văn bản, link hoặc ảnh nhẹ tức thì.</p>
-                    <div class="tag-group">
-                        <span class="tag tag-chat">Zalo PC</span>
-                        <span class="tag tag-chat">Telegram</span>
-                    </div>
+                <p><strong>Chú ý thanh công cụ bên trái (Sidebar):</strong></p>
+                <img src="https://https://nguyenbacson.io.vn/giao-dien-trang-chu-coc-coc.png" class="browser-preview" onerror="this.src='https://via.placeholder.com/600x300?text=Anh+Giao+Dien+Coc+Coc';">
+                
+                <div class="hover-tip">
+                    <strong>👆 Mẹo sử dụng:</strong><br>
+                    Chỉ cần <strong>di chuột (hover)</strong> vào các icon bên trái để xem tên công cụ (Oxford, Cambridge, Grammarly...). Không cần click loạn xạ.
                 </div>
+            </div>
 
-                <div class="tool-card">
-                    <div class="tool-header">
-                        <span class="tool-icon">☁️</span>
-                        <span class="tool-title">Lưu trữ File nặng</span>
-                    </div>
-                    <p class="tool-desc">Với các file dung lượng lớn (Video, Project CAD), bắt buộc upload lên Cloud.</p>
-                    <div class="tag-group">
-                        <span class="tag tag-drive">Google Drive</span>
-                        <span class="tag tag-drive">OneDrive</span>
-                    </div>
-                </div>
-
+            <div class="footer">
+                © 2026 Bản quyền thuộc về Nguyễn Bắc Sơn
             </div>
         </div>
     </div>
 
-    <footer class="fixed-footer">
-        <div class="footer-content">
-            <div class="footer-left">
-                <span class="status-dot"></span>
-                <span>Hệ thống đã xác thực an toàn</span>
-            </div>
-            <div class="footer-center">
-                © 2026 <strong>Nguyễn Bắc Sơn</strong> | <a href="https://nguyenbacson.io.vn" target="_blank" style="color: inherit; text-decoration: none;">nguyenbacson.io.vn</a>
-            </div>
-        </div>
-    </footer>
-
     <script>
-        const CORRECT_DOB = "2007-03-01"; 
+        // LOGIC BẢO MẬT
+        const CORRECT_DOB = "2007-03-01";
         const CORRECT_PHONE = "0879546673";
-        const SECURITY_KEY = "device_authorized_by_duong_final";
+        const KEY = "access_granted_final_flow";
 
-        document.addEventListener("DOMContentLoaded", function() {
-            if (localStorage.getItem(SECURITY_KEY) === "true") {
-                document.getElementById('security-overlay').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-            }
-        });
+        // Check login cũ
+        if(localStorage.getItem(KEY) === "true") {
+            document.getElementById('security-overlay').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+        }
 
         function denyAccess() {
-            document.getElementById('identity-buttons').classList.add('hidden');
-            document.getElementById('deny-message').classList.remove('hidden');
+            document.querySelector('.btn-yes').style.display = 'none';
+            document.querySelector('.btn-no').style.display = 'none';
+            document.getElementById('msg-deny').classList.remove('hidden');
+            document.getElementById('btn-retry').classList.remove('hidden');
         }
 
         function retryAccess() {
-            document.getElementById('identity-buttons').classList.remove('hidden');
-            document.getElementById('deny-message').classList.add('hidden');
+            document.querySelector('.btn-yes').style.display = 'inline-block';
+            document.querySelector('.btn-no').style.display = 'inline-block';
+            document.getElementById('msg-deny').classList.add('hidden');
+            document.getElementById('btn-retry').classList.add('hidden');
         }
 
         function showAuthForm() {
@@ -340,20 +254,18 @@
         function backToIdentity() {
             document.getElementById('step-auth').classList.add('hidden');
             document.getElementById('step-identity').classList.remove('hidden');
-            document.getElementById('msg-error').classList.add('hidden');
         }
 
         function verifyCredentials() {
-            const inputDob = document.getElementById('input-dob').value;
-            const inputPhone = document.getElementById('input-phone').value;
-            const errorMsg = document.getElementById('msg-error');
-
-            if (inputDob === CORRECT_DOB && inputPhone === CORRECT_PHONE) {
-                localStorage.setItem(SECURITY_KEY, "true");
+            const dob = document.getElementById('input-dob').value;
+            const phone = document.getElementById('input-phone').value;
+            
+            if(dob === CORRECT_DOB && phone === CORRECT_PHONE) {
+                localStorage.setItem(KEY, "true");
                 document.getElementById('security-overlay').style.display = 'none';
                 document.getElementById('main-content').style.display = 'block';
             } else {
-                errorMsg.classList.remove('hidden');
+                document.getElementById('msg-error').classList.remove('hidden');
             }
         }
     </script>
