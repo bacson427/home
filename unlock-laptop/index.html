@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HỒ SƠ TRUY CẬP - NB.SON (SECURE v10)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HỒ SƠ TRUY CẬP - NB.SON</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,8 +19,6 @@
             --grid-pattern: linear-gradient(#e5e5e5 1px, transparent 1px), linear-gradient(90deg, #e5e5e5 1px, transparent 1px);
         }
 
-        * { -webkit-tap-highlight-color: transparent; }
-
         body {
             font-family: 'Space Mono', monospace;
             background-color: var(--bg-color);
@@ -32,60 +30,30 @@
             padding-bottom: 80px;
         }
 
-        /* --- CSS CHO LỚP BẢO MẬT (BLUEPRINT STYLE) --- */
-        #security-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(244, 244, 240, 1); 
-            z-index: 9999;
-            display: flex; justify-content: center; align-items: center; flex-direction: column;
-        }
-
-        .login-box {
-            background: var(--paper-color); padding: 30px;
-            border: var(--border-thick); box-shadow: var(--shadow-hard);
-            text-align: center; width: 85%; max-width: 450px; position: relative;
-        }
-
-        .login-box::after {
-            content: "SECURITY_CHECK_V10"; position: absolute; top: -15px; left: 10px;
-            background: var(--ink-color); color: white; padding: 2px 8px; font-size: 0.8rem; font-weight: bold;
-        }
-
-        .icon-bounce { font-size: 3rem; display: block; margin-bottom: 20px; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-
-        .btn-secure {
-            display: inline-block; width: 90%; padding: 15px 20px;
-            border: var(--border-thick); font-family: 'Space Mono', monospace;
-            font-weight: 700; text-transform: uppercase; cursor: pointer;
-            margin: 10px 0; font-size: 1rem; background: white; color: black;
-            box-shadow: 4px 4px 0px #000; touch-action: manipulation; user-select: none;
-        }
-        .btn-secure:active { background: #e0e0e0; box-shadow: 2px 2px 0px #000; transform: translate(2px, 2px); }
-        .btn-yes-secure { background: var(--ink-color); color: white; }
-        .btn-yes-secure:active { background: #333; }
-        
-        .input-secure {
-            width: 100%; padding: 12px; margin-top: 10px; border: var(--border-thick);
-            background: #fff; font-family: 'Space Mono', monospace; font-size: 1.1rem;
-            box-sizing: border-box; border-radius: 0; -webkit-appearance: none;
-        }
-        .input-secure:focus { background: #ffffd0; outline: none; }
-
-        .error-msg { color: white; background: var(--accent-red); margin-top: 20px; padding: 15px; border: var(--border-thick); font-weight: bold; }
-
-        /* --- CSS NỘI DUNG CHÍNH --- */
-        #main-content { display: none; } /* Ẩn mặc định */
+        /* --- CONTAINER CHÍNH --- */
         .container { max-width: 850px; margin: 40px auto; padding: 0 20px; }
 
-        header { text-align: center; margin-bottom: 50px; border-bottom: var(--border-thick); padding-bottom: 30px; }
-        header h1 { font-size: 2.2rem; text-transform: uppercase; letter-spacing: -2px; margin-bottom: 10px; line-height: 1.2; }
-        header p { background: var(--ink-color); color: white; display: inline-block; padding: 5px 10px; font-weight: bold; font-size: 0.9rem; }
+        header {
+            text-align: center; margin-bottom: 50px;
+            border-bottom: var(--border-thick); padding-bottom: 30px;
+        }
+        header h1 {
+            font-size: 2.2rem; text-transform: uppercase; letter-spacing: -2px; margin-bottom: 10px;
+            line-height: 1.2;
+        }
+        header p { 
+            background: var(--ink-color); color: white; display: inline-block; 
+            padding: 5px 10px; font-weight: bold; font-size: 0.9rem; 
+        }
 
+        /* --- KHỐI THÔNG TIN (PHASE) --- */
         .phase-block {
-            background: var(--paper-color); border: var(--border-thick);
-            padding: 25px; margin-bottom: 40px; box-shadow: var(--shadow-hard);
-            position: relative; transition: transform 0.2s;
+            background: var(--paper-color);
+            border: var(--border-thick);
+            padding: 25px; margin-bottom: 40px;
+            box-shadow: var(--shadow-hard);
+            position: relative;
+            transition: transform 0.2s;
         }
         .phase-block:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0px #000; }
 
@@ -96,18 +64,27 @@
             text-transform: uppercase; font-size: 0.9rem;
         }
 
+        /* MÀU SẮC TỪNG GIAI ĐOẠN */
         .phase-win { border-color: var(--ink-color); }
         .phase-win .phase-label { background: var(--accent-blue); color: white; }
+        
         .phase-google { border-color: var(--accent-red); }
         .phase-google .phase-label { background: var(--accent-red); color: white; }
+        
         .phase-coccoc { border-color: var(--accent-green); }
         .phase-coccoc .phase-label { background: var(--accent-green); color: black; }
 
+        /* CHI TIẾT BÊN TRONG */
         .info-panel {
-            border: var(--border-thin); background: #f8f8f8; padding: 15px;
-            margin-top: 15px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;
+            border: var(--border-thin); background: #f8f8f8;
+            padding: 15px; margin-top: 15px;
+            display: flex; align-items: center; gap: 15px; flex-wrap: wrap;
         }
-        .user-avatar { width: 60px; height: 60px; border: var(--border-thick); object-fit: cover; filter: grayscale(100%); }
+
+        .user-avatar {
+            width: 60px; height: 60px; border: var(--border-thick);
+            object-fit: cover; filter: grayscale(100%);
+        }
         
         .data-field {
             margin-bottom: 15px; border-left: 5px solid var(--ink-color);
@@ -122,8 +99,9 @@
         .data-input:focus { outline: none; background: #ffffd0; }
 
         .warning-box {
-            border: 2px dashed var(--accent-red); background: #fff5f5;
-            padding: 15px; margin-top: 20px; font-size: 0.9rem;
+            border: 2px dashed var(--accent-red);
+            background: #fff5f5; padding: 15px; margin-top: 20px;
+            font-size: 0.9rem;
         }
 
         .footer {
@@ -134,175 +112,78 @@
 </head>
 <body>
 
-    <div id="security-overlay">
-        <div id="screen-1" class="login-box">
-            <div class="icon-bounce">⚠️</div>
-            <h2>XÁC THỰC DANH TÍNH</h2>
-            <p>Hệ thống yêu cầu xác nhận.</p>
-            <p style="font-weight: bold; margin: 20px 0; font-size: 1.1rem; background: #000; color: #fff; padding: 10px;">BẠN CÓ PHẢI LÀ [ DƯƠNG ] ?</p>
-            
-            <button type="button" class="btn-secure" onclick="clickNo()">KHÔNG PHẢI</button>
-            <button type="button" class="btn-secure btn-yes-secure" onclick="clickYes()">ĐÚNG, LÀ TÔI</button>
-        </div>
+    <div class="container">
+        <header>
+            <h1>QUY TRÌNH ĐĂNG NHẬP</h1>
+            <p>MÁY CHỦ: DELL LATITUDE 5491 // USER: NGUYEN-BAC-SON</p>
+        </header>
 
-        <div id="screen-deny" class="login-box" style="display: none;">
-             <div class="icon-bounce" style="animation: none;">⛔</div>
-             <h2>TỪ CHỐI TRUY CẬP</h2>
-             <p class="error-msg">BẠN KHÔNG CÓ QUYỀN!</p>
-             <button type="button" class="btn-secure" onclick="clickRetry()">TÔI BẤM NHẦM (THỬ LẠI)</button>
-        </div>
+        <div class="phase-block phase-win">
+            <span class="phase-label">GIAI ĐOẠN 01</span>
+            <h3>KHỞI ĐỘNG WINDOWS</h3>
+            <p>Xác định tài khoản quản trị viên (Admin):</p>
 
-        <div id="screen-2" class="login-box" style="display: none;">
-            <div class="icon-bounce">🔐</div>
-            <h2>NHẬP DỮ LIỆU GỐC</h2>
-            
-            <div style="text-align: left; margin-top: 20px;">
-                <label style="font-weight: bold;">► NGÀY SINH (DOB):</label>
-                <input type="date" id="input-dob" class="input-secure">
-            </div>
-
-            <div style="text-align: left; margin-top: 15px;">
-                <label style="font-weight: bold;">► SỐ ĐIỆN THOẠI:</label>
-                <input type="number" id="input-phone" class="input-secure" placeholder="0xxxxxxxxx">
-            </div>
-
-            <button type="button" class="btn-secure btn-yes-secure" style="margin-top:25px;" onclick="checkLogin()">>> GIẢI MÃ & TRUY CẬP</button>
-            
-            <p id="msg-error" class="error-msg" style="display: none;">❌ DỮ LIỆU KHÔNG KHỚP</p>
-            <button type="button" class="btn-secure" style="font-size: 0.8rem; padding: 10px; margin-top: 10px;" onclick="clickBack()">< QUAY LẠI</button>
-        </div>
-    </div>
-
-    <div id="main-content">
-        <div class="container">
-            <header>
-                <h1>QUY TRÌNH ĐĂNG NHẬP</h1>
-                <p>MÁY CHỦ: DELL LATITUDE 5491 // USER: NGUYEN-BAC-SON</p>
-            </header>
-
-            <div class="phase-block phase-win">
-                <span class="phase-label">GIAI ĐOẠN 01</span>
-                <h3>KHỞI ĐỘNG WINDOWS</h3>
-                <p>Xác định tài khoản quản trị viên (Admin):</p>
-
-                <div class="info-panel">
-                    <img src="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Son+Nguyen&background=000&color=fff'">
-                    <div>
-                        <div style="font-weight: 900; font-size: 1.1rem;">NGUYỄN BẮC SƠN</div>
-                        <div style="margin-top: 5px;">MÃ PIN: <span style="background: var(--ink-color); color: #fff; padding: 2px 6px; font-weight: bold;">04022007</span></div>
-                    </div>
-                </div>
-                <div style="margin-top: 10px; font-size: 0.85rem; color: #666;">*Lưu ý: Bỏ qua tài khoản phụ.</div>
-            </div>
-
-            <div class="phase-block phase-google">
-                <span class="phase-label">GIAI ĐOẠN 02 (CRITICAL)</span>
-                <h3 style="color: var(--accent-red);">XÁC THỰC GOOGLE</h3>
-                <p>Thông tin đăng nhập bắt buộc:</p>
-
-                <div style="background: #fff; border: 2px solid #000; padding: 20px; margin-top: 15px;">
-                    <div class="data-field">
-                        <label class="data-label">EMAIL ĐĂNG NHẬP:</label>
-                        <input type="text" class="data-input" value="bacson20062007@gmail.com" readonly onclick="this.select()">
-                    </div>
-                    
-                    <div class="data-field" style="margin-bottom: 0;">
-                        <label class="data-label">MẬT KHẨU (PASSWORD):</label>
-                        <input type="text" class="data-input" value="@Son2007" readonly onclick="this.select()">
-                    </div>
-                </div>
-
-                <div class="warning-box">
-                    <strong>⚠️ CẢNH BÁO BẢO MẬT:</strong>
-                    <ul style="padding-left: 20px; margin-bottom: 0;">
-                        <li>Mật khẩu máy tính (nếu hỏi): <strong>04022007</strong></li>
-                        <li>Dùng app <strong>Google Authenticator</strong> để lấy mã 2FA.</li>
-                        <li>Tuyệt đối không chia sẻ thông tin này ra ngoài.</li>
-                    </ul>
+            <div class="info-panel">
+                <img src="https://nguyenbacson.io.vn/nguyen-bac-son-cover.png" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Son+Nguyen&background=000&color=fff'">
+                <div>
+                    <div style="font-weight: 900; font-size: 1.1rem;">NGUYỄN BẮC SƠN</div>
+                    <div style="margin-top: 5px;">MÃ PIN: <span style="background: var(--ink-color); color: #fff; padding: 2px 6px; font-weight: bold;">04022007</span></div>
                 </div>
             </div>
+            <div style="margin-top: 10px; font-size: 0.85rem; color: #666;">*Lưu ý: Bỏ qua tài khoản phụ.</div>
+        </div>
 
-            <div class="phase-block phase-coccoc">
-                <span class="phase-label">GIAI ĐOẠN 03</span>
-                <h3>TRÌNH DUYỆT CỐC CỐC</h3>
+        <div class="phase-block phase-google">
+            <span class="phase-label">GIAI ĐOẠN 02 (CRITICAL)</span>
+            <h3 style="color: var(--accent-red);">XÁC THỰC GOOGLE</h3>
+            <p>Thông tin đăng nhập bắt buộc:</p>
+
+            <div style="background: #fff; border: 2px solid #000; padding: 20px; margin-top: 15px;">
+                <div class="data-field">
+                    <label class="data-label">EMAIL ĐĂNG NHẬP:</label>
+                    <input type="text" class="data-input" value="bacson20062007@gmail.com" readonly onclick="this.select()">
+                </div>
                 
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: #e6fffa; padding: 10px; border: 1px solid var(--accent-green);">
-                    <img src="https://img-cache.coccoc.com/image2?i=2&l=30/329005927" width="30">
-                    <span>Tìm icon <strong>Làn sóng xanh</strong>.</span>
+                <div class="data-field" style="margin-bottom: 0;">
+                    <label class="data-label">MẬT KHẨU (PASSWORD):</label>
+                    <input type="text" class="data-input" value="@Son2007" readonly onclick="this.select()">
                 </div>
-
-                <p><strong>HÌNH ẢNH MÀN HÌNH KHÓA (THAM KHẢO):</strong></p>
-                <div style="border: 2px solid #000; padding: 5px; background: #fff; margin-bottom: 20px;">
-                    <img src="https://nguyenbacson.io.vn/unlock-laptop" 
-                         style="width: 100%; display: block;" 
-                         onerror="this.src='https://via.placeholder.com/800x400/000000/ffffff?text=IMG_ERROR_UNLOCK_LAPTOP'"
-                         alt="Ảnh màn hình khóa laptop">
-                </div>
-                <p><strong>KHU VỰC SIDEBAR (THANH BÊN TRÁI):</strong></p>
-                <div style="border: 2px solid #000; padding: 5px; background: #fff;">
-                    <img src="https://nguyenbacson.io.vn/giao-dien-trang-chu-coc-coc.png" 
-                         style="width: 100%; display: block;" 
-                         onerror="this.src='https://via.placeholder.com/800x400/000000/ffffff?text=IMG_ERROR_LOADING'"
-                         alt="Giao diện Cốc Cốc">
-                </div>
-                <p style="margin-top: 10px; font-size: 0.9rem;">>> Di chuột vào các icon để xem chức năng. Không click bừa bãi.</p>
             </div>
 
-            <div class="footer">
-                SYSTEM V10.0 (SECURE) // DESIGNED BY NGUYEN BAC SON<br>
-                PROTECTED BY CLOUDFLARE AI & GOOGLE TRUST
+            <div class="warning-box">
+                <strong>⚠️ CẢNH BÁO BẢO MẬT:</strong>
+                <ul style="padding-left: 20px; margin-bottom: 0;">
+                    <li>Mật khẩu máy tính (nếu hỏi): <strong>04022007</strong></li>
+                    <li>Dùng app <strong>Google Authenticator</strong> để lấy mã 2FA.</li>
+                    <li>Tuyệt đối không chia sẻ thông tin này ra ngoài.</li>
+                </ul>
             </div>
+        </div>
+
+        <div class="phase-block phase-coccoc">
+            <span class="phase-label">GIAI ĐOẠN 03</span>
+            <h3>TRÌNH DUYỆT CỐC CỐC</h3>
+            
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: #e6fffa; padding: 10px; border: 1px solid var(--accent-green);">
+                <img src="https://img-cache.coccoc.com/image2?i=2&l=30/329005927" width="30">
+                <span>Tìm icon <strong>Làn sóng xanh</strong>.</span>
+            </div>
+
+            <p><strong>KHU VỰC SIDEBAR (THANH BÊN TRÁI):</strong></p>
+            <div style="border: 2px solid #000; padding: 5px; background: #fff;">
+                <img src="https://nguyenbacson.io.vn/giao-dien-trang-chu-coc-coc.png" 
+                     style="width: 100%; display: block;" 
+                     onerror="this.src='https://via.placeholder.com/800x400/000000/ffffff?text=IMG_ERROR_LOADING'"
+                     alt="Giao diện Cốc Cốc">
+            </div>
+            <p style="margin-top: 10px; font-size: 0.9rem;">>> Di chuột vào các icon để xem chức năng. Không click bừa bãi.</p>
+        </div>
+
+        <div class="footer">
+            SYSTEM V9.0 (NO-AUTH) // DESIGNED BY NGUYEN BAC SON<br>
+            PROTECTED BY CLOUDFLARE AI & GOOGLE TRUST
         </div>
     </div>
 
-    <script>
-        // --- CẤU HÌNH BẢO MẬT ---
-        const DATA_DOB = "2007-03-01";
-        const DATA_PHONE = "0879546673";
-        const STORAGE_KEY = "device_unlocked_v10_secure"; // Key mới để bắt buộc đăng nhập lại
-
-        // Kiểm tra lịch sử
-        if(localStorage.getItem(STORAGE_KEY) === "true") {
-            document.getElementById('security-overlay').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-        }
-
-        // --- HÀM XỬ LÝ ---
-        function clickNo() {
-            document.getElementById('screen-1').style.display = 'none';
-            document.getElementById('screen-deny').style.display = 'block';
-        }
-        function clickRetry() {
-            document.getElementById('screen-deny').style.display = 'none';
-            document.getElementById('screen-1').style.display = 'block';
-        }
-        function clickYes() {
-            document.getElementById('screen-1').style.display = 'none';
-            document.getElementById('screen-2').style.display = 'block';
-        }
-        function clickBack() {
-            document.getElementById('screen-2').style.display = 'none';
-            document.getElementById('screen-1').style.display = 'block';
-            document.getElementById('msg-error').style.display = 'none';
-        }
-        function checkLogin() {
-            const dob = document.getElementById('input-dob').value;
-            const phone = document.getElementById('input-phone').value;
-            if (dob === DATA_DOB && phone === DATA_PHONE) {
-                localStorage.setItem(STORAGE_KEY, "true");
-                document.getElementById('security-overlay').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-            } else {
-                const err = document.getElementById('msg-error');
-                err.style.display = 'block';
-                // Rung lắc
-                const box = document.getElementById('screen-2');
-                box.style.transform = "translateX(10px)";
-                setTimeout(() => box.style.transform = "translateX(-10px)", 50);
-                setTimeout(() => box.style.transform = "translateX(10px)", 100);
-                setTimeout(() => box.style.transform = "translateX(0)", 150);
-            }
-        }
-    </script>
 </body>
 </html>
