@@ -3,27 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HPBD & HPNY - Optimized</title>
+    <title>Chúc Mừng Sinh Nhật & Năm Mới (Premium)</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&display=swap');
+        /* Import font chữ sang trọng kiểu điện ảnh */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300&display=swap');
 
         body {
             margin: 0;
             overflow: hidden;
-            background: #000;
-            font-family: 'Montserrat', sans-serif;
-            color: white;
-        }
-
-        /* Nền tối nhẹ nhàng hơn để đỡ ngốn GPU */
-        .bg-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, #1a0b1a 0%, #000 100%);
-            z-index: -1;
+            background: #050505;
+            font-family: 'Cinzel', serif; /* Font chữ sang trọng */
+            color: #d4af37; /* Màu vàng Gold */
         }
 
         canvas {
@@ -45,80 +35,105 @@
             z-index: 10;
         }
 
+        /* Nút bấm phong cách tối giản, sang trọng */
         .btn {
             pointer-events: auto;
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.5);
-            padding: 15px 30px;
-            font-size: 18px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #d4af37; /* Gold Text */
+            border: 1px solid #d4af37;
+            padding: 15px 50px;
+            font-size: 16px;
             cursor: pointer;
-            border-radius: 30px;
-            transition: 0.3s;
-            backdrop-filter: blur(4px);
-            margin-top: 20px;
-            display: none;
+            transition: all 0.5s ease;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 4px; /* Giãn chữ tạo cảm giác thoáng đạt */
+            font-family: 'Cinzel', serif;
+            margin-top: 30px;
+            display: none;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+            position: relative;
+            overflow: hidden;
         }
 
+        /* Hiệu ứng hover nút */
         .btn:hover {
-            background: #fff;
+            background: #d4af37;
             color: #000;
-            box-shadow: 0 0 20px rgba(255,255,255,0.8);
+            box-shadow: 0 0 30px #d4af37;
+        }
+
+        /* Gợi ý bấm phím Space */
+        .hint {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         #start-btn { display: block; }
 
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
         #countdown-display {
-            font-size: 15vw; /* Responsive size */
-            font-weight: 900;
-            text-shadow: 0 0 30px #ff00de;
+            font-size: 150px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px #d4af37, 0 0 80px #ff0055;
             display: none;
-            opacity: 0.8;
         }
-        
-        #hidden-youtube { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+        #hidden-youtube { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;}
     </style>
 </head>
 <body>
 
-    <div class="bg-layer"></div>
     <canvas id="mainCanvas"></canvas>
     
     <div id="ui-layer">
-        <button id="start-btn" class="btn">Bắt Đầu</button>
+        <div style="text-align: center;">
+            <button id="start-btn" class="btn">BẮT ĐẦU</button>
+            <div id="hint-text" class="hint" style="display:block">Hoặc nhấn phím CÁCH (Space)</div>
+        </div>
+
         <div id="countdown-display">10</div>
-        <button id="next-phase-btn" class="btn">Tiếp Tục</button>
-        <button id="final-btn" class="btn">Xem Flycam</button>
+
+        <button id="next-phase-btn" class="btn">TIẾP TỤC</button>
+        <button id="final-btn" class="btn">KÍCH HOẠT DRONE</button>
     </div>
 
-    <div id="hidden-youtube">
-        <div id="player"></div>
-    </div>
+    <div id="hidden-youtube"><div id="player"></div></div>
 
     <script>
-        // --- CẤU HÌNH ---
-        const NAME = "Trương Thị Dương";
-        const BIRTHDAY = "01/03/2007";
-        const MOBILE_SCALE = window.innerWidth < 768 ? 0.6 : 1; // Giảm tải cho mobile
-        
+        // --- CẤU HÌNH NỘI DUNG ---
+        const CONFIG = {
+            NAME: "Trương Thị Dương",
+            BIRTHDAY: "01/03/2007",
+            COLORS: {
+                GOLD: '#FFD700',
+                SILVER: '#C0C0C0',
+                RED: '#FF0055',
+                CYAN: '#00FFFF'
+            }
+        };
+
         // --- YOUTUBE API ---
         var player;
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
                 height: '100', width: '100', videoId: 'Og25tNifNSs',
-                playerVars: { 'playsinline': 1, 'controls': 0, 'loop': 1 },
+                playerVars: { 'playsinline': 1, 'controls': 0, 'loop': 1 }
             });
         }
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        document.head.appendChild(tag);
 
-        // --- CORE LOGIC ---
+        // --- CORE SYSTEM ---
         const canvas = document.getElementById('mainCanvas');
-        const ctx = canvas.getContext('2d', { alpha: false }); // Tối ưu render
+        const ctx = canvas.getContext('2d'); // Bỏ alpha:false để dùng blending mode
         let width, height;
 
         function resize() {
@@ -128,53 +143,79 @@
         window.addEventListener('resize', resize);
         resize();
 
+        // Variables
         let state = "IDLE"; 
         let fireworks = [];
         let particles = [];
         let drones = [];
-
-        // UI Controls
+        
+        // DOM Elements
         const startBtn = document.getElementById('start-btn');
         const nextBtn = document.getElementById('next-phase-btn');
         const finalBtn = document.getElementById('final-btn');
         const countDisplay = document.getElementById('countdown-display');
+        const hintText = document.getElementById('hint-text');
 
-        startBtn.onclick = () => {
-            startBtn.style.display = 'none';
-            if(player && typeof player.playVideo === 'function') player.playVideo();
-            state = "FIREWORKS";
-            launchFireworksPeriod(10000, () => {
-                state = "WAITING_1";
-                nextBtn.style.display = 'block';
-            });
-        };
+        // --- CONTROLLER (Spacebar & Click) ---
+        function triggerAction() {
+            if (state === "IDLE") {
+                state = "FIREWORKS";
+                startBtn.style.display = 'none';
+                hintText.style.display = 'none';
+                if(player && player.playVideo) player.playVideo();
+                
+                // Giai đoạn 1: Pháo hoa
+                launchFireworksPeriod(10000, () => {
+                    state = "WAITING_1";
+                    nextBtn.style.display = 'block';
+                    hintText.style.display = 'block'; // Hiện lại gợi ý
+                });
+            } 
+            else if (state === "WAITING_1") {
+                state = "COUNTDOWN";
+                nextBtn.style.display = 'none';
+                hintText.style.display = 'none';
+                
+                // Giai đoạn 2: Đếm ngược
+                countDisplay.style.display = 'block';
+                let c = 10;
+                countDisplay.innerText = c;
+                let t = setInterval(() => {
+                    c--;
+                    if (c > 0) {
+                        countDisplay.innerText = c;
+                        createFirework(width/2 + (Math.random()-0.5)*400, height/2, true);
+                    } else {
+                        clearInterval(t);
+                        countDisplay.style.display = 'none';
+                        state = "WAITING_2";
+                        finalBtn.style.display = 'block';
+                        hintText.style.display = 'block';
+                    }
+                }, 1000);
+            } 
+            else if (state === "WAITING_2") {
+                state = "DRONE";
+                finalBtn.style.display = 'none';
+                hintText.style.display = 'none';
+                startDroneSequence();
+            }
+        }
 
-        nextBtn.onclick = () => {
-            nextBtn.style.display = 'none';
-            state = "COUNTDOWN";
-            countDisplay.style.display = 'block';
-            let c = 10;
-            countDisplay.innerText = c;
-            
-            let t = setInterval(() => {
-                c--;
-                if(c > 0) {
-                    countDisplay.innerText = c;
-                    // Bắn pháo hoa nhẹ khi đếm
-                    createFirework(Math.random()*width, height/2, true); 
-                } else {
-                    clearInterval(t);
-                    countDisplay.style.display = 'none';
-                    state = "WAITING_2";
-                    finalBtn.style.display = 'block';
-                }
-            }, 1000);
-        };
+        // Gán sự kiện click
+        startBtn.onclick = triggerAction;
+        nextBtn.onclick = triggerAction;
+        finalBtn.onclick = triggerAction;
 
-        finalBtn.onclick = () => {
-            finalBtn.style.display = 'none';
-            startDroneSequence();
-        };
+        // Gán sự kiện phím SPACE
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault(); // Chặn cuộn trang
+                triggerAction();
+            }
+        });
+
+        // --- LOGIC EFFECTS ---
 
         function launchFireworksPeriod(duration, callback) {
             let start = Date.now();
@@ -183,113 +224,129 @@
                     clearInterval(interval);
                     if(callback) callback();
                 }
-                if(Math.random() < 0.1) createFirework(); // Giảm tần suất bắn để đỡ lag
-            }, 100); // 100ms bắn 1 lần
+                // Bắn pháo hoa ngẫu nhiên
+                if(Math.random() < 0.08) createFirework(); 
+            }, 50);
         }
 
-        // --- OPTIMIZED DRONE SYSTEM ---
+        function createFirework(x, y, isSpecial = false) {
+            let targetY = y || height * 0.2 + Math.random() * (height * 0.4);
+            let colors = [CONFIG.COLORS.GOLD, CONFIG.COLORS.RED, CONFIG.COLORS.CYAN, '#fff'];
+            
+            fireworks.push({
+                x: x || Math.random() * width,
+                y: height,
+                ty: targetY,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                exploded: false,
+                speed: 8 + Math.random() * 4
+            });
+        }
+
+        // --- DRONE SYSTEM (PREMIUM) ---
         function startDroneSequence() {
-            state = "DRONE";
-            // Tạo số lượng drone vừa phải (khoảng 600-800 thay vì 1500)
-            let droneCount = window.innerWidth < 768 ? 400 : 700;
+            // Số lượng drone (nhiều hơn để tạo độ sáng)
+            let droneCount = window.innerWidth < 768 ? 600 : 1200;
             
             for(let i=0; i<droneCount; i++) {
                 drones.push({
                     x: Math.random() * width,
-                    y: height + 100, // Dưới màn hình
-                    tx: Math.random() * width, // Target X
+                    y: height + 200,
+                    tx: Math.random() * width,
                     ty: Math.random() * height,
-                    color: '#fff',
-                    speed: 0.03 + Math.random() * 0.02
+                    z: Math.random() * 2, // Giả lập độ sâu
+                    color: CONFIG.COLORS.GOLD,
+                    baseColor: CONFIG.COLORS.GOLD,
+                    speed: 0.02 + Math.random() * 0.03,
+                    size: 1 + Math.random() * 2 // Kích thước hạt khác nhau
                 });
             }
 
-            // Timeline Kịch bản
+            // Kịch bản hiển thị
             const sequence = [
-                { t: 1000, txt: "CHÚC MỪNG" },
-                { t: 5000, txt: "NĂM MỚI 2026" },
-                { t: 9000, shp: "HEART" },
-                { t: 14000, txt: "CHÚC MỪNG" },
-                { t: 18000, txt: "SINH NHẬT" },
-                { t: 22000, txt: BIRTHDAY },
-                { t: 26000, txt: NAME },
-                { t: 32000, action: "FREE" }
+                { t: 1000, txt: "HAPPY", color: CONFIG.COLORS.RED },
+                { t: 4000, txt: "NEW YEAR", color: CONFIG.COLORS.GOLD },
+                { t: 8000, txt: "2026", color: CONFIG.COLORS.CYAN },
+                { t: 12000, shp: "HEART", color: CONFIG.COLORS.RED },
+                { t: 17000, txt: "HAPPY", color: CONFIG.COLORS.RED },
+                { t: 20000, txt: "BIRTHDAY", color: CONFIG.COLORS.GOLD },
+                { t: 24000, txt: CONFIG.BIRTHDAY, color: '#fff' },
+                { t: 29000, txt: CONFIG.NAME, color: CONFIG.COLORS.GOLD }, // Tên nhân vật chính
+                { t: 35000, action: "FREE" } // Bay tự do
             ];
 
             sequence.forEach(s => {
                 setTimeout(() => {
-                    if(s.txt) formText(s.txt);
-                    if(s.shp) formShape(s.shp);
+                    if(s.txt) formText(s.txt, s.color);
+                    if(s.shp) formShape(s.shp, s.color);
                     if(s.action) scatterDrones();
                 }, s.t);
             });
         }
 
-        // Kỹ thuật Offscreen Canvas nhỏ để quét chữ nhanh hơn
-        function formText(text) {
-            const size = 150; // Kích thước canvas ảo nhỏ thôi để quét cho nhanh
-            const scale = width / size; 
+        function formText(text, color) {
+            // Canvas ảo để quét chữ
+            const fontSize = 100;
             const offCv = document.createElement('canvas');
-            offCv.width = size;
-            offCv.height = Math.floor(size * (height/width));
+            offCv.width = 300; // Độ phân giải quét thấp để nhanh
+            offCv.height = 150;
             const ctxOff = offCv.getContext('2d');
             
-            ctxOff.font = '900 30px Arial'; // Font dày dễ đọc
+            ctxOff.font = `bold ${fontSize}px "Cinzel"`; // Dùng font sang trọng
             ctxOff.textAlign = 'center';
             ctxOff.textBaseline = 'middle';
             ctxOff.fillStyle = '#fff';
             ctxOff.fillText(text, offCv.width/2, offCv.height/2);
 
-            // Quét pixel
             const data = ctxOff.getImageData(0,0, offCv.width, offCv.height).data;
             let points = [];
-            for(let y=0; y<offCv.height; y+=2) { // Nhảy bước 2 pixel
+            
+            // Quét pixel
+            for(let y=0; y<offCv.height; y+=2) {
                 for(let x=0; x<offCv.width; x+=2) {
                     if(data[(y*offCv.width + x)*4 + 3] > 128) {
-                        points.push({
-                            x: x * scale + (Math.random()*10), 
-                            y: y * scale + (Math.random()*10)
-                        });
+                        // Map to screen
+                        let screenX = (x / offCv.width) * width * 0.8 + width * 0.1;
+                        let screenY = (y / offCv.height) * height * 0.6 + height * 0.2;
+                        points.push({x: screenX, y: screenY});
                     }
                 }
             }
 
-            // Gán vị trí cho drone
-            assignTargets(points, getRainbowColor());
+            assignTargets(points, color);
         }
 
-        function formShape(type) {
+        function formShape(type, color) {
             let points = [];
             const cx = width/2, cy = height/2;
-            const r = Math.min(width, height) * 0.3;
-            
-            if(type === "HEART") {
-                for(let i=0; i<drones.length; i++) {
-                    let t = (i/drones.length) * Math.PI * 2;
+            const scale = Math.min(width, height) * 0.025;
+
+            if (type === "HEART") {
+                for (let i = 0; i < 400; i++) { // Số lượng điểm tạo hình tim
+                    let t = (i / 400) * Math.PI * 2;
                     let x = 16 * Math.pow(Math.sin(t), 3);
-                    let y = -(13 * Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
-                    points.push({ x: cx + x*(r/20), y: cy + y*(r/20) });
+                    let y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                    points.push({ x: cx + x * scale * 15, y: cy + y * scale * 15 });
                 }
             }
-            assignTargets(points, '#ff0055');
+            assignTargets(points, color);
         }
 
         function assignTargets(points, color) {
-            // Shuffle mảng drone để bay ngẫu nhiên đẹp hơn
             drones.sort(() => Math.random() - 0.5);
-            
             drones.forEach((d, i) => {
-                if(i < points.length) {
+                if (i < points.length) {
                     d.tx = points[i].x;
                     d.ty = points[i].y;
-                    d.color = color;
+                    d.baseColor = color;
+                    d.speed = 0.04 + Math.random() * 0.02; // Bay nhanh hơn chút
                 } else {
-                    // Drone thừa thì bay quanh tâm
+                    // Drone thừa bay vòng ngoài tạo background lung linh
                     let angle = Math.random() * Math.PI * 2;
-                    let rad = Math.min(width, height) * 0.4;
+                    let rad = Math.min(width, height) * 0.6;
                     d.tx = width/2 + Math.cos(angle) * rad;
                     d.ty = height/2 + Math.sin(angle) * rad;
-                    d.color = '#333'; // Làm mờ drone thừa
+                    d.baseColor = '#333';
                 }
             });
         }
@@ -298,94 +355,104 @@
             drones.forEach(d => {
                 d.tx = Math.random() * width;
                 d.ty = Math.random() * height;
+                d.baseColor = d.color; // Reset màu
             });
         }
 
-        function getRainbowColor() {
-            const colors = ['#00ffff', '#ff00ff', '#ffff00', '#00ff00', '#ffffff'];
-            return colors[Math.floor(Math.random()*colors.length)];
-        }
+        // --- RENDER LOOP ---
+        function animate() {
+            requestAnimationFrame(animate);
 
-        // --- PHYSICS & DRAWING ---
-        function createFirework(x, y, isSpecial = false) {
-            // Giới hạn số lượng hạt
-            if(fireworks.length > 5) return; 
-            
-            fireworks.push({
-                x: x || Math.random() * width,
-                y: height,
-                ty: y || Math.random() * height/2,
-                color: getRainbowColor(),
-                exploded: false
-            });
-        }
+            // 1. Hiệu ứng làm mờ đuôi (Light Trails)
+            // Màu đen có độ trong suốt thấp tạo vệt dài sang trọng
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.25)'; 
+            ctx.fillRect(0, 0, width, height);
 
-        function loop() {
-            requestAnimationFrame(loop);
-            
-            // Xóa màn hình nhưng giữ lại vệt mờ (Trail)
-            // Thay vì dùng fillRect alpha (nặng), dùng globalCompositeOperation nếu cần
-            ctx.fillStyle = 'rgba(0,0,0,0.2)'; 
-            ctx.fillRect(0,0,width,height);
+            // BẬT CHẾ ĐỘ HOÀ TRỘN ÁNH SÁNG (QUAN TRỌNG ĐỂ SÁNG HƠN)
+            ctx.globalCompositeOperation = 'lighter';
 
-            // 1. Pháo hoa
-            if(state === "FIREWORKS" || state === "COUNTDOWN") {
-                for(let i = fireworks.length - 1; i >= 0; i--) {
-                    let fw = fireworks[i];
-                    if(!fw.exploded) {
-                        fw.y += (fw.ty - fw.y) * 0.05;
-                        ctx.fillStyle = fw.color;
-                        ctx.fillRect(fw.x, fw.y, 3, 3); // Dùng rect nhanh hơn arc
-                        if(Math.abs(fw.y - fw.ty) < 5) {
-                            fw.exploded = true;
-                            // Tạo hạt nổ (giảm số lượng hạt xuống 30 thay vì 100)
-                            for(let j=0; j<30; j++) {
-                                let angle = Math.random() * Math.PI * 2;
-                                let speed = Math.random() * 5;
-                                particles.push({
-                                    x: fw.x, y: fw.y,
-                                    vx: Math.cos(angle)*speed,
-                                    vy: Math.sin(angle)*speed,
-                                    color: fw.color,
-                                    life: 1
-                                });
-                            }
+            // Xử lý Pháo hoa
+            fireworks.forEach((fw, i) => {
+                if (!fw.exploded) {
+                    fw.y -= fw.speed;
+                    ctx.fillStyle = fw.color;
+                    ctx.beginPath();
+                    ctx.arc(fw.x, fw.y, 2, 0, Math.PI*2);
+                    ctx.fill();
+                    if (fw.y <= fw.ty) {
+                        fw.exploded = true;
+                        // Nổ ra các hạt
+                        for(let j=0; j<60; j++) {
+                            let a = Math.random() * Math.PI * 2;
+                            let v = Math.random() * 6;
+                            particles.push({
+                                x: fw.x, y: fw.y,
+                                vx: Math.cos(a)*v, vy: Math.sin(a)*v,
+                                color: fw.color, life: 1.5, decay: 0.01 + Math.random()*0.02
+                            });
                         }
-                    } else {
-                        fireworks.splice(i, 1);
                     }
+                } else {
+                    fireworks.splice(i, 1);
                 }
-            }
+            });
 
-            // 2. Hạt nổ
-            for(let i = particles.length - 1; i >= 0; i--) {
+            // Xử lý Hạt nổ (Sparkles)
+            for (let i = particles.length - 1; i >= 0; i--) {
                 let p = particles[i];
                 p.x += p.vx;
                 p.y += p.vy;
-                p.vy += 0.05; // Gravity
-                p.life -= 0.02;
-                if(p.life <= 0) particles.splice(i, 1);
-                else {
-                    ctx.globalAlpha = p.life;
+                p.vy += 0.08; // Trọng lực
+                p.life -= p.decay;
+                
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                } else {
                     ctx.fillStyle = p.color;
-                    ctx.fillRect(p.x, p.y, 2, 2);
-                    ctx.globalAlpha = 1;
+                    ctx.globalAlpha = p.life;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2);
+                    ctx.fill();
                 }
             }
+            ctx.globalAlpha = 1; // Reset alpha
 
-            // 3. Drone
-            if(state === "DRONE") {
+            // Xử lý Drone
+            if (state === "DRONE" || state.includes("WAITING")) { // Có thể hiện drone làm nền
                 drones.forEach(d => {
+                    // Di chuyển tới đích
                     d.x += (d.tx - d.x) * d.speed;
                     d.y += (d.ty - d.y) * d.speed;
+
+                    // Rung động nhẹ tạo cảm giác đang bay giữ vị trí
+                    let hoverX = Math.sin(Date.now() * 0.005 + d.z) * 1;
+                    let hoverY = Math.cos(Date.now() * 0.003 + d.z) * 1;
+
+                    // Vẽ Drone sáng rực
+                    ctx.fillStyle = d.baseColor;
                     
-                    ctx.fillStyle = d.color;
-                    // Vẽ hình vuông nhỏ thay vì hình tròn để tối ưu
-                    ctx.fillRect(d.x, d.y, 2, 2); 
+                    // Vẽ tâm sáng
+                    ctx.beginPath();
+                    ctx.arc(d.x + hoverX, d.y + hoverY, d.size, 0, Math.PI*2);
+                    ctx.fill();
+                    
+                    // Vẽ hào quang (nếu là drone chính tạo chữ)
+                    if(d.baseColor !== '#333') {
+                        ctx.beginPath();
+                        ctx.arc(d.x + hoverX, d.y + hoverY, d.size * 3, 0, Math.PI*2);
+                        ctx.fillStyle = d.baseColor;
+                        ctx.globalAlpha = 0.2; // Vòng sáng mờ bên ngoài
+                        ctx.fill();
+                        ctx.globalAlpha = 1;
+                    }
                 });
             }
+
+            // Tắt chế độ hoà trộn để vẽ UI bình thường nếu cần (nhưng UI nằm ở div riêng rồi)
+            ctx.globalCompositeOperation = 'source-over';
         }
-        loop();
+        animate();
+
     </script>
 </body>
 </html>
