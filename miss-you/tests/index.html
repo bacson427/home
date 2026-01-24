@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Party for Duong - V12 Superior</title>
+    <title>Party for Duong - V13 Optimized</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@800&family=Dancing+Script:wght@700&display=swap');
 
@@ -14,13 +14,13 @@
             background-color: #000;
         }
 
-        /* NỀN GALAXY CHUYỂN ĐỘNG */
+        /* NỀN GALAXY (Giữ nguyên vì bạn thích, nhưng tối ưu animation) */
         .galaxy-bg {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(125deg, #000000 0%, #1a0b2e 25%, #16213e 50%, #0f3460 75%, #000000 100%);
-            background-size: 400% 400%;
-            animation: gradientMove 15s ease infinite;
+            background: linear-gradient(125deg, #020005 0%, #0b0514 40%, #071a2e 70%, #000000 100%);
+            background-size: 300% 300%;
+            animation: gradientMove 20s ease infinite; /* Chậm lại để đỡ tốn GPU */
             z-index: 0;
         }
 
@@ -40,30 +40,29 @@
 
         .btn {
             pointer-events: auto;
-            background: rgba(255, 215, 0, 0.15);
+            background: rgba(255, 215, 0, 0.1);
             color: #d4af37; border: 2px solid #d4af37;
-            padding: 18px 60px; font-size: 22px;
-            cursor: wait; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-transform: uppercase; letter-spacing: 4px;
+            padding: 15px 50px; font-size: 20px;
+            cursor: wait; transition: all 0.3s;
+            text-transform: uppercase; letter-spacing: 3px;
             font-family: 'Cinzel', serif; font-weight: 900;
             margin-top: 30px; border-radius: 50px; opacity: 0.6;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
         }
 
-        .btn.ready { cursor: pointer; opacity: 1; border-color: #fff; color: #fff; background: rgba(212, 175, 55, 0.4); animation: pulseBtn 2s infinite; }
-        .btn.ready:hover { background: #fff; color: #000; box-shadow: 0 0 60px #fff; transform: scale(1.1); }
+        .btn.ready { cursor: pointer; opacity: 1; border-color: #fff; color: #fff; background: rgba(212, 175, 55, 0.3); animation: pulseBtn 2s infinite; }
+        .btn.ready:hover { background: #fff; color: #000; box-shadow: 0 0 40px #fff; transform: scale(1.05); }
 
-        @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
+        @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
 
         .hint { font-family: 'Montserrat', sans-serif; font-size: 12px; color: rgba(255, 255, 255, 0.5); margin-top: 15px; letter-spacing: 2px; text-transform: uppercase; }
-        #loading-text { margin-top: 15px; font-size: 14px; color: #d4af37; font-family: 'Montserrat', sans-serif; letter-spacing: 1px;}
+        #loading-text { margin-top: 15px; font-size: 14px; color: #d4af37; font-family: 'Montserrat', sans-serif; }
 
         #countdown-display {
             font-size: 20vw; font-weight: 900;
             background: linear-gradient(to bottom, #fff, #ffd700);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 50px rgba(255, 215, 0, 0.5));
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
             display: none; z-index: 101;
         }
 
@@ -76,8 +75,8 @@
     <canvas id="mainCanvas"></canvas>
     
     <div id="ui-layer">
-        <button id="start-btn" class="btn">LOADING...</button>
-        <div id="loading-text">Đang xử lý phông chữ siêu nét...</div>
+        <button id="start-btn" class="btn">ĐANG TẢI...</button>
+        <div id="loading-text">Đang tối ưu hóa đồ họa...</div>
         <div id="hint-text" class="hint" style="display:none">Nhấn Space hoặc Click để bắt đầu</div>
         <div id="countdown-display">10</div>
         <button id="next-phase-btn" class="btn ready" style="display:none">TIẾP TỤC</button>
@@ -99,6 +98,12 @@
             }
         };
 
+        // Kiểm tra thiết bị
+        const isMobile = window.innerWidth < 768;
+        // Nếu là mobile, giảm mật độ hạt đi nhiều hơn
+        const PIXEL_STEP = isMobile ? 5 : 3; 
+        const PARTICLE_SIZE = isMobile ? 3.5 : 3; 
+
         var player;
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
@@ -111,10 +116,9 @@
         document.head.appendChild(tag);
 
         const canvas = document.getElementById('mainCanvas');
-        const ctx = canvas.getContext('2d', { alpha: true });
+        const ctx = canvas.getContext('2d', { alpha: true }); // Alpha true để nền trong suốt
         let width, height;
         
-        // --- PRELOAD & READY ---
         document.fonts.ready.then(function () {
             const btn = document.getElementById('start-btn');
             const loadTxt = document.getElementById('loading-text');
@@ -130,7 +134,7 @@
         let state = "IDLE"; 
         let fireworks = [], particles = [], drones = [];
         let globalHue = 0;
-        let isFinale = false; // Biến kiểm tra màn cuối
+        let isFinale = false;
         
         const startBtn = document.getElementById('start-btn'), nextBtn = document.getElementById('next-phase-btn'), finalBtn = document.getElementById('final-btn'), countDisplay = document.getElementById('countdown-display'), hintText = document.getElementById('hint-text');
 
@@ -161,13 +165,13 @@
         nextBtn.onclick = finalBtn.onclick = triggerAction;
         document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); triggerAction(); } });
 
-        // --- FIREWORKS SYSTEM ---
+        // --- FIREWORKS ---
         function launchFireworksPeriod(duration, callback) {
             let start = Date.now();
             let interval = setInterval(() => {
                 if(Date.now() - start > duration) { clearInterval(interval); if(callback) callback(); }
-                if(Math.random() < 0.25) createFirework(); 
-            }, 50);
+                if(Math.random() < 0.2) createFirework(); // Giảm tần suất bắn để đỡ lag
+            }, 80);
         }
 
         function createFirework(x, y, shape = 'NORMAL') {
@@ -182,24 +186,23 @@
 
         function explodeFirework(fw) {
             fw.exploded = true;
-            let count = fw.shape === 'NORMAL' ? 40 : 100; // Giảm số lượng hạt để tối ưu
+            // GIẢM SỐ LƯỢNG HẠT PHÁO HOA ĐỂ TỐI ƯU
+            let count = fw.shape === 'NORMAL' ? 30 : 80; 
             for(let i=0; i<count; i++) {
                 let angle = (i/count) * Math.PI * 2, speed = Math.random() * 5 + 2, vx, vy;
                 if (fw.shape === 'HEART') { vx = (16 * Math.pow(Math.sin(angle), 3)); vy = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle)); speed = 0.15; }
                 else if (fw.shape === 'STAR') { let r = 10 * Math.pow(Math.cos(angle*2.5), 2) + 2; vx = r * Math.cos(angle); vy = r * Math.sin(angle); speed = 0.2; }
                 else { vx = Math.cos(angle); vy = Math.sin(angle); }
-                particles.push({ x: fw.x, y: fw.y, vx: vx * speed, vy: vy * speed, color: fw.color, life: 1.5, decay: 0.02, gravity: 0.08 });
+                particles.push({ x: fw.x, y: fw.y, vx: vx * speed, vy: vy * speed, color: fw.color, life: 1.2, decay: 0.02, gravity: 0.08 });
             }
         }
 
-        // --- DRONE SYSTEM (SUPERSAMPLING FIX) ---
+        // --- DRONE SYSTEM (OPTIMIZED) ---
         function createDrone(x, y) {
             return {
                 x: x || Math.random() * width, y: y || height + 100, tx: Math.random() * width, ty: Math.random() * height, 
                 z: Math.random(), baseHsl: {h:50, s:100, l:50}, colorMode: 'static', speed: 0.05 + Math.random() * 0.05, 
-                // Sử dụng hình vuông (fillRect) thay vì tròn để tối ưu hiệu năng
-                size: 2.5, 
-                oscillation: Math.random() * Math.PI * 2 // Pha dao động riêng
+                size: PARTICLE_SIZE 
             };
         }
 
@@ -209,7 +212,7 @@
                 { t: 3500, txt: "NĂM MỚI 2026", color: CONFIG.COLORS.GOLD, mode: 'shift' },
                 { t: 7000, txt: "BÍNH NGỌ", color: CONFIG.COLORS.CYAN, mode: 'static' },
                 { t: 10000, shp: "HEART", color: CONFIG.COLORS.RED, mode: 'shift' },
-                { t: 14000, txt: "XINH ĐẸP & HẠNH PHÚC", color: CONFIG.COLORS.WHITE, mode: 'glitter' }, // Chế độ lấp lánh
+                { t: 14000, txt: "XINH ĐẸP & HẠNH PHÚC", color: CONFIG.COLORS.WHITE, mode: 'glitter' },
                 { t: 19000, txt: "SINH NHẬT TUỔI 19", color: CONFIG.COLORS.GOLD, mode: 'shift' },
                 { t: 23000, txt: CONFIG.NAME, color: CONFIG.COLORS.PINK, font: 'Dancing Script', mode: 'rainbow' },
                 { t: 28000, txt: CONFIG.BIRTHDAY, color: CONFIG.COLORS.WHITE, mode: 'static' },
@@ -220,7 +223,7 @@
                 setTimeout(() => {
                     if(s.txt) formText(s.txt, s.color, s.font || 'Cinzel', s.mode);
                     if(s.shp) formShape(s.shp, s.color, s.mode);
-                    isFinale = !!s.isEnd; // Kích hoạt cờ bắn pháo hoa màn cuối
+                    isFinale = !!s.isEnd;
                 }, s.t);
             });
         }
@@ -229,12 +232,12 @@
             const offCv = document.createElement('canvas');
             const offCtx = offCv.getContext('2d');
             
-            // SUPERSAMPLING: Vẽ chữ cực to (300px) để bắt nét mảnh
-            const fontSize = 300; 
+            // Vẽ chữ to để bắt nét
+            const fontSize = 150; 
             offCtx.font = `900 ${fontSize}px "${fontName}"`; 
             const measure = offCtx.measureText(text);
             
-            offCv.width = Math.ceil(measure.width + 100);
+            offCv.width = Math.ceil(measure.width + 50);
             offCv.height = Math.ceil(fontSize * 1.5);
 
             offCtx.font = `900 ${fontSize}px "${fontName}"`;
@@ -242,19 +245,18 @@
             offCtx.fillStyle = '#fff';
             offCtx.fillText(text, offCv.width/2, offCv.height/2);
 
-            // Scale xuống màn hình
             const scale = Math.min(width * 0.9 / offCv.width, height * 0.6 / offCv.height);
             const startX = (width - offCv.width * scale) / 2;
             const startY = (height - offCv.height * scale) / 2;
 
             const data = offCtx.getImageData(0,0, offCv.width, offCv.height).data;
             let points = [];
-            // Quét bước nhảy 4 (vì chữ đã vẽ rất to nên bước nhảy 4 vẫn cực mịn)
-            let step = 4; 
+            
+            // TỐI ƯU HOÁ: Dùng PIXEL_STEP lớn để giảm số lượng hạt
+            let step = PIXEL_STEP; 
 
             for(let y=0; y<offCv.height; y+=step) {
                 for(let x=0; x<offCv.width; x+=step) {
-                    // Ngưỡng alpha > 100 để lọc nhiễu
                     if(data[(y*offCv.width + x)*4 + 3] > 100) {
                         points.push({ x: startX + x * scale, y: startY + y * scale });
                     }
@@ -265,9 +267,11 @@
 
         function formShape(type, hslColor, mode) {
             let points = [], cx = width/2, cy = height/2, size = Math.min(width, height) * 0.35; 
+            let count = isMobile ? 800 : 1500; // Giảm số lượng nếu là mobile
+            
             if (type === "HEART") {
-                for (let i = 0; i < 1500; i++) {
-                    let t = (i / 1500) * Math.PI * 2;
+                for (let i = 0; i < count; i++) {
+                    let t = (i / count) * Math.PI * 2;
                     let x = 16 * Math.pow(Math.sin(t), 3);
                     let y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
                     points.push({ x: cx + x * (size/18), y: cy + y * (size/18) });
@@ -277,9 +281,15 @@
         }
 
         function updateDrones(points, hslColor, mode) {
+            // Giới hạn số lượng drone tối đa để tránh crash trình duyệt
+            const MAX_DRONES = 2500; 
+            if(points.length > MAX_DRONES) {
+                // Nếu chữ quá nhiều điểm, tỉa bớt ngẫu nhiên
+                points = points.filter(() => Math.random() > 0.3);
+            }
+
             while(drones.length < points.length) drones.push(createDrone(width/2, height + 100));
             
-            // Ẩn drone thừa
             drones.forEach(d => { d.targetAlpha = 0; }); 
 
             points.forEach((p, i) => {
@@ -296,15 +306,16 @@
             }
         }
 
-        // --- RENDER LOOP ---
+        // --- RENDER LOOP (HIGH PERFORMANCE) ---
         function animate() {
             requestAnimationFrame(animate);
-            ctx.clearRect(0, 0, width, height); // Xóa sạch để nền CSS hiện rõ
+            // Dùng clearRect thay vì fillRect đè lên để nhanh hơn
+            ctx.clearRect(0, 0, width, height); 
             globalHue += 0.5;
 
-            // Xử lý Pháo hoa màn cuối (THE END)
-            if (isFinale && Math.random() < 0.1) {
-                createFirework(Math.random()*width, height*0.5); // Bắn pháo hoa loạn xạ
+            // Pháo hoa màn cuối (THE END)
+            if (isFinale && Math.random() < 0.05) { // Giảm tần suất bắn
+                createFirework(Math.random()*width, height*0.5); 
             }
 
             // Xử lý Pháo hoa thường
@@ -333,18 +344,18 @@
                     
                     let h = d.baseHsl.h, s = d.baseHsl.s, l = d.baseHsl.l;
                     
-                    // Hiệu ứng màu sắc
                     if (d.colorMode === 'shift') { h = h + Math.sin(globalHue * 0.05) * 20; } 
                     else if (d.colorMode === 'rainbow') { h = (d.x / width * 360 + globalHue * 2) % 360; }
-                    else if (d.colorMode === 'glitter') { if(Math.random() < 0.05) l = 100; } // Lấp lánh trắng
+                    else if (d.colorMode === 'glitter') { if(Math.random() < 0.05) l = 100; }
 
                     if (d.targetAlpha !== 0 || d.y < height) {
-                        // Hiệu ứng Rung động (Breathing)
-                        let wave = Math.sin(globalHue * 0.1 + d.oscillation) * 1.5;
-                        
+                        // Tối ưu: Dùng toạ độ số nguyên (Math.floor) để render nhanh hơn
+                        let finalX = Math.floor(d.x);
+                        let finalY = Math.floor(d.y);
+
                         ctx.fillStyle = `hsl(${h}, ${s}%, ${l}%)`;
-                        // Vẽ hình vuông thay vì tròn (Tối ưu FPS cực mạnh)
-                        ctx.fillRect(d.x + wave, d.y + wave, d.size, d.size);
+                        // Vẽ hình vuông thay vì tròn (nhanh hơn gấp đôi)
+                        ctx.fillRect(finalX, finalY, d.size, d.size);
                     }
                 });
             }
