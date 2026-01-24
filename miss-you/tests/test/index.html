@@ -8,57 +8,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@800&family=Dancing+Script:wght@700&display=swap');
 
         body {
-            margin: 0; overflow: hidden; background-color: #000;
-            font-family: 'Cinzel', serif; touch-action: none;
-            transition: background 2s ease;
-        }
-
-        /* Nền đỏ cho phần tâm thư */
-        body.message-active { background-color: #5c0000 !important; }
-        body.message-active .galaxy-bg, body.message-active canvas { opacity: 0; transition: opacity 2s; }
-
-        .galaxy-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
-            z-index: 0;
-        }
-
-        canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
-
-        #ui-layer {
-            position: absolute; width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center;
-            flex-direction: column; pointer-events: none; z-index: 100;
-        }
-
-        .btn {
-            pointer-events: auto; background: rgba(255, 255, 255, 0.05);
-            color: #d4af37; border: 1px solid rgba(212, 175, 55, 0.5);
-            padding: 15px 40px; font-size: 18px; cursor: pointer;
-            transition: all 0.5s; text-transform: uppercase; letter-spacing: 4px;
-            font-family: 'Cinzel', serif; font-weight: 900; border-radius: 30px; 
-            backdrop-filter: blur(4px);
-        }
-
-        /* Container cho Tâm thư */
-        #letter-container {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 85%; max-width: 700px; color: #fff; text-align: center;
-            z-index: 200; display: none; flex-direction: column;
-        }
-
-        #typewriter-text {
-            font-family: 'Montserrat', sans-serif; font-size: 1.2rem;
-            line-height: 1.8; color: #fdfdfd; margin-bottom: 30px;
-        }
-
-        .signature {
-            font-family: 'Dancing Script', cursive; font-size: 1.5rem;
-            color: #ffd700; opacity: 0; transition: opacity 2s;
-        }
-
-        #hidden-youtube { position: absolute; width: 0; height: 0; opacity: 0; }
-        body {
             margin: 0;
             overflow: hidden;
             background-color: #000;
@@ -118,6 +67,64 @@
 
         #countdown-display { display: none; }
         #hidden-youtube { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;}
+        
+        /* Style cho màn tâm tư */
+        #letter-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: #8B0000; /* Nền đỏ đậm */
+            color: white;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 200;
+            font-family: 'Arial', sans-serif;
+            padding: 40px;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+        
+        #letter-content {
+            max-width: 800px;
+            text-align: center;
+            font-size: 24px;
+            line-height: 1.6;
+            opacity: 0;
+        }
+        
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background-color: white;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        #letter-signature {
+            margin-top: 50px;
+            font-size: 22px;
+            font-family: 'Dancing Script', cursive;
+            opacity: 0;
+        }
+        
+        .fade-out {
+            animation: fadeOut 5s ease-in-out forwards;
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -132,7 +139,13 @@
         <div id="loading-text">LOADING...</div>
         <div id="hint-text" class="hint" style="display:none">Đang nạp pháo hoa tự động...</div>
         <button id="next-phase-btn" class="btn ready" style="display:none">LEST'S GO</button>
-        </div>
+    </div>
+
+    <!-- Thêm container cho bức thư tâm tư -->
+    <div id="letter-container">
+        <div id="letter-content"></div>
+        <div id="letter-signature"></div>
+    </div>
 
     <div id="hidden-youtube"><div id="player"></div></div>
 
@@ -167,6 +180,16 @@
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d', { alpha: true });
         let width, height;
+
+        // Thêm các biến cho màn tâm tư
+        const letterContainer = document.getElementById('letter-container');
+        const letterContent = document.getElementById('letter-content');
+        const letterSignature = document.getElementById('letter-signature');
+        let letterText = "Dương ơi, hôm nay là ngày 01/03/2026, cậu cũng tròn 19 tuổi. Tớ chúc cậu ngày càng xinh đẹp, học giỏi, đạt được kết quả cao trong học tập, sớm đạt được những ước mơ mà cậu đã từng mong ước. Tớ cũng xin lỗi, thời gian vừa qua đã làm cậu phải buồn, giận, chán ghét tớ. Thôi cũng đã qua năm mới tớ mong rằng cậu có thể không để bụng đến tính cách \" trẻ trâu \" của tớ. Tớ cảm ơn cậu!";
+        let letterIndex = 0;
+        let typingSpeed = 100; // 100ms = 0.1 giây mỗi ký tự (10 ký tự/giây)
+        let isTyping = false;
+        let typingInterval;
 
         document.fonts.ready.then(function () {
             const btn = document.getElementById('start-btn');
@@ -231,7 +254,7 @@
             }
         }
 
-        // --- TRANSITION SEQUENCE (MỚI) ---
+        // --- TRANSITION SEQUENCE ---
         function startTransitionSequence() {
             state = "TRANSITION";
             
@@ -265,7 +288,7 @@
             ctx.fillStyle = '#fff';
             ctx.shadowBlur = 40;
             ctx.shadowColor = '#FFD700';
-         ctx.fillText("WELCOME DƯƠNG", 0, 0);
+            ctx.fillText("WELCOME DƯƠNG", 0, 0);
             
             ctx.restore();
             ctx.globalAlpha = 1;
@@ -368,16 +391,84 @@
                 { t: 32000, txt: CONFIG.NAME, color: CONFIG.COLORS.PINK, font: 'Dancing Script', mode: 'rainbow' },
                 { t: 39000, txt: CONFIG.BIRTHDAY, color: CONFIG.COLORS.WHITE, mode: 'static' },
                 { t: 46000, txt: "👉XINH GÁI, GIỎI GIANG & THA TỘI CHO TỚ👈", color: CONFIG.COLORS.PINK, mode: 'glitter' },
-                { t: 53000, txt: "❤️ SINH NHẬT VUI VẺ NHÉ DƯƠNG 💕", color: CONFIG.COLORS.GOLD, isEnd: true, mode: 'rainbow' }
+                { t: 53000, txt: "❤️ SINH NHẬT VUI VẺ NHÉ DƯƠNG 💕", color: CONFIG.COLORS.GOLD, isEnd: true, mode: 'rainbow' },
+                // Thêm mục mới - bắt đầu màn tâm tư
+                { t: 60000, action: "startLetter", isLetter: true }
             ];
 
             sequence.forEach(s => {
                 setTimeout(() => {
                     if(s.txt) formText(s.txt, s.color, s.font || 'Cinzel', s.mode);
                     if(s.shp) formShape(s.shp, s.color, s.mode);
+                    if(s.action === "startLetter") startLetterSequence();
                     isFinale = !!s.isEnd;
                 }, s.t);
             });
+        }
+
+        // --- HÀM XỬ LÝ MÀN TÂM TƯ ---
+        function startLetterSequence() {
+            state = "LETTER";
+            
+            // Tắt drone show
+            drones = [];
+            fireworks = [];
+            particles = [];
+            
+            // Hiển thị container thư
+            letterContainer.style.display = 'flex';
+            
+            // Hiệu ứng fade in cho nền
+            setTimeout(() => {
+                letterContainer.style.opacity = '1';
+                
+                // Bắt đầu gõ chữ sau 1 giây
+                setTimeout(() => {
+                    startTyping();
+                }, 1000);
+            }, 100);
+        }
+
+        function startTyping() {
+            isTyping = true;
+            letterIndex = 0;
+            letterContent.innerHTML = '';
+            
+            typingInterval = setInterval(() => {
+                if (letterIndex < letterText.length) {
+                    // Thêm ký tự
+                    letterContent.innerHTML = letterText.substring(0, letterIndex + 1) + 
+                        '<span class="typing-cursor"></span>';
+                    letterIndex++;
+                    
+                    // Cuộn xuống để xem nội dung
+                    letterContent.scrollTop = letterContent.scrollHeight;
+                } else {
+                    // Kết thúc gõ chữ
+                    clearInterval(typingInterval);
+                    isTyping = false;
+                    
+                    // Xóa con trỏ nhấp nháy
+                    letterContent.innerHTML = letterText;
+                    
+                    // Hiển thị chữ ký sau 1 giây
+                    setTimeout(() => {
+                        letterSignature.innerHTML = "Người gửi: NGUYỄN BẮC SƠN<br>Người nhận: TRƯƠNG THỊ DƯƠNG";
+                        letterSignature.style.opacity = '1';
+                        
+                        // Bắt đầu mờ dần sau 5 phút (300000ms) - Đổi thành 30 giây để test
+                        setTimeout(() => {
+                            letterContainer.classList.add('fade-out');
+                            
+                            // Sau khi mờ xong, ẩn hoàn toàn
+                            setTimeout(() => {
+                                letterContainer.style.display = 'none';
+                                // Có thể thêm hiệu ứng tiếp theo ở đây nếu cần
+                            }, 5000); // 5 giây cho hiệu ứng fade out
+                        }, 30000); // Đợi 30 giây trước khi mờ (để test, đổi thành 300000 cho 5 phút)
+                    }, 1000);
+                }
+            }, typingSpeed);
         }
 
         function formText(text, hslColor, fontName, mode) {
@@ -442,11 +533,36 @@
             }
         }
 
-        document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); triggerAction(); } });
+        // Thêm sự kiện bấm dấu cách để chuyển mục
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (state === "LETTER" && isTyping) {
+                    // Nếu đang gõ chữ, bấm space để skip tới cuối
+                    clearInterval(typingInterval);
+                    letterContent.innerHTML = letterText;
+                    letterIndex = letterText.length;
+                    isTyping = false;
+                    
+                    // Hiển thị chữ ký ngay lập tức
+                    letterSignature.innerHTML = "Người gửi: NGUYỄN BẮC SƠN<br>Người nhận: TRƯƠNG THỊ DƯƠNG";
+                    letterSignature.style.opacity = '1';
+                } else {
+                    triggerAction();
+                }
+            }
+        });
+        
         nextBtn.onclick = triggerAction;
 
         function animate() {
             requestAnimationFrame(animate);
+            
+            // Nếu đang ở màn thư tâm tư, không vẽ canvas
+            if (state === "LETTER") {
+                return;
+            }
+            
             ctx.clearRect(0, 0, width, height); 
             globalHue += 0.5;
 
@@ -503,104 +619,6 @@
         const styleSheet = document.createElement("style");
         styleSheet.innerText = `.stars { box-shadow: ${boxShadowVal.slice(0,-2)}; }`;
         document.head.appendChild(styleSheet);
-        
-        animate();
-        // --- PHẦN 2: TÂM THƯ (VIẾT RIÊNG) ---
-        function startMessagePhase() {
-            state = "MESSAGE";
-            document.body.classList.add('message-active');
-            document.getElementById('hint-text').style.display = 'none';
-            document.getElementById('letter-container').style.display = 'flex';
-
-            const textEl = document.getElementById('typewriter-text');
-            const words = CONFIG.MESSAGE.split(" ");
-            let i = 0;
-
-            // Hiệu ứng đánh máy: 1.5 giây mỗi từ như bạn yêu cầu
-            let typewriter = setInterval(() => {
-                if (i < words.length) {
-                    textEl.innerText += words[i] + " ";
-                    i++;
-                    // Cuộn xuống nếu chữ quá dài trên mobile
-                    window.scrollTo(0, document.body.scrollHeight);
-                } else {
-                    clearInterval(typewriter);
-                    // Hiện chữ ký sau khi viết xong
-                    document.getElementById('sig-sender').style.opacity = "1";
-                    setTimeout(() => {
-                        document.getElementById('sig-receiver').style.opacity = "1";
-                    }, 2000);
-
-                    // Mờ dần sau 5 phút (300.000ms)
-                    setTimeout(() => {
-                        document.getElementById('letter-container').style.transition = "opacity 10s";
-                        document.getElementById('letter-container').style.opacity = "0";
-                    }, 300000);
-                }
-            }, 1200); // Tốc độ ~1.2s mỗi từ
-        }
-
-        // --- HÀM VẼ VÀ HIỆU ỨNG ---
-        function createFirework() {
-            fireworks.push({ x: Math.random()*width, y: height, ty: Math.random()*height*0.5, color: `hsl(${Math.random()*360}, 100%, 60%)`, exploded: false });
-        }
-
-        function startDroneSequence() {
-            // Giả lập drone show đơn giản để test transition
-            setTimeout(() => {
-                state = "FINISHED_DRONE";
-                document.getElementById('hint-text').innerText = "NHẤN DẤU CÁCH ĐỂ XEM TÂM TƯ";
-                document.getElementById('hint-text').style.display = 'block';
-            }, 5000); // Sau 5 giây drone show thì cho phép chuyển sang tâm thư
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-            ctx.fillRect(0, 0, width, height);
-
-            if (state === "COUNTDOWN" && countdownVal > 0) {
-                ctx.save();
-                ctx.translate(width/2, height/2);
-                countdownScale = Math.max(1, countdownScale - 0.1);
-                ctx.scale(countdownScale, countdownScale);
-                ctx.font = "bold 150px Cinzel";
-                ctx.fillStyle = "#ffd700";
-                ctx.textAlign = "center";
-                ctx.fillText(countdownVal, 0, 0);
-                ctx.restore();
-            }
-
-            // Vẽ shockwaves khi đếm ngược
-            shockwaves.forEach((sw, i) => {
-                sw.r += 10; sw.alpha -= 0.02;
-                if(sw.alpha <= 0) shockwaves.splice(i, 1);
-                ctx.beginPath(); ctx.arc(width/2, height/2, sw.r, 0, Math.PI*2);
-                ctx.strokeStyle = `rgba(255, 215, 0, ${sw.alpha})`; ctx.stroke();
-            });
-
-            // Vẽ pháo hoa
-            fireworks.forEach((fw, i) => {
-                if(!fw.exploded) {
-                    fw.y -= 6;
-                    ctx.fillStyle = fw.color; ctx.fillRect(fw.x, fw.y, 3, 3);
-                    if(fw.y <= fw.ty) {
-                        fw.exploded = true;
-                        for(let j=0; j<30; j++) particles.push({x: fw.x, y: fw.y, vx: Math.random()*4-2, vy: Math.random()*4-2, life: 1, color: fw.color});
-                    }
-                } else fireworks.splice(i, 1);
-            });
-
-            particles.forEach((p, i) => {
-                p.x += p.vx; p.y += p.vy; p.life -= 0.02;
-                if(p.life <= 0) particles.splice(i, 1);
-                ctx.fillStyle = p.color; ctx.globalAlpha = p.life; ctx.fillRect(p.x, p.y, 2, 2);
-            });
-            ctx.globalAlpha = 1;
-        }
-
-        document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); triggerAction(); } });
-        document.body.onclick = () => { if(isMobile) triggerAction(); };
         
         animate();
     </script>
