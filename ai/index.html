@@ -41,11 +41,10 @@
     </div>
 
     <script>
-        // =================================================================
-        // MÌNH ĐÃ ĐIỀN SẴN KEY CỦA SƠN VÀO ĐÂY RỒI (DỰA THEO ẢNH)
-        // =================================================================
-        const API_KEY = "AIzaSyDZyGCPBuQvTfx9pAj3IebJAEKqGbh6QJ4"; 
+      <script>
+        // QUAN TRỌNG: Đã xóa API Key ở đây. An toàn tuyệt đối!
         
+        // Vẫn giữ nguyên phần giới thiệu bản thân
         const TRAINING_DATA = 
             "HÃY ĐÓNG VAI LÀ: Nguyễn Bắc Sơn (Nam, sinh 04/02/2007). " +
             "QUÊ QUÁN: Hải Dương. HIỆN TẠI: Sống tại Hà Nội. " +
@@ -63,10 +62,12 @@
 
             if (!userText) return;
 
+            // 1. Hiển thị tin nhắn người dùng
             chatBox.innerHTML += `<div class="message user-msg">${userText}</div>`;
             inputField.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
 
+            // 2. Khóa nút gửi để tránh bấm nhiều lần
             sendBtn.disabled = true;
             sendBtn.innerText = "...";
             
@@ -75,34 +76,39 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                // TÊN MODEL CHUẨN XÁC: gemini-flash-latest
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`;
-                
-                const response = await fetch(url, {
+                // 3. GỌI VÀO SERVER CỦA CHÍNH MÌNH (Thay đổi quan trọng nhất)
+                // Nó sẽ tự tìm đến file api/chat.js Đại Ca vừa tạo
+                const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: TRAINING_DATA + ". Người dùng hỏi: " + userText }] }]
+                        userText: userText,
+                        history: TRAINING_DATA // Gửi kèm thông tin huấn luyện
                     })
                 });
 
                 const data = await response.json();
 
-                if (data.error) {
+                // 4. Xử lý lỗi hoặc hiển thị kết quả
+                if (!response.ok || data.error) {
                     let err = "Lỗi kết nối!";
-                    if (data.error.message.includes("API key")) err = "Key bị lỗi rồi Sơn ơi!";
-                    document.getElementById(loadingId).innerText = "❌ " + err + " (" + data.error.message + ")";
+                    if (data.error && data.error.message) err = data.error.message;
+                    document.getElementById(loadingId).innerText = "❌ " + err;
                     document.getElementById(loadingId).style.color = "#ff5555";
                 } else {
+                    // Lấy nội dung trả về từ Gemini
                     const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Em chưa hiểu ý Đại Ca...";
                     document.getElementById(loadingId).innerText = aiReply;
                 }
             } catch (error) {
                 document.getElementById(loadingId).innerText = "❌ Lỗi mạng: " + error.message;
             }
+            
+            // 5. Mở lại nút gửi
             sendBtn.disabled = false;
             sendBtn.innerText = "Gửi";
         }
+    </script>
     </script>
 </body>
 </html>
