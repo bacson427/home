@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HPBD & HPNY (V19 Cinematic Fast)</title>
+    <title>HPBD & HPNY (V20 Auto Show)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@800&family=Dancing+Script:wght@700&display=swap');
 
@@ -78,11 +78,10 @@
     
     <div id="ui-layer">
         <button id="start-btn" class="btn">LOADING...</button>
-        <div id="loading-text">Đang tối ưu hóa trải nghiệm...</div>
+        <div id="loading-text">Đang nạp pháo hoa tự động...</div>
         <div id="hint-text" class="hint" style="display:none">Nhấn Space hoặc Chạm để bắt đầu</div>
         <button id="next-phase-btn" class="btn ready" style="display:none">TIẾP TỤC</button>
-        <button id="final-btn" class="btn ready" style="display:none">XEM FLYCAM</button>
-    </div>
+        </div>
 
     <div id="hidden-youtube"><div id="player"></div></div>
 
@@ -135,14 +134,17 @@
         let globalHue = 0;
         let isFinale = false;
         
-        // Biến cho hiệu ứng đếm ngược Cinematic
         let countdownVal = 10;
-        let countdownScale = 5; // Bắt đầu zoom từ 5x
+        let countdownScale = 5; 
         let countdownAlpha = 0;
         let shockwaves = [];
         let countdownTimer = null;
+        
+        // Biến cho màn chuyển cảnh
+        let transitionAlpha = 0;
+        let transitionTextScale = 0.5;
 
-        const startBtn = document.getElementById('start-btn'), nextBtn = document.getElementById('next-phase-btn'), finalBtn = document.getElementById('final-btn'), hintText = document.getElementById('hint-text');
+        const startBtn = document.getElementById('start-btn'), nextBtn = document.getElementById('next-phase-btn'), hintText = document.getElementById('hint-text');
 
         function triggerAction() {
             if(!startBtn.classList.contains('ready') && state === "IDLE") return;
@@ -159,39 +161,69 @@
                 state = "COUNTDOWN";
                 nextBtn.style.display = hintText.style.display = 'none';
                 countdownVal = 10;
-                resetCinematicNumber(); // Khởi tạo số 10
+                resetCinematicNumber(); 
 
                 if(countdownTimer) clearInterval(countdownTimer);
                 countdownTimer = setInterval(() => {
                     countdownVal--;
                     if (countdownVal > 0) { 
-                        resetCinematicNumber(); // Reset hiệu ứng zoom cho số mới
-                        
-                        // Hiệu ứng phụ trợ
+                        resetCinematicNumber();
                         if(countdownVal % 2 == 0) createShapedFirework();
-                        // Bắn pháo hoa nền
                         for(let i=0; i<3; i++) createFirework(Math.random()*width, height*0.4 + Math.random()*height*0.3);
                     } 
                     else { 
+                        // HẾT ĐẾM NGƯỢC -> CHUYỂN SANG MÀN TRANSITION
                         clearInterval(countdownTimer); 
-                        state = "WAITING_2"; 
-                        finalBtn.style.display = hintText.style.display = 'block'; 
-                        hintText.innerText = "Kích hoạt Flycam"; 
+                        startTransitionSequence();
                     }
                 }, 1200);
-            } else if (state === "WAITING_2") {
-                state = "DRONE"; finalBtn.style.display = hintText.style.display = 'none'; startDroneSequence();
             }
         }
 
-        nextBtn.onclick = finalBtn.onclick = triggerAction;
-        document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); triggerAction(); } });
+        // --- TRANSITION SEQUENCE (MỚI) ---
+        function startTransitionSequence() {
+            state = "TRANSITION";
+            
+            // 1. Bắn pháo hoa dồn dập trong 3 giây
+            let barrage = setInterval(() => {
+                createFirework(Math.random()*width, height*0.5);
+                createFirework(Math.random()*width, height*0.7);
+            }, 100);
 
-        // --- CINEMATIC COUNTDOWN LOGIC (LIGHTWEIGHT) ---
+            // 2. Sau 4 giây thì dừng pháo hoa và vào Drone Show
+            setTimeout(() => {
+                clearInterval(barrage);
+                state = "DRONE";
+                startDroneSequence();
+            }, 4000);
+        }
+
+        function renderTransitionText() {
+            // Hiện chữ "BẮT ĐẦU" từ từ
+            if(transitionAlpha < 1) transitionAlpha += 0.02;
+            if(transitionTextScale < 1.2) transitionTextScale += 0.005;
+
+            ctx.save();
+            ctx.translate(width/2, height/2);
+            ctx.scale(transitionTextScale, transitionTextScale);
+            
+            ctx.globalAlpha = transitionAlpha;
+            ctx.font = '900 100px "Cinzel"';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#fff';
+            ctx.shadowBlur = 40;
+            ctx.shadowColor = '#FFD700';
+            ctx.fillText("BẮT ĐẦU", 0, 0);
+            
+            ctx.restore();
+            ctx.globalAlpha = 1;
+        }
+
+        // --- CINEMATIC COUNTDOWN ---
         function resetCinematicNumber() {
-            countdownScale = 4.0; // Bắt đầu zoom từ to
+            countdownScale = 4.0; 
             countdownAlpha = 1.0;
-            // Tạo sóng xung kích
             shockwaves.push({ r: 0, alpha: 1, speed: 10 });
         }
 
@@ -199,7 +231,6 @@
             const cx = width / 2;
             const cy = height / 2;
 
-            // Xử lý sóng xung kích (Shockwaves)
             ctx.lineWidth = 5;
             for(let i = shockwaves.length - 1; i >= 0; i--) {
                 let sw = shockwaves[i];
@@ -215,44 +246,32 @@
                 }
             }
 
-            // Xử lý số đếm (Zoom effect)
             if(countdownVal > 0) {
-                // Lerp scale về 1
                 countdownScale += (1 - countdownScale) * 0.1;
-                
                 ctx.save();
                 ctx.translate(cx, cy);
                 ctx.scale(countdownScale, countdownScale);
-                
-                // Vẽ số
                 ctx.font = '900 150px "Cinzel"';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                
-                // Hiệu ứng bóng đổ hào quang
                 ctx.shadowBlur = 30;
                 ctx.shadowColor = '#d4af37';
-                
-                // Gradient vàng kim loại
                 let gradient = ctx.createLinearGradient(0, -100, 0, 100);
                 gradient.addColorStop(0, '#fff');
                 gradient.addColorStop(0.5, '#ffd700');
                 gradient.addColorStop(1, '#ff8c00');
-                
                 ctx.fillStyle = gradient;
                 ctx.fillText(countdownVal, 0, 0);
-                
                 ctx.restore();
             }
         }
-
 
         // --- FIREWORKS ---
         function launchFireworksPeriod(duration, callback) {
             let start = Date.now();
             let interval = setInterval(() => {
                 if(Date.now() - start > duration) { clearInterval(interval); if(callback) callback(); }
-                if(Math.random() < 0.5) createFirework(); // Bắn khá dày
+                if(Math.random() < 0.5) createFirework();
             }, 100);
         }
 
@@ -268,7 +287,7 @@
 
         function explodeFirework(fw) {
             fw.exploded = true;
-            let count = fw.shape === 'NORMAL' ? 30 : 60; // Số lượng hạt vừa phải
+            let count = fw.shape === 'NORMAL' ? 30 : 60;
             for(let i=0; i<count; i++) {
                 let angle = (i/count) * Math.PI * 2, speed = Math.random() * 3 + 1, vx, vy;
                 if (fw.shape === 'HEART') { vx = (16 * Math.pow(Math.sin(angle), 3)); vy = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle)); speed = 0.1; }
@@ -290,15 +309,15 @@
 
         function startDroneSequence() {
             const sequence = [
-                { t: 500, txt: "CHÚC MỪNG", color: CONFIG.COLORS.RED, mode: 'shift' },
-                { t: 6500, txt: "NĂM MỚI 2026", color: CONFIG.COLORS.GOLD, mode: 'shift' },
-                { t: 12500, txt: "BÍNH NGỌ", color: CONFIG.COLORS.CYAN, mode: 'static' },
-                { t: 18500, shp: "HEART", color: CONFIG.COLORS.RED, mode: 'shift' },
-                { t: 24500, txt: "XINH ĐẸP & HẠNH PHÚC", color: CONFIG.COLORS.WHITE, mode: 'glitter' },
-                { t: 31500, txt: "SINH NHẬT TUỔI 19", color: CONFIG.COLORS.GOLD, mode: 'shift' },
-                { t: 38500, txt: CONFIG.NAME, color: CONFIG.COLORS.PINK, font: 'Dancing Script', mode: 'rainbow' },
-                { t: 45500, txt: CONFIG.BIRTHDAY, color: CONFIG.COLORS.WHITE, mode: 'static' },
-                { t: 52500, txt: "THE END", color: CONFIG.COLORS.GOLD, isEnd: true, mode: 'rainbow' }
+                { t: 1000, txt: "CHÚC MỪNG", color: CONFIG.COLORS.RED, mode: 'shift' }, // Delay 1s sau khi bắt đầu
+                { t: 7000, txt: "NĂM MỚI 2026", color: CONFIG.COLORS.GOLD, mode: 'shift' },
+                { t: 13000, txt: "BÍNH NGỌ", color: CONFIG.COLORS.CYAN, mode: 'static' },
+                { t: 19000, shp: "HEART", color: CONFIG.COLORS.RED, mode: 'shift' },
+                { t: 25000, txt: "XINH ĐẸP & HẠNH PHÚC", color: CONFIG.COLORS.WHITE, mode: 'glitter' },
+                { t: 32000, txt: "SINH NHẬT TUỔI 19", color: CONFIG.COLORS.GOLD, mode: 'shift' },
+                { t: 39000, txt: CONFIG.NAME, color: CONFIG.COLORS.PINK, font: 'Dancing Script', mode: 'rainbow' },
+                { t: 46000, txt: CONFIG.BIRTHDAY, color: CONFIG.COLORS.WHITE, mode: 'static' },
+                { t: 53000, txt: "THE END", color: CONFIG.COLORS.GOLD, isEnd: true, mode: 'rainbow' }
             ];
 
             sequence.forEach(s => {
@@ -372,14 +391,20 @@
             }
         }
 
+        document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); triggerAction(); } });
+        nextBtn.onclick = triggerAction;
+
         function animate() {
             requestAnimationFrame(animate);
             ctx.clearRect(0, 0, width, height); 
             globalHue += 0.5;
 
-            // Render Cinematic Countdown
             if (state === "COUNTDOWN") {
                 renderCinematicCountdown();
+            }
+
+            if (state === "TRANSITION") {
+                renderTransitionText();
             }
 
             if (isFinale && Math.random() < 0.05) { createFirework(Math.random()*width, height*0.5); }
