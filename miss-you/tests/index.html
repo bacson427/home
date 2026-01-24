@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HPBD & HPNY (V18 Stable 3D)</title>
+    <title>HPBD & HPNY (V19 Cinematic Fast)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@800&family=Dancing+Script:wght@700&display=swap');
 
@@ -65,7 +65,7 @@
         .hint { font-family: 'Montserrat', sans-serif; font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 20px; letter-spacing: 2px; text-transform: uppercase; }
         #loading-text { margin-top: 15px; font-size: 12px; color: #d4af37; font-family: 'Montserrat', sans-serif; }
 
-        #countdown-display { display: none; } /* Ẩn div cũ */
+        #countdown-display { display: none; }
         #hidden-youtube { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;}
     </style>
 </head>
@@ -78,7 +78,7 @@
     
     <div id="ui-layer">
         <button id="start-btn" class="btn">LOADING...</button>
-        <div id="loading-text">Đang tối ưu hệ thống 3D...</div>
+        <div id="loading-text">Đang tối ưu hóa trải nghiệm...</div>
         <div id="hint-text" class="hint" style="display:none">Nhấn Space hoặc Chạm để bắt đầu</div>
         <button id="next-phase-btn" class="btn ready" style="display:none">TIẾP TỤC</button>
         <button id="final-btn" class="btn ready" style="display:none">XEM FLYCAM</button>
@@ -101,8 +101,7 @@
 
         const isMobile = window.innerWidth < 768;
         const PARTICLE_SIZE = isMobile ? 3 : 2.5;
-        // Tăng bước nhảy quét lên 5 để giảm tải (fix lag)
-        const SCAN_STEP = isMobile ? 5 : 4; 
+        const SCAN_STEP = isMobile ? 4 : 3;
 
         var player;
         function onYouTubeIframeAPIReady() {
@@ -133,11 +132,14 @@
 
         let state = "IDLE"; 
         let fireworks = [], particles = [], drones = [];
-        let countdown3DParticles = [];
         let globalHue = 0;
         let isFinale = false;
+        
+        // Biến cho hiệu ứng đếm ngược Cinematic
         let countdownVal = 10;
-        let countdownRotation = 0;
+        let countdownScale = 5; // Bắt đầu zoom từ 5x
+        let countdownAlpha = 0;
+        let shockwaves = [];
         let countdownTimer = null;
 
         const startBtn = document.getElementById('start-btn'), nextBtn = document.getElementById('next-phase-btn'), finalBtn = document.getElementById('final-btn'), hintText = document.getElementById('hint-text');
@@ -157,25 +159,24 @@
                 state = "COUNTDOWN";
                 nextBtn.style.display = hintText.style.display = 'none';
                 countdownVal = 10;
-                init3DNumber(countdownVal);
+                resetCinematicNumber(); // Khởi tạo số 10
 
                 if(countdownTimer) clearInterval(countdownTimer);
                 countdownTimer = setInterval(() => {
                     countdownVal--;
                     if (countdownVal > 0) { 
-                        explode3DNumber();
-                        setTimeout(() => { if(state === "COUNTDOWN") init3DNumber(countdownVal); }, 200);
+                        resetCinematicNumber(); // Reset hiệu ứng zoom cho số mới
                         
+                        // Hiệu ứng phụ trợ
                         if(countdownVal % 2 == 0) createShapedFirework();
-                        // Giảm số lượng pháo hoa phụ để tập trung tài nguyên cho 3D
-                        if(Math.random() < 0.5) createFirework(Math.random()*width, height*0.3);
+                        // Bắn pháo hoa nền
+                        for(let i=0; i<3; i++) createFirework(Math.random()*width, height*0.4 + Math.random()*height*0.3);
                     } 
                     else { 
                         clearInterval(countdownTimer); 
                         state = "WAITING_2"; 
                         finalBtn.style.display = hintText.style.display = 'block'; 
                         hintText.innerText = "Kích hoạt Flycam"; 
-                        countdown3DParticles = []; 
                     }
                 }, 1200);
             } else if (state === "WAITING_2") {
@@ -186,106 +187,72 @@
         nextBtn.onclick = finalBtn.onclick = triggerAction;
         document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); triggerAction(); } });
 
-        // --- OPTIMIZED 3D COUNTDOWN ---
-        function init3DNumber(num) {
-            countdown3DParticles = [];
-            const text = num.toString();
-            const offCv = document.createElement('canvas');
-            const offCtx = offCv.getContext('2d');
-            const fontSize = 200;
-            offCtx.font = `900 ${fontSize}px "Cinzel"`;
-            const measure = offCtx.measureText(text);
-            offCv.width = Math.ceil(measure.width + 20); offCv.height = Math.ceil(fontSize * 1.5);
-            offCtx.font = `900 ${fontSize}px "Cinzel"`;
-            offCtx.textAlign = 'center'; offCtx.textBaseline = 'middle';
-            offCtx.fillStyle = '#fff';
-            offCtx.fillText(text, offCv.width/2, offCv.height/2);
-            
-            const data = offCtx.getImageData(0,0, offCv.width, offCv.height).data;
-            // Dùng bước nhảy SCAN_STEP đã cấu hình (lớn hơn bản cũ)
-            const step = SCAN_STEP; 
-            
-            for(let y=0; y<offCv.height; y+=step) {
-                for(let x=0; x<offCv.width; x+=step) {
-                    if(data[(y*offCv.width + x)*4 + 3] > 100) {
-                        // FIX LAG: Thay vì tạo vòng lặp Z, chỉ tạo 1 hạt có Z ngẫu nhiên
-                        // Điều này giảm số lượng hạt đi 5 lần -> Hết lag
-                        let randomZ = (Math.random() - 0.5) * 40; 
-                        
-                        countdown3DParticles.push({
-                            x: (x - offCv.width/2) * 2,
-                            y: (y - offCv.height/2) * 2,
-                            z: randomZ,
-                            ox: (x - offCv.width/2) * 2,
-                            oy: (y - offCv.height/2) * 2,
-                            oz: randomZ,
-                            color: CONFIG.COLORS.GOLD,
-                            size: 2.5
-                        });
-                    }
+        // --- CINEMATIC COUNTDOWN LOGIC (LIGHTWEIGHT) ---
+        function resetCinematicNumber() {
+            countdownScale = 4.0; // Bắt đầu zoom từ to
+            countdownAlpha = 1.0;
+            // Tạo sóng xung kích
+            shockwaves.push({ r: 0, alpha: 1, speed: 10 });
+        }
+
+        function renderCinematicCountdown() {
+            const cx = width / 2;
+            const cy = height / 2;
+
+            // Xử lý sóng xung kích (Shockwaves)
+            ctx.lineWidth = 5;
+            for(let i = shockwaves.length - 1; i >= 0; i--) {
+                let sw = shockwaves[i];
+                sw.r += sw.speed;
+                sw.alpha -= 0.02;
+                if(sw.alpha <= 0) {
+                    shockwaves.splice(i, 1);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, sw.r, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(255, 215, 0, ${sw.alpha})`;
+                    ctx.stroke();
                 }
+            }
+
+            // Xử lý số đếm (Zoom effect)
+            if(countdownVal > 0) {
+                // Lerp scale về 1
+                countdownScale += (1 - countdownScale) * 0.1;
+                
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.scale(countdownScale, countdownScale);
+                
+                // Vẽ số
+                ctx.font = '900 150px "Cinzel"';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // Hiệu ứng bóng đổ hào quang
+                ctx.shadowBlur = 30;
+                ctx.shadowColor = '#d4af37';
+                
+                // Gradient vàng kim loại
+                let gradient = ctx.createLinearGradient(0, -100, 0, 100);
+                gradient.addColorStop(0, '#fff');
+                gradient.addColorStop(0.5, '#ffd700');
+                gradient.addColorStop(1, '#ff8c00');
+                
+                ctx.fillStyle = gradient;
+                ctx.fillText(countdownVal, 0, 0);
+                
+                ctx.restore();
             }
         }
 
-        function explode3DNumber() {
-            countdown3DParticles.forEach(p => {
-                p.vx = (Math.random()-0.5) * 30;
-                p.vy = (Math.random()-0.5) * 30;
-                p.vz = (Math.random()-0.5) * 30;
-                p.exploding = true;
-            });
-        }
-
-        function render3DCountdown() {
-            if(countdown3DParticles.length === 0) return;
-            const cx = width/2;
-            const cy = height/2;
-            countdownRotation += 0.03;
-
-            // FIX LAG: Bỏ dòng sort (sắp xếp) gây nặng máy
-            // countdown3DParticles.sort(...) -> DELETE
-
-            ctx.save();
-            ctx.translate(cx, cy);
-
-            countdown3DParticles.forEach((p) => {
-                if(p.exploding) {
-                    p.ox += p.vx; p.oy += p.vy; p.oz += p.vz;
-                    p.vx *= 0.95; p.vy *= 0.95; p.vz *= 0.95;
-                }
-
-                let x1 = p.ox * Math.cos(countdownRotation) - p.oz * Math.sin(countdownRotation);
-                let z1 = p.oz * Math.cos(countdownRotation) + p.ox * Math.sin(countdownRotation);
-                let y1 = p.oy;
-
-                let scale = 400 / (400 + z1);
-                let x2d = x1 * scale;
-                let y2d = y1 * scale;
-                
-                if(scale > 0) {
-                    // Dùng fillRect thay vì arc để tối ưu
-                    ctx.fillStyle = `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${scale})`;
-                    let s = p.size * scale;
-                    ctx.fillRect(x2d - s/2, y2d - s/2, s, s);
-                }
-            });
-            
-            // Vẽ vòng hào quang đơn giản hơn
-            ctx.strokeStyle = 'rgba(212, 175, 55, 0.5)';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 160 * Math.cos(countdownRotation*0.5), 160, countdownRotation, 0, Math.PI*2);
-            ctx.stroke();
-
-            ctx.restore();
-        }
 
         // --- FIREWORKS ---
         function launchFireworksPeriod(duration, callback) {
             let start = Date.now();
             let interval = setInterval(() => {
                 if(Date.now() - start > duration) { clearInterval(interval); if(callback) callback(); }
-                if(Math.random() < 0.3) createFirework(); 
+                if(Math.random() < 0.5) createFirework(); // Bắn khá dày
             }, 100);
         }
 
@@ -301,7 +268,7 @@
 
         function explodeFirework(fw) {
             fw.exploded = true;
-            let count = fw.shape === 'NORMAL' ? 40 : 80;
+            let count = fw.shape === 'NORMAL' ? 30 : 60; // Số lượng hạt vừa phải
             for(let i=0; i<count; i++) {
                 let angle = (i/count) * Math.PI * 2, speed = Math.random() * 3 + 1, vx, vy;
                 if (fw.shape === 'HEART') { vx = (16 * Math.pow(Math.sin(angle), 3)); vy = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle)); speed = 0.1; }
@@ -410,8 +377,9 @@
             ctx.clearRect(0, 0, width, height); 
             globalHue += 0.5;
 
+            // Render Cinematic Countdown
             if (state === "COUNTDOWN") {
-                render3DCountdown();
+                renderCinematicCountdown();
             }
 
             if (isFinale && Math.random() < 0.05) { createFirework(Math.random()*width, height*0.5); }
