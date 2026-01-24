@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chúc Mừng Sinh Nhật & Năm Mới (V4 Auto-Fit)</title>
+    <title>Chúc Mừng Sinh Nhật & Năm Mới (Final Fix V5)</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400&display=swap');
 
         body {
             margin: 0;
@@ -72,7 +72,7 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         #countdown-display {
-            font-size: 12vw; /* Kích thước chữ theo màn hình */
+            font-size: 12vw;
             font-weight: 700;
             color: #fff;
             text-shadow: 0 0 20px #d4af37;
@@ -226,10 +226,11 @@
             });
         }
 
-        // --- ADVANCED DRONE TEXT SYSTEM (AUTO-FIT) ---
+        // --- ADVANCED DRONE TEXT SYSTEM (HIGH DENSITY FIX) ---
         function startDroneSequence() {
-            // Tăng lượng drone lên để hình rõ hơn
-            let droneCount = window.innerWidth < 768 ? 700 : 1500;
+            // Tăng số lượng drone lên đáng kể để phủ kín chữ
+            // Laptop: 2500 drone, Mobile: 1200 drone
+            let droneCount = window.innerWidth < 768 ? 1200 : 2500;
             
             for(let i=0; i<droneCount; i++) {
                 drones.push({
@@ -267,28 +268,23 @@
         }
 
         function formText(text, color) {
-            // 1. Tạo Canvas ảo để đo kích thước chữ
             const offCv = document.createElement('canvas');
             const offCtx = offCv.getContext('2d');
             
-            // Set font to measure
+            // Dùng font Cinzel Bold để nét dày hơn
             const fontSize = 100;
-            offCtx.font = `bold ${fontSize}px "Cinzel"`;
+            offCtx.font = `700 ${fontSize}px "Cinzel"`; 
             const measure = offCtx.measureText(text);
             
-            // Resize canvas vừa khít chữ
             offCv.width = Math.ceil(measure.width + 20);
             offCv.height = Math.ceil(fontSize * 1.5);
 
-            // Vẽ chữ lên canvas ảo
-            offCtx.font = `bold ${fontSize}px "Cinzel"`;
+            offCtx.font = `700 ${fontSize}px "Cinzel"`;
             offCtx.textAlign = 'center';
             offCtx.textBaseline = 'middle';
             offCtx.fillStyle = '#fff';
             offCtx.fillText(text, offCv.width/2, offCv.height/2);
 
-            // 2. Tính toán tỷ lệ Scale để fit vào màn hình chính
-            // Quy ước: Chữ không được rộng quá 85% màn hình và cao quá 40% màn hình
             const maxW = width * 0.85;
             const maxH = height * 0.4;
             const scale = Math.min(maxW / offCv.width, maxH / offCv.height);
@@ -296,17 +292,16 @@
             const startX = (width - offCv.width * scale) / 2;
             const startY = (height - offCv.height * scale) / 2;
 
-            // 3. Quét pixel và map sang toạ độ màn hình
             const data = offCtx.getImageData(0,0, offCv.width, offCv.height).data;
             let points = [];
             
-            // Bước nhảy quét (giảm tải CPU)
-            let step = 2; 
-            if(offCv.width * scale > width) step = 4; // Nếu chữ quá to thì quét thưa hơn
+            // *** QUAN TRỌNG: Giảm bước nhảy xuống 1 để quét từng pixel ***
+            // Điều này giúp không bỏ sót bất kỳ chi tiết nào của chữ
+            let step = 1; 
 
             for(let y=0; y<offCv.height; y+=step) {
                 for(let x=0; x<offCv.width; x+=step) {
-                    if(data[(y*offCv.width + x)*4 + 3] > 128) {
+                    if(data[(y*offCv.width + x)*4 + 3] > 180) { // Chỉ lấy những pixel thực sự rõ (alpha > 180)
                         points.push({
                             x: startX + x * scale,
                             y: startY + y * scale
@@ -321,14 +316,14 @@
         function formShape(type, color) {
             let points = [];
             const cx = width/2, cy = height/2;
-            const size = Math.min(width, height) * 0.35; // Hình chiếm 35% màn hình
+            const size = Math.min(width, height) * 0.35; 
 
             if (type === "HEART") {
-                for (let i = 0; i < 600; i++) {
-                    let t = (i / 600) * Math.PI * 2;
+                // Tăng số điểm cho hình tim
+                for (let i = 0; i < 800; i++) {
+                    let t = (i / 800) * Math.PI * 2;
                     let x = 16 * Math.pow(Math.sin(t), 3);
                     let y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-                    // Scale cho tim
                     points.push({ x: cx + x * (size/18), y: cy + y * (size/18) });
                 }
             }
@@ -342,13 +337,11 @@
                     d.tx = points[i].x;
                     d.ty = points[i].y;
                     d.baseColor = color;
-                    // Drone vào vị trí sẽ rung rinh nhẹ
                     d.speed = 0.05 + Math.random() * 0.03; 
                 } else {
-                    // Drone thừa bay background lung linh
                     d.tx = Math.random() * width;
                     d.ty = Math.random() * height;
-                    d.baseColor = 'rgba(255, 215, 0, 0.05)'; // Vàng rất mờ
+                    d.baseColor = 'rgba(255, 215, 0, 0.05)'; 
                     d.speed = 0.01;
                 }
             });
@@ -365,14 +358,11 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            // Nền đen mờ tạo trail
             ctx.fillStyle = 'rgba(5, 5, 10, 0.3)';
             ctx.fillRect(0, 0, width, height);
 
-            // Chế độ hoà trộn sáng (Glow effect)
             ctx.globalCompositeOperation = 'lighter';
 
-            // Pháo hoa
             fireworks.forEach((fw, i) => {
                 if (!fw.exploded) {
                     fw.y -= fw.speed;
@@ -388,7 +378,6 @@
                 } else fireworks.splice(i, 1);
             });
 
-            // Hạt nổ
             for (let i = particles.length - 1; i >= 0; i--) {
                 let p = particles[i];
                 p.x += p.vx; p.y += p.vy; p.vy += 0.1; p.life -= 0.02;
@@ -401,13 +390,11 @@
             }
             ctx.globalAlpha = 1;
 
-            // Drone
             if (state === "DRONE" || state.includes("WAITING")) {
                 drones.forEach(d => {
                     d.x += (d.tx - d.x) * d.speed;
                     d.y += (d.ty - d.y) * d.speed;
                     
-                    // Hiệu ứng rung
                     let vibX = Math.sin(Date.now()*0.01 + d.z*10) * 0.5;
                     let vibY = Math.cos(Date.now()*0.01 + d.z*10) * 0.5;
 
