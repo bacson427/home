@@ -3,80 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Celebration V8</title>
+    <title>HPBD & HPNY (V9 Stable)</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@400&family=Dancing+Script&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@400&family=Dancing+Script:wght@700&display=swap');
 
         body {
             margin: 0;
             overflow: hidden;
-            background: #020205; /* Nền đen xanh sâu thẳm */
+            background: #020205;
             font-family: 'Cinzel', serif;
         }
 
-        canvas {
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
+        canvas { display: block; position: absolute; top: 0; left: 0; }
 
         #ui-layer {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            pointer-events: none;
-            z-index: 20;
+            position: absolute; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column; pointer-events: none; z-index: 20;
         }
 
         .btn {
             pointer-events: auto;
             background: linear-gradient(45deg, #d4af37, #fceabb);
-            color: #000;
-            border: none;
-            padding: 18px 60px;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            font-family: 'Cinzel', serif;
-            font-weight: 900;
-            margin-top: 30px;
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
-            border-radius: 50px;
-            display: none;
+            color: #000; border: none; padding: 18px 60px;
+            font-size: 20px; cursor: wait; /* Mặc định là chờ */
+            transition: 0.5s; text-transform: uppercase;
+            font-family: 'Cinzel', serif; font-weight: 900;
+            margin-top: 30px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+            border-radius: 50px; opacity: 0.5; /* Mờ đi khi chưa sẵn sàng */
         }
 
-        .btn:hover {
-            transform: scale(1.05) translateY(-5px);
-            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.8), 0 0 20px #fff;
+        .btn.ready {
+            cursor: pointer; opacity: 1; animation: pulse 2s infinite;
         }
+
+        .btn:hover.ready { transform: scale(1.05); box-shadow: 0 0 50px #d4af37; }
+
+        @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);} 70% {box-shadow: 0 0 0 20px rgba(212, 175, 55, 0);} 100% {box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);} }
 
         .hint {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.6);
-            margin-top: 20px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            font-family: 'Montserrat', sans-serif; font-size: 13px; color: rgba(255, 255, 255, 0.6);
+            margin-top: 20px; letter-spacing: 2px; text-transform: uppercase;
             text-shadow: 0 0 10px rgba(0,0,0,0.8);
         }
 
-        #start-btn { display: block; }
+        #loading-text {
+            color: #d4af37; font-family: 'Montserrat', sans-serif; margin-top: 10px; font-size: 12px;
+        }
 
+        #start-btn { display: block; }
+        
         #countdown-display {
-            font-size: 18vw;
-            font-weight: 900;
+            font-size: 18vw; font-weight: 900;
             background: linear-gradient(to bottom, #FFD700, #FF8C00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px #d4af37);
-            display: none;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px #d4af37); display: none;
         }
 
         #hidden-youtube { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;}
@@ -87,22 +68,25 @@
     <canvas id="mainCanvas"></canvas>
     
     <div id="ui-layer">
-        <button id="start-btn" class="btn">KHAI TIỆC</button>
-        <div id="hint-text" class="hint">Nhấn Space hoặc Click để bắt đầu</div>
+        <button id="start-btn" class="btn">ĐANG TẢI...</button>
+        <div id="loading-text">Vui lòng chờ font chữ tải xong...</div>
+        <div id="hint-text" class="hint" style="display:none">Nhấn Space hoặc Click để bắt đầu</div>
         <div id="countdown-display">10</div>
-        <button id="next-phase-btn" class="btn">TIẾP TỤC</button>
-        <button id="final-btn" class="btn">XEM FLYCAM</button>
+        <button id="next-phase-btn" class="btn ready" style="display:none">TIẾP TỤC</button>
+        <button id="final-btn" class="btn ready" style="display:none">XEM FLYCAM</button>
     </div>
 
     <div id="hidden-youtube"><div id="player"></div></div>
 
     <script>
+        // --- CẤU HÌNH ---
         const CONFIG = {
             NAME: "Trương Thị Dương",
             BIRTHDAY: "01/03/2007",
-            COLORS: { GOLD: '#FFD700', RED: '#FF0055', CYAN: '#00FFFF', WHITE: '#FFFFFF', PINK: '#FF69B4', PURPLE: '#9400D3' }
+            COLORS: { GOLD: '#FFD700', RED: '#FF0055', CYAN: '#00FFFF', WHITE: '#FFFFFF', PINK: '#FF69B4' }
         };
 
+        // --- YOUTUBE API ---
         var player;
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
@@ -114,24 +98,46 @@
         tag.src = "https://www.youtube.com/iframe_api";
         document.head.appendChild(tag);
 
+        // --- INIT & FONT LOADING CHECK (FIX LỖI MẤT CHỮ) ---
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
         let width, height;
+        
+        // Wait for fonts to be ready before allowing start
+        document.fonts.ready.then(function () {
+            const btn = document.getElementById('start-btn');
+            const loadTxt = document.getElementById('loading-text');
+            const hint = document.getElementById('hint-text');
+            
+            btn.innerText = "KHAI TIỆC";
+            btn.classList.add('ready');
+            loadTxt.style.display = 'none';
+            hint.style.display = 'block';
+            
+            // Re-bind click event only when ready
+            btn.onclick = triggerAction;
+        });
+
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
         window.addEventListener('resize', resize); resize();
 
         let state = "IDLE";
         let fireworks = [], particles = [], drones = [], flowers = [], fountains = [];
         let frameCount = 0;
-        let finishedSequence = false; // Biến kiểm tra kết thúc
+        let finishedSequence = false;
 
         const startBtn = document.getElementById('start-btn'), nextBtn = document.getElementById('next-phase-btn'), finalBtn = document.getElementById('final-btn'), countDisplay = document.getElementById('countdown-display'), hintText = document.getElementById('hint-text');
 
+        // --- CONTROLLER ---
         function triggerAction() {
+            // Chỉ chạy khi nút đã sẵn sàng
+            if(state === "IDLE" && !startBtn.classList.contains('ready')) return;
+
             if (state === "IDLE") {
                 state = "FIREWORKS";
                 startBtn.style.display = hintText.style.display = 'none';
                 if(player && player.playVideo) player.playVideo();
+                
                 launchFireworksPeriod(10000, () => {
                     state = "WAITING_1"; nextBtn.style.display = hintText.style.display = 'block'; hintText.innerText = "Sẵn sàng đếm ngược";
                 });
@@ -139,22 +145,19 @@
                 state = "COUNTDOWN";
                 nextBtn.style.display = hintText.style.display = 'none';
                 countDisplay.style.display = 'block';
-                let c = 10; countDisplay.innerText = c;
-                
-                // Kích hoạt hiệu ứng màn 2
-                startM2Effects();
+                startM2Effects(); // Bật hiệu ứng Màn 2
 
+                let c = 10; countDisplay.innerText = c;
                 let t = setInterval(() => {
                     c--;
                     if (c > 0) {
                         countDisplay.innerText = c;
-                        // Bắn pháo hoa hình thù khi đếm
                         createShapedFirework();
                     } else {
                         clearInterval(t);
                         countDisplay.style.display = 'none';
                         state = "WAITING_2"; finalBtn.style.display = hintText.style.display = 'block'; hintText.innerText = "Màn trình diễn ánh sáng đặc biệt";
-                        stopM2Effects(); // Dừng hiệu ứng màn 2
+                        stopM2Effects();
                     }
                 }, 1000);
             } else if (state === "WAITING_2") {
@@ -164,63 +167,32 @@
             }
         }
 
-        startBtn.onclick = nextBtn.onclick = finalBtn.onclick = triggerAction;
+        nextBtn.onclick = finalBtn.onclick = triggerAction;
         document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); triggerAction(); } });
 
-        // --- MÀN 2: HIỆU ỨNG ĐẶC BIỆT ---
+        // --- MAN 2 EFFECTS ---
         let m2Intervals = [];
         function startM2Effects() {
-             // 1. Pháo phụt (Fountains)
-            m2Intervals.push(setInterval(() => {
-                if(Math.random() < 0.3) createFountain();
-            }, 100));
-
-             // 2. Hoa rơi (Falling Flowers)
-            m2Intervals.push(setInterval(() => {
-                createFlower();
-            }, 300));
+            m2Intervals.push(setInterval(() => { if(Math.random() < 0.3) createFountain(); }, 100));
+            m2Intervals.push(setInterval(() => { createFlower(); }, 300));
         }
-
-        function stopM2Effects() {
-            m2Intervals.forEach(clearInterval);
-            m2Intervals = [];
-        }
+        function stopM2Effects() { m2Intervals.forEach(clearInterval); m2Intervals = []; }
 
         function createFountain() {
             let x = Math.random() * width;
             for(let i=0; i<5; i++) {
-                fountains.push({
-                    x: x + (Math.random()-0.5)*20,
-                    y: height,
-                    vx: (Math.random()-0.5)*2,
-                    vy: -(Math.random()*10 + 5),
-                    color: Math.random() > 0.5 ? CONFIG.COLORS.GOLD : '#fff',
-                    life: 1, decay: 0.02 + Math.random()*0.02
-                });
+                fountains.push({ x: x+(Math.random()-0.5)*20, y: height, vx: (Math.random()-0.5)*2, vy: -(Math.random()*10+5), color: Math.random()>0.5?CONFIG.COLORS.GOLD:'#fff', life:1, decay:0.02+Math.random()*0.02 });
             }
         }
-
         function createFlower() {
-            flowers.push({
-                x: Math.random() * width,
-                y: -50,
-                vx: Math.random() * 2 - 1,
-                vy: Math.random() * 2 + 1,
-                rotation: Math.random() * 360,
-                rotationSpeed: Math.random() * 2 - 1,
-                color: [CONFIG.COLORS.PINK, CONFIG.COLORS.RED, CONFIG.COLORS.WHITE][Math.floor(Math.random()*3)],
-                size: Math.random() * 5 + 3
-            });
+            flowers.push({ x: Math.random()*width, y: -50, vx: Math.random()*2-1, vy: Math.random()*2+1, rotation: Math.random()*360, color: [CONFIG.COLORS.PINK, CONFIG.COLORS.RED, CONFIG.COLORS.WHITE][Math.floor(Math.random()*3)], size: Math.random()*5+3 });
         }
-
         function createShapedFirework() {
              let types = ['HEART', 'STAR', 'CIRCLE'];
-             let type = types[Math.floor(Math.random()*types.length)];
-             createFirework(width/2 + (Math.random()-0.5)*width*0.6, height*0.3 + Math.random()*height*0.3, type);
+             createFirework(width/2+(Math.random()-0.5)*width*0.6, height*0.3+Math.random()*height*0.3, types[Math.floor(Math.random()*types.length)]);
         }
 
-
-        // --- LOGIC PHÁO HOA CƠ BẢN & HÌNH THÙ ---
+        // --- FIREWORKS ---
         function launchFireworksPeriod(duration, callback) {
             let start = Date.now();
             let interval = setInterval(() => {
@@ -229,66 +201,26 @@
             }, 60);
         }
 
-        function createFirework(x, y, shapeType = 'NORMAL') {
-            let targetY = y || height * 0.1 + Math.random() * (height * 0.4);
-            let colors = Object.values(CONFIG.COLORS);
-            fireworks.push({
-                x: x || Math.random() * width,
-                y: height,
-                ty: targetY,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                exploded: false,
-                speed: 8 + Math.random() * 4,
-                shape: shapeType
-            });
+        function createFirework(x, y, shape = 'NORMAL') {
+            fireworks.push({ x: x || Math.random()*width, y: height, ty: y || height*0.1+Math.random()*height*0.4, color: Object.values(CONFIG.COLORS)[Math.floor(Math.random()*5)], exploded: false, speed: 8+Math.random()*4, shape: shape });
         }
-
         function explodeFirework(fw) {
-            fw.exploded = true;
-            let count = 150; 
-            if(fw.shape === 'NORMAL') count = 60;
-
+            fw.exploded = true; let count = fw.shape === 'NORMAL' ? 60 : 150;
             for(let i=0; i<count; i++) {
-                let vx, vy;
-                let angle = (i/count) * Math.PI * 2;
-                let speed = Math.random()*6 + 2;
-
-                if(fw.shape === 'HEART') {
-                    let a = angle;
-                    vx = (16 * Math.pow(Math.sin(a), 3));
-                    vy = -(13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a));
-                    speed = 0.15; 
-                } else if (fw.shape === 'STAR') {
-                    let r = 10 * Math.pow(Math.cos(angle*2.5), 2) + 2; 
-                    vx = r * Math.cos(angle);
-                    vy = r * Math.sin(angle);
-                    speed = 0.2;
-                } else if (fw.shape === 'CIRCLE') {
-                    vx = Math.cos(angle); vy = Math.sin(angle);
-                    speed = 5;
-                } else {
-                    vx = Math.cos(angle); vy = Math.sin(angle);
-                }
-
-                particles.push({
-                    x: fw.x, y: fw.y, vx: vx*speed, vy: vy*speed, color: fw.color,
-                    life: 1.5, decay: 0.01 + Math.random()*0.015, gravity: 0.08
-                });
+                let angle = (i/count)*Math.PI*2, vx, vy, speed = Math.random()*6+2;
+                if(fw.shape === 'HEART') { angle = (i/count)*Math.PI*2; vx=16*Math.pow(Math.sin(angle),3); vy=-(13*Math.cos(angle)-5*Math.cos(2*angle)-2*Math.cos(3*angle)-Math.cos(4*angle)); speed=0.15; }
+                else if(fw.shape === 'STAR') { let r=10*Math.pow(Math.cos(angle*2.5),2)+2; vx=r*Math.cos(angle); vy=r*Math.sin(angle); speed=0.2; }
+                else { vx=Math.cos(angle); vy=Math.sin(angle); }
+                particles.push({ x: fw.x, y: fw.y, vx: vx*speed, vy: vy*speed, color: fw.color, life: 1.5, decay: 0.015 });
             }
         }
 
-        // --- MÀN 3: FLYCAM & KẾT THÚC ---
-        function createDrone(x, y, color) {
-            return {
-                x: x || Math.random() * width, y: y || height + 100,
-                tx: Math.random() * width, ty: Math.random() * height,
-                z: Math.random(), baseColor: color || CONFIG.COLORS.GOLD, currentColor: color || CONFIG.COLORS.GOLD,
-                speed: 0.05 + Math.random() * 0.05, size: 2.5
-            };
+        // --- DRONE & TEXT LOGIC (FIXED) ---
+        function createDrone(x, y) {
+            return { x: x||Math.random()*width, y: y||height+100, tx: Math.random()*width, ty: Math.random()*height, z: Math.random(), baseColor: CONFIG.COLORS.GOLD, currentColor: CONFIG.COLORS.GOLD, speed: 0.05+Math.random()*0.05, size: 2.5 };
         }
 
         function startDroneSequence() {
-            // Kịch bản câu chúc dài và kết thúc
             const sequence = [
                 { t: 500, txt: "CHÚC MỪNG", color: CONFIG.COLORS.RED },
                 { t: 3500, txt: "NĂM MỚI 2026", color: CONFIG.COLORS.GOLD },
@@ -296,22 +228,16 @@
                 { t: 10000, shp: "HEART", color: CONFIG.COLORS.RED },
                 { t: 14000, txt: "VÀ ĐẶC BIỆT LÀ...", color: CONFIG.COLORS.WHITE },
                 { t: 17000, txt: "SINH NHẬT LẦN THỨ 19", color: CONFIG.COLORS.GOLD },
-                { t: 21000, txt: CONFIG.NAME, color: CONFIG.COLORS.RED, font: 'Dancing Script' }, // Tên dùng font viết tay
+                { t: 21000, txt: CONFIG.NAME, color: CONFIG.COLORS.RED, font: 'Dancing Script' },
                 { t: 25000, txt: CONFIG.BIRTHDAY, color: CONFIG.COLORS.WHITE },
                 { t: 29000, txt: "LUÔN XINH ĐẸP & HẠNH PHÚC", color: CONFIG.COLORS.PINK },
-                // KẾT THÚC
-                { t: 35000, txt: "THE END", color: CONFIG.COLORS.GOLD, isEnd: true } 
+                { t: 35000, txt: "THE END", color: CONFIG.COLORS.GOLD, isEnd: true }
             ];
-
             sequence.forEach(s => {
                 setTimeout(() => {
-                    if(s.txt) formText(s.txt, s.color, s.font || 'Cinzel');
+                    if(s.txt) formText(s.txt, s.color, s.font||'Cinzel');
                     if(s.shp) formShape(s.shp, s.color);
-                    if(s.isEnd) {
-                        finishedSequence = true; // Đánh dấu đã kết thúc
-                    } else {
-                        finishedSequence = false;
-                    }
+                    finishedSequence = !!s.isEnd;
                 }, s.t);
             });
         }
@@ -320,94 +246,89 @@
             const offCv = document.createElement('canvas'); const offCtx = offCv.getContext('2d');
             const fontSize = 150; offCtx.font = `900 ${fontSize}px "${fontName}"`;
             const measure = offCtx.measureText(text);
-            offCv.width = Math.ceil(measure.width + 50); offCv.height = Math.ceil(fontSize * 2);
+            offCv.width = Math.ceil(measure.width+50); offCv.height = Math.ceil(fontSize*2);
             offCtx.font = `900 ${fontSize}px "${fontName}"`; offCtx.textAlign = 'center'; offCtx.textBaseline = 'middle';
             offCtx.fillStyle = '#fff'; offCtx.fillText(text, offCv.width/2, offCv.height/2);
 
-            const maxW = width * 0.95; const maxH = height * 0.7;
-            const scale = Math.min(maxW / offCv.width, maxH / offCv.height);
-            const startX = (width - offCv.width * scale) / 2; const startY = (height - offCv.height * scale) / 2;
-
+            const scale = Math.min(width*0.95/offCv.width, height*0.6/offCv.height);
+            const startX = (width - offCv.width*scale)/2, startY = (height - offCv.height*scale)/2;
             const data = offCtx.getImageData(0,0, offCv.width, offCv.height).data;
-            let points = []; let step = 3;
+            let points = []; let step = 3; 
+
             for(let y=0; y<offCv.height; y+=step) { for(let x=0; x<offCv.width; x+=step) {
-                    if(data[(y*offCv.width + x)*4 + 3] > 128) points.push({ x: startX + x * scale, y: startY + y * scale });
+                if(data[(y*offCv.width+x)*4+3] > 60) points.push({x: startX+x*scale, y: startY+y*scale}); // Threshold thấp để lấy nét mảnh
             }}
-            ensureDrones(points.length); assignTargets(points, color);
+            
+            // LOGIC SỬA LỖI MẤT CHỮ: Loop qua points chứ không loop qua drones
+            ensureDrones(points.length);
+            
+            // Reset toàn bộ drone về trạng thái "ẩn" trước khi gán mới
+            drones.forEach(d => { d.baseColor = 'transparent'; });
+            
+            // Gán vị trí mới
+            points.forEach((p, i) => {
+                if(drones[i]) {
+                    drones[i].tx = p.x; drones[i].ty = p.y; drones[i].baseColor = color;
+                }
+            });
+            
+            // Các drone thừa cho bay đi chơi
+            for(let i = points.length; i < drones.length; i++) {
+                drones[i].tx = width/2 + (Math.random()-0.5)*width*1.5;
+                drones[i].ty = height + 500;
+            }
         }
 
         function formShape(type, color) {
-            let points = []; const cx = width/2, cy = height/2; const size = Math.min(width, height) * 0.35;
-            if (type === "HEART") { for (let i = 0; i < 1200; i++) { let t = (i / 1200) * Math.PI * 2;
-                    points.push({ x: cx + 16*Math.pow(Math.sin(t),3)*(size/18), y: cy - (13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))*(size/18) }); }}
-            ensureDrones(points.length); assignTargets(points, color);
+            let points = [], cx = width/2, cy = height/2, size = Math.min(width,height)*0.35;
+            if(type === "HEART") { for(let i=0; i<1200; i++) { let t=(i/1200)*Math.PI*2; points.push({x: cx+16*Math.pow(Math.sin(t),3)*(size/18), y: cy-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))*(size/18)});} }
+            
+            ensureDrones(points.length);
+            drones.forEach(d => { d.baseColor = 'transparent'; });
+            points.forEach((p, i) => { if(drones[i]) { drones[i].tx = p.x; drones[i].ty = p.y; drones[i].baseColor = color; } });
         }
 
         function ensureDrones(count) {
-            if (drones.length < count) { for(let i=0; i<count - drones.length; i++) drones.push(createDrone(width/2, height + 100)); }
-        }
-        function assignTargets(points, color) {
-            drones.forEach((d, i) => {
-                if (i < points.length) { d.tx = points[i].x; d.ty = points[i].y; d.baseColor = color; } 
-                else { d.tx = width/2 + (Math.random()-0.5)*width*2; d.ty = height + 500; d.baseColor = 'transparent'; }
-            });
+            while(drones.length < count) drones.push(createDrone(width/2, height+100));
         }
 
-        // --- RENDER LOOP CHÍNH ---
         function animate() {
             requestAnimationFrame(animate); frameCount++;
             ctx.fillStyle = 'rgba(2, 2, 5, 0.25)'; ctx.fillRect(0, 0, width, height);
 
-            // Vẽ các lớp nền Màn 2
             if(state === "COUNTDOWN") {
-                flowers.forEach((f,i) => { f.y += f.vy; f.x += Math.sin(frameCount*0.02)*0.5; f.rotation += f.rotationSpeed;
-                    if(f.y > height) flowers.splice(i,1); else drawFlower(f); });
-                fountains.forEach((p,i) => { p.x += p.vx; p.y += p.vy; p.vy += 0.2; p.life -= p.decay;
-                    if(p.life<=0) fountains.splice(i,1); else { ctx.globalAlpha = p.life; ctx.fillStyle=p.color; ctx.fillRect(p.x,p.y,2,2); ctx.globalAlpha=1; } });
+                flowers.forEach((f,i) => { f.y+=f.vy; f.x+=Math.sin(frameCount*0.02); f.rotation+=1; if(f.y>height) flowers.splice(i,1); else drawFlower(f); });
+                fountains.forEach((p,i) => { p.x+=p.vx; p.y+=p.vy; p.vy+=0.2; p.life-=p.decay; if(p.life<=0) fountains.splice(i,1); else { ctx.globalAlpha=p.life; ctx.fillStyle=p.color; ctx.fillRect(p.x,p.y,2,2); ctx.globalAlpha=1;} });
             }
 
             ctx.globalCompositeOperation = 'lighter';
-
-            if (state !== "DRONE") {
-                fireworks.forEach((fw, i) => {
-                    if (!fw.exploded) { fw.y -= fw.speed; ctx.fillStyle = fw.color; ctx.beginPath(); ctx.arc(fw.x, fw.y, 3, 0, Math.PI*2); ctx.fill();
-                        if (fw.y <= fw.ty) explodeFirework(fw); } else fireworks.splice(i, 1); });
-                particles.forEach((p, i) => { p.x += p.vx; p.y += p.vy; p.vy += p.gravity; p.life -= p.decay;
-                    if (p.life <= 0) particles.splice(i, 1); else { ctx.fillStyle = p.color; ctx.globalAlpha = p.life; ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill(); } });
+            if(state !== "DRONE") {
+                fireworks.forEach((fw,i) => { if(!fw.exploded) { fw.y-=fw.speed; ctx.fillStyle=fw.color; ctx.beginPath(); ctx.arc(fw.x,fw.y,3,0,Math.PI*2); ctx.fill(); if(fw.y<=fw.ty) explodeFirework(fw); } else fireworks.splice(i,1); });
+                particles.forEach((p,i) => { p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.life-=p.decay; if(p.life<=0) particles.splice(i,1); else { ctx.fillStyle=p.color; ctx.globalAlpha=p.life; ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.fill(); } });
             }
 
-            if (state === "DRONE") {
-                fireworks = []; particles = []; fountains = []; flowers = []; // Dọn dẹp
-                
-                // Logic nhấp nháy cho THE END
-                let flashColor = CONFIG.COLORS.GOLD;
-                if(finishedSequence) {
-                    let colors = Object.values(CONFIG.COLORS);
-                    flashColor = colors[Math.floor(frameCount / 15) % colors.length]; // Đổi màu mỗi 15 frame
-                }
-
+            if(state === "DRONE") {
+                fireworks=[]; particles=[]; fountains=[]; flowers=[];
+                let flash = finishedSequence ? Object.values(CONFIG.COLORS)[Math.floor(frameCount/10)%6] : null;
                 drones.forEach(d => {
                     d.x += (d.tx - d.x) * d.speed; d.y += (d.ty - d.y) * d.speed;
-                    if (d.baseColor !== 'transparent') {
-                        d.currentColor = finishedSequence ? flashColor : d.baseColor;
-                        let vib = finishedSequence ? 0 : Math.sin(frameCount*0.05 + d.z)*0.5; // Nếu kết thúc thì đứng im
-                        
-                        ctx.fillStyle = d.currentColor;
-                        ctx.beginPath(); ctx.arc(d.x + vib, d.y + vib, d.size, 0, Math.PI*2); ctx.fill();
-                        if(finishedSequence && Math.random() < 0.1) { ctx.fillStyle='#fff'; ctx.fillRect(d.x,d.y,2,2)} // Lấp lánh thêm
+                    if(d.baseColor !== 'transparent') {
+                        d.currentColor = finishedSequence ? flash : d.baseColor;
+                        let vib = finishedSequence ? 0 : Math.sin(frameCount*0.05+d.z)*0.5;
+                        ctx.fillStyle = d.currentColor; ctx.beginPath(); ctx.arc(d.x+vib, d.y+vib, d.size, 0, Math.PI*2); ctx.fill();
+                        if(finishedSequence && Math.random()<0.1) { ctx.fillStyle='#fff'; ctx.fillRect(d.x,d.y,2,2); }
                     }
                 });
             }
             ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
         }
-        
+
         function drawFlower(f) {
-            ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.rotation * Math.PI/180);
-            ctx.fillStyle = f.color; ctx.beginPath();
-            for(let i=0; i<5; i++) { ctx.ellipse(0, f.size/2, f.size/2, f.size, i*(Math.PI*2/5), 0, Math.PI*2); }
+            ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.rotation*Math.PI/180); ctx.fillStyle=f.color; ctx.beginPath();
+            for(let i=0;i<5;i++) ctx.ellipse(0,f.size/2,f.size/2,f.size,i*(Math.PI*2/5),0,Math.PI*2);
             ctx.fill(); ctx.restore();
         }
-
+        
         animate();
     </script>
 </body>
