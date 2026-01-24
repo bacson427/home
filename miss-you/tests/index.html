@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HPBD & HPNY (V15 Slow Motion)</title>
+    <title>HPBD & HPNY (V16 Dense Fireworks)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@800&family=Dancing+Script:wght@700&display=swap');
 
@@ -23,12 +23,11 @@
             z-index: 0;
         }
         
-        /* Sao lấp lánh chậm */
         .stars {
             width: 1px; height: 1px;
             background: transparent;
             box-shadow: 1744px 122px #FFF , 134px 1321px #FFF , 92px 859px #FFF;
-            animation: animStar 100s linear infinite; /* Chậm hơn gấp đôi */
+            animation: animStar 100s linear infinite;
         }
         
         @keyframes animStar { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
@@ -46,7 +45,7 @@
             background: rgba(255, 255, 255, 0.05);
             color: #d4af37; border: 1px solid rgba(212, 175, 55, 0.5);
             padding: 15px 40px; font-size: 18px;
-            cursor: wait; transition: all 0.5s; /* Transition mượt hơn */
+            cursor: wait; transition: all 0.5s;
             text-transform: uppercase; letter-spacing: 4px;
             font-family: 'Cinzel', serif; font-weight: 900;
             margin-top: 30px; border-radius: 30px; 
@@ -58,7 +57,7 @@
             cursor: pointer; opacity: 1; 
             border-color: #ffd700;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-            animation: pulse 3s infinite; /* Nhịp thở chậm hơn */
+            animation: pulse 3s infinite;
         }
         .btn.ready:hover { background: rgba(255, 215, 0, 0.2); transform: scale(1.05); color: #fff; }
 
@@ -87,7 +86,7 @@
     
     <div id="ui-layer">
         <button id="start-btn" class="btn">LOADING...</button>
-        <div id="loading-text">Đang làm chậm thời gian...</div>
+        <div id="loading-text">Đang nạp thêm pháo hoa...</div>
         <div id="hint-text" class="hint" style="display:none">Nhấn Space hoặc Chạm để bắt đầu</div>
         <div id="countdown-display">10</div>
         <button id="next-phase-btn" class="btn ready" style="display:none">TIẾP TỤC</button>
@@ -155,7 +154,8 @@
                 state = "FIREWORKS";
                 startBtn.style.display = hintText.style.display = 'none';
                 if(player && player.playVideo) player.playVideo();
-                launchFireworksPeriod(12000, () => { // Kéo dài màn pháo hoa lên 12s
+                // Màn 1: Bắn 12 giây
+                launchFireworksPeriod(12000, () => { 
                     state = "WAITING_1"; nextBtn.style.display = hintText.style.display = 'block'; hintText.innerText = "Sẵn sàng đếm ngược";
                 });
             } else if (state === "WAITING_1") {
@@ -165,9 +165,15 @@
                 let c = 10; countDisplay.innerText = c;
                 let t = setInterval(() => {
                     c--;
-                    if (c > 0) { countDisplay.innerText = c; if(c%2==0) createShapedFirework(); } 
+                    if (c > 0) { 
+                        countDisplay.innerText = c; 
+                        // Màn 2: Bắn dày hơn
+                        if(c%2==0) createShapedFirework(); // Hình thù mỗi 2s
+                        // Bắn thêm 3 quả nhỏ mỗi giây xung quanh
+                        for(let i=0; i<3; i++) createFirework(Math.random()*width, height*0.4 + Math.random()*height*0.3);
+                    } 
                     else { clearInterval(t); countDisplay.style.display = 'none'; state = "WAITING_2"; finalBtn.style.display = hintText.style.display = 'block'; hintText.innerText = "Kích hoạt Flycam"; }
-                }, 1200); // Đếm chậm hơn 1 chút (1.2s mỗi số)
+                }, 1200);
             } else if (state === "WAITING_2") {
                 state = "DRONE"; finalBtn.style.display = hintText.style.display = 'none'; startDroneSequence();
             }
@@ -176,19 +182,19 @@
         nextBtn.onclick = finalBtn.onclick = triggerAction;
         document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); triggerAction(); } });
 
-        // --- FIREWORKS (SLOW MOTION) ---
+        // --- FIREWORKS (DENSE VERSION) ---
         function launchFireworksPeriod(duration, callback) {
             let start = Date.now();
             let interval = setInterval(() => {
                 if(Date.now() - start > duration) { clearInterval(interval); if(callback) callback(); }
-                // Bắn rất thưa (200ms 1 quả) để dễ nhìn
-                if(Math.random() < 0.3) createFirework(); 
-            }, 200);
+                // Tăng tốc độ bắn lên (80ms kiểm tra 1 lần, xác suất 60%) -> Rất dày
+                if(Math.random() < 0.6) createFirework(); 
+            }, 80);
         }
 
         function createFirework(x, y, shape = 'NORMAL') {
             let colors = ['#FFD700', '#FF0055', '#00FFFF', '#FFFFFF'];
-            // Tốc độ bay lên giảm xuống (4-7) thay vì 8-13
+            // Tốc độ bay vẫn giữ chậm (4-7) để chill
             fireworks.push({ x: x || Math.random() * width, y: height, ty: y || height * 0.15 + Math.random() * (height * 0.3), color: colors[Math.floor(Math.random() * colors.length)], exploded: false, speed: 4 + Math.random() * 3, shape: shape });
         }
         
@@ -201,11 +207,10 @@
             fw.exploded = true;
             let count = fw.shape === 'NORMAL' ? 40 : 80;
             for(let i=0; i<count; i++) {
-                let angle = (i/count) * Math.PI * 2, speed = Math.random() * 3 + 1, vx, vy; // Tốc độ nổ giảm
-                if (fw.shape === 'HEART') { vx = (16 * Math.pow(Math.sin(angle), 3)); vy = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle)); speed = 0.1; } // Tim nổ chậm
+                let angle = (i/count) * Math.PI * 2, speed = Math.random() * 3 + 1, vx, vy;
+                if (fw.shape === 'HEART') { vx = (16 * Math.pow(Math.sin(angle), 3)); vy = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle)); speed = 0.1; }
                 else if (fw.shape === 'STAR') { let r = 10 * Math.pow(Math.cos(angle*2.5), 2) + 2; vx = r * Math.cos(angle); vy = r * Math.sin(angle); speed = 0.15; }
                 else { vx = Math.cos(angle); vy = Math.sin(angle); }
-                // Decay giảm xuống 0.01 để hạt tồn tại lâu hơn
                 particles.push({ x: fw.x, y: fw.y, vx: vx * speed, vy: vy * speed, color: fw.color, life: 1.5, decay: 0.01, gravity: 0.04 });
             }
         }
@@ -215,14 +220,12 @@
             return {
                 x: x || Math.random() * width, y: y || height + 100, tx: Math.random() * width, ty: Math.random() * height, 
                 z: Math.random(), baseHsl: {h:50, s:100, l:50}, colorMode: 'static', 
-                // Tốc độ bay cực chậm và mượt (0.02)
-                speed: 0.02 + Math.random() * 0.02, 
+                speed: 0.02 + Math.random() * 0.02, // Bay chậm
                 size: PARTICLE_SIZE 
             };
         }
 
         function startDroneSequence() {
-            // Tăng thời gian giãn cách giữa các chữ lên 6-7 giây
             const sequence = [
                 { t: 500, txt: "CHÚC MỪNG", color: CONFIG.COLORS.RED, mode: 'shift' },
                 { t: 6500, txt: "NĂM MỚI 2026", color: CONFIG.COLORS.GOLD, mode: 'shift' },
@@ -311,7 +314,7 @@
             ctx.clearRect(0, 0, width, height); 
             globalHue += 0.5;
 
-            if (isFinale && Math.random() < 0.03) { createFirework(Math.random()*width, height*0.5); } // Màn cuối cũng bắn chậm
+            if (isFinale && Math.random() < 0.05) { createFirework(Math.random()*width, height*0.5); }
 
             if (state !== "DRONE" || isFinale) {
                 ctx.globalCompositeOperation = 'lighter';
