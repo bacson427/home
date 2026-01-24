@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Nguyễn Bắc Sơn</title>
     <style>
-        /* GIAO DIỆN DARK MODE */
         body { font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #fff; margin: 0; display: flex; flex-direction: column; height: 100vh; }
         .header { background-color: #1f1f1f; padding: 15px; text-align: center; border-bottom: 1px solid #333; }
         .header h2 { margin: 0; color: #4facfe; font-size: 18px; }
@@ -41,7 +40,7 @@
     </div>
 
     <script>
-        // DỮ LIỆU HUẤN LUYỆN
+        // Dữ liệu huấn luyện
         const TRAINING_DATA = 
             "HÃY ĐÓNG VAI LÀ: Nguyễn Bắc Sơn (Nam, sinh 04/02/2007). " +
             "QUÊ QUÁN: Hải Dương. HIỆN TẠI: Sống tại Hà Nội. " +
@@ -64,7 +63,7 @@
             inputField.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // 2. Khóa nút
+            // 2. Khóa nút gửi
             sendBtn.disabled = true;
             sendBtn.innerText = "...";
             
@@ -73,7 +72,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                // 3. GỌI VỀ SERVER (api/chat.js)
+                // 3. GỌI VỀ SERVER CỦA MÌNH (QUAN TRỌNG NHẤT)
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -85,7 +84,6 @@
 
                 const data = await response.json();
 
-                // 4. Xử lý kết quả
                 if (!response.ok || data.error) {
                     let errMessage = data.error?.message || "Lỗi kết nối!";
                     document.getElementById(loadingId).innerText = "❌ " + errMessage;
@@ -98,7 +96,7 @@
                 document.getElementById(loadingId).innerText = "❌ Lỗi mạng: " + error.message;
             }
 
-            // 5. Mở lại nút
+            // 4. Mở lại nút gửi
             sendBtn.disabled = false;
             sendBtn.innerText = "Gửi";
         }
