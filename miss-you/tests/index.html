@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HPBD & HPNY (Pro Max V14)</title>
+    <title>HPBD & HPNY (V15 Slow Motion)</title>
     <style>
-        /* Import Font sang trọng */
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@800&family=Dancing+Script:wght@700&display=swap');
 
         body {
@@ -13,10 +12,10 @@
             overflow: hidden;
             background-color: #000;
             font-family: 'Cinzel', serif;
-            touch-action: none; /* Chặn zoom trên mobile */
+            touch-action: none;
         }
 
-        /* NỀN GALAXY PRO - Tối ưu hoá layer */
+        /* NỀN GALAXY CHẬM RÃI */
         .galaxy-bg {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -24,12 +23,12 @@
             z-index: 0;
         }
         
-        /* Sao lấp lánh bằng CSS nhẹ hơn Canvas */
+        /* Sao lấp lánh chậm */
         .stars {
             width: 1px; height: 1px;
             background: transparent;
-            box-shadow: 1744px 122px #FFF , 134px 1321px #FFF , 92px 859px #FFF; /* Ví dụ rút gọn, script sẽ tạo thêm */
-            animation: animStar 50s linear infinite;
+            box-shadow: 1744px 122px #FFF , 134px 1321px #FFF , 92px 859px #FFF;
+            animation: animStar 100s linear infinite; /* Chậm hơn gấp đôi */
         }
         
         @keyframes animStar { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
@@ -42,13 +41,12 @@
             flex-direction: column; pointer-events: none; z-index: 100;
         }
 
-        /* Nút bấm phong cách kính mờ (Glassmorphism) */
         .btn {
             pointer-events: auto;
             background: rgba(255, 255, 255, 0.05);
             color: #d4af37; border: 1px solid rgba(212, 175, 55, 0.5);
             padding: 15px 40px; font-size: 18px;
-            cursor: wait; transition: all 0.4s;
+            cursor: wait; transition: all 0.5s; /* Transition mượt hơn */
             text-transform: uppercase; letter-spacing: 4px;
             font-family: 'Cinzel', serif; font-weight: 900;
             margin-top: 30px; border-radius: 30px; 
@@ -60,11 +58,11 @@
             cursor: pointer; opacity: 1; 
             border-color: #ffd700;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-            animation: pulse 2s infinite; 
+            animation: pulse 3s infinite; /* Nhịp thở chậm hơn */
         }
         .btn.ready:hover { background: rgba(255, 215, 0, 0.2); transform: scale(1.05); color: #fff; }
 
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); } 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); } 50% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); } 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); } }
 
         .hint { font-family: 'Montserrat', sans-serif; font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 20px; letter-spacing: 2px; text-transform: uppercase; }
         #loading-text { margin-top: 15px; font-size: 12px; color: #d4af37; font-family: 'Montserrat', sans-serif; }
@@ -88,8 +86,8 @@
     <canvas id="mainCanvas"></canvas>
     
     <div id="ui-layer">
-        <button id="start-btn" class="btn">LOADING SYSTEM...</button>
-        <div id="loading-text">Đang khởi tạo đồ họa Pro Max...</div>
+        <button id="start-btn" class="btn">LOADING...</button>
+        <div id="loading-text">Đang làm chậm thời gian...</div>
         <div id="hint-text" class="hint" style="display:none">Nhấn Space hoặc Chạm để bắt đầu</div>
         <div id="countdown-display">10</div>
         <button id="next-phase-btn" class="btn ready" style="display:none">TIẾP TỤC</button>
@@ -99,7 +97,6 @@
     <div id="hidden-youtube"><div id="player"></div></div>
 
     <script>
-        // --- CẤU HÌNH NGƯỜI DÙNG ---
         const CONFIG = {
             NAME: "Trương Thị Dương",
             BIRTHDAY: "01/03/2007",
@@ -112,16 +109,11 @@
             }
         };
 
-        // --- CẤU HÌNH HỆ THỐNG (TỰ ĐỘNG TỐI ƯU) ---
         const isMobile = window.innerWidth < 768;
-        // Kích thước canvas ảo để quét chữ (càng nhỏ càng nhanh nhưng vỡ nét, 300 là tối ưu)
         const SCAN_WIDTH = isMobile ? 300 : 500; 
-        // Kích thước hạt Drone
         const PARTICLE_SIZE = isMobile ? 3 : 2.5;
-        // Mật độ hạt (càng thấp càng dày)
         const SCAN_STEP = isMobile ? 3 : 2;
 
-        // --- YOUTUBE SETUP ---
         var player;
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
@@ -133,12 +125,10 @@
         tag.src = "https://www.youtube.com/iframe_api";
         document.head.appendChild(tag);
 
-        // --- CANVAS SETUP ---
         const canvas = document.getElementById('mainCanvas');
-        const ctx = canvas.getContext('2d', { alpha: true }); // Alpha true để nền CSS hiện ra
+        const ctx = canvas.getContext('2d', { alpha: true });
         let width, height;
 
-        // --- FONTS READY ---
         document.fonts.ready.then(function () {
             const btn = document.getElementById('start-btn');
             const loadTxt = document.getElementById('loading-text');
@@ -151,7 +141,6 @@
         function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
         window.addEventListener('resize', resize); resize();
 
-        // --- GLOBAL STATE ---
         let state = "IDLE"; 
         let fireworks = [], particles = [], drones = [];
         let globalHue = 0;
@@ -166,7 +155,7 @@
                 state = "FIREWORKS";
                 startBtn.style.display = hintText.style.display = 'none';
                 if(player && player.playVideo) player.playVideo();
-                launchFireworksPeriod(10000, () => {
+                launchFireworksPeriod(12000, () => { // Kéo dài màn pháo hoa lên 12s
                     state = "WAITING_1"; nextBtn.style.display = hintText.style.display = 'block'; hintText.innerText = "Sẵn sàng đếm ngược";
                 });
             } else if (state === "WAITING_1") {
@@ -178,7 +167,7 @@
                     c--;
                     if (c > 0) { countDisplay.innerText = c; if(c%2==0) createShapedFirework(); } 
                     else { clearInterval(t); countDisplay.style.display = 'none'; state = "WAITING_2"; finalBtn.style.display = hintText.style.display = 'block'; hintText.innerText = "Kích hoạt Flycam"; }
-                }, 1000);
+                }, 1200); // Đếm chậm hơn 1 chút (1.2s mỗi số)
             } else if (state === "WAITING_2") {
                 state = "DRONE"; finalBtn.style.display = hintText.style.display = 'none'; startDroneSequence();
             }
@@ -187,18 +176,20 @@
         nextBtn.onclick = finalBtn.onclick = triggerAction;
         document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); triggerAction(); } });
 
-        // --- FIREWORKS ENGINE (OPTIMIZED) ---
+        // --- FIREWORKS (SLOW MOTION) ---
         function launchFireworksPeriod(duration, callback) {
             let start = Date.now();
             let interval = setInterval(() => {
                 if(Date.now() - start > duration) { clearInterval(interval); if(callback) callback(); }
-                if(Math.random() < 0.2) createFirework(); // Bắn thưa để mượt
-            }, 80);
+                // Bắn rất thưa (200ms 1 quả) để dễ nhìn
+                if(Math.random() < 0.3) createFirework(); 
+            }, 200);
         }
 
         function createFirework(x, y, shape = 'NORMAL') {
             let colors = ['#FFD700', '#FF0055', '#00FFFF', '#FFFFFF'];
-            fireworks.push({ x: x || Math.random() * width, y: height, ty: y || height * 0.15 + Math.random() * (height * 0.3), color: colors[Math.floor(Math.random() * colors.length)], exploded: false, speed: 8 + Math.random() * 5, shape: shape });
+            // Tốc độ bay lên giảm xuống (4-7) thay vì 8-13
+            fireworks.push({ x: x || Math.random() * width, y: height, ty: y || height * 0.15 + Math.random() * (height * 0.3), color: colors[Math.floor(Math.random() * colors.length)], exploded: false, speed: 4 + Math.random() * 3, shape: shape });
         }
         
         function createShapedFirework() {
@@ -210,34 +201,38 @@
             fw.exploded = true;
             let count = fw.shape === 'NORMAL' ? 40 : 80;
             for(let i=0; i<count; i++) {
-                let angle = (i/count) * Math.PI * 2, speed = Math.random() * 5 + 2, vx, vy;
-                if (fw.shape === 'HEART') { vx = (16 * Math.pow(Math.sin(angle), 3)); vy = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle)); speed = 0.15; }
-                else if (fw.shape === 'STAR') { let r = 10 * Math.pow(Math.cos(angle*2.5), 2) + 2; vx = r * Math.cos(angle); vy = r * Math.sin(angle); speed = 0.2; }
+                let angle = (i/count) * Math.PI * 2, speed = Math.random() * 3 + 1, vx, vy; // Tốc độ nổ giảm
+                if (fw.shape === 'HEART') { vx = (16 * Math.pow(Math.sin(angle), 3)); vy = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle)); speed = 0.1; } // Tim nổ chậm
+                else if (fw.shape === 'STAR') { let r = 10 * Math.pow(Math.cos(angle*2.5), 2) + 2; vx = r * Math.cos(angle); vy = r * Math.sin(angle); speed = 0.15; }
                 else { vx = Math.cos(angle); vy = Math.sin(angle); }
-                particles.push({ x: fw.x, y: fw.y, vx: vx * speed, vy: vy * speed, color: fw.color, life: 1.2, decay: 0.02, gravity: 0.06 });
+                // Decay giảm xuống 0.01 để hạt tồn tại lâu hơn
+                particles.push({ x: fw.x, y: fw.y, vx: vx * speed, vy: vy * speed, color: fw.color, life: 1.5, decay: 0.01, gravity: 0.04 });
             }
         }
 
-        // --- DRONE ENGINE (PRO MAX) ---
+        // --- DRONE (SLOW & SMOOTH) ---
         function createDrone(x, y) {
             return {
                 x: x || Math.random() * width, y: y || height + 100, tx: Math.random() * width, ty: Math.random() * height, 
-                z: Math.random(), baseHsl: {h:50, s:100, l:50}, colorMode: 'static', speed: 0.05 + Math.random() * 0.05, 
+                z: Math.random(), baseHsl: {h:50, s:100, l:50}, colorMode: 'static', 
+                // Tốc độ bay cực chậm và mượt (0.02)
+                speed: 0.02 + Math.random() * 0.02, 
                 size: PARTICLE_SIZE 
             };
         }
 
         function startDroneSequence() {
+            // Tăng thời gian giãn cách giữa các chữ lên 6-7 giây
             const sequence = [
                 { t: 500, txt: "CHÚC MỪNG", color: CONFIG.COLORS.RED, mode: 'shift' },
-                { t: 3500, txt: "NĂM MỚI 2026", color: CONFIG.COLORS.GOLD, mode: 'shift' },
-                { t: 7000, txt: "BÍNH NGỌ", color: CONFIG.COLORS.CYAN, mode: 'static' },
-                { t: 10000, shp: "HEART", color: CONFIG.COLORS.RED, mode: 'shift' },
-                { t: 14000, txt: "XINH ĐẸP & HẠNH PHÚC", color: CONFIG.COLORS.WHITE, mode: 'glitter' },
-                { t: 19000, txt: "SINH NHẬT TUỔI 19", color: CONFIG.COLORS.GOLD, mode: 'shift' },
-                { t: 23000, txt: CONFIG.NAME, color: CONFIG.COLORS.PINK, font: 'Dancing Script', mode: 'rainbow' },
-                { t: 28000, txt: CONFIG.BIRTHDAY, color: CONFIG.COLORS.WHITE, mode: 'static' },
-                { t: 34000, txt: "THE END", color: CONFIG.COLORS.GOLD, isEnd: true, mode: 'rainbow' }
+                { t: 6500, txt: "NĂM MỚI 2026", color: CONFIG.COLORS.GOLD, mode: 'shift' },
+                { t: 12500, txt: "BÍNH NGỌ", color: CONFIG.COLORS.CYAN, mode: 'static' },
+                { t: 18500, shp: "HEART", color: CONFIG.COLORS.RED, mode: 'shift' },
+                { t: 24500, txt: "XINH ĐẸP & HẠNH PHÚC", color: CONFIG.COLORS.WHITE, mode: 'glitter' },
+                { t: 31500, txt: "SINH NHẬT TUỔI 19", color: CONFIG.COLORS.GOLD, mode: 'shift' },
+                { t: 38500, txt: CONFIG.NAME, color: CONFIG.COLORS.PINK, font: 'Dancing Script', mode: 'rainbow' },
+                { t: 45500, txt: CONFIG.BIRTHDAY, color: CONFIG.COLORS.WHITE, mode: 'static' },
+                { t: 52500, txt: "THE END", color: CONFIG.COLORS.GOLD, isEnd: true, mode: 'rainbow' }
             ];
 
             sequence.forEach(s => {
@@ -249,39 +244,27 @@
             });
         }
 
-        // Kỹ thuật Smart Scaling để chữ nét mà không lag
         function formText(text, hslColor, fontName, mode) {
             const offCv = document.createElement('canvas');
             const offCtx = offCv.getContext('2d');
-            
-            // Vẽ chữ trên canvas nhỏ (đủ nét nhưng không quá to)
             const fontSize = 100; 
             offCtx.font = `900 ${fontSize}px "${fontName}"`; 
             const measure = offCtx.measureText(text);
-            
-            offCv.width = Math.ceil(measure.width + 20);
-            offCv.height = Math.ceil(fontSize * 1.5);
-
+            offCv.width = Math.ceil(measure.width + 20); offCv.height = Math.ceil(fontSize * 1.5);
             offCtx.font = `900 ${fontSize}px "${fontName}"`;
             offCtx.textAlign = 'center'; offCtx.textBaseline = 'middle';
             offCtx.fillStyle = '#fff';
             offCtx.fillText(text, offCv.width/2, offCv.height/2);
 
-            // Tính tỷ lệ phóng đại (Scale Up)
-            const targetWidth = width * 0.9;
-            const targetHeight = height * 0.6;
-            const scale = Math.min(targetWidth / offCv.width, targetHeight / offCv.height);
-            
+            const scale = Math.min(width * 0.9 / offCv.width, height * 0.6 / offCv.height);
             const startX = (width - offCv.width * scale) / 2;
             const startY = (height - offCv.height * scale) / 2;
 
             const data = offCtx.getImageData(0,0, offCv.width, offCv.height).data;
             let points = [];
             
-            // Quét điểm ảnh
             for(let y=0; y<offCv.height; y+=SCAN_STEP) {
                 for(let x=0; x<offCv.width; x+=SCAN_STEP) {
-                    // Ngưỡng alpha thấp (50) để bắt nét mỏng
                     if(data[(y*offCv.width + x)*4 + 3] > 50) {
                         points.push({ x: startX + x * scale, y: startY + y * scale });
                     }
@@ -293,7 +276,6 @@
         function formShape(type, hslColor, mode) {
             let points = [], cx = width/2, cy = height/2, size = Math.min(width, height) * 0.35; 
             let count = isMobile ? 800 : 1500;
-            
             if (type === "HEART") {
                 for (let i = 0; i < count; i++) {
                     let t = (i / count) * Math.PI * 2;
@@ -306,18 +288,11 @@
         }
 
         function updateDrones(points, hslColor, mode) {
-            // Giới hạn drone để không sập nguồn
             const MAX_DRONES = isMobile ? 1800 : 3000;
-            if (points.length > MAX_DRONES) {
-                // Tỉa bớt hạt ngẫu nhiên nếu quá nhiều
-                points = points.filter(() => Math.random() > (1 - MAX_DRONES/points.length));
-            }
+            if (points.length > MAX_DRONES) points = points.filter(() => Math.random() > (1 - MAX_DRONES/points.length));
 
             while(drones.length < points.length) drones.push(createDrone(width/2, height + 100));
-            
-            // Reset hạt thừa
             drones.forEach(d => d.targetAlpha = 0); 
-
             points.forEach((p, i) => {
                 if(drones[i]) {
                     drones[i].tx = p.x; drones[i].ty = p.y;
@@ -325,27 +300,21 @@
                     drones[i].targetAlpha = 1; 
                 }
             });
-            
-            // Hạt thừa bay tản ra ngoài thay vì đứng yên
             for(let i = points.length; i < drones.length; i++) {
                 drones[i].tx = width/2 + (Math.random()-0.5)*width*1.5;
                 drones[i].ty = height + 200;
             }
         }
 
-        // --- RENDER LOOP (GPU OPTIMIZED) ---
         function animate() {
             requestAnimationFrame(animate);
-            // ClearRect nhanh hơn FillRect đè lên
             ctx.clearRect(0, 0, width, height); 
             globalHue += 0.5;
 
-            // Màn cuối thêm pháo hoa
-            if (isFinale && Math.random() < 0.05) { createFirework(Math.random()*width, height*0.5); }
+            if (isFinale && Math.random() < 0.03) { createFirework(Math.random()*width, height*0.5); } // Màn cuối cũng bắn chậm
 
-            // Render Pháo hoa
             if (state !== "DRONE" || isFinale) {
-                ctx.globalCompositeOperation = 'lighter'; // Cộng màu cho sáng
+                ctx.globalCompositeOperation = 'lighter';
                 fireworks.forEach((fw, i) => {
                     if (!fw.exploded) {
                         fw.y -= fw.speed;
@@ -356,28 +325,23 @@
                 particles.forEach((p, i) => {
                     p.x += p.vx; p.y += p.vy; p.vy += p.gravity; p.life -= p.decay;
                     if (p.life <= 0) particles.splice(i, 1);
-                    else { ctx.fillStyle = p.color; ctx.globalAlpha = p.life; ctx.fillRect(p.x, p.y, 2, 2); } // Dùng fillRect thay vì arc để nhanh
+                    else { ctx.fillStyle = p.color; ctx.globalAlpha = p.life; ctx.fillRect(p.x, p.y, 2, 2); }
                 });
                 ctx.globalAlpha = 1;
             }
 
-            // Render Drone
             if (state === "DRONE") {
                 ctx.globalCompositeOperation = 'lighter'; 
                 drones.forEach(d => {
                     d.x += (d.tx - d.x) * d.speed; d.y += (d.ty - d.y) * d.speed;
-                    
                     let h = d.baseHsl.h, s = d.baseHsl.s, l = d.baseHsl.l;
-                    
                     if (d.colorMode === 'shift') { h = h + Math.sin(globalHue * 0.05) * 20; } 
                     else if (d.colorMode === 'rainbow') { h = (d.x / width * 360 + globalHue * 2) % 360; }
                     else if (d.colorMode === 'glitter') { if(Math.random() < 0.05) l = 100; }
 
                     if (d.targetAlpha !== 0 || d.y < height) {
-                        // Làm tròn toạ độ để GPU vẽ nhanh hơn (Sub-pixel rendering tốn kém)
                         let dx = (d.x + 0.5) << 0;
                         let dy = (d.y + 0.5) << 0;
-                        
                         ctx.fillStyle = `hsl(${h}, ${s}%, ${l}%)`;
                         ctx.fillRect(dx, dy, d.size, d.size);
                     }
@@ -386,13 +350,9 @@
             ctx.globalCompositeOperation = 'source-over';
         }
         
-        // Tạo sao nền (CSS handle phần lớn, thêm ít JS cho random)
         const starContainer = document.getElementById('stars');
         let boxShadowVal = '';
-        for(let i=0; i<300; i++) {
-            boxShadowVal += `${Math.random()*2000}px ${Math.random()*2000}px #FFF, `;
-        }
-        // Gắn style vào class .stars trong CSS (Hack nhẹ để không dùng JS loop quá nhiều)
+        for(let i=0; i<200; i++) boxShadowVal += `${Math.random()*2000}px ${Math.random()*2000}px #FFF, `;
         const styleSheet = document.createElement("style");
         styleSheet.innerText = `.stars { box-shadow: ${boxShadowVal.slice(0,-2)}; }`;
         document.head.appendChild(styleSheet);
