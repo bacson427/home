@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HPBD & HPNY (V16 Dense Fireworks)</title>
+    <title>HPBD & HPNY (V17 3D Luxury)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@800&family=Dancing+Script:wght@700&display=swap');
 
@@ -15,7 +15,7 @@
             touch-action: none;
         }
 
-        /* NỀN GALAXY CHẬM RÃI */
+        /* NỀN GALAXY */
         .galaxy-bg {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -66,13 +66,8 @@
         .hint { font-family: 'Montserrat', sans-serif; font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 20px; letter-spacing: 2px; text-transform: uppercase; }
         #loading-text { margin-top: 15px; font-size: 12px; color: #d4af37; font-family: 'Montserrat', sans-serif; }
 
-        #countdown-display {
-            font-size: 20vw; font-weight: 900;
-            background: linear-gradient(to bottom, #fff, #ffd700);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.6));
-            display: none; z-index: 101;
-        }
+        /* Ẩn div đếm ngược cũ, ta sẽ vẽ trực tiếp lên Canvas */
+        #countdown-display { display: none; }
 
         #hidden-youtube { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;}
     </style>
@@ -86,9 +81,8 @@
     
     <div id="ui-layer">
         <button id="start-btn" class="btn">LOADING...</button>
-        <div id="loading-text">Đang nạp thêm pháo hoa...</div>
+        <div id="loading-text">Đang khởi tạo hệ thống 3D...</div>
         <div id="hint-text" class="hint" style="display:none">Nhấn Space hoặc Chạm để bắt đầu</div>
-        <div id="countdown-display">10</div>
         <button id="next-phase-btn" class="btn ready" style="display:none">TIẾP TỤC</button>
         <button id="final-btn" class="btn ready" style="display:none">XEM FLYCAM</button>
     </div>
@@ -109,7 +103,6 @@
         };
 
         const isMobile = window.innerWidth < 768;
-        const SCAN_WIDTH = isMobile ? 300 : 500; 
         const PARTICLE_SIZE = isMobile ? 3 : 2.5;
         const SCAN_STEP = isMobile ? 3 : 2;
 
@@ -142,10 +135,13 @@
 
         let state = "IDLE"; 
         let fireworks = [], particles = [], drones = [];
+        let countdown3DParticles = []; // Hạt cho số 3D
         let globalHue = 0;
         let isFinale = false;
+        let countdownVal = 10;
+        let countdownRotation = 0;
 
-        const startBtn = document.getElementById('start-btn'), nextBtn = document.getElementById('next-phase-btn'), finalBtn = document.getElementById('final-btn'), countDisplay = document.getElementById('countdown-display'), hintText = document.getElementById('hint-text');
+        const startBtn = document.getElementById('start-btn'), nextBtn = document.getElementById('next-phase-btn'), finalBtn = document.getElementById('final-btn'), hintText = document.getElementById('hint-text');
 
         function triggerAction() {
             if(!startBtn.classList.contains('ready') && state === "IDLE") return;
@@ -154,25 +150,34 @@
                 state = "FIREWORKS";
                 startBtn.style.display = hintText.style.display = 'none';
                 if(player && player.playVideo) player.playVideo();
-                // Màn 1: Bắn 12 giây
+                // Màn 1: Pháo hoa dày đặc
                 launchFireworksPeriod(12000, () => { 
                     state = "WAITING_1"; nextBtn.style.display = hintText.style.display = 'block'; hintText.innerText = "Sẵn sàng đếm ngược";
                 });
             } else if (state === "WAITING_1") {
                 state = "COUNTDOWN";
                 nextBtn.style.display = hintText.style.display = 'none';
-                countDisplay.style.display = 'block';
-                let c = 10; countDisplay.innerText = c;
+                countdownVal = 10;
+                init3DNumber(countdownVal); // Tạo số 3D đầu tiên
+
                 let t = setInterval(() => {
-                    c--;
-                    if (c > 0) { 
-                        countDisplay.innerText = c; 
-                        // Màn 2: Bắn dày hơn
-                        if(c%2==0) createShapedFirework(); // Hình thù mỗi 2s
-                        // Bắn thêm 3 quả nhỏ mỗi giây xung quanh
-                        for(let i=0; i<3; i++) createFirework(Math.random()*width, height*0.4 + Math.random()*height*0.3);
+                    countdownVal--;
+                    if (countdownVal > 0) { 
+                        // Hiệu ứng nổ số cũ và tạo số mới
+                        explode3DNumber();
+                        setTimeout(() => init3DNumber(countdownVal), 200);
+                        
+                        // Bắn pháo hoa phụ trợ
+                        if(countdownVal % 2 == 0) createShapedFirework();
+                        for(let i=0; i<4; i++) createFirework(Math.random()*width, height*0.3);
                     } 
-                    else { clearInterval(t); countDisplay.style.display = 'none'; state = "WAITING_2"; finalBtn.style.display = hintText.style.display = 'block'; hintText.innerText = "Kích hoạt Flycam"; }
+                    else { 
+                        clearInterval(t); 
+                        state = "WAITING_2"; 
+                        finalBtn.style.display = hintText.style.display = 'block'; 
+                        hintText.innerText = "Kích hoạt Flycam"; 
+                        countdown3DParticles = []; // Xóa hạt 3D
+                    }
                 }, 1200);
             } else if (state === "WAITING_2") {
                 state = "DRONE"; finalBtn.style.display = hintText.style.display = 'none'; startDroneSequence();
@@ -182,19 +187,123 @@
         nextBtn.onclick = finalBtn.onclick = triggerAction;
         document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); triggerAction(); } });
 
-        // --- FIREWORKS (DENSE VERSION) ---
+        // --- 3D COUNTDOWN ENGINE ---
+        function init3DNumber(num) {
+            countdown3DParticles = [];
+            const text = num.toString();
+            // 1. Tạo 2D bitmap từ số
+            const offCv = document.createElement('canvas');
+            const offCtx = offCv.getContext('2d');
+            const fontSize = 200;
+            offCtx.font = `900 ${fontSize}px "Cinzel"`;
+            const measure = offCtx.measureText(text);
+            offCv.width = Math.ceil(measure.width + 20); offCv.height = Math.ceil(fontSize * 1.5);
+            offCtx.font = `900 ${fontSize}px "Cinzel"`;
+            offCtx.textAlign = 'center'; offCtx.textBaseline = 'middle';
+            offCtx.fillStyle = '#fff';
+            offCtx.fillText(text, offCv.width/2, offCv.height/2);
+            
+            const data = offCtx.getImageData(0,0, offCv.width, offCv.height).data;
+            const step = 4;
+            
+            // 2. Convert pixel sang 3D point
+            for(let y=0; y<offCv.height; y+=step) {
+                for(let x=0; x<offCv.width; x+=step) {
+                    if(data[(y*offCv.width + x)*4 + 3] > 100) {
+                        // Tạo độ dày cho số (Layering)
+                        for(let z=-20; z<=20; z+=10) { 
+                             countdown3DParticles.push({
+                                x: (x - offCv.width/2) * 2, // Scale to
+                                y: (y - offCv.height/2) * 2,
+                                z: z,
+                                ox: (x - offCv.width/2) * 2, // Original position
+                                oy: (y - offCv.height/2) * 2,
+                                oz: z,
+                                color: CONFIG.COLORS.GOLD,
+                                size: 2
+                             });
+                        }
+                    }
+                }
+            }
+        }
+
+        function explode3DNumber() {
+            // Cho hạt bay tứ tung
+            countdown3DParticles.forEach(p => {
+                p.vx = (Math.random()-0.5) * 20;
+                p.vy = (Math.random()-0.5) * 20;
+                p.vz = (Math.random()-0.5) * 20;
+                p.exploding = true;
+            });
+        }
+
+        function render3DCountdown() {
+            if(countdown3DParticles.length === 0) return;
+            
+            const cx = width/2;
+            const cy = height/2;
+            countdownRotation += 0.03; // Tốc độ xoay
+
+            // Sắp xếp hạt theo Z để vẽ đúng thứ tự xa gần
+            countdown3DParticles.sort((a,b) => b.rotatedZ - a.rotatedZ);
+
+            ctx.save();
+            ctx.translate(cx, cy);
+
+            countdown3DParticles.forEach((p, i) => {
+                if(p.exploding) {
+                    p.ox += p.vx; p.oy += p.vy; p.oz += p.vz;
+                    p.vx *= 0.95; p.vy *= 0.95; p.vz *= 0.95; // Ma sát
+                }
+
+                // Công thức xoay 3D quanh trục Y
+                let x1 = p.ox * Math.cos(countdownRotation) - p.oz * Math.sin(countdownRotation);
+                let z1 = p.oz * Math.cos(countdownRotation) + p.ox * Math.sin(countdownRotation);
+                let y1 = p.oy;
+
+                // Phối cảnh (Perspective Projection)
+                let scale = 400 / (400 + z1); // Focal length = 400
+                let x2d = x1 * scale;
+                let y2d = y1 * scale;
+                
+                // Lưu Z để sort
+                p.rotatedZ = z1;
+
+                if(scale > 0) { // Chỉ vẽ nếu ở phía trước camera
+                    ctx.fillStyle = `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${scale})`;
+                    let s = p.size * scale;
+                    ctx.fillRect(x2d - s/2, y2d - s/2, s, s);
+                }
+            });
+            
+            // Vẽ vòng hào quang xoay (Gyroscope Ring)
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            // Vòng 1
+            ctx.ellipse(0, 0, 150 * Math.cos(countdownRotation*0.5), 150, countdownRotation, 0, Math.PI*2);
+            ctx.stroke();
+            // Vòng 2
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 180, 180 * Math.sin(countdownRotation*0.3), -countdownRotation, 0, Math.PI*2);
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.5)';
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // --- FIREWORKS ---
         function launchFireworksPeriod(duration, callback) {
             let start = Date.now();
             let interval = setInterval(() => {
                 if(Date.now() - start > duration) { clearInterval(interval); if(callback) callback(); }
-                // Tăng tốc độ bắn lên (80ms kiểm tra 1 lần, xác suất 60%) -> Rất dày
                 if(Math.random() < 0.6) createFirework(); 
             }, 80);
         }
 
         function createFirework(x, y, shape = 'NORMAL') {
             let colors = ['#FFD700', '#FF0055', '#00FFFF', '#FFFFFF'];
-            // Tốc độ bay vẫn giữ chậm (4-7) để chill
             fireworks.push({ x: x || Math.random() * width, y: height, ty: y || height * 0.15 + Math.random() * (height * 0.3), color: colors[Math.floor(Math.random() * colors.length)], exploded: false, speed: 4 + Math.random() * 3, shape: shape });
         }
         
@@ -215,12 +324,12 @@
             }
         }
 
-        // --- DRONE (SLOW & SMOOTH) ---
+        // --- DRONE ---
         function createDrone(x, y) {
             return {
                 x: x || Math.random() * width, y: y || height + 100, tx: Math.random() * width, ty: Math.random() * height, 
                 z: Math.random(), baseHsl: {h:50, s:100, l:50}, colorMode: 'static', 
-                speed: 0.02 + Math.random() * 0.02, // Bay chậm
+                speed: 0.02 + Math.random() * 0.02, 
                 size: PARTICLE_SIZE 
             };
         }
@@ -313,6 +422,11 @@
             requestAnimationFrame(animate);
             ctx.clearRect(0, 0, width, height); 
             globalHue += 0.5;
+
+            // Render 3D Countdown
+            if (state === "COUNTDOWN") {
+                render3DCountdown();
+            }
 
             if (isFinale && Math.random() < 0.05) { createFirework(Math.random()*width, height*0.5); }
 
