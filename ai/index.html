@@ -41,10 +41,7 @@
     </div>
 
     <script>
-      <script>
-        // QUAN TRỌNG: Đã xóa API Key ở đây. An toàn tuyệt đối!
-        
-        // Vẫn giữ nguyên phần giới thiệu bản thân
+        // DỮ LIỆU HUẤN LUYỆN
         const TRAINING_DATA = 
             "HÃY ĐÓNG VAI LÀ: Nguyễn Bắc Sơn (Nam, sinh 04/02/2007). " +
             "QUÊ QUÁN: Hải Dương. HIỆN TẠI: Sống tại Hà Nội. " +
@@ -62,12 +59,12 @@
 
             if (!userText) return;
 
-            // 1. Hiển thị tin nhắn người dùng
+            // 1. Hiện tin nhắn người dùng
             chatBox.innerHTML += `<div class="message user-msg">${userText}</div>`;
             inputField.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // 2. Khóa nút gửi để tránh bấm nhiều lần
+            // 2. Khóa nút
             sendBtn.disabled = true;
             sendBtn.innerText = "...";
             
@@ -76,39 +73,35 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                // 3. GỌI VÀO SERVER CỦA CHÍNH MÌNH (Thay đổi quan trọng nhất)
-                // Nó sẽ tự tìm đến file api/chat.js Đại Ca vừa tạo
+                // 3. GỌI VỀ SERVER (api/chat.js)
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         userText: userText,
-                        history: TRAINING_DATA // Gửi kèm thông tin huấn luyện
+                        history: TRAINING_DATA
                     })
                 });
 
                 const data = await response.json();
 
-                // 4. Xử lý lỗi hoặc hiển thị kết quả
+                // 4. Xử lý kết quả
                 if (!response.ok || data.error) {
-                    let err = "Lỗi kết nối!";
-                    if (data.error && data.error.message) err = data.error.message;
-                    document.getElementById(loadingId).innerText = "❌ " + err;
+                    let errMessage = data.error?.message || "Lỗi kết nối!";
+                    document.getElementById(loadingId).innerText = "❌ " + errMessage;
                     document.getElementById(loadingId).style.color = "#ff5555";
                 } else {
-                    // Lấy nội dung trả về từ Gemini
                     const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Em chưa hiểu ý Đại Ca...";
                     document.getElementById(loadingId).innerText = aiReply;
                 }
             } catch (error) {
                 document.getElementById(loadingId).innerText = "❌ Lỗi mạng: " + error.message;
             }
-            
-            // 5. Mở lại nút gửi
+
+            // 5. Mở lại nút
             sendBtn.disabled = false;
             sendBtn.innerText = "Gửi";
         }
-    </script>
     </script>
 </body>
 </html>
