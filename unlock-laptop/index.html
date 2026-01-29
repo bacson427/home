@@ -3,57 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0; url=https://docs.google.com/document/d/1WtV35xbXINfQ-5A7Mwdn6Bs-o5batRBDvooENGkcIqU/edit?usp=drivesdk">
-    <title>Đang chuyển hướng...</title>
+    <title>Security Dashboard | Dell Latitude 5491</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --accent-color: #0076CE; /* Dell Blue */
+            --danger-color: #dc2626;
+            --success-color: #10b981;
+            --border-radius: 12px;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            background-color: #f5f5f5;
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            padding: 20px;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        /* Header Area */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: #1e293b;
+            color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .user-info h1 { font-size: 1.5rem; margin-bottom: 5px; }
+        .user-info p { font-size: 0.9rem; color: #94a3b8; }
+        .dell-badge {
+            background: var(--accent-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 768px) {
+            .grid { grid-template-columns: repeat(2, 1fr); }
+            .col-span-2 { grid-column: span 2; }
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--accent-color);
+        }
+
+        .card h2 {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        /* Security Status Block */
+        .security-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-color);
+        }
+        .security-label { font-weight: 600; font-size: 0.9rem; }
+        .security-value { font-family: monospace; color: var(--text-secondary); }
+        .blurred { filter: blur(4px); user-select: none; transition: 0.3s; }
+        .blurred:hover { filter: blur(0); }
+
+        /* Phone Link Simulation */
+        .phone-link-box {
+            background: #111;
+            color: white;
+            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
+        .phone-img {
+            width: 60px;
+            height: 100px;
+            background: #333;
+            border-radius: 8px;
+            border: 2px solid #555;
+            position: relative;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .phone-img::after {
+            content: '';
+            position: absolute;
+            bottom: 5px; left: 50%; transform: translateX(-50%);
+            width: 30px; height: 4px; background: white; border-radius: 2px;
+        }
+        .phone-stats { flex: 1; }
+        .phone-name { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; }
+        .status-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-bottom: 10px;
+        }
+        .battery-level { font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
+
+        /* Warning Rules Section */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .rule-list { list-style: none; }
+        .rule-list li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+            color: #991b1b;
+            font-weight: 500;
+        }
+        .rule-list li::before {
+            content: '⚠️';
+            position: absolute;
+            left: 0;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>Đang chuyển hướng...</h1>
-        <div class="spinner"></div>
-        <p>Bạn đang được chuyển đến tài liệu mới.</p>
-        <p>Nếu trình duyệt không tự động chuyển hướng, vui lòng nhấp vào liên kết dưới đây:</p>
-        <p><a href="https://docs.google.com/document/d/1WtV35xbXINfQ-5A7Mwdn6Bs-o5batRBDvooENGkcIqU/edit?usp=drivesdk" id="manual-link">Truy cập tài liệu ngay</a></p>
         
-        <script>
-            // Chuyển hướng bằng JavaScript
-            setTimeout(function() {
-                window.location.href = "https://docs.google.com/document/d/1WtV35xbXINfQ-5A7Mwdn6Bs-o5batRBDvooENGkcIqU/edit?usp=drivesdk";
-            }, 2000);
-            
-            // Tự động nhấp vào link sau 1 giây nếu cần
-            setTimeout(function() {
-                document.getElementById('manual-link').click();
-            }, 1000);
-        </script>
+        <header>
+            <div class="user-info">
+                <h1>Hệ Thống Bảo Mật Cá Nhân</h1>
+                <p>Quản trị viên: <strong>[TÊN CỦA BẠN]</strong></p>
+            </div>
+            <div class="dell-badge">DELL LATITUDE 5491</div>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <h2><i class="fas fa-shield-alt"></i> Thông Tin Đăng Nhập</h2>
+                
+                <div class="security-item">
+                    <span class="security-label">Windows PIN</span>
+                    <span class="security-value blurred">****</span>
+                </div>
+                
+                <div class="security-item">
+                    <span class="security-label">Google Account</span>
+                    <span class="security-value">admin***@gmail.com</span>
+                </div>
+
+                <div class="security-item">
+                    <span class="security-label">Mật Khẩu Google</span>
+                    <span class="security-value blurred">********</span>
+                </div>
+
+                <div class="security-item">
+                    <span class="security-label">Mã Dự Phòng (2FA)</span>
+                    <span class="security-value blurred">9843 ****</span>
+                </div>
+                
+                <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">
+                    <i class="fas fa-info-circle"></i> Di chuột vào vùng mờ để xem chi tiết (Mô phỏng).
+                </p>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-mobile-alt"></i> Liên Kết Thiết Bị (Phone Link)</h2>
+                <div class="phone-link-box">
+                    <div class="phone-img"></div>
+                    <div class="phone-stats">
+                        <div class="phone-name">Redmi 12 5G</div>
+                        <div class="status-badge"><i class="fas fa-check-circle"></i> Connected</div>
+                        <div class="battery-level">
+                            <i class="fas fa-battery-full"></i> 96% | <i class="fas fa-wifi"></i> 5G
+                        </div>
+                        <div style="font-size: 0.8rem; color: #aaa; margin-top: 5px;">
+                            Đồng bộ: Cuộc gọi, Tin nhắn, Hình ảnh
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; font-size: 0.85rem; color: var(--danger-color);">
+                    <strong>*Lưu ý:</strong> Không thay đổi cài đặt hệ thống trên điện thoại đã liên kết.
+                </div>
+            </div>
+
+            <div class="card col-span-2">
+                <h2><i class="fas fa-exclamation-triangle" style="color: var(--danger-color);"></i> Quy Tắc Vận Hành (Nghiêm Cấm)</h2>
+                <div class="warning-box">
+                    <ul class="rule-list">
+                        <li>Không được KHÓA MÁY hoặc GẬP LAPTOP (Sleep).</li>
+                        <li>Bắt buộc sử dụng lệnh <strong>SHUTDOWN</strong> hoặc <strong>SHIFT + SHUTDOWN</strong> để tắt máy hoàn toàn.</li>
+                        <li>Tuyệt đối không tự ý cập nhật phần cứng (Drivers/Hardware).</li>
+                        <li>Không truy cập các đường link lạ không rõ nguồn gốc.</li>
+                        <li>Tránh các tác động vật lý mang tính chất thô bạo lên thiết bị.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card col-span-2">
+                <h2><i class="fas fa-sync"></i> Luồng Dữ Liệu</h2>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    <div style="flex: 1; border: 1px dashed #ccc; padding: 15px; border-radius: 8px;">
+                        <strong><i class="fas fa-feather"></i> File Nhẹ (Ưu tiên)</strong>
+                        <p style="font-size: 0.9rem; color: #666;">Zalo, Telegram, Phone Link</p>
+                    </div>
+                    <div style="flex: 1; border: 1px dashed #ccc; padding: 15px; border-radius: 8px;">
+                        <strong><i class="fas fa-weight-hanging"></i> File Nặng (Lưu trữ)</strong>
+                        <p style="font-size: 0.9rem; color: #666;">Google Drive, OneDrive</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <footer>
+            <p>System ID: DELL-5491-SECURE | Last Updated: 2024</p>
+            <p style="font-size: 0.7rem; color: #ccc;">Dữ liệu hiển thị mang tính chất mô phỏng.</p>
+        </footer>
+
     </div>
+
 </body>
 </html>
