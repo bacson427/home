@@ -3,276 +3,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security Dashboard | Dell Latitude 5491</title>
+    <title>Sổ Tay Bảo Mật | Nguyễn Bắc Sơn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #f0f2f5;
+            --bg-color: #fdfbf7; /* Màu giấy trắng kem */
             --card-bg: #ffffff;
-            --text-primary: #1f2937;
-            --text-secondary: #6b7280;
-            --accent-color: #0076CE; /* Dell Blue */
-            --danger-color: #dc2626;
-            --warning-color: #f59e0b;
-            --success-color: #10b981;
-            --border-radius: 12px;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --text-main: #4a4036; /* Màu nâu cà phê đậm */
+            --text-light: #8c7b75;
+            --accent: #a68b6c; /* Màu vàng nâu mộc mạp */
+            --border: #e6e2d8;
+            --danger: #d9534f;
+            --font-heading: 'Lora', serif;
+            --font-body: 'Inter', sans-serif;
+            --shadow: 0 4px 20px rgba(74, 64, 54, 0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: var(--font-main);
+            font-family: var(--font-body);
             background-color: var(--bg-color);
-            color: var(--text-primary);
-            padding: 20px;
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
         }
 
-        .container { max-width: 1000px; margin: 0 auto; }
+        .container { max-width: 900px; margin: 0 auto; }
 
-        /* Header Area */
+        /* Header đơn giản */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            background: #1e293b;
-            color: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 20px;
         }
 
-        .user-info h1 { font-size: 1.5rem; margin-bottom: 5px; }
-        .user-info p { font-size: 0.9rem; color: #94a3b8; }
-        .dell-badge {
-            background: var(--accent-color);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
+        h1 {
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-family: var(--font-heading);
+            font-style: italic;
+            color: var(--text-light);
+            font-size: 1rem;
         }
 
         /* Grid Layout */
         .grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 20px;
+            gap: 30px;
         }
         @media (min-width: 768px) {
             .grid { grid-template-columns: repeat(2, 1fr); }
-            .col-span-2 { grid-column: span 2; }
+            .full-width { grid-column: span 2; }
         }
 
-        /* Card Styles */
-        .card {
+        /* Thẻ Card phong cách giấy note */
+        .paper-card {
             background: var(--card-bg);
-            padding: 25px;
-            border-radius: var(--border-radius);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 8px;
             box-shadow: var(--shadow);
-            border-top: 4px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
         }
 
-        .card h2 {
-            font-size: 1.1rem;
-            color: var(--text-primary);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 10px;
+        .paper-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 64, 54, 0.1);
         }
 
-        /* Database Section Styles */
-        .database-box {
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            border: 1px solid #bfdbfe;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .btn-access {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background-color: var(--accent-color);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 6px;
-            text-decoration: none;
+        .card-title {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
             font-weight: 600;
-            margin: 15px 0;
-            transition: background 0.2s;
-            box-shadow: 0 4px 6px rgba(0, 118, 206, 0.2);
-        }
-        
-        .btn-access:hover {
-            background-color: #005a9e;
-            transform: translateY(-1px);
-        }
-
-        .laptop-only-warning {
-            font-size: 0.85rem;
-            color: var(--danger-color);
-            background: #fef2f2;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px dashed #fecaca;
-            display: inline-block;
-        }
-
-        /* Security Status Block */
-        .security-item {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--border);
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #f8fafc;
-            border-radius: 8px;
-            border-left: 3px solid #cbd5e1;
-        }
-        .security-label { font-weight: 600; font-size: 0.9rem; }
-        .security-value { font-family: monospace; color: var(--text-secondary); }
-        .blurred { filter: blur(4px); user-select: none; transition: 0.3s; }
-        .blurred:hover { filter: blur(0); }
-
-        /* Phone Link */
-        .phone-link-box {
-            background: #111; color: white; padding: 20px;
-            border-radius: 10px; display: flex; align-items: center; gap: 20px;
-        }
-        .phone-img {
-            width: 60px; height: 100px; background: #333;
-            border-radius: 8px; border: 2px solid #555; position: relative;
-        }
-        .phone-img::after {
-            content: ''; position: absolute; bottom: 5px; left: 50%;
-            transform: translateX(-50%); width: 30px; height: 4px; background: white; border-radius: 2px;
-        }
-        .phone-stats { flex: 1; }
-        .status-badge {
-            display: inline-block; background: #10b981; color: white;
-            padding: 3px 10px; border-radius: 4px; font-size: 0.75rem; margin-bottom: 5px;
+            align-items: center;
         }
 
-        /* Warning Rules */
-        .warning-box { background: #fef2f2; border: 1px solid #fecaca; padding: 15px; border-radius: 8px; }
-        .rule-list { list-style: none; }
-        .rule-list li { margin-bottom: 8px; padding-left: 20px; position: relative; color: #991b1b; font-weight: 500; }
-        .rule-list li::before { content: '⚠️'; position: absolute; left: 0; }
+        /* Button chính */
+        .btn-main {
+            display: block;
+            width: 100%;
+            background-color: var(--text-main);
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background 0.3s;
+            margin-top: 15px;
+        }
 
-        footer { text-align: center; margin-top: 30px; color: var(--text-secondary); font-size: 0.8rem; }
+        .btn-main:hover {
+            background-color: #2c241b;
+        }
+
+        /* Phần tương tác ẩn hiện mật khẩu */
+        .secret-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .secret-label { font-weight: 500; color: var(--text-light); }
+        
+        .secret-value-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .secret-data {
+            font-family: monospace;
+            background: #f5f5f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            letter-spacing: 2px;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--accent);
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        .toggle-btn:hover { color: var(--text-main); }
+
+        /* Cảnh báo */
+        .note-box {
+            background-color: #fff5f5;
+            border-left: 4px solid var(--danger);
+            padding: 15px;
+            font-size: 0.95rem;
+            color: #7d3c3c;
+            margin-top: 10px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Danh sách quy tắc */
+        ul.simple-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        ul.simple-list li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+        }
+        ul.simple-list li::before {
+            content: "•";
+            color: var(--accent);
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -5px;
+        }
+
+        /* Tag phân loại */
+        .tag-group { margin-top: 15px; }
+        .tag {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            border: 1px solid var(--border);
+        }
+        .tag.light { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+        .tag.heavy { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-family: var(--font-heading);
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        
         <header>
-            <div class="user-info">
-                <h1>Hệ Thống Bảo Mật Cá Nhân</h1>
-                <p>Quản trị viên: <strong>[TÊN CỦA BẠN]</strong></p>
-            </div>
-            <div class="dell-badge">DELL LATITUDE 5491</div>
+            <h1>Nguyễn Bắc Sơn</h1>
+            <div class="subtitle">Dell Latitude 5491 &bull; 04.02.2007</div>
         </header>
 
         <div class="grid">
-            
-            <div class="card col-span-2">
-                <h2><i class="fas fa-database"></i> TỔNG HỢP TẤT CẢ MẬT KHẨU ĐÃ LƯU</h2>
-                <div class="database-box">
-                    <p style="font-size: 1.1rem; color: #1e3a8a; font-weight: 500;">
-                        Kho lưu trữ thông tin xác thực & Tài khoản
-                    </p>
-                    
-                    <a href="https://docs.google.com/spreadsheets/d/1FythxX7Rvx5B9cktiDVha4vSydT8bnwDBwjx9OjraoU/edit?usp=drivesdk" 
-                       target="_blank" 
-                       class="btn-access">
-                        <i class="fas fa-external-link-alt"></i> TRUY CẬP DỮ LIỆU
-                    </a>
 
-                    <br>
-                    <div class="laptop-only-warning">
-                        <i class="fas fa-laptop-code"></i> 
-                        <strong>LƯU Ý:</strong> Phải đăng nhập vào Laptop mới có thể xem được.
-                        <br>
-                        [span_0](start_span)<span style="font-size: 0.8rem; font-style: italic;">(Mục này chứa thông tin quan trọng không được chia sẻ ra ngoài[span_0](end_span))</span>
-                    </div>
+            <div class="paper-card full-width">
+                <div class="card-title">
+                    <span><i class="fas fa-key"></i> Tổng Hợp Mật Khẩu</span>
+                    <i class="fas fa-laptop" style="font-size: 1rem; color: var(--text-light);"></i>
                 </div>
-            </div>
-
-            <div class="card">
-                <h2><i class="fas fa-shield-alt"></i> Thông Tin Đăng Nhập</h2>
+                [span_0](start_span)<p>Nơi lưu trữ toàn bộ tài khoản và thông tin xác thực quan trọng của hệ thống[span_0](end_span).</p>
                 
-                <div class="security-item">
-                    <span class="security-label">Windows PIN</span>
-                    <span class="security-value blurred">****</span>
+                <a href="https://docs.google.com/spreadsheets/d/1FythxX7Rvx5B9cktiDVha4vSydT8bnwDBwjx9OjraoU/edit?usp=drivesdk" target="_blank" class="btn-main">
+                    Mở Kho Dữ Liệu (Google Sheet)
+                </a>
+
+                <div class="note-box">
+                    <strong><i class="fas fa-exclamation-circle"></i> Lưu ý:</strong> Chỉ được phép truy cập khi đang đăng nhập trên Laptop này. [span_1](start_span)Tuyệt đối không chia sẻ link ra ngoài[span_1](end_span).
                 </div>
+            </div>
+
+            <div class="paper-card">
+                <div class="card-title">Thông Tin Xác Thực</div>
                 
-                <div class="security-item">
-                    <span class="security-label">Google Account</span>
-                    <span class="security-value">admin***@gmail.com</span>
+                <div class="secret-row">
+                    <span class="secret-label">Mật khẩu Google</span>
+                    <div class="secret-value-group">
+                        <span class="secret-data" id="pass-google">••••••••</span>
+                        <button class="toggle-btn" onclick="toggleVisibility('pass-google', '@2007Son')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="secret-row">
+                    <span class="secret-label">Windows PIN</span>
+                    <div class="secret-value-group">
+                        <span class="secret-data" id="pin-windows">••••••••</span>
+                        <button class="toggle-btn" onclick="toggleVisibility('pin-windows', '04022007')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="secret-row">
+                    <span class="secret-label">Mã dự phòng</span>
+                    <div class="secret-value-group">
+                        <span class="secret-data" id="backup-code">9843••••</span>
+                        <button class="toggle-btn" onclick="toggleVisibility('backup-code', '9843xxxx')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="security-item">
-                    <span class="security-label">Mã Dự Phòng (2FA)</span>
-                    <span class="security-value blurred">9843 ****</span>
+                [span_2](start_span)<p style="font-size: 0.8rem; margin-top: 15px; color: var(--text-light);">*Bấm vào icon con mắt để xem thông tin[span_2](end_span).</p>
+            </div>
+
+            <div class="paper-card">
+                <div class="card-title">Kết Nối Thiết Bị</div>
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <i class="fas fa-mobile-alt" style="font-size: 2rem; color: var(--text-main);"></i>
+                    <div>
+                        <div style="font-weight: 600;">Redmi 12 5G</div>
+                        <div style="font-size: 0.85rem; color: #27ae60;">● Đang kết nối</div>
+                    </div>
+                </div>
+                <p>Đồng bộ dữ liệu thời gian thực. [span_3](start_span)Không được thay đổi cài đặt gốc trên điện thoại[span_3](end_span).</p>
+                <div class="tag-group">
+                    <span class="tag light">Zalo</span>
+                    <span class="tag light">Phone Link</span>
+                    <span class="tag heavy">Google Drive</span>
                 </div>
             </div>
 
-            <div class="card">
-                <h2><i class="fas fa-mobile-alt"></i> Phone Link</h2>
-                <div class="phone-link-box">
-                    <div class="phone-img"></div>
-                    <div class="phone-stats">
-                        <div style="font-weight: bold; margin-bottom:5px;">Redmi 12 5G</div>
-                        <div class="status-badge"><i class="fas fa-check-circle"></i> Connected</div>
-                        <div style="font-size: 0.9rem;"><i class="fas fa-battery-full"></i> 96%</div>
-                    </div>
-                </div>
-                <div style="margin-top: 10px; font-size: 0.8rem; color: #666;">
-                    [span_1](start_span)Tuyệt đối không chỉnh sửa hệ thống trên điện thoại[span_1](end_span).
-                </div>
-            </div>
-
-            <div class="card col-span-2">
-                [span_2](start_span)<h2><i class="fas fa-exclamation-triangle" style="color: var(--danger-color);"></i> NGHIÊM CẤM[span_2](end_span)</h2>
-                <div class="warning-box">
-                    <ul class="rule-list">
-                        <li>Không được KHÓA MÁY hoặc GẬP LAPTOP (Sleep).</li>
-                        <li>Bắt buộc dùng <strong>SHUTDOWN</strong> hoặc <strong>SHIFT + SHUTDOWN</strong>.</li>
-                        <li>Không tự ý update phần cứng & truy cập link lạ.</li>
-                        <li>Không tác động vật lý thô bạo lên thiết bị.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="card col-span-2">
-                <h2><i class="fas fa-sync"></i> Phân Loại Dữ Liệu</h2>
-                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                    <div style="flex: 1; border: 1px dashed #ccc; padding: 15px; border-radius: 8px;">
-                        <strong><i class="fas fa-feather"></i> File Nhẹ</strong>
-                        <p style="font-size: 0.9rem; color: #666;">Zalo, Telegram, Phone Link</p>
-                    </div>
-                    <div style="flex: 1; border: 1px dashed #ccc; padding: 15px; border-radius: 8px;">
-                        <strong><i class="fas fa-weight-hanging"></i> File Nặng</strong>
-                        <p style="font-size: 0.9rem; color: #666;">Google Drive, OneDrive</p>
-                    </div>
-                </div>
+            <div class="paper-card full-width">
+                <div class="card-title" style="color: var(--danger);">Quy Tắc Vận Hành</div>
+                <ul class="simple-list">
+                    <li><strong>Tắt máy:</strong> Không gập máy để Sleep. [span_4](start_span)Bắt buộc dùng <em>Shutdown</em> hoặc <em>Shift + Shutdown</em>[span_4](end_span).</li>
+                    [span_5](start_span)<li><strong>Phần cứng:</strong> Giữ nguyên bản, không tự ý cập nhật Driver hay can thiệp phần cứng[span_5](end_span).</li>
+                    [span_6](start_span)<li><strong>An toàn mạng:</strong> Tuyệt đối không nhấn vào các đường link lạ hoặc không rõ nguồn gốc[span_6](end_span).</li>
+                    [span_7](start_span)<li><strong>Sử dụng:</strong> Tránh các tác động vật lý mạnh lên thiết bị[span_7](end_span).</li>
+                </ul>
             </div>
 
         </div>
 
         <footer>
-            <p>System ID: DELL-5491-SECURE | Last Updated: 2024</p>
+            <p>Thiết lập cá nhân &copy; 2024 - 2027</p>
+            <p style="font-size: 0.8rem; margin-top:5px; color:#ccc;">Dữ liệu được trích xuất từ TỔNG HỢP PASSWORD.pdf</p>
         </footer>
-
     </div>
 
+    <script>
+        // Hàm tương tác ẩn/hiện mật khẩu
+        function toggleVisibility(elementId, realValue) {
+            const element = document.getElementById(elementId);
+            const currentText = element.innerText;
+            
+            // Nếu đang bị che (chứa dấu chấm tròn hoặc sao)
+            if (currentText.includes('•') || currentText.includes('xxxx')) {
+                element.innerText = realValue;
+                element.style.color = "#d9534f"; // Đổi màu chữ khi hiện để cảnh báo
+            } else {
+                // Quay lại trạng thái che
+                if(elementId === 'backup-code') {
+                    element.innerText = '9843••••';
+                } else {
+                    element.innerText = '••••••••';
+                }
+                element.style.color = ""; // Trả lại màu gốc
+            }
+        }
+    </script>
 </body>
 </html>
