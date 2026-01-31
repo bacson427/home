@@ -3,254 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HPBD & HPNY - Audio Reactive V3</title>
+    <title>HPBD & HPNY (V2.1 Audio Reactive)</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Dancing+Script:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@800&family=Dancing+Script:wght@700&display=swap');
+
         body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Cinzel', serif; touch-action: none; }
         .galaxy-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%); z-index: 0; }
-        #stars { width: 1px; height: 1px; background: transparent; }
+        .stars { width: 1px; height: 1px; background: transparent; animation: animStar 100s linear infinite; }
+        @keyframes animStar { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
         #ui-layer { position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; flex-direction: column; pointer-events: none; z-index: 100; }
-        .btn { pointer-events: auto; background: rgba(255, 255, 255, 0.05); color: #d4af37; border: 1px solid rgba(212, 175, 55, 0.5); padding: 15px 40px; font-size: 18px; cursor: pointer; transition: all 0.5s; text-transform: uppercase; letter-spacing: 4px; border-radius: 30px; backdrop-filter: blur(4px); }
-        .btn:hover { background: rgba(255, 215, 0, 0.2); transform: scale(1.05); color: #fff; border-color: #ffd700; }
+        .btn { pointer-events: auto; background: rgba(255, 255, 255, 0.05); color: #d4af37; border: 1px solid rgba(212, 175, 55, 0.5); padding: 15px 40px; font-size: 18px; cursor: wait; transition: all 0.5s; text-transform: uppercase; letter-spacing: 4px; font-family: 'Cinzel', serif; font-weight: 900; margin-top: 30px; border-radius: 30px; backdrop-filter: blur(4px); opacity: 0.5; }
+        .btn.ready { cursor: pointer; opacity: 1; border-color: #ffd700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); animation: pulse 3s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); } 50% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); } 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); } }
         #letter-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #8B0000; color: white; display: none; justify-content: center; align-items: center; flex-direction: column; z-index: 200; font-family: 'Arial', sans-serif; padding: 20px; box-sizing: border-box; opacity: 0; transition: opacity 2s ease-in-out; }
         #letter-content { max-width: 600px; text-align: center; font-size: clamp(16px, 4vw, 24px); line-height: 1.6; }
         .typing-cursor { display: inline-block; width: 2px; height: 1em; background-color: white; animation: blink 1s infinite; vertical-align: middle; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        #letter-signature { margin-top: 30px; font-size: clamp(18px, 5vw, 22px); font-family: 'Dancing Script', cursive; opacity: 0; transition: opacity 1.5s; text-align: center; }
     </style>
 </head>
 <body>
-    <div class="galaxy-bg"><div id="stars"></div></div>
+    <div class="galaxy-bg"><div id="stars" class="stars"></div></div>
     <canvas id="mainCanvas"></canvas>
     <div id="ui-layer">
-        <button id="start-btn" class="btn">KHAI TIỆC</button>
-        <p style="color: #d4af37; margin-top: 10px; font-size: 10px;" id="status-text">Chạm để bắt đầu nhạc và pháo hoa</p>
+        <button id="start-btn" class="btn">ĐANG NẠP...</button>
+        <button id="next-phase-btn" class="btn ready" style="display:none">TIẾP TỤC</button>
     </div>
     <div id="letter-container">
         <div id="letter-content"></div>
-        <div id="letter-signature"></div>
+        <div id="letter-signature" style="margin-top:30px; font-family:'Dancing Script'; font-size: 22px; opacity:0; transition: 1s;"></div>
     </div>
-    <audio id="bg-music" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" crossorigin="anonymous"></audio>
+    <audio id="bg-music" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" crossorigin="anonymous" loop></audio>
 
-<script>
-    const canvas = document.getElementById('mainCanvas');
-    const ctx = canvas.getContext('2d');
-    const music = document.getElementById('bg-music');
-    let width, height, audioCtx, analyser, dataArray;
-    let state = "IDLE", drones = [], fireworks = [], particles = [], globalHue = 0;
-    let currentVol = 0;
+    <script>
+        const CONFIG = {
+            NAME: "Trương Thị Dương",
+            DRONE_SPEED: 0.02, // Chậm lại cho mượt
+            SEQUENCE_DELAY: 8000 // Kéo dài mỗi hiệu ứng
+        };
 
-    const isMobile = window.innerWidth < 768;
-    const DRONE_SPEED = 0.025; // Chậm và mượt hơn
-    const SCAN_STEP = isMobile ? 6 : 4;
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        const music = document.getElementById('bg-music');
+        let width, height, audioCtx, analyser, dataArray;
+        let volBoost = 1;
 
-    function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resize); resize();
+        function initAudio() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            const source = audioCtx.createMediaElementSource(music);
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+            analyser.fftSize = 256;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+        }
 
-    // Khởi tạo Audio Analyzer
-    function initAudio() {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioCtx.createAnalyser();
-        const source = audioCtx.createMediaElementSource(music);
-        source.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        analyser.fftSize = 256;
-        dataArray = new Uint8Array(analyser.frequencyBinCount);
-    }
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
 
-    document.getElementById('start-btn').onclick = function() {
-        if (!audioCtx) initAudio();
-        this.style.display = document.getElementById('status-text').style.display = 'none';
-        music.play();
-        state = "FIREWORKS";
-        startDroneSequence();
-    };
-
-    function createFirework(x, y) {
-        // Kích thước nổ phụ thuộc vào cường độ âm thanh tại thời điểm bắn
-        const power = (currentVol / 255) * 1.5 + 0.5;
-        fireworks.push({
-            x: x || Math.random() * width,
-            y: height,
-            ty: y || height * (0.1 + Math.random() * 0.3),
-            color: `hsl(${Math.random() * 360}, 100%, 60%)`,
-            exploded: false,
-            speed: 4,
-            power: power
+        document.fonts.ready.then(() => {
+            const btn = document.getElementById('start-btn');
+            btn.innerText = "KHAI TIỆC"; btn.classList.add('ready');
+            btn.onclick = triggerAction;
         });
-    }
 
-    function explode(fw) {
-        fw.exploded = true;
-        // Số lượng hạt tỉ lệ với âm lượng nhạc
-        const count = Math.floor(40 + (currentVol / 255) * 60);
-        for(let i=0; i<count; i++) {
-            const angle = (i/count) * Math.PI * 2;
-            const speed = (Math.random() * 3 + 2) * fw.power;
-            particles.push({
-                x: fw.x, y: fw.y,
-                vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed,
-                color: fw.color,
-                life: 1.0,
-                decay: 0.015
+        let state = "IDLE", fireworks = [], particles = [], drones = [], globalHue = 0;
+
+        function triggerAction() {
+            if (state === "IDLE") {
+                state = "FIREWORKS";
+                document.getElementById('start-btn').style.display = 'none';
+                if(!audioCtx) initAudio();
+                music.play();
+                setTimeout(() => { state = "WAITING"; document.getElementById('next-phase-btn').style.display = 'block'; }, 8000);
+            } else if (state === "WAITING") {
+                state = "COUNTDOWN";
+                document.getElementById('next-phase-btn').style.display = 'none';
+                startCountdown();
+            }
+        }
+
+        function createFirework(x, y) {
+            // Nổ to hay bé dựa trên volBoost (sóng nhạc)
+            fireworks.push({ x: x || Math.random() * width, y: height, ty: y || height * 0.2, color: `hsl(${Math.random()*360}, 100%, 60%)`, exploded: false, boost: volBoost });
+        }
+
+        function explode(fw) {
+            fw.exploded = true;
+            let count = 30 + (fw.boost * 40); // Nhạc to nổ nhiều hạt hơn
+            for(let i=0; i<count; i++) {
+                let angle = (i/count) * Math.PI * 2, speed = (Math.random() * 3 + 2) * fw.boost;
+                particles.push({ x: fw.x, y: fw.y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed, color: fw.color, life: 1, decay: 0.015 });
+            }
+        }
+
+        function startCountdown() {
+            let count = 10;
+            let timer = setInterval(() => {
+                if(count <= 0) { clearInterval(timer); startDroneShow(); }
+                else { createFirework(width/2, height/2); count--; }
+            }, 1000);
+        }
+
+        function startDroneShow() {
+            state = "DRONE";
+            const sequence = [
+                { txt: "🎉 CHÚC MỪNG 🎉" },
+                { txt: "🌟 NĂM MỚI 2026 🌟" },
+                { txt: "🐴 BÍNH NGỌ 🐴" },
+                { txt: "💝 VALENTINE 🌹" },
+                { txt: "💐 PHỤ NỮ 8/3 🌷" },
+                { shp: "HEART" },
+                { txt: "🍀 HPBD TUỔI 19 🐷" },
+                { txt: CONFIG.NAME },
+                { txt: "❤️ MÃI XINH ĐẸP NHÉ ❤️", isEnd: true }
+            ];
+
+            sequence.forEach((s, i) => {
+                setTimeout(() => {
+                    if(s.txt) formText(s.txt);
+                    if(s.shp) formShape();
+                    if(s.isEnd) setTimeout(startLetter, CONFIG.SEQUENCE_DELAY);
+                }, i * CONFIG.SEQUENCE_DELAY);
             });
         }
-    }
 
-    function startDroneSequence() {
-        const sequence = [
-            { t: 2000, txt: "WELCOME DƯƠNG", color: {h:48,s:100,l:60}, mode: 'shift' },
-            { t: 10000, txt: "🎉CHÚC MỪNG🎊", color: {h:0,s:100,l:60}, mode: 'shift' },
-            { t: 18000, txt: "🌟NĂM MỚI 2026🔥", color: {h:48,s:100,l:60}, mode: 'shift' },
-            { t: 26000, txt: "🐴BÍNH NGỌ🐴", color: {h:190,s:100,l:70}, mode: 'static' },
-            { t: 34000, txt: "💝HAPPY VALENTINE🌹", color: {h:320,s:100,l:70}, mode: 'shift' },
-            { t: 42000, txt: "💐QUỐC TẾ PHỤ NỮ 8/3🌷", color: {h:0,s:100,l:60}, mode: 'rainbow' },
-            { t: 50000, shp: "HEART", color: {h:350,s:100,l:60} },
-            { t: 58000, txt: "🍀HPBD TUỔI 19🐷", color: {h:48,s:100,l:60} },
-            { t: 66000, action: "startLetter" }
-        ];
-
-        sequence.forEach(s => {
-            setTimeout(() => {
-                if(s.txt) formText(s.txt, s.color, s.mode);
-                if(s.shp) formShape(s.shp, s.color);
-                if(s.action === "startLetter") startLetter();
-            }, s.t);
-        });
-    }
-
-    function formText(text, hsl, mode) {
-        const offCv = document.createElement('canvas');
-        const offCtx = offCv.getContext('2d');
-        let fSize = isMobile ? 40 : 80;
-        offCtx.font = `900 ${fSize}px "Cinzel"`;
-        const m = offCtx.measureText(text);
-        offCv.width = m.width + 40; offCv.height = fSize * 2;
-        offCtx.font = `900 ${fSize}px "Cinzel"`;
-        offCtx.textAlign = 'center'; offCtx.textBaseline = 'middle';
-        offCtx.fillStyle = 'white';
-        offCtx.fillText(text, offCv.width/2, offCv.height/2);
-
-        const data = offCtx.getImageData(0,0, offCv.width, offCv.height).data;
-        const pts = [];
-        const scale = Math.min(width*0.9/offCv.width, height*0.6/offCv.height);
-        for(let y=0; y<offCv.height; y+=SCAN_STEP) {
-            for(let x=0; x<offCv.width; x+=SCAN_STEP) {
-                if(data[(y*offCv.width + x)*4 + 3] > 128) {
-                    pts.push({ x: (width - offCv.width*scale)/2 + x*scale, y: (height - offCv.height*scale)/2 + y*scale });
+        function formText(text) {
+            const tempCv = document.createElement('canvas');
+            const tempCtx = tempCv.getContext('2d');
+            let fSize = width < 600 ? 40 : 80;
+            tempCtx.font = `900 ${fSize}px "Cinzel"`;
+            tempCv.width = tempCtx.measureText(text).width + 20; tempCv.height = fSize * 2;
+            tempCtx.font = `900 ${fSize}px "Cinzel"`; tempCtx.textAlign = 'center'; tempCtx.textBaseline = 'middle';
+            tempCtx.fillStyle = '#fff'; tempCtx.fillText(text, tempCv.width/2, tempCv.height/2);
+            
+            let data = tempCtx.getImageData(0,0, tempCv.width, tempCv.height).data, pts = [];
+            let step = width < 600 ? 4 : 3;
+            for(let y=0; y<tempCv.height; y+=step) {
+                for(let x=0; x<tempCv.width; x+=step) {
+                    if(data[(y*tempCv.width+x)*4+3] > 128) pts.push({ x: (width-tempCv.width)/2 + x, y: (height-tempCv.height)/2 + y });
                 }
             }
+            updateDrones(pts);
         }
-        updateDrones(pts, hsl, mode);
-    }
 
-    function formShape(type, hsl) {
-        const pts = [], cx = width/2, cy = height/2, size = Math.min(width, height)*0.4;
-        for(let i=0; i<800; i++) {
-            let t = (i/800)*Math.PI*2;
-            let x = 16*Math.pow(Math.sin(t),3);
-            let y = -(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
-            pts.push({ x: cx + x*(size/30), y: cy + y*(size/30) });
-        }
-        updateDrones(pts, hsl, 'shift');
-    }
-
-    function updateDrones(pts, hsl, mode) {
-        while(drones.length < pts.length) drones.push({ x: width/2, y: height+50, tx: width/2, ty: height, color: hsl, mode: mode });
-        pts.forEach((p, i) => {
-            drones[i].tx = p.x; drones[i].ty = p.y;
-            drones[i].color = hsl; drones[i].mode = mode;
-        });
-        for(let i=pts.length; i<drones.length; i++) drones[i].ty = height + 500;
-    }
-
-    function startLetter() {
-        state = "LETTER"; drones = [];
-        const container = document.getElementById('letter-container');
-        container.style.display = 'flex';
-        setTimeout(() => {
-            container.style.opacity = '1';
-            typeLetter();
-        }, 100);
-    }
-
-    function typeLetter() {
-        const text = "Dương ơi, hôm nay là ngày 01/03/2026, cậu cũng tròn 19 tuổi. Tớ chúc cậu ngày càng xinh đẹp, học giỏi, đạt được kết quả cao trong học tập, sớm đạt được những ước mơ mà cậu đã từng mong ước. Tớ cũng xin lỗi, thời gian vừa qua đã làm cậu phải buồn, giận, chán ghét tớ. Thôi cũng đã qua năm mới tớ mong rằng cậu có thể không để bụng đến tính cách \" trẻ trâu \" của tớ. Tớ cảm ơn cậu!";
-        let i = 0;
-        const interval = setInterval(() => {
-            document.getElementById('letter-content').innerHTML = text.substring(0, i) + '<span class="typing-cursor">|</span>';
-            i++;
-            if(i > text.length) {
-                clearInterval(interval);
-                document.getElementById('letter-signature').innerHTML = "Người gửi: NGUYỄN BẮC SƠN<br>Người nhận: TRƯƠNG THỊ DƯƠNG";
-                document.getElementById('letter-signature').style.opacity = '1';
+        function formShape() {
+            let pts = [], cx = width/2, cy = height/2, size = Math.min(width, height)*0.35;
+            for(let i=0; i<800; i++) {
+                let t = (i/800)*Math.PI*2;
+                let x = 16*Math.pow(Math.sin(t), 3), y = -(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+                pts.push({ x: cx + x*(size/20), y: cy + y*(size/20) });
             }
-        }, 60);
-    }
-
-    function animate() {
-        requestAnimationFrame(animate);
-        if(state === "LETTER") return;
-
-        // Lấy dữ liệu âm thanh
-        if(analyser) {
-            analyser.getByteFrequencyData(dataArray);
-            let sum = 0;
-            for(let i=0; i<dataArray.length; i++) sum += dataArray[i];
-            currentVol = sum / dataArray.length; // Độ lớn trung bình
+            updateDrones(pts);
         }
 
-        // Hiệu ứng Motion Blur nhẹ
-        ctx.fillStyle = 'rgba(0,0,0,0.15)';
-        ctx.fillRect(0,0,width,height);
+        function updateDrones(pts) {
+            while(drones.length < pts.length) drones.push({ x: width/2, y: height, tx: width/2, ty: height });
+            pts.forEach((p, i) => { drones[i].tx = p.x; drones[i].ty = p.y; });
+            for(let i=pts.length; i<drones.length; i++) drones[i].ty = height + 100;
+        }
 
-        ctx.globalCompositeOperation = 'lighter';
+        function startLetter() {
+            state = "LETTER";
+            const container = document.getElementById('letter-container');
+            container.style.display = 'flex';
+            setTimeout(() => { 
+                container.style.opacity = '1'; 
+                let idx = 0, txt = "Dương ơi, hôm nay là ngày 01/03/2026... Chúc cậu mãi xinh đẹp và tha lỗi cho tớ nhé!";
+                let itv = setInterval(() => {
+                    document.getElementById('letter-content').innerHTML = txt.slice(0, idx) + '<span class="typing-cursor"></span>';
+                    if(idx++ >= txt.length) { 
+                        clearInterval(itv);
+                        document.getElementById('letter-signature').innerHTML = "Ký tên: Nguyễn Bắc Sơn";
+                        document.getElementById('letter-signature').style.opacity = 1;
+                    }
+                }, 70).catch(e => console.log(e));
+            }, 1000);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if(state === "LETTER") return;
+            ctx.clearRect(0,0,width,height);
+            
+            if(analyser) {
+                analyser.getByteFrequencyData(dataArray);
+                let avg = dataArray.reduce((a,b)=>a+b)/dataArray.length;
+                volBoost = 0.8 + (avg/128); // Hệ số nổ theo nhạc
+            }
+
+            fireworks.forEach((fw, i) => {
+                if(!fw.exploded) {
+                    fw.y -= 6;
+                    ctx.fillStyle = fw.color; ctx.fillRect(fw.x, fw.y, 3, 3);
+                    if(fw.y <= fw.ty) explode(fw);
+                } else fireworks.splice(i, 1);
+            });
+
+            particles.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.life -= p.decay;
+                if(p.life <= 0) particles.splice(i, 1);
+                else { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 2, 2); }
+            });
+
+            if(state === "DRONE") {
+                ctx.globalAlpha = 1;
+                drones.forEach(d => {
+                    d.x += (d.tx - d.x) * CONFIG.DRONE_SPEED;
+                    d.y += (d.ty - d.y) * CONFIG.DRONE_SPEED;
+                    ctx.fillStyle = `hsl(${(d.x/width)*360}, 100%, 70%)`;
+                    ctx.fillRect(d.x, d.y, 2.5, 2.5);
+                });
+            }
+        }
+
+        let stars = document.getElementById('stars'), sCss = '';
+        for(let i=0; i<150; i++) sCss += `${Math.random()*2000}px ${Math.random()*2000}px #FFF, `;
+        stars.style.boxShadow = sCss.slice(0,-2);
         
-        // Tự động bắn pháo hoa theo nhịp bass (âm lượng cao)
-        if(state === "FIREWORKS" && currentVol > 80 && Math.random() < 0.05) {
-            createFirework();
-        }
-
-        fireworks.forEach((fw, i) => {
-            fw.y -= fw.speed;
-            ctx.fillStyle = fw.color;
-            ctx.beginPath(); ctx.arc(fw.x, fw.y, 2, 0, Math.PI*2); ctx.fill();
-            if(fw.y <= fw.ty) { explode(fw); fireworks.splice(i, 1); }
-        });
-
-        particles.forEach((p, i) => {
-            p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.life -= p.decay;
-            if(p.life <= 0) particles.splice(i, 1);
-            else {
-                ctx.fillStyle = p.color; ctx.globalAlpha = p.life;
-                ctx.fillRect(p.x, p.y, 2, 2);
-            }
-        });
-
-        drones.forEach(d => {
-            // Tốc độ bay chậm rãi, mượt mà
-            d.x += (d.tx - d.x) * DRONE_SPEED;
-            d.y += (d.ty - d.y) * DRONE_SPEED;
-            let h = d.color.h;
-            if(d.mode === 'rainbow') h = (globalHue + d.x/2) % 360;
-            ctx.fillStyle = `hsl(${h}, 100%, ${60 + (currentVol/10)}%)`;
-            if(d.y < height + 100) ctx.fillRect(d.x, d.y, 2, 2);
-        });
-
-        globalHue += 1;
-        ctx.globalAlpha = 1;
-        ctx.globalCompositeOperation = 'source-over';
-    }
-
-    // Tạo sao nền
-    const sBox = document.getElementById('stars');
-    let sCss = '';
-    for(let i=0; i<150; i++) sCss += `${Math.random()*2000}px ${Math.random()*2000}px #FFF, `;
-    sBox.style.boxShadow = sCss.slice(0,-2);
-
-    animate();
-</script>
+        animate();
+    </script>
 </body>
 </html>
