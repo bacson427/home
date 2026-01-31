@@ -156,7 +156,7 @@
 
         const isMobile = window.innerWidth < 768;
         const PARTICLE_SIZE = isMobile ? 3 : 2.5;
-        const SCAN_STEP = isMobile ? 8 : 6;
+        const SCAN_STEP = isMobile ? 12 : 10;
 
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d', { alpha: true });
@@ -198,7 +198,10 @@
         let countdownTimer = null;
         let audioContext, analyser, dataArray, bufferLength;
         let fireworksSizeMultiplier = 1;
-        let currentMessageEndTime = 0;
+        let currentDisplayingMessage = null;
+        let messageHoldTime = 0;
+        let messageStartTime = 0;
+        let currentShapePoints = [];
 
         const startBtn = document.getElementById('start-btn'), 
               nextBtn = document.getElementById('next-phase-btn'), 
@@ -230,8 +233,7 @@
             }
             return sum / (bufferLength * 256);
         }
-
-        function triggerAction() {
+function triggerAction() {
             if (state === "IDLE") {
                 state = "FIREWORKS";
                 startBtn.style.display = hintText.style.display = 'none';
@@ -268,7 +270,7 @@
             state = "TRANSITION";
             let barrage = setInterval(() => {
                 createFirework(Math.random()*width, height*0.5);
-            }, 250);
+            }, 300);
 
             setTimeout(() => {
                 clearInterval(barrage);
@@ -379,34 +381,25 @@
 
         function startDroneSequence() {
             const sequence = [
-                { t: 1000, txt: "🎉CHÚC MỪNG🎊", color: CONFIG.COLORS.RED, mode: 'shift', duration: 9000 },
-                { t: 11000, txt: "🌟NĂM MỚI 2026🌟", color: CONFIG.COLORS.GOLD, mode: 'shift', duration: 9000 },
-                { t: 21000, txt: "🐴BÍNH NGỌ🐴", color: CONFIG.COLORS.CYAN, mode: 'static', duration: 9000 },
-                { t: 31000, txt: "💝HAPPY VALENTINE💝", color: CONFIG.COLORS.PINK, mode: 'shift', duration: 9000 },
-                { t: 41000, txt: "💐QUỐC TẾ PHỤ NỮ 8/3💐", color: CONFIG.COLORS.RED, mode: 'rainbow', duration: 10000 },
-                { t: 52000, txt: "🍀CHÚC MỪNG SINH NHẬT TUỔI 19🍀", color: CONFIG.COLORS.GOLD, mode: 'shift', duration: 11000 },
-                { t: 64000, txt: CONFIG.NAME, color: CONFIG.COLORS.PINK, font: 'Dancing Script', mode: 'rainbow', duration: 10000 },
-                { t: 75000, txt: "❤️ SINH NHẬT VUI VẺ NHÉ DƯƠNG 💕", color: CONFIG.COLORS.GOLD, mode: 'rainbow', duration: 12000 },
-                { t: 88000, action: "finalShow" },
-                { t: 105000, action: "startLetter" }
+                { t: 1000, txt: "🎉CHÚC MỪNG🎊", color: CONFIG.COLORS.RED, mode: 'shift', holdTime: 7000 },
+                { t: 9000, txt: "🌟NĂM MỚI 2026🌟", color: CONFIG.COLORS.GOLD, mode: 'shift', holdTime: 7000 },
+                { t: 17000, txt: "🐴BÍNH NGỌ🐴", color: CONFIG.COLORS.CYAN, mode: 'static', holdTime: 7000 },
+                { t: 25000, txt: "💝HAPPY VALENTINE💝", color: CONFIG.COLORS.PINK, mode: 'shift', holdTime: 7000 },
+                { t: 33000, txt: "💐QUỐC TẾ PHỤ NỮ 8/3💐", color: CONFIG.COLORS.RED, mode: 'rainbow', holdTime: 7000 },
+                { t: 41000, txt: "🍀CHÚC MỪNG SINH NHẬT TUỔI 19🍀", color: CONFIG.COLORS.GOLD, mode: 'shift', holdTime: 8000 },
+                { t: 50000, txt: CONFIG.NAME, color: CONFIG.COLORS.PINK, font: 'Dancing Script', mode: 'rainbow', holdTime: 7000 },
+                { t: 58000, txt: "❤️ SINH NHẬT VUI VẺ NHÉ DƯƠNG 💕", color: CONFIG.COLORS.GOLD, mode: 'rainbow', holdTime: 8000 },
+                { t: 67000, action: "finalShow" },
+                { t: 82000, action: "startLetter" }
             ];
 
             sequence.forEach(s => {
                 setTimeout(() => {
                     if(s.txt) {
-                        currentMessageEndTime = Date.now() + s.duration;
+                        currentDisplayingMessage = s.txt;
+                        messageHoldTime = s.holdTime;
+                        messageStartTime = Date.now();
                         formText(s.txt, s.color, s.font || 'Cinzel', s.mode);
-                        
-                        // Tạo pháo hoa hình dạng trong khi hiển thị chữ
-                        const fireworkInterval = setInterval(() => {
-                            if(Date.now() > currentMessageEndTime - 1000) {
-                                clearInterval(fireworkInterval);
-                                return;
-                            }
-                            const shapes = ['HEART', 'STAR', 'CIRCLE'];
-                            const shape = shapes[Math.floor(Math.random() * shapes.length)];
-                            createShapedFirework(shape);
-                        }, 1500);
                     }
                     if(s.action === "finalShow") startFinalShow();
                     if(s.action === "startLetter") startLetterSequence();
@@ -416,6 +409,7 @@
 
         function startFinalShow() {
             isFinale = true;
+            currentDisplayingMessage = "FINAL_SHOW";
             
             // Tạo bánh sinh nhật và trái tim cùng lúc
             setTimeout(() => {
@@ -425,15 +419,15 @@
                 }, 300);
             }, 800);
 
-            // Bắn pháo hoa đặc biệt trong 12 giây
+            // Bắn pháo hoa đặc biệt trong 15 giây
             let specialFireworks = setInterval(() => {
                 let shapes = ['HEART', 'STAR', 'CIRCLE'];
                 createFirework(Math.random()*width, height*0.3, shapes[Math.floor(Math.random()*shapes.length)]);
-            }, 1000);
+            }, 1200);
 
             setTimeout(() => {
                 clearInterval(specialFireworks);
-            }, 12000);
+            }, 15000);
         }
 
         function startLetterSequence() {
@@ -447,8 +441,7 @@
                 setTimeout(startTyping, 1500);
             }, 200);
         }
-
-        function startTyping() {
+function startTyping() {
             isTyping = true;
             letterIndex = 0;
             letterContent.innerHTML = '';
@@ -467,7 +460,6 @@
             }, typingSpeed);
         }
 
-        
         function formText(text, hslColor, fontName, mode) {
             const offCv = document.createElement('canvas');
             const offCtx = offCv.getContext('2d');
@@ -523,13 +515,24 @@
                 }
             }
             
+            // Giới hạn số điểm để tăng hiệu suất
+            if (points.length > 400) {
+                let sampledPoints = [];
+                let skip = Math.ceil(points.length / 400);
+                for (let i = 0; i < points.length; i += skip) {
+                    sampledPoints.push(points[i]);
+                }
+                points = sampledPoints;
+            }
+            
+            currentShapePoints = points;
             updateDrones(points, hslColor, mode);
         }
 
         function formShape(type, hslColor, mode) {
             let points = [], cx = width/2, cy = height/2;
             let size = Math.min(width, height) * 0.32;
-            let count = isMobile ? 350 : 700;
+            let count = isMobile ? 200 : 400;
             
             if (type === 'HEART') {
                 for (let i = 0; i < count; i++) {
@@ -550,7 +553,7 @@
                 for (let layer = 0; layer < layers; layer++) {
                     const layerRadius = size * (0.65 - layer * 0.12);
                     const layerY = cy + size * 0.25 - layer * (size * 0.12);
-                    const layerPoints = 120;
+                    const layerPoints = 80;
                     
                     for (let i = 0; i < layerPoints; i++) {
                         let angle = (i / layerPoints) * Math.PI * 2;
@@ -568,17 +571,17 @@
                     let candleY = cy - size * 0.08;
                     
                     // Thân nến
-                    for (let j = 0; j < 4; j++) {
+                    for (let j = 0; j < 3; j++) {
                         points.push({
                             x: candleX,
-                            y: candleY + j * 2.5
+                            y: candleY + j * 2
                         });
                     }
                     
                     // Lửa nến
                     points.push({
                         x: candleX,
-                        y: candleY - 4
+                        y: candleY - 3
                     });
                 }
             } else if (type === 'STAR') {
@@ -604,47 +607,60 @@
                 }
             }
             
+            currentShapePoints = points;
             updateDrones(points, hslColor, mode);
         }
 
         function updateDrones(points, hslColor, mode) {
-            // Tốc độ drone rất chậm để có thời gian quan sát
-            const droneSpeed = 0.008;
-            
-            // Làm sạch drones cũ một cách từ từ
-            if (drones.length > points.length * 2) {
-                drones = drones.slice(0, points.length * 2);
-            }
-            
-            // Thêm drone mới nếu cần
-            while(drones.length < points.length) {
-                drones.push({ 
-                    x: Math.random() * width, 
-                    y: height + Math.random() * 100, 
-                    tx: width/2, 
-                    ty: height, 
-                    speed: droneSpeed, 
-                    size: PARTICLE_SIZE,
-                    arrived: false
-                });
-            }
-            
-            // Cập nhật mục tiêu cho drones
-            points.forEach((p, i) => {
-                if(drones[i]) {
-                    drones[i].tx = p.x; 
-                    drones[i].ty = p.y;
-                    drones[i].baseHsl = hslColor; 
+            // Giữ nguyên drone hiện tại, chỉ thay đổi mục tiêu
+            if (drones.length === 0) {
+                // Khởi tạo drones từ các vị trí ngẫu nhiên trên màn hình
+                for (let i = 0; i < points.length; i++) {
+                    drones.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        tx: points[i].x,
+                        ty: points[i].y,
+                        baseHsl: hslColor,
+                        colorMode: mode,
+                        size: PARTICLE_SIZE,
+                        speed: 0.01 + Math.random() * 0.01,
+                        arrived: false
+                    });
+                }
+            } else {
+                // Cập nhật mục tiêu cho drones hiện có
+                for (let i = 0; i < Math.min(drones.length, points.length); i++) {
+                    drones[i].tx = points[i].x;
+                    drones[i].ty = points[i].y;
+                    drones[i].baseHsl = hslColor;
                     drones[i].colorMode = mode;
-                    drones[i].speed = droneSpeed;
                     drones[i].arrived = false;
                 }
-            });
-            
-            // Di chuyển các drone không cần thiết ra khỏi màn hình
-            for(let i = points.length; i < drones.length; i++) {
-                drones[i].tx = width/2;
-                drones[i].ty = height + 200 + Math.random() * 100;
+                
+                // Thêm drones mới nếu cần
+                for (let i = drones.length; i < points.length; i++) {
+                    drones.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        tx: points[i].x,
+                        ty: points[i].y,
+                        baseHsl: hslColor,
+                        colorMode: mode,
+                        size: PARTICLE_SIZE,
+                        speed: 0.01 + Math.random() * 0.01,
+                        arrived: false
+                    });
+                }
+                
+                // Loại bỏ drones thừa
+                if (drones.length > points.length) {
+                    // Thay vì xóa ngay, hãy di chuyển chúng ra khỏi màn hình
+                    for (let i = points.length; i < drones.length; i++) {
+                        drones[i].tx = -100;
+                        drones[i].ty = -100;
+                    }
+                }
             }
         }
 
@@ -653,7 +669,7 @@
             if (state === "LETTER") return;
             
             ctx.clearRect(0, 0, width, height); 
-            globalHue += 0.2; // Giảm tốc độ thay đổi màu
+            globalHue += 0.2;
 
             // Cập nhật kích thước pháo hoa theo âm nhạc
             if (analyser) {
@@ -672,7 +688,6 @@
                     fw.y -= fw.speed;
                     fw.size = 1.8 * fireworksSizeMultiplier;
                     
-                    // Hiệu ứng đuôi pháo hoa
                     ctx.fillStyle = fw.color; 
                     ctx.beginPath(); 
                     ctx.arc(fw.x, fw.y, fw.size, 0, Math.PI*2); 
@@ -705,44 +720,78 @@
             }
 
             if (state === "DRONE" || isFinale) {
+                let allArrived = drones.length > 0;
+                let activeDrones = 0;
+                
                 drones.forEach(d => {
+                    // Kiểm tra xem drone có ở trong màn hình không
+                    if (d.tx < -50 || d.ty < -50) {
+                        // Di chuyển drone ra khỏi màn hình
+                        const dx = d.tx - d.x;
+                        const dy = d.ty - d.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 10) {
+                            // Xóa drone đã ra khỏi màn hình
+                            return;
+                        }
+                        
+                        d.x += dx * 0.05;
+                        d.y += dy * 0.05;
+                        return;
+                    }
+                    
+                    activeDrones++;
+                    
                     // Tính khoảng cách đến mục tiêu
                     const dx = d.tx - d.x;
                     const dy = d.ty - d.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
                     
-                    // Điều chỉnh tốc độ dựa trên khoảng cách
-                    let speed = d.speed;
-                    if (distance < 20) {
-                        speed *= 0.5; // Chậm lại khi gần đến đích
+                    // Kiểm tra xem drone đã đến đích chưa
+                    if (distance < 2) {
+                        d.x = d.tx;
+                        d.y = d.ty;
                         d.arrived = true;
-                    } else if (distance > 100) {
-                        speed *= 1.5; // Nhanh hơn khi xa đích
+                    } else {
+                        allArrived = false;
+                        // Di chuyển drone đến mục tiêu
+                        d.x += dx * d.speed;
+                        d.y += dy * d.speed;
                     }
                     
-                    d.x += dx * speed;
-                    d.y += dy * speed;
-                    
+                    // Tính màu sắc
                     let h = d.baseHsl?.h || 0;
                     if (d.colorMode === 'rainbow') {
-                        h = (d.x / width * 360 + globalHue * 0.5) % 360;
+                        h = (h + globalHue * 0.3) % 360;
                     } else if (d.colorMode === 'shift') {
-                        h = (d.baseHsl.h + globalHue * 0.3) % 360;
-                    } else {
-                        h = d.baseHsl.h;
+                        h = (d.baseHsl.h + globalHue * 0.2) % 360;
                     }
                     
-                    // Độ trong suốt dựa trên việc đã đến đích chưa
+                    // Độ trong suốt
                     const alpha = d.arrived ? 0.95 : 0.7;
                     
+                    // Vẽ drone
                     ctx.fillStyle = `hsla(${h}, ${d.baseHsl?.s || 100}%, ${d.baseHsl?.l || 60}%, ${alpha})`;
-                    
-                    if(d.y < height + 100) {
-                        ctx.beginPath();
-                        ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
+                    ctx.beginPath();
+                    ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+                    ctx.fill();
                 });
+                
+                // Kiểm tra thời gian giữ cho mỗi thông điệp
+                if (currentDisplayingMessage && messageStartTime > 0) {
+                    const elapsedTime = Date.now() - messageStartTime;
+                    const shouldHold = elapsedTime < messageHoldTime;
+                    
+                    // Nếu đã đến lúc chuyển thông điệp tiếp theo, từ từ xóa drones
+                    if (!shouldHold && drones.length > 0) {
+                        // Di chuyển drones ra khỏi màn hình
+                        drones.forEach(d => {
+                            d.tx = -100 - Math.random() * 100;
+                            d.ty = -100 - Math.random() * 100;
+                        });
+                    }
+                }
             }
             
             ctx.globalAlpha = 1;
