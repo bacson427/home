@@ -3,229 +3,242 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>HPBD DƯƠNG</title>
+<title>HPBD Dương Ultimate Show</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@800&family=Dancing+Script:wght@700&display=swap');
 
-body{margin:0;overflow:hidden;background:#000;font-family:'Cinzel',serif}
-
-canvas{position:absolute;top:0;left:0}
-
-#letter-container{
-position:absolute;top:0;left:0;width:100%;height:100%;
-background:#8B0000;color:white;
-display:none;justify-content:center;align-items:center;flex-direction:column;
-z-index:999;font-family:Arial;padding:20px;box-sizing:border-box;opacity:0;transition:2s;
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #000;
+    font-family: Cinzel;
 }
-#letter-content{max-width:700px;text-align:center;font-size:clamp(16px,4vw,24px);line-height:1.6}
-#letter-signature{margin-top:20px;font-family:'Dancing Script',cursive;font-size:22px;opacity:0;transition:2s}
-.typing-cursor{display:inline-block;width:2px;height:1em;background:white;animation:blink 1s infinite}
-@keyframes blink{50%{opacity:0}}
+
+canvas { position: fixed; top: 0; left: 0; }
+
+#ui {
+    position: fixed; inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+button {
+    padding: 14px 40px;
+    background: rgba(255,215,0,.1);
+    border: 1px solid gold;
+    color: gold;
+    font-size: 18px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 900;
+}
+
+#letter {
+    position: fixed;
+    inset: 0;
+    background: #8b0000;
+    color: white;
+    display: none;
+    padding: 30px;
+    font-family: Montserrat;
+    z-index: 999;
+}
 </style>
 </head>
 
 <body>
 
-<canvas id="mainCanvas"></canvas>
+<canvas id="cv"></canvas>
 
-<div id="letter-container">
-<div id="letter-content"></div>
-<div id="letter-signature"></div>
+<div id="ui">
+<button id="start">KHAI TIỆC</button>
 </div>
 
-<audio id="bg-music" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
+<div id="letter">
+<div id="letterText"></div>
+<div id="sign"></div>
+</div>
+
+<audio id="music" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3"></audio>
 
 <script>
-// ================= CONFIG ==================
+// ================= CONFIG =================
 const CONFIG = {
-NAME:"Trương Thị Dương",
-COLORS:{
-GOLD:{h:48},RED:{h:350},CYAN:{h:190},PINK:{h:320}
-}
+NAME:"TRƯƠNG THỊ DƯƠNG",
+LETTER:"Dương ơi, hôm nay cậu tròn 19 tuổi. Tớ chúc cậu luôn xinh đẹp, học giỏi và đạt được mọi ước mơ. Tớ xin lỗi vì đã làm cậu buồn. Mong năm mới cậu luôn vui vẻ và hạnh phúc.",
 };
 
-// ================ SETUP ===================
-const canvas=document.getElementById("mainCanvas");
-const ctx=canvas.getContext("2d");
-const music=document.getElementById("bg-music");
+// ================ CANVAS ==================
+const cv = document.getElementById("cv");
+const ctx = cv.getContext("2d");
+let W,H;
+function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+resize(); addEventListener("resize",resize);
 
-let w,h;
-function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight}
-addEventListener("resize",resize);resize();
+const isMobile = W < 768;
 
-let fireworks=[],particles=[],drones=[];
-let state="IDLE",globalHue=0;
-
-// ========== AUDIO ANALYSER ==========
-const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-let analyser,dataArray;
-function initAudio(){
-const src=audioCtx.createMediaElementSource(music);
-analyser=audioCtx.createAnalyser();
+// ================ AUDIO ==================
+const music = document.getElementById("music");
+const AC = new AudioContext();
+const src = AC.createMediaElementSource(music);
+const analyser = AC.createAnalyser();
 src.connect(analyser);
-analyser.connect(audioCtx.destination);
-analyser.fftSize=128;
-dataArray=new Uint8Array(analyser.frequencyBinCount);
-}
-music.onplay=()=>{if(!analyser) initAudio();audioCtx.resume()}
+analyser.connect(AC.destination);
+analyser.fftSize = 256;
+const data = new Uint8Array(analyser.frequencyBinCount);
+let beat = 0;
 
-// ============ FIREWORKS ===============
-function createFirework(x,y,shape="NORMAL"){
-let colors=["#FFD700","#FF0055","#00FFFF","#FFFFFF"];
-fireworks.push({x:x||Math.random()*w,y:h,ty:y||h*0.3,color:colors[Math.random()*4|0],exploded:false,shape});
-}
+// ================ DRONE ==================
+let drones = [];
+let droneSpeed = isMobile ? 0.012 : 0.02;
 
-function createShapeParticles(fw,type,count,bass){
-let scale=Math.min(w,h)/60;
-for(let i=0;i<count;i++){
-let t=i/count*Math.PI*2,x=0,y=0;
-if(type=="HEART"){
-x=16*Math.sin(t)**3;
-y=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
-}
-if(type=="STAR"){
-let r=i%2?6:12;
-x=Math.cos(t*5)*r;y=Math.sin(t*5)*r;
-}
-x*=scale;y*=scale;
-let ang=Math.atan2(y,x);
-let sp=(Math.random()*2+1)*(1+bass*3);
-particles.push({x:fw.x,y:fw.y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,color:fw.color,life:1,decay:0.015,gravity:0.02});
-}
-}
+// ================ FIREWORK =================
+let fireworks = [], particles = [];
 
-function explodeFirework(fw){
-fw.exploded=true;
-let bass=0.2;
-if(analyser){analyser.getByteFrequencyData(dataArray);bass=dataArray[1]/255}
-let count=50+bass*200;
+// ================ TEXT DRONE ===============
+function makeTextPoints(text){
+    const c = document.createElement("canvas");
+    const cctx = c.getContext("2d");
+    let size = Math.min(W/10, isMobile?40:80);
+    cctx.font = "900 "+size+"px Cinzel";
+    let w = cctx.measureText(text).width+20;
+    c.width=w; c.height=size*1.5;
+    cctx.font = "900 "+size+"px Cinzel";
+    cctx.fillStyle="white";
+    cctx.textAlign="center";
+    cctx.textBaseline="middle";
+    cctx.fillText(text,w/2,size/1.5);
 
-if(fw.shape=="HEART"||fw.shape=="STAR"){
-createShapeParticles(fw,fw.shape,count,bass);return;
-}
-for(let i=0;i<count;i++){
-let a=i/count*Math.PI*2;
-let sp=(Math.random()*2+1)*(1+bass*2);
-particles.push({x:fw.x,y:fw.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,color:fw.color,life:1,decay:0.015,gravity:0.03});
-}
+    let img = cctx.getImageData(0,0,w,c.height).data;
+    let pts=[];
+    let step = isMobile?5:3;
+    for(let y=0;y<c.height;y+=step){
+        for(let x=0;x<w;x+=step){
+            if(img[(y*w+x)*4+3]>100){
+                pts.push({x:(W-w)/2+x,y:(H-c.height)/2+y});
+            }
+        }
+    }
+    return pts;
 }
 
-// ============ DRONES ===================
-function updateDrones(points,color){
-while(drones.length<points.length)drones.push({x:w/2,y:h+100,tx:w/2,ty:h,speed:0.02});
-points.forEach((p,i)=>{drones[i].tx=p.x;drones[i].ty=p.y;drones[i].h=color.h});
-for(let i=points.length;i<drones.length;i++)drones[i].ty=h+400;
+function setDrones(points){
+    while(drones.length<points.length)
+        drones.push({x:W/2,y:H+100,tx:0,ty:0});
+    points.forEach((p,i)=>{
+        drones[i].tx=p.x;
+        drones[i].ty=p.y;
+    });
 }
 
-// text safe fit
-function formText(txt,color){
-let off=document.createElement("canvas"),c=off.getContext("2d");
-let size=80;
-do{c.font=`900 ${size}px Cinzel`;size-=2}while(c.measureText(txt).width>w*0.9);
-off.width=c.measureText(txt).width+20;off.height=size*1.4;
-c.font=`900 ${size}px Cinzel`;c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";
-c.fillText(txt,off.width/2,off.height/2);
-let scale=Math.min(w*0.9/off.width,h*0.5/off.height);
-let data=c.getImageData(0,0,off.width,off.height).data,pts=[];
-for(let y=0;y<off.height;y+=4)for(let x=0;x<off.width;x+=4)
-if(data[(y*off.width+x)*4+3]>128)pts.push({x:(w-off.width*scale)/2+x*scale,y:(h-off.height*scale)/2+y*scale});
-updateDrones(pts,color);
+// ================ SHAPES ===================
+function cakeHeart(){
+    let pts=[];
+    let cx=W/2, cy=H/2;
+    let r=Math.min(W,H)*0.25;
+
+    // cake circle
+    for(let i=0;i<600;i++){
+        let a=Math.random()*Math.PI*2;
+        pts.push({x:cx+Math.cos(a)*r, y:cy+Math.sin(a)*r});
+    }
+
+    // heart
+    for(let i=0;i<800;i++){
+        let t=i/800*Math.PI*2;
+        let x=16*Math.pow(Math.sin(t),3);
+        let y=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+        pts.push({x:cx+x*r/30, y:cy-r+y*r/30});
+    }
+
+    setDrones(pts);
 }
 
-// ============ FINAL CAKE + HEART ============
-function finalFormation(){
-let pts=[],cx=w/2,cy=h/2;
-
-// cake layers
-for(let layer=0;layer<3;layer++){
-let r=40+layer*30;
-for(let i=0;i<300;i++){
-let a=i/300*Math.PI*2;
-pts.push({x:cx+Math.cos(a)*r,y:cy+120+layer*25+Math.sin(a)*r*0.25});
+// ================ FIREWORKS =================
+function fire(x,y){
+    fireworks.push({x,y,ty:H*0.2+Math.random()*H*0.3,ex:false});
 }
-}
-
-// heart
-for(let i=0;i<800;i++){
-let t=i/800*Math.PI*2;
-let x=16*Math.sin(t)**3;
-let y=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
-pts.push({x:cx+x*8,y:cy-40+y*8});
-}
-updateDrones(pts,CONFIG.COLORS.GOLD);
-
-// fireworks shapes
-setInterval(()=>{
-createFirework(Math.random()*w,h*0.3,Math.random()>0.5?"HEART":"STAR");
-},800);
+function explode(f){
+    f.ex=true;
+    let count = 30 + beat*0.4;
+    for(let i=0;i<count;i++){
+        let a=i/count*Math.PI*2;
+        let s=Math.random()*3;
+        particles.push({x:f.x,y:f.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1});
+    }
 }
 
-// ============ LETTER ====================
-const letterContainer=document.getElementById("letter-container");
-const letterContent=document.getElementById("letter-content");
-const letterSignature=document.getElementById("letter-signature");
-let text="Dương ơi, hôm nay là ngày 01 tháng 03 năm 2026, cậu tròn 19 tuổi. Tớ chúc cậu ngày càng xinh đẹp, học giỏi, đạt được kết quả cao trong học tập và sớm đạt được những ước mơ của mình. Tớ xin lỗi vì thời gian qua đã làm cậu buồn. Mong rằng năm mới cậu sẽ không để bụng tính cách trẻ con của tớ. Cảm ơn cậu rất nhiều.";
-let idx=0;
-
-function startLetter(){
-state="LETTER";letterContainer.style.display="flex";
-setTimeout(()=>letterContainer.style.opacity=1,100);
-let timer=setInterval(()=>{
-letterContent.innerHTML=text.slice(0,idx++)+'<span class="typing-cursor"></span>';
-if(idx>text.length){
-clearInterval(timer);
-letterContent.innerHTML=text;
-setTimeout(()=>{
-letterSignature.innerHTML="Người gửi: Nguyễn Bắc Sơn<br>Người nhận: Trương Thị Dương";
-letterSignature.style.opacity=1;
-setTimeout(finalFormation,3000);
-},1000);
-}
-},50);
+// ================ LETTER ==================
+function showLetter(){
+    document.getElementById("letter").style.display="block";
+    let t=CONFIG.LETTER;
+    let el=document.getElementById("letterText");
+    let i=0;
+    let timer=setInterval(()=>{
+        el.innerHTML=t.slice(0,i++);
+        if(i>t.length){
+            clearInterval(timer);
+            document.getElementById("sign").innerHTML="Người gửi: NGUYỄN BẮC SƠN<br>Người nhận: "+CONFIG.NAME;
+        }
+    },50);
 }
 
-// ============ DRONE SEQUENCE ============
-function startDrone(){
-formText("CHÚC MỪNG SINH NHẬT TUỔI MƯỜI CHÍN",CONFIG.COLORS.GOLD);
-setTimeout(()=>formText(CONFIG.NAME,CONFIG.COLORS.PINK),8000);
-setTimeout(startLetter,15000);
-}
+// ================ ANIMATE =================
+function loop(){
+requestAnimationFrame(loop);
+ctx.clearRect(0,0,W,H);
 
-// ============ ANIMATE ==================
-function animate(){
-requestAnimationFrame(animate);
-ctx.clearRect(0,0,w,h);
-globalHue+=0.5;
+// audio beat
+analyser.getByteFrequencyData(data);
+beat = data.reduce((a,b)=>a+b)/data.length;
+
+// fireworks
+if(Math.random()<0.05) fire(Math.random()*W,H);
 
 fireworks.forEach((f,i)=>{
-if(!f.exploded){
-f.y-=5;
-ctx.fillStyle=f.color;ctx.fillRect(f.x,f.y,2,2);
-if(f.y<f.ty) explodeFirework(f);
-}else fireworks.splice(i,1);
+    if(!f.ex){
+        f.y-=5;
+        if(f.y<f.ty) explode(f);
+        ctx.fillStyle="gold";
+        ctx.fillRect(f.x,f.y,2,2);
+    }else fireworks.splice(i,1);
 });
 
 particles.forEach((p,i)=>{
-p.x+=p.vx;p.y+=p.vy;p.vy+=p.gravity;p.life-=p.decay;
-if(p.life<=0)particles.splice(i,1);
-else{ctx.globalAlpha=p.life;ctx.fillStyle=p.color;ctx.fillRect(p.x,p.y,2,2)}
-});
-
-drones.forEach(d=>{
-d.x+=(d.tx-d.x)*0.02;
-d.y+=(d.ty-d.y)*0.02;
-ctx.fillStyle=`hsl(${d.h||0},100%,60%)`;
-ctx.fillRect(d.x,d.y,3,3);
+    p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.life-=0.02;
+    if(p.life<0) particles.splice(i,1);
+    else{
+        ctx.globalAlpha=p.life;
+        ctx.fillStyle="hsl("+Math.random()*360+",100%,60%)";
+        ctx.fillRect(p.x,p.y,2,2);
+    }
 });
 ctx.globalAlpha=1;
-}
-animate();
 
-// ============ START SHOW ============
-music.play();
-for(let i=0;i<10;i++)setTimeout(()=>createFirework(),i*500);
-setTimeout(startDrone,5000);
+// drones
+drones.forEach(d=>{
+    d.x+=(d.tx-d.x)*droneSpeed;
+    d.y+=(d.ty-d.y)*droneSpeed;
+    ctx.fillStyle="white";
+    ctx.fillRect(d.x,d.y,2,2);
+});
+}
+loop();
+
+// ================ SHOW SEQUENCE =============
+document.getElementById("start").onclick=async ()=>{
+    await AC.resume();
+    music.play();
+
+    setDrones(makeTextPoints("HAPPY BIRTHDAY DƯƠNG"));
+    setTimeout(()=>setDrones(makeTextPoints("CHÚC MỪNG SINH NHẬT TUỔI 19")),6000);
+    setTimeout(()=>cakeHeart(),14000);
+    setTimeout(()=>showLetter(),22000);
+};
 </script>
 
 </body>
