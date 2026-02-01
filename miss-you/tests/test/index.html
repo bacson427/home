@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_V22_SMOOTH_TRANSITION</title>
+    <title>SON_V23_FINAL_POEM</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&family=Noto+Sans+Symbols+2&display=swap');
         
         body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Share Tech Mono', monospace; }
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
@@ -42,17 +42,15 @@
         @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* Message Layer - CÓ TRANSITION MƯỢT */
+        /* Message Layer - Fade Transition */
         #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            /* Nền hồng tím mờ ảo */
             background: radial-gradient(circle, rgba(60, 0, 30, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%); 
-            display: none; z-index: 3000; opacity: 0; /* Bắt đầu ẩn */
+            display: none; z-index: 3000; opacity: 0;
             flex-direction: column; justify-content: center; align-items: center;
             padding: 20px; box-sizing: border-box;
-            transition: opacity 2.5s ease-in-out; /* QUAN TRỌNG: Thời gian chuyển cảnh 2.5s */
+            transition: opacity 2.5s ease-in-out;
         }
-        /* Class để kích hoạt hiện lên */
         #msg-layer.visible { opacity: 1; }
 
         #msg-content {
@@ -63,9 +61,16 @@
         }
         #skip-btn { margin-top: 30px; padding: 12px 30px; border: 1px solid #FFD700; background: transparent; color: #FFD700; display: none; pointer-events: auto; font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 20px; }
 
-        /* Virus */
+        /* Virus Terminal - FULL SCREEN UPDATE */
         .glitch-layer { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 2000; display:none; pointer-events:none; mix-blend-mode: hard-light; }
-        #virus-terminal { position: absolute; top:20%; left:5%; width:90%; color:#F00; font-family:'Share Tech Mono'; display:none; z-index:2001; text-shadow:0 0 5px #F00; background:rgba(0,0,0,0.8); padding:10px; border:1px solid #F00;}
+        #virus-terminal { 
+            position: absolute; 
+            top: 0; left: 0; width: 100%; height: 100%; /* Tràn màn hình */
+            color: #F00; font-family: 'Share Tech Mono'; font-size: 14px; 
+            display: none; z-index: 2001; text-shadow: 0 0 5px #F00; 
+            background: #000; padding: 10px; box-sizing: border-box;
+            overflow: hidden; border: none; /* Bỏ viền */
+        }
 
     </style>
 </head>
@@ -105,6 +110,14 @@ Happy Birthday, my special girl! ❤️
 
 -- Nguyễn Bắc Sơn --`;
 
+    // BÀI THƠ KẾT THÚC
+    const FINAL_POEM = [
+        "❤️ Sinh Nhật Vui Vẻ ❤️",
+        "♦️ Thêm tuổi thêm xinh ♦️",
+        "♣️ Thêm nhiều sức khỏe ♣️",
+        "♠️ Với tới ước mơ ♠️"
+    ];
+
     // --- KỊCH BẢN DRONE ---
     const SCRIPT = [
         { t: "GỬI ĐẾN\nTRƯƠNG THỊ DƯƠNG", c: "#0F0" },
@@ -128,6 +141,8 @@ Happy Birthday, my special girl! ❤️
     let particles = [], fireworks = [], sparkles = [];
     let scriptIdx = 0;
     let countdown = 10;
+    let poemIdx = 0;
+    let currentPoemText = "";
     
     // Matrix
     const M_CHARS = "01"; 
@@ -165,7 +180,7 @@ Happy Birthday, my special girl! ❤️
         }, 1000);
     }
 
-    // --- 2. VIRUS ---
+    // --- 2. VIRUS (FULL SCREEN) ---
     function runVirus() {
         state = "VIRUS";
         const term = document.getElementById('virus-terminal');
@@ -175,11 +190,15 @@ Happy Birthday, my special girl! ❤️
 
         let logs = "";
         let count = 0;
+        // Tăng tốc độ log và số lượng dòng để lấp đầy màn hình nhanh hơn
         let t = setInterval(() => {
-            logs += `> CRITICAL ERROR: SYSTEM HACKED...\n`;
+            logs += `> CRITICAL ERROR: SYSTEM HACKED AT KERNEL LEVEL...\n`;
             logs += `> ATTEMPTING RECOVERY... ${count}%\n`;
-            term.innerText = logs; term.scrollTop = term.scrollHeight;
-            count+=2;
+            logs += `> UNKNOWN PROCESS TAKING OVER DISPLAY...\n`;
+            term.innerText = logs; 
+            // Luôn cuộn xuống dưới cùng
+            term.scrollTop = term.scrollHeight;
+            count+=1;
             
             canvas.style.transform = `translate(${Math.random()*10-5}px, ${Math.random()*10-5}px)`;
 
@@ -190,7 +209,7 @@ Happy Birthday, my special girl! ❤️
                 matrixColor = "#003300"; 
                 runDroneShow(); 
             }
-        }, 80);
+        }, 40); // Tốc độ nhanh hơn
     }
 
     // --- 3. DRONE SHOW ---
@@ -216,7 +235,7 @@ Happy Birthday, my special girl! ❤️
     function runHeartTrend() {
         state = "HEART_TREND";
         let heartPts = getHeartOutlinePoints();
-        let textPts = getTextPoints("Trương Thị\nDương");
+        let textPts = getTextPoints("Trương Thị\nDương", "Dancing Script");
         let allTargets = [...heartPts, ...textPts];
         
         if(particles.length < allTargets.length) {
@@ -240,7 +259,7 @@ Happy Birthday, my special girl! ❤️
         setTimeout(runMessage, 15000);
     }
 
-    // --- 5. MESSAGE (SMOOTH TRANSITION) ---
+    // --- 5. MESSAGE ---
     function runMessage() {
         state = "MSG";
         const layer = document.getElementById('msg-layer');
@@ -248,7 +267,6 @@ Happy Birthday, my special girl! ❤️
         const btn = document.getElementById('skip-btn');
         
         layer.style.display = 'flex';
-        // Delay nhẹ rồi mới Fade-In để mượt mà
         setTimeout(() => { layer.classList.add('visible'); }, 50);
         
         let i = 0;
@@ -259,73 +277,85 @@ Happy Birthday, my special girl! ❤️
                 clearInterval(t);
                 content.innerText = LETTER;
                 btn.style.display = 'block';
-                // Tự động chuyển sau 25s
                 setTimeout(() => { if(state==="MSG") startFinale(); }, 25000);
             }
         }, 40);
     }
 
-    // --- 6. FINALE (SMOOTH FADE OUT) ---
+    // --- 6. FINALE (POEM FALLING) ---
     window.startFinale = function() {
         const layer = document.getElementById('msg-layer');
+        layer.classList.remove('visible');
         
-        // Bước 1: Fade out lớp thư
-        layer.classList.remove('visible'); // Opacity về 0 từ từ
-        
-        // Bước 2: Bắt đầu chuyển động Drone ngay bên dưới (khi thư đang mờ dần)
         state = "FINALE";
-        formCake();
-        
-        // Bước 3: Ẩn hẳn layer sau khi fade xong (2.5s)
-        setTimeout(() => {
-            layer.style.display = 'none';
-        }, 2500);
+        setTimeout(() => { layer.style.display = 'none'; }, 2500);
 
+        // Bắt đầu quy trình hiện thơ
+        poemIdx = 0;
+        currentPoemText = "";
+        nextPoemLine();
+
+        // Pháo hoa tim nền
         setInterval(() => {
             if(Math.random()>0.2) launchHeartFirework();
         }, 400);
     };
+
+    function nextPoemLine() {
+        if(poemIdx < FINAL_POEM.length) {
+            // Thêm dòng mới vào văn bản hiện tại
+            currentPoemText += (poemIdx > 0 ? "\n" : "") + FINAL_POEM[poemIdx];
+            // Vẽ lại toàn bộ văn bản (các dòng cũ + dòng mới)
+            // Sử dụng màu Vàng Kim #FFD700
+            formText(currentPoemText, "#FFD700");
+            poemIdx++;
+            // Hiện dòng tiếp theo sau 3.5 giây
+            setTimeout(nextPoemLine, 3500);
+        }
+    }
 
     // --- LOGIC VẼ ---
     function formText(txt, color) {
         const lines = txt.split('\n');
         const tmp = document.createElement('canvas');
         const tCtx = tmp.getContext('2d');
-        let fSize = isMobile ? 80 : 140;
-        tCtx.font = `900 ${fSize}px "Arial Black"`;
+        
+        // Điều chỉnh font size cho bài thơ ở đoạn cuối
+        let baseFontSize = state === "FINALE" ? (isMobile ? 50 : 80) : (isMobile ? 80 : 140);
+        let fontName = state === "FINALE" ? "Arial" : "Arial Black"; // Bài thơ dùng font nhẹ hơn chút
+
+        tCtx.font = `900 ${baseFontSize}px "${fontName}"`;
         let maxW = 0;
         lines.forEach(l => {
             let m = tCtx.measureText(l);
             if(m.width > maxW) maxW = m.width;
         });
-        tmp.width = maxW + 20; tmp.height = lines.length * fSize * 1.3;
-        tCtx.font = `900 ${fSize}px "Arial Black"`;
-        tCtx.fillStyle = '#fff'; tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
-        lines.forEach((l, i) => { tCtx.fillText(l, tmp.width/2, fSize*0.8 + i*fSize); });
         
-        getPoints(tmp, color, false);
+        // Tăng chiều cao canvas để chứa đủ bài thơ
+        tmp.width = maxW + 40; 
+        tmp.height = lines.length * baseFontSize * 1.8;
+
+        tCtx.font = `900 ${baseFontSize}px "${fontName}"`;
+        tCtx.fillStyle = '#fff'; tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
+        
+        let startY = baseFontSize;
+        lines.forEach((l, i) => { 
+            tCtx.fillText(l, tmp.width/2, startY + i * (baseFontSize * 1.2)); 
+        });
+        
+        getPoints(tmp, color);
     }
 
-    function formCake() {
-        const tmp = document.createElement('canvas');
-        const tCtx = tmp.getContext('2d');
-        let s = Math.min(w, h) * 0.7;
-        tmp.width = tmp.height = s;
-        tCtx.font = `${s/2}px serif`; tCtx.textAlign='center'; tCtx.textBaseline='middle';
-        tCtx.fillStyle='#fff'; tCtx.fillText("🎂", s/2, s/2);
-        getPoints(tmp, "#FFD700", true);
-    }
-
-    function getTextPoints(txt) {
+    function getTextPoints(txt, font) {
         const tmp = document.createElement('canvas');
         const tCtx = tmp.getContext('2d');
         let fSize = isMobile ? 40 : 60;
-        tCtx.font = `bold ${fSize}px "Dancing Script"`;
+        tCtx.font = `bold ${fSize}px "${font}"`;
         let lines = txt.split('\n');
         let maxW = 0;
         lines.forEach(l => maxW = Math.max(maxW, tCtx.measureText(l).width));
         tmp.width = maxW + 20; tmp.height = lines.length * fSize * 1.5;
-        tCtx.font = `bold ${fSize}px "Dancing Script"`;
+        tCtx.font = `bold ${fSize}px "${font}"`;
         tCtx.fillStyle = '#fff'; tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
         lines.forEach((l, i) => { tCtx.fillText(l, tmp.width/2, fSize + i*fSize); });
         
@@ -355,10 +385,10 @@ Happy Birthday, my special girl! ❤️
         return pts;
     }
 
-    function getPoints(tmp, color, isCake) {
+    function getPoints(tmp, color) {
         const data = tmp.getContext('2d').getImageData(0,0, tmp.width, tmp.height).data;
         let pts = [];
-        let scale = Math.min(w*0.9/tmp.width, h*0.65/tmp.height);
+        let scale = Math.min(w*0.95/tmp.width, h*0.8/tmp.height); // Tăng vùng hiển thị
         let sx = (w - tmp.width*scale)/2;
         let sy = (h - tmp.height*scale)/2;
         for(let y=0; y<tmp.height; y+=DOT_GAP) {
@@ -444,6 +474,7 @@ Happy Birthday, my special girl! ❤️
                     ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 2, 2);
                 }
             } else {
+                // Drone show & Finale Poem handles here
                 p.x += dx * 0.1; p.y += dy * 0.1;
                 ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, DOT_SIZE, DOT_SIZE);
             }
