@@ -3,147 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PROJECT: D.U.O.N.G - v10.0</title>
+    <title>SYSTEM_OVERRIDE_V11</title>
     <style>
-        /* Font đậm chất Hacker/Khoa học viễn tưởng */
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@900&display=swap');
+        /* Font chữ Hacker */
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
         
         body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Share Tech Mono', monospace; }
         
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
 
-        /* UI Layer */
+        /* UI Layer - Luôn nằm trên cùng */
         #ui-layer {
             position: absolute; width: 100%; height: 100%;
             display: flex; justify-content: center; align-items: center;
-            flex-direction: column; z-index: 100; pointer-events: none;
+            flex-direction: column; z-index: 999; 
+            pointer-events: none; /* Để click xuyên qua nếu cần */
         }
 
-        /* Nút bấm khởi động */
+        /* Nút bấm */
         .cyber-btn {
-            pointer-events: auto; background: transparent; 
+            pointer-events: auto; background: #000; 
             color: #0F0; border: 2px solid #0F0;
-            padding: 20px 60px; font-size: 24px; cursor: pointer; 
-            font-family: 'Orbitron', sans-serif; text-transform: uppercase; letter-spacing: 4px;
-            box-shadow: 0 0 15px #0F0, inset 0 0 15px #0F0;
-            text-shadow: 0 0 10px #0F0;
-            transition: all 0.3s;
-            animation: glitch 1s infinite;
+            padding: 20px 50px; font-size: 20px; cursor: pointer; 
+            font-family: 'Share Tech Mono', monospace; letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+            transition: 0.3s; z-index: 1000;
         }
         .cyber-btn:hover { background: #0F0; color: #000; box-shadow: 0 0 50px #0F0; }
 
-        /* Màn hình Boot (Dòng lệnh chạy) */
-        #console-container {
+        /* Màn hình Boot (Loading Bar) */
+        #boot-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; padding: 20px; box-sizing: border-box;
-            color: #0F0; font-size: 14px; line-height: 1.5;
-            overflow: hidden; display: none; z-index: 150;
-            text-shadow: 0 0 5px #0F0;
+            background: #000; display: none; 
+            flex-direction: column; justify-content: center; align-items: center;
+            z-index: 900;
+        }
+        
+        #progress-container {
+            width: 80%; max-width: 400px; height: 30px;
+            border: 2px solid #0F0; padding: 3px;
+            box-shadow: 0 0 15px #0F0; margin-top: 20px;
+        }
+        
+        #progress-bar {
+            width: 0%; height: 100%; background: #0F0;
+            transition: width 0.1s linear;
         }
 
-        /* Số đếm ngược 3D Xoay */
-        #countdown-3d {
-            display: none; position: relative; width: 200px; height: 200px;
-            transform-style: preserve-3d; animation: spinCube 2s infinite linear;
-            z-index: 120;
-        }
-        .face {
-            position: absolute; width: 200px; height: 200px;
-            background: rgba(0, 255, 0, 0.1); border: 2px solid #0F0;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 100px; color: #fff; font-family: 'Orbitron';
-            text-shadow: 0 0 20px #0F0;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
-        }
-        /* Tạo hình khối lập phương */
-        .face:nth-child(1) { transform: translateZ(100px); }
-        .face:nth-child(2) { transform: rotateY(90deg) translateZ(100px); }
-        .face:nth-child(3) { transform: rotateY(180deg) translateZ(100px); }
-        .face:nth-child(4) { transform: rotateY(-90deg) translateZ(100px); }
-        .face:nth-child(5) { transform: rotateX(90deg) translateZ(100px); }
-        .face:nth-child(6) { transform: rotateX(-90deg) translateZ(100px); }
+        #boot-text { color: #0F0; font-size: 18px; text-shadow: 0 0 5px #0F0; }
+        #hex-code { color: rgba(0, 255, 0, 0.5); font-size: 12px; margin-top: 10px; height: 20px; }
 
-        @keyframes spinCube {
-            0% { transform: rotateX(0deg) rotateY(0deg); }
-            100% { transform: rotateX(360deg) rotateY(360deg); }
-        }
-
-        /* Màn tâm thư Hacker */
+        /* Màn tâm thư */
         #letter-box {
-            position: absolute; width: 90%; max-width: 700px;
-            background: rgba(0, 20, 0, 0.95); border: 1px solid #0F0;
-            padding: 30px; display: none; flex-direction: column;
-            box-shadow: 0 0 50px #0F0; z-index: 200;
+            position: absolute; width: 85%; max-width: 600px;
+            background: rgba(0, 10, 0, 0.95); border: 1px solid #0F0;
+            padding: 20px; display: none; 
+            box-shadow: 0 0 30px #0F0; z-index: 800;
         }
-        #letter-text {
-            color: #0F0; font-size: 18px; text-align: justify;
-            text-shadow: 0 0 5px #0F0;
-        }
+        #letter-content { color: #0F0; font-size: 16px; line-height: 1.6; text-align: justify; }
 
-        @keyframes glitch {
-            0% { transform: translate(0) } 20% { transform: translate(-2px, 2px) }
-            40% { transform: translate(-2px, -2px) } 60% { transform: translate(2px, 2px) }
-            80% { transform: translate(2px, -2px) } 100% { transform: translate(0) }
-        }
     </style>
 </head>
 <body>
-    <canvas id="matrixCanvas"></canvas>
+    <canvas id="mainCanvas"></canvas>
     
     <div id="ui-layer">
-        <button id="start-btn" class="cyber-btn">INITIALIZE</button>
-        <div id="countdown-3d">
-            <div class="face">10</div><div class="face">10</div>
-            <div class="face">10</div><div class="face">10</div>
-            <div class="face">10</div><div class="face">10</div>
-        </div>
+        <button id="start-btn" class="cyber-btn">KÍCH HOẠT HỆ THỐNG</button>
+        
         <div id="letter-box">
-            <div id="letter-text"></div>
+            <div id="letter-content"></div>
         </div>
     </div>
 
-    <div id="console-container"></div>
+    <div id="boot-screen">
+        <div id="boot-text">INITIALIZING... 0%</div>
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        <div id="hex-code">0x0000</div>
+    </div>
 
     <audio id="bg-music" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop crossorigin="anonymous"></audio>
 
 <script>
     // --- CẤU HÌNH ---
     const CONFIG = {
-        // Mỗi màn text hiện trong 12 giây (Câu giờ cực mạnh)
-        SCENE_DURATION: 12000, 
-        BOOT_DURATION: 8000, // 8 giây chạy dòng lệnh
-        COUNTDOWN: 10
+        SCENE_DURATION: 12000, // 12 giây mỗi cảnh
+        BOOT_TIME: 10000 // 10 giây nạp (Phase 1)
     };
 
-    // Kịch bản chia nhỏ (Ăn bớt thời gian + Chữ to)
+    // Kịch bản hiển thị
     const SCRIPT = [
-        { text: "ĐỐI TƯỢNG:\nTRƯƠNG THỊ DƯƠNG", color: "#0F0" }, // Xanh Hacker
-        { text: "NHIỆM VỤ:\nCHÚC MỪNG 2026", color: "#FFD700" }, // Vàng
-        { text: "MÃ LỆNH:\nXUÂN BÍNH NGỌ 🐴", color: "#00FFFF" }, // Cyan
-        { text: "SỰ KIỆN 1:\nHAPPY VALENTINE", color: "#FF0055" }, // Hồng
-        { text: "SỰ KIỆN 2:\nQUỐC TẾ PHỤ NỮ", color: "#FFF" }, // Trắng
+        { text: "ĐỐI TƯỢNG:\nTRƯƠNG THỊ DƯƠNG", color: "#0F0" }, 
+        { text: "NHIỆM VỤ:\nCHÚC MỪNG 2026", color: "#FFD700" }, 
+        { text: "MÃ LỆNH:\nXUÂN BÍNH NGỌ 🐴", color: "#00FFFF" }, 
+        { text: "SỰ KIỆN 1:\nHAPPY VALENTINE", color: "#FF0055" }, 
+        { text: "SỰ KIỆN 2:\nQUỐC TẾ PHỤ NỮ", color: "#FFF" }, 
         { text: "SỰ KIỆN CHÍNH:\nSINH NHẬT TUỔI 19", color: "#FFD700" },
         { text: "TRẠNG THÁI:\nXINH ĐẸP RẠNG NGỜI", color: "#00FFFF" },
         { action: "LETTER" }
     ];
 
-    const cv = document.getElementById('matrixCanvas');
-    const ctx = cv.getContext('2d');
+    const canvas = document.getElementById('mainCanvas');
+    const ctx = canvas.getContext('2d');
     let width, height;
-    
-    // Matrix Rain Variables (Pha trộn tiếng Latinh/Hy Lạp)
-    // Bao gồm: Katakana, Số, Latin, Hy Lạp
-    const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ΩΣΔΨΦΞΛΠΓΘabcdefghijklmnopqrstuvwxyz";
+
+    // Matrix Variables (Latin + Greek + Katakana mix)
+    const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZΩΣΔΨΦΞΛΠΓΘ0123456789";
     let columns = [];
     let fontSize = 16;
 
-    // Drone Variables
+    // State
+    let state = "IDLE"; // IDLE, BOOT, SHOW, LETTER
     let drones = [];
-    let state = "IDLE"; // IDLE, BOOT, COUNTDOWN, SHOW, LETTER
+    let scriptIdx = 0;
 
     function resize() {
-        width = cv.width = window.innerWidth;
-        height = cv.height = window.innerHeight;
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
         let cols = width / fontSize;
         columns = [];
         for(let i=0; i<cols; i++) columns[i] = 1;
@@ -151,72 +128,52 @@
     window.addEventListener('resize', resize);
     resize();
 
-    // --- START SEQUENCE ---
+    // --- KHỞI ĐỘNG (SỬA LỖI LOGIC) ---
     document.getElementById('start-btn').onclick = function() {
-        this.style.display = 'none';
-        document.getElementById('bg-music').play().catch(console.log);
+        this.style.display = 'none'; // Ẩn nút ngay lập tức
         
-        // GIAI ĐOẠN 1: BOOT SEQUENCE
+        // Thử phát nhạc (nếu lỗi thì bỏ qua, code vẫn chạy tiếp)
+        const audio = document.getElementById('bg-music');
+        audio.play().catch(e => console.log("Audio autoplay blocked by browser"));
+        
+        // Chạy Phase 1 ngay lập tức
         runBootSequence();
     };
 
+    // --- PHASE 1: LOADING BAR ---
     function runBootSequence() {
         state = "BOOT";
-        const consoleDiv = document.getElementById('console-container');
-        consoleDiv.style.display = 'block';
+        const bootScreen = document.getElementById('boot-screen');
+        const bar = document.getElementById('progress-bar');
+        const txt = document.getElementById('boot-text');
+        const hex = document.getElementById('hex-code');
         
-        const logs = [
-            "INITIALIZING KERNEL...",
-            "LOADING MODULES: [▓▓▓▓▓▓░░░░] 60%",
-            "ACCESSING MAINFRAME...",
-            "BYPASSING FIREWALL (LEVEL 5)...",
-            "DECRYPTING USER DATA: 'TRUONG_THI_DUONG'...",
-            "SCANNING BIOMETRICS... MATCH FOUND.",
-            "UPLOADING BIRTHDAY PROTOCOL...",
-            "LOADING ASSETS... [OK]",
-            "SYSTEM BREACH SUCCESSFUL."
-        ];
-
-        let i = 0;
+        bootScreen.style.display = 'flex';
+        
+        let progress = 0;
         let interval = setInterval(() => {
-            if(i < logs.length) {
-                consoleDiv.innerHTML += `> ${logs[i]}<br>`;
-                consoleDiv.scrollTop = consoleDiv.scrollHeight;
-                i++;
-            } else {
-                clearInterval(interval);
-                setTimeout(() => {
-                    consoleDiv.style.display = 'none';
-                    startCountdown3D();
-                }, 1000);
-            }
-        }, 800); // Tốc độ in dòng lệnh
-    }
-
-    // GIAI ĐOẠN 2: 3D ROTATING COUNTDOWN
-    function startCountdown3D() {
-        state = "COUNTDOWN";
-        const box = document.getElementById('countdown-3d');
-        const faces = document.querySelectorAll('.face');
-        box.style.display = 'block';
-
-        let count = CONFIG.COUNTDOWN;
-        
-        let timer = setInterval(() => {
-            count--;
-            faces.forEach(f => f.innerText = count);
+            progress += 1; // Tăng dần 1%
             
-            if(count < 0) {
-                clearInterval(timer);
-                box.style.display = 'none';
-                startDroneShow();
+            // Cập nhật giao diện
+            bar.style.width = progress + "%";
+            txt.innerText = `SYSTEM LOADING... ${progress}%`;
+            
+            // Hiệu ứng mã Hex nháy loạn xạ
+            hex.innerText = "0x" + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
+
+            if (progress >= 100) {
+                clearInterval(interval);
+                // Kết thúc boot, vào show
+                setTimeout(() => {
+                    bootScreen.style.display = 'none';
+                    startShow();
+                }, 500);
             }
-        }, 1000);
+        }, CONFIG.BOOT_TIME / 100); // Chia thời gian ra 100 bước
     }
 
-    // GIAI ĐOẠN 3: MATRIX & DRONE SHOW
-    let scriptIdx = 0;
-    function startDroneShow() {
+    // --- PHASE 2: SHOW ---
+    function startShow() {
         state = "SHOW";
         nextScene();
     }
@@ -236,51 +193,50 @@
         setTimeout(nextScene, CONFIG.SCENE_DURATION);
     }
 
-    // --- LOGIC DRONE & TEXT ---
+    // --- TEXT TO DRONE LOGIC ---
     function formText(text, color) {
         const lines = text.split('\n');
         const offCv = document.createElement('canvas');
         const offCtx = offCv.getContext('2d');
         
-        let fSize = width < 768 ? 60 : 120;
-        offCtx.font = `900 ${fSize}px "Orbitron"`; // Font Hacker
+        let fSize = width < 768 ? 50 : 100; // Font size vừa phải
+        offCtx.font = `900 ${fSize}px "Share Tech Mono"`; 
         
-        // Tính kích thước
         let maxW = 0;
         lines.forEach(l => {
             let m = offCtx.measureText(l);
             if(m.width > maxW) maxW = m.width;
         });
         
-        offCv.width = maxW + 50;
-        offCv.height = lines.length * fSize * 1.3;
+        offCv.width = maxW + 40;
+        offCv.height = lines.length * fSize * 1.5;
 
-        offCtx.font = `900 ${fSize}px "Orbitron"`;
+        offCtx.font = `900 ${fSize}px "Share Tech Mono"`;
         offCtx.fillStyle = '#fff';
         offCtx.textAlign = 'center';
         offCtx.textBaseline = 'middle';
         
-        let startY = fSize/2 + 20;
+        let startY = fSize;
         lines.forEach((l, i) => {
-            offCtx.fillText(l, offCv.width/2, startY + i * fSize);
+            offCtx.fillText(l, offCv.width/2, startY + i * (fSize * 1.1));
         });
 
-        // Scan Points
+        // Scan pixels
         let points = [];
         let data = offCtx.getImageData(0,0, offCv.width, offCv.height).data;
         let step = width < 768 ? 4 : 3;
         
-        // Scale Fit Screen
-        let scale = Math.min((width*0.9)/offCv.width, (height*0.7)/offCv.height);
-        let startX = (width - offCv.width*scale)/2;
-        let startY = (height - offCv.height*scale)/2;
+        // Scale to fit screen
+        let scale = Math.min((width * 0.95) / offCv.width, (height * 0.6) / offCv.height);
+        let startX = (width - offCv.width * scale) / 2;
+        let startY = (height - offCv.height * scale) / 2;
 
         for(let y=0; y<offCv.height; y+=step) {
             for(let x=0; x<offCv.width; x+=step) {
                 if(data[(y*offCv.width + x)*4 + 3] > 128) {
                     points.push({
-                        x: startX + x*scale,
-                        y: startY + y*scale
+                        x: startX + x * scale,
+                        y: startY + y * scale
                     });
                 }
             }
@@ -289,15 +245,17 @@
     }
 
     function updateDrones(points, color) {
-        points.sort(() => Math.random() - 0.5); // Randomize
-        
+        points.sort(() => Math.random() - 0.5);
+
         if(drones.length < points.length) {
             let add = points.length - drones.length;
             for(let i=0; i<add; i++) {
                 drones.push({
-                    x: Math.random()*width, y: Math.random()*height,
+                    x: Math.random() * width, 
+                    y: Math.random() * height, // Bay từ vị trí ngẫu nhiên
                     tx: width/2, ty: height/2,
-                    color: color, size: 2
+                    color: color, 
+                    size: 2
                 });
             }
         }
@@ -308,17 +266,15 @@
                 d.ty = points[i].y;
                 d.color = color;
             } else {
-                // Drone thừa bay thành vòng tròn bảo vệ xung quanh
-                let angle = (i / (drones.length - points.length)) * Math.PI * 2;
-                let r = Math.min(width, height) * 0.45;
-                d.tx = width/2 + Math.cos(angle)*r;
-                d.ty = height/2 + Math.sin(angle)*r;
-                d.color = "rgba(0, 255, 0, 0.3)"; // Màu xanh mờ
+                // Drone thừa bay loạn xạ kiểu Matrix glitch
+                d.tx = Math.random() * width;
+                d.ty = Math.random() * height;
+                d.color = "rgba(0, 255, 0, 0)"; // Ẩn đi
             }
         });
     }
 
-    // --- RENDER MATRIX RAIN ---
+    // --- MATRIX RAIN RENDER ---
     function drawMatrix() {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; // Tạo vệt mờ
         ctx.fillRect(0, 0, width, height);
@@ -339,43 +295,44 @@
 
     // --- TÂM THƯ ---
     function showLetter() {
+        state = "LETTER";
         const box = document.getElementById('letter-box');
-        const txt = document.getElementById('letter-text');
-        box.style.display = 'flex';
+        const content = document.getElementById('letter-content');
+        box.style.display = 'block';
         
-        let content = "GỬI: TRƯƠNG THỊ DƯƠNG\n\n[SYSTEM MESSAGE]: Chúc mừng sinh nhật tuổi 19! Chúc cậu một năm mới bùng nổ như những dòng code này. Luôn xinh đẹp, mạnh mẽ và thành công.\n\nCảm ơn vì đã luôn ở bên cạnh tớ.\n\n[END OF TRANSMISSION]\nKý tên: Nguyễn Bắc Sơn";
+        let text = "GỬI: TRƯƠNG THỊ DƯƠNG\n\n[SYSTEM MESSAGE]: Chúc mừng sinh nhật tuổi 19! Chúc cậu một năm mới bùng nổ, luôn xinh đẹp và thành công. Cảm ơn vì đã luôn ở bên cạnh tớ.\n\n[END OF TRANSMISSION]\n\nKý tên: Nguyễn Bắc Sơn";
         
         let i = 0;
         let t = setInterval(() => {
-            txt.innerText = content.substring(0, i) + "█";
+            content.innerText = text.substring(0, i) + "_";
             i++;
-            if(i > content.length) clearInterval(t);
+            if(i > text.length) clearInterval(t);
         }, 50);
     }
 
-    // --- MAIN LOOP ---
+    // --- ANIMATION LOOP ---
     function animate() {
         requestAnimationFrame(animate);
 
-        // Vẽ nền Matrix
-        if(state !== "BOOT") {
-            drawMatrix();
-        }
+        // Nếu đang boot thì không vẽ gì trên canvas (để html lo)
+        if(state === "BOOT") return;
 
-        // Vẽ Drones (Text)
+        // Vẽ nền Matrix
+        drawMatrix();
+
+        // Vẽ Drone (Chữ)
         if(state === "SHOW" || state === "LETTER") {
             drones.forEach(d => {
-                // Di chuyển
+                // Di chuyển mượt
                 d.x += (d.tx - d.x) * 0.08;
                 d.y += (d.ty - d.y) * 0.08;
                 
-                // Vẽ
                 ctx.fillStyle = d.color;
-                // Hiệu ứng "Pixel" vuông vức cho đúng chất hacker
                 ctx.fillRect(d.x, d.y, d.size, d.size);
             });
         }
     }
+    
     animate();
 
 </script>
