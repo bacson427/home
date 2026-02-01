@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_HACKER_PRO_V14</title>
+    <title>SON_HACKER_V15_HD</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&display=swap');
         
@@ -134,14 +134,15 @@ Tớ cảm ơn cậu rất nhiều!
     const canvas = document.getElementById('mainCanvas');
     const ctx = canvas.getContext('2d');
     let width, height;
+    const isMobile = window.innerWidth < 768;
 
     // Variables
     const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let columns = [];
     let fontSize = 16;
-    let matrixColor = "#0F0"; // Mặc định xanh
+    let matrixColor = "#0F0"; 
 
-    let state = "IDLE"; // IDLE, COUNTDOWN, VIRUS, SHOW, READING, FINALE
+    let state = "IDLE"; 
     let drones = [];
     let fireworks = [];
     let particles = [];
@@ -180,7 +181,7 @@ Tớ cảm ơn cậu rất nhiều!
             if(countdownVal <= 0) {
                 clearInterval(timer);
                 cubeBox.style.display = 'none';
-                triggerVirus(); // Chuyển sang Virus
+                triggerVirus(); 
             }
         }, 1000);
     }
@@ -188,16 +189,15 @@ Tớ cảm ơn cậu rất nhiều!
     // --- PHASE 2: VIRUS ATTACK ---
     function triggerVirus() {
         state = "VIRUS";
-        matrixColor = "#F00"; // Matrix chuyển đỏ
+        matrixColor = "#F00"; 
         document.getElementById('virus-alert').style.display = 'flex';
-        document.body.classList.add('shake-screen'); // Rung màn hình
+        document.body.classList.add('shake-screen'); 
 
-        // Virus quậy trong 5 giây
         setTimeout(() => {
             document.getElementById('virus-alert').style.display = 'none';
             document.body.classList.remove('shake-screen');
-            matrixColor = "#0F0"; // Trả lại màu xanh
-            startDroneShow(); // Vào show chính
+            matrixColor = "#0F0"; 
+            startDroneShow(); 
         }, 5000);
     }
 
@@ -229,14 +229,12 @@ Tớ cảm ơn cậu rất nhiều!
         const skipBtn = document.getElementById('skip-btn');
         overlay.style.display = 'flex';
 
-        // Drones bay loạn xạ làm nền
         drones.forEach(d => {
             d.tx = Math.random() * width;
             d.ty = Math.random() * height;
             d.color = "rgba(0, 255, 0, 0.1)";
         });
 
-        // Gõ chữ
         let i = 0;
         let t = setInterval(() => {
             msgBody.innerText = MY_WISH.substring(0, i);
@@ -246,7 +244,6 @@ Tớ cảm ơn cậu rất nhiều!
                 clearInterval(t);
                 msgBody.innerHTML = MY_WISH; 
                 skipBtn.style.display = 'block';
-                // Tự chuyển sau 10s nếu ko bấm
                 setTimeout(() => { if(state === "READING") startFinale(); }, 10000);
             }
         }, 50);
@@ -268,12 +265,13 @@ Tớ cảm ơn cậu rất nhiều!
         }, 300);
     }
 
-    // --- LOGIC VẼ ---
+    // --- LOGIC VẼ (ĐÃ TỐI ƯU ĐỘ NÉT) ---
     function formText(text, color) {
         const lines = text.split('\n');
         const offCv = document.createElement('canvas');
         const offCtx = offCv.getContext('2d');
-        let fSize = width < 768 ? 60 : 100;
+        // Tăng kích thước font nguồn để lấy mẫu nét hơn
+        let fSize = isMobile ? 80 : 150;
         
         offCtx.font = `900 ${fSize}px "Share Tech Mono"`;
         let maxW = 0;
@@ -282,14 +280,14 @@ Tớ cảm ơn cậu rất nhiều!
             if(m.width > maxW) maxW = m.width;
         });
         
-        offCv.width = maxW + 40;
+        offCv.width = maxW + 50;
         offCv.height = lines.length * fSize * 1.5;
         offCtx.font = `900 ${fSize}px "Share Tech Mono"`;
         offCtx.fillStyle = '#fff';
         offCtx.textAlign = 'center'; offCtx.textBaseline = 'middle';
         
         lines.forEach((l, i) => {
-            offCtx.fillText(l, offCv.width/2, fSize + i * fSize);
+            offCtx.fillText(l, offCv.width/2, fSize * 0.8 + i * fSize);
         });
         processPoints(offCv, color);
     }
@@ -309,7 +307,11 @@ Tớ cảm ơn cậu rất nhiều!
     function processPoints(offCv, color) {
         let points = [];
         let data = offCtx = offCv.getContext('2d').getImageData(0,0, offCv.width, offCv.height).data;
-        let step = width < 768 ? 5 : 4;
+        
+        // GIẢM STEP ĐỂ TĂNG MẬT ĐỘ ĐIỂM ẢNH (NÉT HƠN)
+        // Mobile: step 3, PC: step 2 (Rất dày)
+        let step = isMobile ? 3 : 2; 
+        
         let scale = Math.min(width*0.9/offCv.width, height*0.7/offCv.height);
         let startX = (width - offCv.width*scale)/2;
         let startY = (height - offCv.height*scale)/2;
@@ -321,6 +323,14 @@ Tớ cảm ơn cậu rất nhiều!
                 }
             }
         }
+
+        // Giới hạn số lượng drone tối đa để tránh lag trên máy yếu
+        const MAX_DRONES = isMobile ? 3500 : 5000;
+        if (points.length > MAX_DRONES) {
+            points.sort(() => Math.random() - 0.5);
+            points = points.slice(0, MAX_DRONES);
+        }
+
         updateDrones(points, color);
     }
 
@@ -331,7 +341,7 @@ Tớ cảm ơn cậu rất nhiều!
                 drones.push({
                     x: Math.random()*width, y: height+100,
                     tx: width/2, ty: height/2,
-                    color: color, size: 2
+                    color: color, size: 2 // Kích thước drone là 2px
                 });
             }
         }
@@ -347,7 +357,6 @@ Tớ cảm ơn cậu rất nhiều!
 
     // --- RENDER ---
     function drawMatrix() {
-        // Nếu là Virus thì nền đỏ nhạt, còn lại đen nhạt
         ctx.fillStyle = state === "VIRUS" ? 'rgba(50, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.05)';
         ctx.fillRect(0, 0, width, height);
         ctx.fillStyle = matrixColor;
@@ -364,7 +373,7 @@ Tớ cảm ơn cậu rất nhiều!
         fireworks.push({
             x: Math.random()*width, y: height,
             tx: Math.random()*width, ty: Math.random()*height*0.5,
-            vx: 0, vy: -15, color: `hsl(${Math.random()*360}, 100%, 50%)`
+            vx: 0, vy: -15, color: `hsl(${Math.random()*360}, 100%, 50%)`, state: "RISE"
         });
     }
 
@@ -386,19 +395,16 @@ Tớ cảm ơn cậu rất nhiều!
     function animate() {
         requestAnimationFrame(animate);
 
-        // Nền Matrix (trừ khi đang đọc thư thì tối lại)
         if(state !== "READING") drawMatrix();
         else { ctx.fillStyle="rgba(0,0,0,0.8)"; ctx.fillRect(0,0,width,height); }
 
-        // Drones
         drones.forEach(d => {
-            d.x += (d.tx - d.x) * 0.1;
-            d.y += (d.ty - d.y) * 0.1;
+            d.x += (d.tx - d.x) * 0.08;
+            d.y += (d.ty - d.y) * 0.08;
             ctx.fillStyle = d.color;
             ctx.fillRect(d.x, d.y, d.size, d.size);
         });
 
-        // Fireworks
         for(let i=fireworks.length-1; i>=0; i--) {
             let fw = fireworks[i];
             fw.y += fw.vy; fw.vy += 0.2;
@@ -415,7 +421,6 @@ Tớ cảm ơn cậu rất nhiều!
             }
         }
 
-        // Particles
         for(let i=particles.length-1; i>=0; i--) {
             let p = particles[i];
             p.x += p.vx; p.y += p.vy; p.vy += p.gravity; p.life -= 0.02;
@@ -426,7 +431,6 @@ Tớ cảm ơn cậu rất nhiều!
             }
         }
 
-        // Hearts
         if(state === "FINALE") {
             for(let i=hearts.length-1; i>=0; i--) {
                 let h = hearts[i];
