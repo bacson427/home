@@ -3,86 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_HACKER_V15_HD</title>
+    <title>SON_V16_FINAL_FIX</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&display=swap');
         
         body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Share Tech Mono', monospace; }
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
 
-        /* UI Layer */
+        /* UI */
         #ui-layer {
             position: absolute; width: 100%; height: 100%;
             display: flex; justify-content: center; align-items: center;
             flex-direction: column; z-index: 999; pointer-events: none;
         }
 
-        /* Nút Start */
         .cyber-btn {
             pointer-events: auto; background: #000; color: #0F0; border: 2px solid #0F0;
-            padding: 20px 50px; font-size: 24px; cursor: pointer; 
-            font-family: 'Black Ops One', cursive; letter-spacing: 3px;
-            box-shadow: 0 0 20px #0F0; text-shadow: 0 0 10px #0F0;
-            transition: 0.3s; animation: pulse 1s infinite;
+            padding: 20px 40px; font-size: 22px; cursor: pointer; 
+            font-family: 'Black Ops One', cursive; letter-spacing: 2px;
+            box-shadow: 0 0 15px #0F0; transition: 0.3s;
         }
-        .cyber-btn:hover { background: #0F0; color: #000; box-shadow: 0 0 60px #0F0; }
+        .cyber-btn:hover { background: #0F0; color: #000; box-shadow: 0 0 40px #0F0; }
 
-        /* 3D Cube */
-        #cube-container { display: none; perspective: 1000px; width: 200px; height: 200px; }
+        /* Cube */
+        #cube-container { display: none; perspective: 800px; width: 150px; height: 150px; }
         #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 4s infinite linear; }
         .face {
-            position: absolute; width: 196px; height: 196px;
+            position: absolute; width: 146px; height: 146px;
             border: 2px solid #0F0; background: rgba(0, 255, 0, 0.1);
-            color: #0F0; font-size: 100px; display: flex;
+            color: #0F0; font-size: 80px; display: flex;
             justify-content: center; align-items: center;
-            font-family: 'Black Ops One'; box-shadow: 0 0 20px rgba(0,255,0,0.5);
+            font-family: 'Black Ops One';
         }
-        .front { transform: translateZ(100px); } .back { transform: rotateY(180deg) translateZ(100px); }
-        .right { transform: rotateY(90deg) translateZ(100px); } .left { transform: rotateY(-90deg) translateZ(100px); }
-        .top { transform: rotateX(90deg) translateZ(100px); } .bottom { transform: rotateX(-90deg) translateZ(100px); }
+        .front { transform: translateZ(75px); } .back { transform: rotateY(180deg) translateZ(75px); }
+        .right { transform: rotateY(90deg) translateZ(75px); } .left { transform: rotateY(-90deg) translateZ(75px); }
+        .top { transform: rotateX(90deg) translateZ(75px); } .bottom { transform: rotateX(-90deg) translateZ(75px); }
         @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
 
-        /* Màn hình Virus */
-        #virus-alert {
+        /* Virus Alert */
+        #virus-screen {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(50, 0, 0, 0.8); z-index: 2000;
+            background: rgba(50, 0, 0, 0.9); z-index: 2000;
             flex-direction: column; justify-content: center; align-items: center;
+            animation: shake 0.5s infinite;
         }
-        .alert-box {
-            border: 5px solid #F00; padding: 40px; background: #000;
-            color: #F00; font-family: 'Black Ops One'; font-size: clamp(30px, 5vw, 60px);
-            text-align: center; box-shadow: 0 0 50px #F00;
-            animation: glitch 0.2s infinite;
+        .virus-text {
+            color: #F00; font-size: 50px; font-family: 'Black Ops One'; text-align: center;
+            text-shadow: 0 0 20px #F00; border: 5px solid #F00; padding: 20px; background: #000;
         }
-        .shake-screen { animation: shake 0.5s infinite; }
+        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 50% { transform: translate(-1px, -2px) rotate(-1deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
 
-        /* Màn hình Tâm thư */
-        #message-overlay {
+        /* Message */
+        #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95); display: none;
+            background: rgba(0,0,0,0.95); display: none; z-index: 3000;
             flex-direction: column; justify-content: center; align-items: center;
-            z-index: 2000; padding: 20px; box-sizing: border-box;
+            padding: 20px; box-sizing: border-box;
         }
-        #msg-body {
-            color: #0F0; font-size: 16px; line-height: 1.6; 
-            font-family: 'Share Tech Mono', monospace; white-space: pre-wrap;
-            max-width: 800px; text-align: left; border-left: 2px solid #0F0; padding-left: 20px;
+        #msg-content {
+            color: #0F0; font-size: 16px; line-height: 1.6; font-family: 'Share Tech Mono';
+            white-space: pre-wrap; max-width: 600px; text-shadow: 0 0 5px #0F0;
+            border-left: 3px solid #0F0; padding-left: 15px;
         }
-        #skip-btn { margin-top: 20px; border: 1px solid #FFF; background: transparent; color: #FFF; padding: 10px; cursor: pointer; display: none; }
-
-        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
-        @keyframes glitch { 0% { opacity: 1; } 50% { opacity: 0.7; transform: skewX(10deg); } 100% { opacity: 1; } }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .cursor { display: inline-block; width: 10px; height: 20px; background: #0F0; animation: blink 0.5s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
+        #skip-btn { margin-top: 20px; padding: 10px 20px; border: 1px solid #FFF; background: transparent; color: #FFF; display: none; pointer-events: auto; }
 
     </style>
 </head>
 <body>
-    <canvas id="mainCanvas"></canvas>
+    <canvas id="c"></canvas>
     
     <div id="ui-layer">
-        <button id="start-btn" class="cyber-btn">HACK SYSTEM</button>
+        <button id="btn-start" class="cyber-btn">SYSTEM START</button>
         <div id="cube-container">
             <div id="cube">
                 <div class="face front">10</div><div class="face back">10</div>
@@ -92,356 +83,338 @@
         </div>
     </div>
 
-    <div id="virus-alert">
-        <div class="alert-box">
-            ⚠ WARNING ⚠<br>VIRUS DETECTED<br>SYSTEM COMPROMISED
-        </div>
+    <div id="virus-screen">
+        <div class="virus-text">⚠ WARNING ⚠<br>SYSTEM HACKED</div>
     </div>
 
-    <div id="message-overlay">
-        <div style="color: #F00; font-size: 20px; margin-bottom: 20px; border-bottom: 2px solid #F00;">SECRET FILE DECRYPTED</div>
-        <div id="msg-body"></div>
-        <button id="skip-btn">TIẾP TỤC >></button>
+    <div id="msg-layer">
+        <div id="msg-content"></div>
+        <button id="skip-btn" onclick="startFinale()">TIẾP TỤC >></button>
     </div>
 
-    <audio id="bg-music" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop crossorigin="anonymous"></audio>
+    <audio id="audio" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
 
 <script>
     // --- NỘI DUNG TÂM THƯ ---
-    const MY_WISH = `Dương ơi, hôm nay là ngày 01/03/2026, cậu tròn 19 tuổi.
+    const LETTER = `Dương ơi, hôm nay 01/03/2026, cậu tròn 19 tuổi.
 
-Tớ chúc cậu ngày càng xinh đẹp, học giỏi, đạt được kết quả cao trong học tập, sớm đạt được những ước mơ mà cậu đã từng mong ước.
+Tớ chúc cậu ngày càng xinh đẹp, học giỏi, đạt được kết quả cao và sớm thực hiện được mọi ước mơ.
 
-Tớ cũng xin lỗi, thời gian vừa qua đã làm cậu phải buồn, giận, chán ghét tớ. Thôi cũng đã qua năm mới tớ mong rằng cậu có thể không để bụng đến tính cách "trẻ trâu" của tớ.
+Tớ xin lỗi vì thời gian qua đã làm cậu buồn. Năm mới mong cậu bỏ qua cho tính cách "trẻ trâu" của tớ nhé.
 
-Tớ cảm ơn cậu rất nhiều!
+Cảm ơn cậu rất nhiều!
 
 -- Nguyễn Bắc Sơn --`;
 
+    // --- KỊCH BẢN DRONE ---
     const SCRIPT = [
-        { text: "GỬI ĐẾN\nTRƯƠNG THỊ DƯƠNG", color: "#0F0" }, 
-        { text: "CHÚC MỪNG\nNĂM MỚI 2026", color: "#FFD700" }, 
-        { text: "XUÂN BÍNH NGỌ\nTHÀNH CÔNG RỰC RỠ", color: "#00FFFF" }, 
-        { text: "HAPPY VALENTINE\n14/02 NGỌT NGÀO", color: "#FF0055" }, 
-        { text: "QUỐC TẾ PHỤ NỮ\n8/3 VUI VẺ", color: "#FFF" }, 
-        { text: "HAPPY BIRTHDAY\nSINH NHẬT VUI VẺ", color: "#FFD700" },
-        { text: "TUỔI 19\nTỎA SÁNG LUNG LINH", color: "#00FFFF" },
-        { action: "SHOW_MESSAGE" } 
+        { t: "GỬI ĐẾN\nTRƯƠNG THỊ DƯƠNG", c: "#0F0" },
+        { t: "CHÚC MỪNG\nNĂM MỚI 2026", c: "#FFD700" },
+        { t: "XUÂN BÍNH NGỌ\nTHÀNH CÔNG RỰC RỠ", c: "#00FFFF" },
+        { t: "HAPPY VALENTINE\n14/02 NGỌT NGÀO", c: "#FF0055" },
+        { t: "QUỐC TẾ PHỤ NỮ\n8/3 VUI VẺ", c: "#FFF" },
+        { t: "HAPPY BIRTHDAY\nSINH NHẬT TUỔI 19", c: "#FFD700" },
+        { action: "MSG" }
     ];
 
-    const CONFIG = { SCENE_DURATION: 10000 }; 
-
-    const canvas = document.getElementById('mainCanvas');
+    const canvas = document.getElementById('c');
     const ctx = canvas.getContext('2d');
-    let width, height;
     const isMobile = window.innerWidth < 768;
+    let w, h;
 
-    // Variables
-    const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let columns = [];
-    let fontSize = 16;
-    let matrixColor = "#0F0"; 
+    // CẤU HÌNH TỐI ƯU (CHÌA KHÓA ĐỂ NÉT & MƯỢT)
+    // Tăng kích thước điểm ảnh (Size) và Giãn cách (Gap) vừa đủ
+    // Thay vì 1000 điểm nhỏ, ta dùng 400 điểm to -> Máy nhẹ hơn, mắt nhìn nét hơn
+    const DOT_GAP = isMobile ? 5 : 4; 
+    const DOT_SIZE = isMobile ? 3.5 : 3; 
 
     let state = "IDLE"; 
     let drones = [];
-    let fireworks = [];
-    let particles = [];
-    let hearts = []; 
-    let fountains = []; 
+    let fireworks = [], particles = [], hearts = [];
     let scriptIdx = 0;
-    let countdownVal = 10;
+    let countdown = 10;
+    
+    // Matrix Background
+    const M_CHARS = "0123456789ABCDEF";
+    let m_cols = [];
 
     function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-        let cols = width / fontSize;
-        columns = [];
-        for(let i=0; i<cols; i++) columns[i] = 1;
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+        m_cols = Array(Math.floor(w/20)).fill(0);
     }
     window.addEventListener('resize', resize);
     resize();
 
-    // --- KHỞI ĐỘNG ---
-    document.getElementById('start-btn').onclick = function() {
+    // --- BUTTON START ---
+    document.getElementById('btn-start').onclick = function() {
         this.style.display = 'none';
-        document.getElementById('bg-music').play().catch(() => {});
-        startCountdown();
+        document.getElementById('audio').play().catch(()=>{});
+        runCountdown();
     };
 
-    // --- PHASE 1: COUNTDOWN ---
-    function startCountdown() {
+    // --- 1. COUNTDOWN ---
+    function runCountdown() {
         state = "COUNTDOWN";
-        const cubeBox = document.getElementById('cube-container');
+        document.getElementById('cube-container').style.display = 'block';
         const faces = document.querySelectorAll('.face');
-        cubeBox.style.display = 'block';
-
-        let timer = setInterval(() => {
-            countdownVal--;
-            faces.forEach(f => f.innerText = countdownVal);
-            if(countdownVal <= 0) {
-                clearInterval(timer);
-                cubeBox.style.display = 'none';
-                triggerVirus(); 
+        
+        let tmr = setInterval(() => {
+            countdown--;
+            faces.forEach(f => f.innerText = countdown);
+            if(countdown <= 0) {
+                clearInterval(tmr);
+                document.getElementById('cube-container').style.display = 'none';
+                runVirus();
             }
         }, 1000);
     }
 
-    // --- PHASE 2: VIRUS ATTACK ---
-    function triggerVirus() {
+    // --- 2. VIRUS ---
+    function runVirus() {
         state = "VIRUS";
-        matrixColor = "#F00"; 
-        document.getElementById('virus-alert').style.display = 'flex';
-        document.body.classList.add('shake-screen'); 
-
+        document.getElementById('virus-screen').style.display = 'flex';
         setTimeout(() => {
-            document.getElementById('virus-alert').style.display = 'none';
-            document.body.classList.remove('shake-screen');
-            matrixColor = "#0F0"; 
-            startDroneShow(); 
-        }, 5000);
+            document.getElementById('virus-screen').style.display = 'none';
+            runShow();
+        }, 4000);
     }
 
-    // --- PHASE 3: DRONE SHOW ---
-    function startDroneShow() {
+    // --- 3. DRONE SHOW ---
+    function runShow() {
         state = "SHOW";
         nextScene();
     }
 
     function nextScene() {
         if(scriptIdx >= SCRIPT.length) return;
-        let scene = SCRIPT[scriptIdx];
-        scriptIdx++;
-
-        if(scene.action === "SHOW_MESSAGE") {
-            triggerMessageSequence();
+        let s = SCRIPT[scriptIdx++];
+        
+        if(s.action === "MSG") {
+            setTimeout(runMessage, 1000);
             return;
         }
 
-        formText(scene.text, scene.color);
-        setTimeout(nextScene, CONFIG.SCENE_DURATION);
+        formText(s.t, s.c);
+        setTimeout(nextScene, 9000); // 9 giây mỗi câu
     }
 
-    // --- PHASE 4: TÂM THƯ ---
-    function triggerMessageSequence() {
-        state = "READING";
-        const overlay = document.getElementById('message-overlay');
-        const msgBody = document.getElementById('msg-body');
-        const skipBtn = document.getElementById('skip-btn');
-        overlay.style.display = 'flex';
-
+    // --- 4. MESSAGE ---
+    function runMessage() {
+        state = "MSG";
+        const layer = document.getElementById('msg-layer');
+        const content = document.getElementById('msg-content');
+        const btn = document.getElementById('skip-btn');
+        layer.style.display = 'flex';
+        
+        // Drone bay về nền làm background
         drones.forEach(d => {
-            d.tx = Math.random() * width;
-            d.ty = Math.random() * height;
-            d.color = "rgba(0, 255, 0, 0.1)";
+            d.tx = Math.random() * w;
+            d.ty = Math.random() * h;
+            d.c = "rgba(0, 255, 0, 0.1)";
         });
 
         let i = 0;
-        let t = setInterval(() => {
-            msgBody.innerText = MY_WISH.substring(0, i);
-            msgBody.innerHTML += '<span class="cursor"></span>';
+        let tmr = setInterval(() => {
+            content.innerText = LETTER.substring(0, i) + "█";
             i++;
-            if(i > MY_WISH.length) {
-                clearInterval(t);
-                msgBody.innerHTML = MY_WISH; 
-                skipBtn.style.display = 'block';
-                setTimeout(() => { if(state === "READING") startFinale(); }, 10000);
+            if(i > LETTER.length) {
+                clearInterval(tmr);
+                content.innerText = LETTER;
+                btn.style.display = 'block';
+                setTimeout(() => { if(state==="MSG") startFinale(); }, 12000);
             }
         }, 50);
-
-        skipBtn.onclick = startFinale;
     }
 
-    // --- PHASE 5: FINALE ---
-    function startFinale() {
-        document.getElementById('message-overlay').style.display = 'none';
+    window.startFinale = function() {
+        document.getElementById('msg-layer').style.display = 'none';
         state = "FINALE";
-        
         formCake();
-        
         setInterval(() => {
-            shootFirework();
-            if(Math.random() > 0.4) spawnHeart();
-            spawnFountain(); 
-        }, 300);
-    }
+            if(Math.random()>0.3) firework();
+            if(Math.random()>0.5) heart();
+        }, 400);
+    };
 
-    // --- LOGIC VẼ (ĐÃ TỐI ƯU ĐỘ NÉT) ---
-    function formText(text, color) {
-        const lines = text.split('\n');
-        const offCv = document.createElement('canvas');
-        const offCtx = offCv.getContext('2d');
-        // Tăng kích thước font nguồn để lấy mẫu nét hơn
-        let fSize = isMobile ? 80 : 150;
+    // --- CORE LOGIC: TEXT TO POINTS (OPTIMIZED) ---
+    function formText(txt, color) {
+        const lines = txt.split('\n');
+        const tmp = document.createElement('canvas');
+        const tCtx = tmp.getContext('2d');
         
-        offCtx.font = `900 ${fSize}px "Share Tech Mono"`;
+        // Font đậm (Bold) để nét chữ dày
+        let fSize = isMobile ? 70 : 120;
+        tCtx.font = `900 ${fSize}px "Arial Black", "Verdana"`;
+        
         let maxW = 0;
         lines.forEach(l => {
-            let m = offCtx.measureText(l);
+            let m = tCtx.measureText(l);
             if(m.width > maxW) maxW = m.width;
         });
-        
-        offCv.width = maxW + 50;
-        offCv.height = lines.length * fSize * 1.5;
-        offCtx.font = `900 ${fSize}px "Share Tech Mono"`;
-        offCtx.fillStyle = '#fff';
-        offCtx.textAlign = 'center'; offCtx.textBaseline = 'middle';
+
+        tmp.width = maxW + 20;
+        tmp.height = lines.length * fSize * 1.3;
+
+        tCtx.font = `900 ${fSize}px "Arial Black", "Verdana"`;
+        tCtx.fillStyle = '#fff';
+        tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
         
         lines.forEach((l, i) => {
-            offCtx.fillText(l, offCv.width/2, fSize * 0.8 + i * fSize);
+            tCtx.fillText(l, tmp.width/2, fSize*0.8 + i*fSize);
         });
-        processPoints(offCv, color);
+
+        getPoints(tmp, color);
     }
 
     function formCake() {
-        const offCv = document.createElement('canvas');
-        const offCtx = offCv.getContext('2d');
-        let s = Math.min(width, height) * 0.8;
-        offCv.width = s; offCv.height = s;
-        offCtx.textAlign = 'center'; offCtx.textBaseline = 'middle';
-        offCtx.font = `${s/2}px Arial`;
-        offCtx.fillStyle = '#fff';
-        offCtx.fillText("🎂", s/2, s/2);
-        processPoints(offCv, "#FFD700");
+        const tmp = document.createElement('canvas');
+        const tCtx = tmp.getContext('2d');
+        let s = Math.min(w, h) * 0.8;
+        tmp.width = tmp.height = s;
+        tCtx.font = `${s/2}px serif`;
+        tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
+        tCtx.fillStyle = '#fff';
+        tCtx.fillText("🎂", s/2, s/2);
+        getPoints(tmp, "#FFD700");
     }
 
-    function processPoints(offCv, color) {
+    function getPoints(tmp, color) {
+        const data = tmp.getContext('2d').getImageData(0,0, tmp.width, tmp.height).data;
         let points = [];
-        let data = offCtx = offCv.getContext('2d').getImageData(0,0, offCv.width, offCv.height).data;
         
-        // GIẢM STEP ĐỂ TĂNG MẬT ĐỘ ĐIỂM ẢNH (NÉT HƠN)
-        // Mobile: step 3, PC: step 2 (Rất dày)
-        let step = isMobile ? 3 : 2; 
-        
-        let scale = Math.min(width*0.9/offCv.width, height*0.7/offCv.height);
-        let startX = (width - offCv.width*scale)/2;
-        let startY = (height - offCv.height*scale)/2;
+        // Tính toán tỷ lệ scale để vừa màn hình
+        let scale = Math.min(w*0.9/tmp.width, h*0.65/tmp.height);
+        let sx = (w - tmp.width*scale)/2;
+        let sy = (h - tmp.height*scale)/2;
 
-        for(let y=0; y<offCv.height; y+=step) {
-            for(let x=0; x<offCv.width; x+=step) {
-                if(data[(y*offCv.width+x)*4+3] > 128) {
-                    points.push({x: startX + x*scale, y: startY + y*scale});
+        for(let y=0; y<tmp.height; y+=DOT_GAP) {
+            for(let x=0; x<tmp.width; x+=DOT_GAP) {
+                if(data[(y*tmp.width + x)*4 + 3] > 128) {
+                    points.push({
+                        x: sx + x*scale,
+                        y: sy + y*scale
+                    });
                 }
             }
         }
-
-        // Giới hạn số lượng drone tối đa để tránh lag trên máy yếu
-        const MAX_DRONES = isMobile ? 3500 : 5000;
-        if (points.length > MAX_DRONES) {
+        
+        // Giới hạn số lượng drone để đảm bảo mượt (khoảng 2000-3000 hạt là đẹp)
+        if(points.length > 3500) {
             points.sort(() => Math.random() - 0.5);
-            points = points.slice(0, MAX_DRONES);
+            points = points.slice(0, 3500);
         }
 
         updateDrones(points, color);
     }
 
-    function updateDrones(points, color) {
-        points.sort(() => Math.random() - 0.5);
-        if(drones.length < points.length) {
-            for(let i=0; i<points.length - drones.length; i++) {
+    function updateDrones(pts, color) {
+        // Shuffle
+        pts.sort(() => Math.random() - 0.5);
+        
+        // Add needed
+        if(drones.length < pts.length) {
+            let add = pts.length - drones.length;
+            for(let i=0; i<add; i++) {
                 drones.push({
-                    x: Math.random()*width, y: height+100,
-                    tx: width/2, ty: height/2,
-                    color: color, size: 2 // Kích thước drone là 2px
+                    x: Math.random()*w, y: Math.random()*h,
+                    tx: w/2, ty: h/2,
+                    c: color
                 });
             }
         }
+
+        // Assign targets
         drones.forEach((d, i) => {
-            if(i < points.length) {
-                d.tx = points[i].x; d.ty = points[i].y; d.color = color;
+            if(i < pts.length) {
+                d.tx = pts[i].x;
+                d.ty = pts[i].y;
+                d.c = color;
             } else {
-                d.tx = Math.random()*width; d.ty = Math.random()*height;
-                d.color = "rgba(0,0,0,0)";
+                d.tx = Math.random()*w;
+                d.ty = -100; // Bay đi
+                d.c = "rgba(0,0,0,0)";
             }
         });
     }
 
-    // --- RENDER ---
-    function drawMatrix() {
-        ctx.fillStyle = state === "VIRUS" ? 'rgba(50, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.05)';
-        ctx.fillRect(0, 0, width, height);
-        ctx.fillStyle = matrixColor;
-        ctx.font = fontSize + 'px monospace';
-        for(let i=0; i<columns.length; i++) {
-            let char = CHARS[Math.floor(Math.random()*CHARS.length)];
-            ctx.fillText(char, i*fontSize, columns[i]*fontSize);
-            if(columns[i]*fontSize > height && Math.random() > 0.975) columns[i] = 0;
-            columns[i]++;
+    // --- EFFECTS ---
+    function firework() {
+        fireworks.push({x: Math.random()*w, y: h, tx: Math.random()*w, ty: Math.random()*h*0.5, c: `hsl(${Math.random()*360},100%,50%)`, vy: -12});
+    }
+    function heart() {
+        hearts.push({x: Math.random()*w, y: -20, vy: Math.random()*3+2, sz: Math.random()*20+15});
+    }
+
+    // --- LOOP ---
+    function loop() {
+        requestAnimationFrame(loop);
+
+        // Matrix BG (Tắt khi đọc thư)
+        if(state !== "MSG") {
+            ctx.fillStyle = (state==="VIRUS") ? "rgba(20,0,0,0.1)" : "rgba(0,0,0,0.1)";
+            ctx.fillRect(0,0,w,h);
+            ctx.fillStyle = (state==="VIRUS") ? "#F00" : "#0F0";
+            ctx.font = "14px monospace";
+            m_cols.forEach((y, i) => {
+                let char = M_CHARS[Math.floor(Math.random()*16)];
+                ctx.fillText(char, i*20, y);
+                m_cols[i] = (y > h + Math.random()*10000) ? 0 : y + 20;
+            });
+        } else {
+            ctx.fillStyle = "rgba(0,0,0,0.8)";
+            ctx.fillRect(0,0,w,h);
         }
-    }
 
-    function shootFirework() {
-        fireworks.push({
-            x: Math.random()*width, y: height,
-            tx: Math.random()*width, ty: Math.random()*height*0.5,
-            vx: 0, vy: -15, color: `hsl(${Math.random()*360}, 100%, 50%)`, state: "RISE"
-        });
-    }
-
-    function spawnHeart() {
-        hearts.push({
-            x: Math.random()*width, y: -20,
-            vy: Math.random()*3 + 1, size: Math.random()*20 + 10
-        });
-    }
-
-    function spawnFountain() {
-        particles.push({
-            x: width/2 + (Math.random()-0.5)*100, y: height,
-            vx: (Math.random()-0.5)*10, vy: -Math.random()*20 - 10,
-            color: "#FFD700", life: 1, gravity: 0.5
-        });
-    }
-
-    function animate() {
-        requestAnimationFrame(animate);
-
-        if(state !== "READING") drawMatrix();
-        else { ctx.fillStyle="rgba(0,0,0,0.8)"; ctx.fillRect(0,0,width,height); }
-
+        // DRONES
+        ctx.shadowBlur = 0;
         drones.forEach(d => {
             d.x += (d.tx - d.x) * 0.08;
             d.y += (d.ty - d.y) * 0.08;
-            ctx.fillStyle = d.color;
-            ctx.fillRect(d.x, d.y, d.size, d.size);
+            ctx.fillStyle = d.c;
+            
+            // Vẽ hình tròn thay vì vuông -> Nhìn mượt hơn
+            // Kích thước to hơn (DOT_SIZE) -> Đỡ phải vẽ nhiều hạt
+            ctx.fillRect(d.x, d.y, DOT_SIZE, DOT_SIZE);
         });
 
+        // Add Glow effect for Drones (Chỉ vẽ 1 lần context settings để tối ưu)
+        // Lưu ý: shadowBlur tốn hiệu năng, nếu máy yếu quá có thể bỏ dòng này
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = drones.length > 0 ? drones[0].c : "#fff";
+
+        // FIREWORKS
+        ctx.shadowBlur = 0;
         for(let i=fireworks.length-1; i>=0; i--) {
-            let fw = fireworks[i];
-            fw.y += fw.vy; fw.vy += 0.2;
-            ctx.fillStyle = fw.color; ctx.fillRect(fw.x, fw.y, 3, 3);
-            if(fw.vy >= 0) {
-                for(let j=0; j<30; j++) {
-                    let a = Math.random()*Math.PI*2, s = Math.random()*5;
-                    particles.push({
-                        x: fw.x, y: fw.y, vx: Math.cos(a)*s, vy: Math.sin(a)*s,
-                        color: fw.color, life: 1, gravity: 0.1
-                    });
-                }
+            let f = fireworks[i];
+            f.y += f.vy; f.vy += 0.2;
+            ctx.fillStyle = f.c; ctx.fillRect(f.x, f.y, 4, 4);
+            if(f.vy >= 0) {
                 fireworks.splice(i, 1);
+                for(let j=0; j<20; j++) particles.push({x:f.x, y:f.y, vx:Math.cos(j)*5, vy:Math.sin(j)*5, c:f.c, l:1});
             }
         }
-
+        
+        // PARTICLES
         for(let i=particles.length-1; i>=0; i--) {
             let p = particles[i];
-            p.x += p.vx; p.y += p.vy; p.vy += p.gravity; p.life -= 0.02;
-            if(p.life <= 0) particles.splice(i, 1);
-            else {
-                ctx.globalAlpha = p.life; ctx.fillStyle = p.color;
-                ctx.fillRect(p.x, p.y, 2, 2); ctx.globalAlpha = 1;
-            }
+            p.x += p.vx; p.y += p.vy; p.vy+=0.1; p.l-=0.03;
+            if(p.l<=0) particles.splice(i,1);
+            else { ctx.globalAlpha=p.l; ctx.fillStyle=p.c; ctx.fillRect(p.x,p.y,3,3); ctx.globalAlpha=1; }
         }
 
+        // HEARTS
         if(state === "FINALE") {
+            ctx.fillStyle = "#F00";
             for(let i=hearts.length-1; i>=0; i--) {
-                let h = hearts[i];
-                h.y += h.vy;
-                ctx.fillStyle = "#F00"; ctx.font = `${h.size}px Arial`;
-                ctx.fillText("❤️", h.x, h.y);
-                if(h.y > height) hearts.splice(i, 1);
+                let he = hearts[i]; he.y += he.vy;
+                ctx.font = `${he.sz}px serif`; ctx.fillText("❤️", he.x, he.y);
+                if(he.y>h) hearts.splice(i,1);
             }
         }
     }
-    animate();
+    loop();
+
 </script>
 </body>
 </html>
