@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_V19_ULTIMATE_PARTY</title>
+    <title>SON_V20_TREND_HEART</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Share+Tech+Mono&family=Black+Ops+One&display=swap');
-    
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
+        
         body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Share Tech Mono', monospace; }
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
 
@@ -16,87 +16,73 @@
             display: flex; justify-content: center; align-items: center;
             flex-direction: column; z-index: 999; pointer-events: none;
         }
+
         .cyber-btn {
-            pointer-events: auto; background: #000; color: #FF69B4; border: 2px solid #FF69B4;
+            pointer-events: auto; background: #000; color: #FF1493; border: 2px solid #FF1493;
             padding: 20px 45px; font-size: 22px; cursor: pointer; 
             font-family: 'Black Ops One', cursive; letter-spacing: 2px;
-            box-shadow: 0 0 15px #FF69B4; transition: 0.3s;
-            animation: pulse 2s infinite;
+            box-shadow: 0 0 15px #FF1493; transition: 0.3s;
+            animation: pulse 2s infinite; border-radius: 10px;
         }
-        .cyber-btn:hover { background: #FF69B4; color: #000; box-shadow: 0 0 40px #FF69B4; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .cyber-btn:hover { background: #FF1493; color: #FFF; box-shadow: 0 0 40px #FF1493; }
 
-        /* --- HIỆU ỨNG MỚI: CHỮ CHẠY THEO TIM --- */
-        #path-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: none; justify-content: center; align-items: center;
-            z-index: 800; pointer-events: none;
+        /* 3D Cube */
+        #cube-container { display: none; perspective: 800px; width: 150px; height: 150px; margin-bottom: 20px;}
+        #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 4s infinite linear; }
+        .face {
+            position: absolute; width: 146px; height: 146px;
+            border: 2px solid #0F0; background: rgba(0, 255, 0, 0.05);
+            color: #0F0; font-size: 80px; display: flex;
+            justify-content: center; align-items: center;
+            font-family: 'Black Ops One';
         }
-        /* Đường dẫn hình trái tim SVG (Ẩn) */
-        #heart-path {
-            position: absolute; width: 0; height: 0;
-        }
-        /* Chữ chạy trên đường dẫn */
-        #moving-text {
-            font-family: 'Dancing Script', cursive;
-            font-size: 24px; fill: #FF1493; /* Màu hồng đậm */
-            text-shadow: 0 0 5px #FF69B4, 0 0 10px #FF69B4;
-            letter-spacing: 3px; font-weight: bold;
-        }
-        /* Hiệu ứng hạt bay nền cho màn hình tim */
-        .floating-particle {
-            position: absolute; width: 3px; height: 3px;
-            background: #FF69B4; border-radius: 50%;
-            animation: floatUp linear infinite; opacity: 0;
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
-            20% { opacity: 0.8; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-        }
+        .front { transform: translateZ(75px); } .back { transform: rotateY(180deg) translateZ(75px); }
+        .right { transform: rotateY(90deg) translateZ(75px); } .left { transform: rotateY(-90deg) translateZ(75px); }
+        .top { transform: rotateX(90deg) translateZ(75px); } .bottom { transform: rotateX(-90deg) translateZ(75px); }
+        
+        @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         /* Message Layer */
         #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.92); display: none; z-index: 3000;
+            background: rgba(0,0,0,0.95); display: none; z-index: 3000;
             flex-direction: column; justify-content: center; align-items: center;
             padding: 20px; box-sizing: border-box;
         }
         #msg-content {
             color: #FF69B4; font-size: 16px; line-height: 1.6; font-family: 'Dancing Script', cursive; font-weight: bold;
             white-space: pre-wrap; max-width: 650px; text-shadow: 0 0 10px #FF69B4;
-            border-left: 4px solid #FF69B4; padding-left: 20px; background: rgba(20, 0, 10, 0.5);
+            border: 2px solid #FF69B4; padding: 20px; border-radius: 15px;
+            background: radial-gradient(circle, rgba(50,0,20,0.8) 0%, rgba(0,0,0,0.8) 100%);
         }
-        #skip-btn { margin-top: 30px; padding: 12px 30px; border: 1px solid #FFD700; background: transparent; color: #FFD700; display: none; pointer-events: auto; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        #skip-btn { margin-top: 30px; padding: 12px 30px; border: 1px solid #FFD700; background: transparent; color: #FFD700; display: none; pointer-events: auto; font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 20px; }
         #skip-btn:hover { background: #FFD700; color: #000; }
+
+        /* Virus Glitch */
+        .glitch-layer { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 2000; display:none; pointer-events:none; mix-blend-mode: hard-light; }
+        #virus-terminal { position: absolute; top:20%; left:5%; width:90%; color:#F00; font-family:'Share Tech Mono'; display:none; z-index:2001; text-shadow:0 0 5px #F00; background:rgba(0,0,0,0.8); padding:10px; border:1px solid #F00;}
 
     </style>
 </head>
 <body>
     <canvas id="c"></canvas>
+    <div id="glitch-div" class="glitch-layer"></div>
+    <div id="virus-terminal"></div>
     
-    <div id="path-container">
-        <div id="particles-bg"></div>
-        
-        <svg width="600" height="500" viewBox="0 0 600 500" style="overflow: visible;">
-            <defs>
-                <path id="heartPath" d="M290,120 C160,-20 -20,180 290,460 C600,180 420,-20 290,120" fill="none" />
-            </defs>
-            
-            <text dy="-5">
-                <textPath href="#heartPath" id="moving-text" startOffset="0%">
-                    GỬI ĐẾN: TRƯƠNG THỊ DƯƠNG  ❤️  HAPPY BIRTHDAY 19 TUỔI  ❤️
-                </textPath>
-            </text>
-        </svg>
-    </div>
-
     <div id="ui-layer">
-        <button id="btn-start" class="cyber-btn">BẮT ĐẦU BUỔI TIỆC</button>
+        <button id="btn-start" class="cyber-btn">CHẠY CODE TRÁI TIM</button>
+        <div id="cube-container">
+            <div id="cube">
+                <div class="face front">10</div><div class="face back">10</div>
+                <div class="face right">10</div><div class="face left">10</div>
+                <div class="face top">10</div><div class="face bottom">10</div>
+            </div>
+        </div>
     </div>
 
     <div id="msg-layer">
-        <div style="color: #FFD700; font-size: 20px; margin-bottom: 20px;">💌 TÂM THƯ GỬI DƯƠNG</div>
+        <div style="color: #FFD700; font-size: 24px; margin-bottom: 20px; font-family: 'Dancing Script';">💌 Thư gửi Dương</div>
         <div id="msg-content"></div>
         <button id="skip-btn" onclick="startFinale()">TIẾP TỤC >></button>
     </div>
@@ -104,7 +90,7 @@
     <audio id="audio" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
 
 <script>
-    // --- TÂM THƯ ---
+    // --- NỘI DUNG ---
     const LETTER = `Dương ơi, hôm nay 01/03/2026, cậu tròn 19 tuổi.
 
 Tớ chúc cậu tuổi mới luôn xinh đẹp rạng ngời, học tập thật giỏi và sớm đạt được mọi ước mơ.
@@ -115,31 +101,25 @@ Happy Birthday, my special girl! ❤️
 
 -- Nguyễn Bắc Sơn --`;
 
-    // --- KỊCH BẢN TỔNG THỂ ---
-    const SCRIPT = [
-        // Màn 3: Drone Show
-        { t: "CHÚC MỪNG\nNĂM MỚI 2026", c: "#FFD700" },
-        { t: "XUÂN BÍNH NGỌ\nMÃ ĐÁO THÀNH CÔNG", c: "#00FFFF" },
-        { t: "HAPPY VALENTINE\n14/02 NGỌT NGÀO", c: "#FF0055" },
-        { t: "QUỐC TẾ PHỤ NỮ\n8/3 VUI VẺ", c: "#FFF" },
-        { t: "HAPPY BIRTHDAY\nSINH NHẬT TUỔI 19", c: "#FFD700" },
-        // Màn 4: Tâm thư
-        { action: "MSG" } 
-    ];
+    const HEART_TEXT = "Trương Thị\nDương"; // Tên hiện trong tim
 
     const canvas = document.getElementById('c');
     const ctx = canvas.getContext('2d');
     const isMobile = window.innerWidth < 768;
     let w, h;
 
-    // CẤU HÌNH DRONE (Neon)
-    const DOT_GAP = isMobile ? 4 : 3; 
-    const DOT_SIZE = isMobile ? 3 : 2.5; 
+    // Config Particles
+    const PARTICLE_COUNT = isMobile ? 1200 : 2500; // Số lượng hạt cho tim
+    const DRONE_SIZE = isMobile ? 2.5 : 2;
 
     let state = "IDLE"; 
-    let drones = [], fireworks = [], particles = [], hearts = [];
-    let scriptIdx = 0;
-    let pathOffset = 100; // Cho chữ chạy từ 100% về 0
+    let particles = [], fireworks = [], sparkles = [];
+    let countdown = 10;
+    
+    // Heart Points Cache
+    let heartPoints = [];
+    let textPoints = [];
+    let scaleHeart = 0; // Để hiệu ứng tim đập
 
     function resize() {
         w = canvas.width = window.innerWidth;
@@ -152,278 +132,300 @@ Happy Birthday, my special girl! ❤️
     document.getElementById('btn-start').onclick = function() {
         this.style.display = 'none';
         document.getElementById('audio').play().catch(()=>{});
-        // Màn 1: Khai tiệc Pháo hoa
-        runOpening();
+        runCountdown();
     };
 
-    // --- MÀN 1: OPENING FIREWORKS ---
-    function runOpening() {
-        state = "OPENING";
-        // Bắn pháo hoa liên tục trong 8 giây
-        let fwInterval = setInterval(() => {
-            if(Math.random()>0.3) launchFirework();
-        }, 400);
-
-        setTimeout(() => {
-            clearInterval(fwInterval);
-            runPathText(); // Chuyển sang màn 2
-        }, 8000);
+    // --- 1. COUNTDOWN ---
+    function runCountdown() {
+        state = "COUNTDOWN";
+        document.getElementById('cube-container').style.display = 'block';
+        const faces = document.querySelectorAll('.face');
+        let tmr = setInterval(() => {
+            countdown--;
+            faces.forEach(f => f.innerText = countdown);
+            if(countdown <= 0) {
+                clearInterval(tmr);
+                document.getElementById('cube-container').style.display = 'none';
+                runVirus();
+            }
+        }, 1000);
     }
 
-    // --- MÀN 2: CHỮ CHẠY THEO TIM (HIỆU ỨNG MỚI) ---
-    function runPathText() {
-        state = "PATH_TEXT";
-        const container = document.getElementById('path-container');
-        const textPath = document.getElementById('moving-text');
-        container.style.display = 'flex';
+    // --- 2. VIRUS ---
+    function runVirus() {
+        state = "VIRUS";
+        const term = document.getElementById('virus-terminal');
+        const glitch = document.getElementById('glitch-div');
+        term.style.display = 'block'; glitch.style.display = 'block';
         
-        // Tạo hạt nền bay lên
-        createFloatingParticles();
+        let logs = "";
+        let count = 0;
+        let t = setInterval(() => {
+            logs += `> INJECTING LOVE_CODE.EXE... ${count}%\n`;
+            term.innerText = logs; term.scrollTop = term.scrollHeight;
+            count+=5;
+            
+            // Glitch effect
+            canvas.style.transform = `translate(${Math.random()*10-5}px, ${Math.random()*10-5}px)`;
 
-        // Animation chữ chạy
-        // Dùng JS interval để control mượt hơn trên mobile
-        let pathAnim = setInterval(() => {
-            pathOffset -= 0.3; // Tốc độ chạy
-            if(pathOffset < -50) pathOffset = 100; // Loop lại
-            textPath.setAttribute('startOffset', pathOffset + "%");
-        }, 20);
-
-        // Chạy trong 14 giây rồi chuyển màn
-        setTimeout(() => {
-            clearInterval(pathAnim);
-            container.style.display = 'none';
-            // Xóa hạt nền
-            document.getElementById('particles-bg').innerHTML = '';
-            runDroneShow(); // Chuyển sang màn 3
-        }, 14000);
+            if(count > 100) {
+                clearInterval(t);
+                term.style.display = 'none'; glitch.style.display = 'none';
+                canvas.style.transform = "none";
+                runHeartTrend(); // CHUYỂN SANG CODE TRÁI TIM
+            }
+        }, 100);
     }
 
-    function createFloatingParticles() {
-        const bg = document.getElementById('particles-bg');
-        for(let i=0; i<40; i++) {
-            let p = document.createElement('div');
-            p.className = 'floating-particle';
-            p.style.left = Math.random()*100 + "%";
-            p.style.animationDuration = (Math.random()*5 + 5) + "s";
-            p.style.animationDelay = Math.random()*5 + "s";
-            bg.appendChild(p);
-        }
-    }
-
-    // --- MÀN 3: DRONE SHOW ---
-    function runDroneShow() {
-        state = "SHOW";
-        nextScene();
-    }
-
-    function nextScene() {
-        if(scriptIdx >= SCRIPT.length) return;
-        let s = SCRIPT[scriptIdx++];
+    // --- 3. TREND CODE TRÁI TIM (ALEXX.DEV STYLE) ---
+    function runHeartTrend() {
+        state = "HEART_TREND";
         
-        if(s.action === "MSG") {
-            setTimeout(runMessage, 1500);
-            return;
+        // 1. Tính toán điểm hình trái tim
+        heartPoints = getHeartOutlinePoints();
+        // 2. Tính toán điểm tên người (Nằm giữa tim)
+        textPoints = getTextPoints(HEART_TEXT);
+        
+        // Kết hợp điểm lại
+        let allTargets = [...heartPoints, ...textPoints];
+        
+        // Tạo hạt bắt đầu từ 2 góc dưới (Mô phỏng 2 con mèo bắn tim)
+        particles = [];
+        for(let i=0; i<allTargets.length; i++) {
+            let startX = (i % 2 === 0) ? 0 : w; // Trái hoặc Phải
+            let startY = h;
+            
+            particles.push({
+                x: startX, y: startY,
+                tx: allTargets[i].x, ty: allTargets[i].y, // Target
+                vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2,
+                c: (i < heartPoints.length) ? "#FF1493" : "#FFFFFF", // Tim hồng, Chữ trắng
+                delay: Math.random() * 100 // Bay lệch nhau xíu cho tự nhiên
+            });
+        }
+        
+        // Thêm hạt bay lung tung làm nền
+        for(let i=0; i<300; i++) {
+            particles.push({
+                x: Math.random()*w, y: h,
+                tx: Math.random()*w, ty: Math.random()*h,
+                vx: 0, vy: 0,
+                c: "rgba(255, 105, 180, 0.3)",
+                isBg: true
+            });
         }
 
-        formText(s.t, s.c);
-        setTimeout(nextScene, 9000); 
+        // Chuyển sang màn thư sau 15 giây ngắm tim
+        setTimeout(runMessage, 15000);
     }
 
-    // --- MÀN 4: MESSAGE ---
+    // --- 4. MESSAGE ---
     function runMessage() {
         state = "MSG";
-        const layer = document.getElementById('msg-layer');
+        document.getElementById('msg-layer').style.display = 'flex';
         const content = document.getElementById('msg-content');
         const btn = document.getElementById('skip-btn');
-        layer.style.display = 'flex';
         
-        // Drone bay làm nền hồng
-        drones.forEach(d => {
-            d.tx = Math.random() * w; d.ty = Math.random() * h;
-            d.c = "rgba(255, 105, 180, 0.2)";
-        });
-
         let i = 0;
-        let tmr = setInterval(() => {
+        let t = setInterval(() => {
             content.innerText = LETTER.substring(0, i) + "_";
             i++;
             if(i > LETTER.length) {
-                clearInterval(tmr);
+                clearInterval(t);
                 content.innerText = LETTER;
                 btn.style.display = 'block';
-                // Tự động chuyển sau 20s
-                setTimeout(() => { if(state==="MSG") startFinale(); }, 20000);
+                setTimeout(() => { if(state==="MSG") startFinale(); }, 15000);
             }
-        }, 45);
+        }, 40);
     }
 
-    // --- MÀN 5: FINALE ---
     window.startFinale = function() {
         document.getElementById('msg-layer').style.display = 'none';
         state = "FINALE";
         
+        // Chuyển hạt thành Bánh kem
         formCake();
         
-        // Pháo hoa tim dồn dập
+        // Bắn pháo hoa tim
         setInterval(() => {
             if(Math.random()>0.2) launchHeartFirework();
-        }, 350);
+        }, 400);
     };
 
-    // --- LOGIC VẼ DRONE ---
-    function formText(txt, color) {
-        const lines = txt.split('\n');
+    // --- MATH HELPERS ---
+    
+    // Hàm tạo điểm hình trái tim chuẩn toán học
+    function getHeartOutlinePoints() {
+        let pts = [];
+        let r = Math.min(w, h) * (isMobile ? 0.015 : 0.012); // Bán kính
+        let count = isMobile ? 600 : 1000;
+        
+        for(let i=0; i<count; i++) {
+            let t = (i/count) * Math.PI * 2;
+            // Công thức trái tim
+            let x = 16 * Math.pow(Math.sin(t), 3);
+            let y = -(13 * Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
+            
+            pts.push({
+                x: w/2 + x * r,
+                y: h/2 + y * r - (h*0.05) // Dịch lên tí cho cân
+            });
+        }
+        return pts;
+    }
+
+    function getTextPoints(txt) {
         const tmp = document.createElement('canvas');
         const tCtx = tmp.getContext('2d');
-        let fSize = isMobile ? 80 : 140;
-        tCtx.font = `900 ${fSize}px "Arial Black"`;
+        let fSize = isMobile ? 40 : 60;
+        tCtx.font = `bold ${fSize}px "Dancing Script"`;
+        
+        let lines = txt.split('\n');
         let maxW = 0;
-        lines.forEach(l => {
-            let m = tCtx.measureText(l);
-            if(m.width > maxW) maxW = m.width;
-        });
-        tmp.width = maxW + 20;
-        tmp.height = lines.length * fSize * 1.3;
-        tCtx.font = `900 ${fSize}px "Arial Black"`;
-        tCtx.fillStyle = '#fff';
-        tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
+        lines.forEach(l => maxW = Math.max(maxW, tCtx.measureText(l).width));
+        
+        tmp.width = maxW + 20; tmp.height = lines.length * fSize * 1.5;
+        tCtx.font = `bold ${fSize}px "Dancing Script"`;
+        tCtx.fillStyle = '#fff'; tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
+        
         lines.forEach((l, i) => {
-            tCtx.fillText(l, tmp.width/2, fSize*0.8 + i*fSize);
+            tCtx.fillText(l, tmp.width/2, fSize + i*fSize);
         });
-        getPoints(tmp, color);
-    }
 
-    function formCake() {
-        const tmp = document.createElement('canvas');
-        const tCtx = tmp.getContext('2d');
-        let s = Math.min(w, h) * 0.8;
-        tmp.width = tmp.height = s;
-        tCtx.font = `${s/2}px serif`;
-        tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
-        tCtx.fillStyle = '#fff';
-        tCtx.fillText("🎂", s/2, s/2);
-        getPoints(tmp, "#FFD700");
-    }
-
-    function getPoints(tmp, color) {
-        const data = tmp.getContext('2d').getImageData(0,0, tmp.width, tmp.height).data;
-        let points = [];
-        let scale = Math.min(w*0.9/tmp.width, h*0.65/tmp.height);
-        let sx = (w - tmp.width*scale)/2;
-        let sy = (h - tmp.height*scale)/2;
-        for(let y=0; y<tmp.height; y+=DOT_GAP) {
-            for(let x=0; x<tmp.width; x+=DOT_GAP) {
-                if(data[(y*tmp.width + x)*4 + 3] > 128) {
-                    points.push({x: sx + x*scale, y: sy + y*scale});
+        let data = tCtx.getImageData(0,0,tmp.width,tmp.height).data;
+        let pts = [];
+        let gap = 3;
+        
+        for(let y=0; y<tmp.height; y+=gap) {
+            for(let x=0; x<tmp.width; x+=gap) {
+                if(data[(y*tmp.width+x)*4+3] > 128) {
+                    pts.push({
+                        x: w/2 - tmp.width/2 + x,
+                        y: h/2 - tmp.height/2 + y
+                    });
                 }
             }
         }
-        // Limit max drones
-        if(points.length > 4000) {
-            points.sort(() => Math.random() - 0.5);
-            points = points.slice(0, 4000);
-        }
-        updateDrones(points, color);
+        return pts;
     }
 
-    function updateDrones(pts, color) {
-        pts.sort(() => Math.random() - 0.5);
-        if(drones.length < pts.length) {
-            let add = pts.length - drones.length;
-            for(let i=0; i<add; i++) {
-                drones.push({
-                    x: Math.random()*w, y: Math.random()*h, tx: w/2, ty: h/2, c: color
-                });
+    function formCake() {
+        // Tái sử dụng hạt cũ để xếp bánh
+        particles.forEach(p => {
+             p.c = "#FFD700"; // Đổi màu vàng
+        });
+        
+        const tmp = document.createElement('canvas');
+        const tCtx = tmp.getContext('2d');
+        let s = Math.min(w, h) * 0.6;
+        tmp.width = tmp.height = s;
+        tCtx.font = `${s/2}px serif`; tCtx.textAlign='center'; tCtx.textBaseline='middle';
+        tCtx.fillStyle='#fff'; tCtx.fillText("🎂", s/2, s/2);
+        
+        let data = tCtx.getImageData(0,0,s,s).data;
+        let targets = [];
+        let gap = 4;
+        
+        for(let y=0; y<s; y+=gap) {
+            for(let x=0; x<s; x+=gap) {
+                if(data[(y*s+x)*4+3]>128) {
+                    targets.push({x: w/2 - s/2 + x, y: h/2 - s/2 + y});
+                }
             }
         }
-        drones.forEach((d, i) => {
-            if(i < pts.length) {
-                d.tx = pts[i].x; d.ty = pts[i].y; d.c = color;
+        
+        // Gán target mới
+        particles.forEach((p, i) => {
+            if(i < targets.length) {
+                p.tx = targets[i].x; p.ty = targets[i].y;
             } else {
-                d.tx = Math.random()*w; d.ty = -100; d.c = "transparent";
+                p.tx = Math.random()*w; p.ty = -100; p.c = "transparent";
             }
         });
     }
 
-    // --- EFFECTS ---
-    function launchFirework() {
-        fireworks.push({
-            x: Math.random()*w, y: h, tx: Math.random()*w, ty: Math.random()*h*0.5,
-            vy: -15, c: `hsl(${Math.random()*360},100%,60%)`, type: 'NORMAL'
-        });
-    }
+    // --- FIREWORKS ---
     function launchHeartFirework() {
-        fireworks.push({
-            x: Math.random()*w, y: h, tx: Math.random()*w, ty: h*0.2 + Math.random()*h*0.3,
-            vy: -12, c: `hsl(${Math.random()*60 + 330}, 100%, 60%)`, type: 'HEART'
-        });
+        let x = Math.random() * w;
+        let y = h;
+        let ty = h*0.2 + Math.random()*h*0.3;
+        fireworks.push({x:x, y:y, tx:x, ty:ty, vy:-12, c:`hsl(${Math.random()*60+330},100%,60%)`});
     }
 
     function explode(fw) {
-        if(fw.type === 'NORMAL') {
-            for(let j=0; j<25; j++) {
-                let a=Math.random()*Math.PI*2, s=Math.random()*6;
-                particles.push({x:fw.x, y:fw.y, vx:Math.cos(a)*s, vy:Math.sin(a)*s, c:fw.c, l:1, g:0.1});
-            }
-        } else {
-            for(let i=0; i<40; i++) {
-                let t=(i/40)*Math.PI*2, s=Math.random()*0.1+0.05;
-                let dx=16*Math.pow(Math.sin(t),3), dy=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
-                particles.push({x:fw.x, y:fw.y, vx:dx*s, vy:dy*s, c:fw.c, l:1.5, g:0.05});
-            }
+        for(let i=0; i<40; i++) {
+            let t = (i/40) * Math.PI * 2;
+            let dx = 16 * Math.pow(Math.sin(t), 3);
+            let dy = -(13 * Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
+            let s = Math.random() * 0.1 + 0.05; 
+            sparkles.push({
+                x: fw.x, y: fw.y, vx: dx * s, vy: dy * s, 
+                c: fw.c, l: 1.5, g: 0.05
+            });
         }
     }
 
-    // --- LOOP ---
+    // --- ANIMATION LOOP ---
+    let time = 0;
     function loop() {
         requestAnimationFrame(loop);
+        time++;
 
-        // Xóa nền (Mờ để tạo đuôi)
+        // Nền tối
         ctx.fillStyle = "rgba(0,0,0,0.2)";
         ctx.fillRect(0,0,w,h);
 
-        // Drones
-        if(state !== "PATH_TEXT") {
-            drones.forEach(d => {
-                d.x += (d.tx - d.x) * 0.1;
-                d.y += (d.ty - d.y) * 0.1;
-                ctx.fillStyle = d.c;
-                ctx.fillRect(d.x, d.y, DOT_SIZE, DOT_SIZE);
-            });
+        // Hiệu ứng tim đập (Scale)
+        let beat = 1;
+        if(state === "HEART_TREND") {
+            beat = 1 + Math.sin(time * 0.1) * 0.02; // Nhịp tim nhẹ
         }
 
-        // Fireworks
+        // Render Particles
+        particles.forEach(p => {
+            if(state === "HEART_TREND" || state === "FINALE") {
+                // Di chuyển về đích (Easing)
+                let dx = p.tx - p.x;
+                let dy = p.ty - p.y;
+                
+                if(p.isBg) {
+                    p.y -= 2;
+                    if(p.y < 0) p.y = h;
+                } else {
+                    p.x += dx * 0.05; // Bay từ từ
+                    p.y += dy * 0.05;
+                }
+                
+                // Vẽ có tâm (Scale from center)
+                let finalX = p.x; 
+                let finalY = p.y;
+                
+                if(!p.isBg && state === "HEART_TREND") {
+                     // Áp dụng nhịp tim
+                     let cx = w/2; let cy = h/2;
+                     finalX = cx + (p.x - cx) * beat;
+                     finalY = cy + (p.y - cy) * beat;
+                }
+
+                ctx.fillStyle = p.c;
+                ctx.fillRect(finalX, finalY, DRONE_SIZE, DRONE_SIZE);
+            }
+        });
+
+        // Render Fireworks
         for(let i=fireworks.length-1; i>=0; i--) {
             let f = fireworks[i];
             f.y += f.vy; f.vy += 0.2;
             ctx.fillStyle = f.c; ctx.fillRect(f.x, f.y, 3, 3);
-            if(f.vy >= 0) {
-                explode(f);
-                fireworks.splice(i, 1);
-            }
+            if(f.vy >= 0) { explode(f); fireworks.splice(i, 1); }
         }
-        
-        // Particles
-        for(let i=particles.length-1; i>=0; i--) {
-            let p = particles[i];
-            p.x += p.vx; p.y += p.vy; p.vy += p.g; p.l -= 0.02;
-            if(p.l <= 0) particles.splice(i, 1);
-            else {
-                ctx.globalAlpha = Math.min(p.l, 1);
-                ctx.fillStyle = p.c;
-                ctx.fillRect(p.x, p.y, 2, 2);
-                ctx.globalAlpha = 1;
-            }
-        }
-        
-        // Hearts Rain in Finale
-        if(state === "FINALE") {
-             for(let i=hearts.length-1; i>=0; i--) {
-                let he = hearts[i]; he.y += he.vy;
-                ctx.font = `${he.sz}px serif`; ctx.fillText("❤️", he.x, he.y);
-                if(he.y>h) hearts.splice(i,1);
-             }
-             if(Math.random()>0.8) hearts.push({x:Math.random()*w, y:-20, vy:Math.random()*3+2, sz:Math.random()*20+15});
+
+        // Render Sparkles
+        for(let i=sparkles.length-1; i>=0; i--) {
+            let s = sparkles[i];
+            s.x += s.vx; s.y += s.vy; s.vy += s.g; s.l -= 0.02;
+            if(s.l <= 0) sparkles.splice(i, 1);
+            else { ctx.globalAlpha = Math.min(s.l, 1); ctx.fillStyle = s.c; ctx.fillRect(s.x, s.y, 2, 2); ctx.globalAlpha=1; }
         }
     }
     loop();
