@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_V21_FULL_RESTORE</title>
+    <title>SON_V22_SMOOTH_TRANSITION</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
         
@@ -42,18 +42,24 @@
         @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* Message */
+        /* Message Layer - CÓ TRANSITION MƯỢT */
         #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); display: none; z-index: 3000;
+            /* Nền hồng tím mờ ảo */
+            background: radial-gradient(circle, rgba(60, 0, 30, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%); 
+            display: none; z-index: 3000; opacity: 0; /* Bắt đầu ẩn */
             flex-direction: column; justify-content: center; align-items: center;
             padding: 20px; box-sizing: border-box;
+            transition: opacity 2.5s ease-in-out; /* QUAN TRỌNG: Thời gian chuyển cảnh 2.5s */
         }
+        /* Class để kích hoạt hiện lên */
+        #msg-layer.visible { opacity: 1; }
+
         #msg-content {
             color: #FF69B4; font-size: 16px; line-height: 1.6; font-family: 'Dancing Script', cursive; font-weight: bold;
             white-space: pre-wrap; max-width: 650px; text-shadow: 0 0 10px #FF69B4;
             border: 2px solid #FF69B4; padding: 20px; border-radius: 15px;
-            background: radial-gradient(circle, rgba(50,0,20,0.9) 0%, rgba(0,0,0,0.9) 100%);
+            background: rgba(20, 0, 10, 0.6);
         }
         #skip-btn { margin-top: 30px; padding: 12px 30px; border: 1px solid #FFD700; background: transparent; color: #FFD700; display: none; pointer-events: auto; font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 20px; }
 
@@ -99,15 +105,15 @@ Happy Birthday, my special girl! ❤️
 
 -- Nguyễn Bắc Sơn --`;
 
-    // --- KỊCH BẢN DRONE (ĐÃ KHÔI PHỤC) ---
+    // --- KỊCH BẢN DRONE ---
     const SCRIPT = [
         { t: "GỬI ĐẾN\nTRƯƠNG THỊ DƯƠNG", c: "#0F0" },
-        { t: "CHÚC MỪNG\nNĂM MỚI 2026", c: "#FFD700" }, // Vàng
-        { t: "XUÂN BÍNH NGỌ\nMÃ ĐÁO THÀNH CÔNG", c: "#00FFFF" }, // Cyan
-        { t: "HAPPY VALENTINE\n14/02 NGỌT NGÀO", c: "#FF0055" }, // Hồng đậm
-        { t: "QUỐC TẾ PHỤ NỮ\n8/3 VUI VẺ", c: "#FFF" }, // Trắng
+        { t: "CHÚC MỪNG\nNĂM MỚI 2026", c: "#FFD700" }, 
+        { t: "XUÂN BÍNH NGỌ\nMÃ ĐÁO THÀNH CÔNG", c: "#00FFFF" }, 
+        { t: "HAPPY VALENTINE\n14/02 NGỌT NGÀO", c: "#FF0055" }, 
+        { t: "QUỐC TẾ PHỤ NỮ\n8/3 VUI VẺ", c: "#FFF" }, 
         { t: "HAPPY BIRTHDAY\nSINH NHẬT TUỔI 19", c: "#FFD700" },
-        { action: "HEART_TREND" } // Chuyển sang màn tim
+        { action: "HEART_TREND" } 
     ];
 
     const canvas = document.getElementById('c');
@@ -165,7 +171,7 @@ Happy Birthday, my special girl! ❤️
         const term = document.getElementById('virus-terminal');
         const glitch = document.getElementById('glitch-div');
         term.style.display = 'block'; glitch.style.display = 'block';
-        matrixColor = "#300"; // Nền đỏ
+        matrixColor = "#300"; 
 
         let logs = "";
         let count = 0;
@@ -181,13 +187,13 @@ Happy Birthday, my special girl! ❤️
                 clearInterval(t);
                 term.style.display = 'none'; glitch.style.display = 'none';
                 canvas.style.transform = "none";
-                matrixColor = "#003300"; // Trả lại nền xanh
-                runDroneShow(); // VÀO DRONE SHOW
+                matrixColor = "#003300"; 
+                runDroneShow(); 
             }
         }, 80);
     }
 
-    // --- 3. DRONE SHOW (TEXT) ---
+    // --- 3. DRONE SHOW ---
     function runDroneShow() {
         state = "SHOW";
         nextScene();
@@ -203,20 +209,16 @@ Happy Birthday, my special girl! ❤️
         }
 
         formText(s.t, s.c);
-        setTimeout(nextScene, 8000); // 8 giây mỗi câu
+        setTimeout(nextScene, 8000); 
     }
 
-    // --- 4. HEART TREND (ALEXX.DEV) ---
+    // --- 4. HEART TREND ---
     function runHeartTrend() {
         state = "HEART_TREND";
-        
-        // Tạo hình tim + tên
         let heartPts = getHeartOutlinePoints();
         let textPts = getTextPoints("Trương Thị\nDương");
         let allTargets = [...heartPts, ...textPts];
         
-        // Tái sử dụng particles (drones)
-        // Nếu thiếu thì thêm, thừa thì ẩn
         if(particles.length < allTargets.length) {
             let add = allTargets.length - particles.length;
             for(let i=0; i<add; i++) particles.push({x:w/2, y:h, tx:w/2, ty:h, c:'#FFF'});
@@ -224,33 +226,30 @@ Happy Birthday, my special girl! ❤️
 
         particles.forEach((p, i) => {
             if(i < allTargets.length) {
-                // Bắn từ 2 góc dưới (Mèo bắn tim)
-                p.x = (i%2===0) ? 0 : w; 
-                p.y = h;
-                p.tx = allTargets[i].x;
-                p.ty = allTargets[i].y;
-                p.c = (i < heartPts.length) ? "#FF1493" : "#FFF"; // Tim hồng, chữ trắng
-                p.vx = (Math.random()-0.5)*2; 
-                p.vy = (Math.random()-0.5)*2;
+                p.x = (i%2===0) ? 0 : w; p.y = h;
+                p.tx = allTargets[i].x; p.ty = allTargets[i].y;
+                p.c = (i < heartPts.length) ? "#FF1493" : "#FFF"; 
+                p.vx = (Math.random()-0.5)*2; p.vy = (Math.random()-0.5)*2;
                 p.isBg = false;
             } else {
-                // Hạt thừa làm nền
                 p.tx = Math.random()*w; p.ty = Math.random()*h;
-                p.c = "rgba(255,105,180,0.1)";
-                p.isBg = true;
+                p.c = "rgba(255,105,180,0.1)"; p.isBg = true;
             }
         });
 
-        // Chờ 15s ngắm tim rồi hiện thư
         setTimeout(runMessage, 15000);
     }
 
-    // --- 5. MESSAGE ---
+    // --- 5. MESSAGE (SMOOTH TRANSITION) ---
     function runMessage() {
         state = "MSG";
-        document.getElementById('msg-layer').style.display = 'flex';
+        const layer = document.getElementById('msg-layer');
         const content = document.getElementById('msg-content');
         const btn = document.getElementById('skip-btn');
+        
+        layer.style.display = 'flex';
+        // Delay nhẹ rồi mới Fade-In để mượt mà
+        setTimeout(() => { layer.classList.add('visible'); }, 50);
         
         let i = 0;
         let t = setInterval(() => {
@@ -260,16 +259,28 @@ Happy Birthday, my special girl! ❤️
                 clearInterval(t);
                 content.innerText = LETTER;
                 btn.style.display = 'block';
-                setTimeout(() => { if(state==="MSG") startFinale(); }, 20000);
+                // Tự động chuyển sau 25s
+                setTimeout(() => { if(state==="MSG") startFinale(); }, 25000);
             }
         }, 40);
     }
 
-    // --- 6. FINALE ---
+    // --- 6. FINALE (SMOOTH FADE OUT) ---
     window.startFinale = function() {
-        document.getElementById('msg-layer').style.display = 'none';
+        const layer = document.getElementById('msg-layer');
+        
+        // Bước 1: Fade out lớp thư
+        layer.classList.remove('visible'); // Opacity về 0 từ từ
+        
+        // Bước 2: Bắt đầu chuyển động Drone ngay bên dưới (khi thư đang mờ dần)
         state = "FINALE";
         formCake();
+        
+        // Bước 3: Ẩn hẳn layer sau khi fade xong (2.5s)
+        setTimeout(() => {
+            layer.style.display = 'none';
+        }, 2500);
+
         setInterval(() => {
             if(Math.random()>0.2) launchHeartFirework();
         }, 400);
@@ -277,7 +288,6 @@ Happy Birthday, my special girl! ❤️
 
     // --- LOGIC VẼ ---
     function formText(txt, color) {
-        // ... (Logic cũ giữ nguyên độ nét)
         const lines = txt.split('\n');
         const tmp = document.createElement('canvas');
         const tCtx = tmp.getContext('2d');
@@ -307,7 +317,6 @@ Happy Birthday, my special girl! ❤️
     }
 
     function getTextPoints(txt) {
-        // Cho phần tim
         const tmp = document.createElement('canvas');
         const tCtx = tmp.getContext('2d');
         let fSize = isMobile ? 40 : 60;
@@ -354,28 +363,23 @@ Happy Birthday, my special girl! ❤️
         let sy = (h - tmp.height*scale)/2;
         for(let y=0; y<tmp.height; y+=DOT_GAP) {
             for(let x=0; x<tmp.width; x+=DOT_GAP) {
-                if(data[(y*tmp.width+x)*4+3] > 128) {
+                if(data[(y*tmp.width + x)*4 + 3] > 128) {
                     pts.push({x: sx + x*scale, y: sy + y*scale});
                 }
             }
         }
-        
-        // Update particles array
         if(particles.length < pts.length) {
             let add = pts.length - particles.length;
             for(let i=0; i<add; i++) particles.push({x:Math.random()*w, y:Math.random()*h, tx:w/2, ty:h, c:color});
         }
-        
-        // Shuffle for effect
+        // Shuffle
         pts.sort(() => Math.random() - 0.5);
 
         particles.forEach((p, i) => {
             if(i < pts.length) {
-                p.tx = pts[i].x; p.ty = pts[i].y; p.c = color;
-                p.isBg = false;
+                p.tx = pts[i].x; p.ty = pts[i].y; p.c = color; p.isBg = false;
             } else {
-                p.tx = Math.random()*w; p.ty = Math.random()*h; p.c = "rgba(0,0,0,0)";
-                p.isBg = true;
+                p.tx = Math.random()*w; p.ty = Math.random()*h; p.c = "rgba(0,0,0,0)"; p.isBg = true;
             }
         });
     }
@@ -403,8 +407,8 @@ Happy Birthday, my special girl! ❤️
         requestAnimationFrame(loop);
         time++;
 
-        // Matrix BG
-        if(state === "HEART_TREND") ctx.fillStyle = "rgba(20,0,20,0.2)"; // Hồng tối
+        // Background
+        if(state === "HEART_TREND") ctx.fillStyle = "rgba(20,0,20,0.2)"; 
         else if(state === "VIRUS") ctx.fillStyle = "rgba(50,0,0,0.2)";
         else ctx.fillStyle = "rgba(0,0,0,0.2)";
         
@@ -420,32 +424,26 @@ Happy Birthday, my special girl! ❤️
             });
         }
 
-        // Beat for Heart
         let beat = 1;
         if(state === "HEART_TREND") beat = 1 + Math.sin(time*0.1)*0.03;
 
-        // Particles (Drones)
+        // Particles
         particles.forEach(p => {
             let dx = p.tx - p.x;
             let dy = p.ty - p.y;
             
-            // Logic di chuyển
             if(state === "HEART_TREND") {
                 if(!p.isBg) {
-                    p.x += dx * 0.05; p.y += dy * 0.05; // Bay từ từ
-                    
-                    // Vẽ scale tâm
+                    p.x += dx * 0.05; p.y += dy * 0.05; 
                     let cx = w/2; let cy = h/2;
                     let fx = cx + (p.x-cx)*beat;
                     let fy = cy + (p.y-cy)*beat;
                     ctx.fillStyle = p.c; ctx.fillRect(fx, fy, DOT_SIZE, DOT_SIZE);
                 } else {
-                    // Hạt nền bay lên
                     p.y -= 1; if(p.y < 0) p.y = h;
                     ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 2, 2);
                 }
             } else {
-                // Drone show bình thường
                 p.x += dx * 0.1; p.y += dy * 0.1;
                 ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, DOT_SIZE, DOT_SIZE);
             }
@@ -453,7 +451,8 @@ Happy Birthday, my special girl! ❤️
 
         // Fireworks
         for(let i=fireworks.length-1; i>=0; i--) {
-            let f = fireworks[i]; f.y += f.vy; f.vy += 0.2;
+            let f = fireworks[i];
+            f.y += f.vy; f.vy += 0.2;
             ctx.fillStyle = f.c; ctx.fillRect(f.x, f.y, 3, 3);
             if(f.vy >= 0) { explode(f); fireworks.splice(i, 1); }
         }
