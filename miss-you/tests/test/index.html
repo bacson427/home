@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_V23_FINAL_POEM</title>
+    <title>SON_V24_RGB_POEM</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&family=Noto+Sans+Symbols+2&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
         
         body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Share Tech Mono', monospace; }
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
@@ -42,7 +42,7 @@
         @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* Message Layer - Fade Transition */
+        /* Message Layer */
         #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, rgba(60, 0, 30, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%); 
@@ -61,15 +61,14 @@
         }
         #skip-btn { margin-top: 30px; padding: 12px 30px; border: 1px solid #FFD700; background: transparent; color: #FFD700; display: none; pointer-events: auto; font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 20px; }
 
-        /* Virus Terminal - FULL SCREEN UPDATE */
+        /* Virus */
         .glitch-layer { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 2000; display:none; pointer-events:none; mix-blend-mode: hard-light; }
         #virus-terminal { 
-            position: absolute; 
-            top: 0; left: 0; width: 100%; height: 100%; /* Tràn màn hình */
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             color: #F00; font-family: 'Share Tech Mono'; font-size: 14px; 
             display: none; z-index: 2001; text-shadow: 0 0 5px #F00; 
             background: #000; padding: 10px; box-sizing: border-box;
-            overflow: hidden; border: none; /* Bỏ viền */
+            overflow: hidden; border: none;
         }
 
     </style>
@@ -110,7 +109,6 @@ Happy Birthday, my special girl! ❤️
 
 -- Nguyễn Bắc Sơn --`;
 
-    // BÀI THƠ KẾT THÚC
     const FINAL_POEM = [
         "❤️ Sinh Nhật Vui Vẻ ❤️",
         "♦️ Thêm tuổi thêm xinh ♦️",
@@ -118,7 +116,6 @@ Happy Birthday, my special girl! ❤️
         "♠️ Với tới ước mơ ♠️"
     ];
 
-    // --- KỊCH BẢN DRONE ---
     const SCRIPT = [
         { t: "GỬI ĐẾN\nTRƯƠNG THỊ DƯƠNG", c: "#0F0" },
         { t: "CHÚC MỪNG\nNĂM MỚI 2026", c: "#FFD700" }, 
@@ -180,7 +177,7 @@ Happy Birthday, my special girl! ❤️
         }, 1000);
     }
 
-    // --- 2. VIRUS (FULL SCREEN) ---
+    // --- 2. VIRUS ---
     function runVirus() {
         state = "VIRUS";
         const term = document.getElementById('virus-terminal');
@@ -190,13 +187,11 @@ Happy Birthday, my special girl! ❤️
 
         let logs = "";
         let count = 0;
-        // Tăng tốc độ log và số lượng dòng để lấp đầy màn hình nhanh hơn
         let t = setInterval(() => {
             logs += `> CRITICAL ERROR: SYSTEM HACKED AT KERNEL LEVEL...\n`;
             logs += `> ATTEMPTING RECOVERY... ${count}%\n`;
             logs += `> UNKNOWN PROCESS TAKING OVER DISPLAY...\n`;
             term.innerText = logs; 
-            // Luôn cuộn xuống dưới cùng
             term.scrollTop = term.scrollHeight;
             count+=1;
             
@@ -209,7 +204,7 @@ Happy Birthday, my special girl! ❤️
                 matrixColor = "#003300"; 
                 runDroneShow(); 
             }
-        }, 40); // Tốc độ nhanh hơn
+        }, 40); 
     }
 
     // --- 3. DRONE SHOW ---
@@ -282,7 +277,7 @@ Happy Birthday, my special girl! ❤️
         }, 40);
     }
 
-    // --- 6. FINALE (POEM FALLING) ---
+    // --- 6. FINALE (RGB POEM) ---
     window.startFinale = function() {
         const layer = document.getElementById('msg-layer');
         layer.classList.remove('visible');
@@ -290,12 +285,10 @@ Happy Birthday, my special girl! ❤️
         state = "FINALE";
         setTimeout(() => { layer.style.display = 'none'; }, 2500);
 
-        // Bắt đầu quy trình hiện thơ
         poemIdx = 0;
         currentPoemText = "";
         nextPoemLine();
 
-        // Pháo hoa tim nền
         setInterval(() => {
             if(Math.random()>0.2) launchHeartFirework();
         }, 400);
@@ -303,13 +296,10 @@ Happy Birthday, my special girl! ❤️
 
     function nextPoemLine() {
         if(poemIdx < FINAL_POEM.length) {
-            // Thêm dòng mới vào văn bản hiện tại
             currentPoemText += (poemIdx > 0 ? "\n" : "") + FINAL_POEM[poemIdx];
-            // Vẽ lại toàn bộ văn bản (các dòng cũ + dòng mới)
-            // Sử dụng màu Vàng Kim #FFD700
-            formText(currentPoemText, "#FFD700");
+            // Không truyền màu cố định nữa, để loop tự xử lý RGB
+            formText(currentPoemText, "#FFF"); 
             poemIdx++;
-            // Hiện dòng tiếp theo sau 3.5 giây
             setTimeout(nextPoemLine, 3500);
         }
     }
@@ -320,9 +310,8 @@ Happy Birthday, my special girl! ❤️
         const tmp = document.createElement('canvas');
         const tCtx = tmp.getContext('2d');
         
-        // Điều chỉnh font size cho bài thơ ở đoạn cuối
         let baseFontSize = state === "FINALE" ? (isMobile ? 50 : 80) : (isMobile ? 80 : 140);
-        let fontName = state === "FINALE" ? "Arial" : "Arial Black"; // Bài thơ dùng font nhẹ hơn chút
+        let fontName = state === "FINALE" ? "Arial" : "Arial Black";
 
         tCtx.font = `900 ${baseFontSize}px "${fontName}"`;
         let maxW = 0;
@@ -331,7 +320,6 @@ Happy Birthday, my special girl! ❤️
             if(m.width > maxW) maxW = m.width;
         });
         
-        // Tăng chiều cao canvas để chứa đủ bài thơ
         tmp.width = maxW + 40; 
         tmp.height = lines.length * baseFontSize * 1.8;
 
@@ -388,7 +376,7 @@ Happy Birthday, my special girl! ❤️
     function getPoints(tmp, color) {
         const data = tmp.getContext('2d').getImageData(0,0, tmp.width, tmp.height).data;
         let pts = [];
-        let scale = Math.min(w*0.95/tmp.width, h*0.8/tmp.height); // Tăng vùng hiển thị
+        let scale = Math.min(w*0.95/tmp.width, h*0.8/tmp.height); 
         let sx = (w - tmp.width*scale)/2;
         let sy = (h - tmp.height*scale)/2;
         for(let y=0; y<tmp.height; y+=DOT_GAP) {
@@ -474,9 +462,19 @@ Happy Birthday, my special girl! ❤️
                     ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 2, 2);
                 }
             } else {
-                // Drone show & Finale Poem handles here
+                // Drone show
                 p.x += dx * 0.1; p.y += dy * 0.1;
-                ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, DOT_SIZE, DOT_SIZE);
+                
+                // HIỆU ỨNG RGB CHẬM CHO BÀI THƠ
+                if(state === "FINALE" && !p.isBg) {
+                    // Hue thay đổi theo vị trí X và thời gian (chậm: time * 0.2)
+                    let hue = (p.x / w * 180 + time * 0.2) % 360; 
+                    ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+                } else {
+                    ctx.fillStyle = p.c;
+                }
+                
+                ctx.fillRect(p.x, p.y, DOT_SIZE, DOT_SIZE);
             }
         });
 
