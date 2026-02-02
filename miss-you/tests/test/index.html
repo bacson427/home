@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_V24_RGB_POEM</title>
+    <title>SON_V25_CRYSTAL_CLEAR</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&family=Noto+Sans+Symbols+2&display=swap');
         
         body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Share Tech Mono', monospace; }
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
@@ -42,34 +42,43 @@
         @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* Message Layer */
+        /* Message Layer - TỐI ƯU HIỂN THỊ MOBILE */
         #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, rgba(60, 0, 30, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%); 
             display: none; z-index: 3000; opacity: 0;
             flex-direction: column; justify-content: center; align-items: center;
-            padding: 20px; box-sizing: border-box;
-            transition: opacity 2.5s ease-in-out;
+            padding: 15px; box-sizing: border-box;
+            transition: opacity 2s ease-in-out;
         }
         #msg-layer.visible { opacity: 1; }
 
         #msg-content {
-            color: #FF69B4; font-size: 16px; line-height: 1.6; font-family: 'Dancing Script', cursive; font-weight: bold;
-            white-space: pre-wrap; max-width: 650px; text-shadow: 0 0 10px #FF69B4;
-            border: 2px solid #FF69B4; padding: 20px; border-radius: 15px;
-            background: rgba(20, 0, 10, 0.6);
+            color: #FF69B4; 
+            /* Font size tự động chỉnh theo chiều rộng màn hình */
+            font-size: clamp(15px, 4.5vw, 20px); 
+            line-height: 1.6; font-family: 'Dancing Script', cursive; font-weight: bold;
+            white-space: pre-wrap; 
+            width: 90%; /* Chiếm 90% màn hình */
+            max-width: 600px;
+            max-height: 70vh; /* Không quá 70% chiều cao */
+            overflow-y: auto; /* Cuộn nếu dài quá */
+            text-shadow: 0 0 5px #FF69B4;
+            border-left: 3px solid #FF69B4; padding: 15px; 
+            background: rgba(30, 0, 15, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 20, 147, 0.3);
         }
-        #skip-btn { margin-top: 30px; padding: 12px 30px; border: 1px solid #FFD700; background: transparent; color: #FFD700; display: none; pointer-events: auto; font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 20px; }
+        #skip-btn { 
+            margin-top: 20px; padding: 10px 25px; 
+            border: 1px solid #FFD700; background: transparent; color: #FFD700; 
+            display: none; pointer-events: auto; font-weight: bold; cursor: pointer; 
+            transition: 0.3s; border-radius: 20px; font-size: 16px;
+        }
 
         /* Virus */
         .glitch-layer { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 2000; display:none; pointer-events:none; mix-blend-mode: hard-light; }
-        #virus-terminal { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            color: #F00; font-family: 'Share Tech Mono'; font-size: 14px; 
-            display: none; z-index: 2001; text-shadow: 0 0 5px #F00; 
-            background: #000; padding: 10px; box-sizing: border-box;
-            overflow: hidden; border: none;
-        }
+        #virus-terminal { position: absolute; top:0; left:0; width:100%; height:100%; color:#F00; font-family:'Share Tech Mono'; font-size:14px; display:none; z-index:2001; text-shadow:0 0 5px #F00; background:#000; padding:10px; box-sizing:border-box; overflow:hidden;}
 
     </style>
 </head>
@@ -90,7 +99,7 @@
     </div>
 
     <div id="msg-layer">
-        <div style="color: #FFD700; font-size: 24px; margin-bottom: 20px; font-family: 'Dancing Script';">💌 Thư gửi Dương</div>
+        <div style="color: #FFD700; font-size: clamp(20px, 6vw, 30px); margin-bottom: 15px; font-family: 'Dancing Script'; text-align:center;">💌 Thư gửi Dương</div>
         <div id="msg-content"></div>
         <button id="skip-btn" onclick="startFinale()">TIẾP TỤC >></button>
     </div>
@@ -131,7 +140,9 @@ Happy Birthday, my special girl! ❤️
     const isMobile = window.innerWidth < 768;
     let w, h;
 
-    const DOT_GAP = isMobile ? 4 : 3; 
+    // CẤU HÌNH NEON 
+    // Giảm khoảng cách (GAP) để chữ đặc hơn
+    const DOT_GAP = isMobile ? 3 : 3; 
     const DOT_SIZE = isMobile ? 2.5 : 2; 
 
     let state = "IDLE"; 
@@ -139,7 +150,6 @@ Happy Birthday, my special girl! ❤️
     let scriptIdx = 0;
     let countdown = 10;
     let poemIdx = 0;
-    let currentPoemText = "";
     
     // Matrix
     const M_CHARS = "01"; 
@@ -204,7 +214,7 @@ Happy Birthday, my special girl! ❤️
                 matrixColor = "#003300"; 
                 runDroneShow(); 
             }
-        }, 40); 
+        }, 30); // Tốc độ virus nhanh hơn
     }
 
     // --- 3. DRONE SHOW ---
@@ -277,18 +287,18 @@ Happy Birthday, my special girl! ❤️
         }, 40);
     }
 
-    // --- 6. FINALE (RGB POEM) ---
+    // --- 6. FINALE (POEM CLEAR) ---
     window.startFinale = function() {
         const layer = document.getElementById('msg-layer');
-        layer.classList.remove('visible');
+        layer.classList.remove('visible'); // Fade out
         
         state = "FINALE";
-        setTimeout(() => { layer.style.display = 'none'; }, 2500);
+        setTimeout(() => { layer.style.display = 'none'; }, 2000);
 
         poemIdx = 0;
-        currentPoemText = "";
-        nextPoemLine();
+        nextPoemLine(); // Bắt đầu hiện thơ
 
+        // Pháo hoa tim
         setInterval(() => {
             if(Math.random()>0.2) launchHeartFirework();
         }, 400);
@@ -296,39 +306,43 @@ Happy Birthday, my special girl! ❤️
 
     function nextPoemLine() {
         if(poemIdx < FINAL_POEM.length) {
-            currentPoemText += (poemIdx > 0 ? "\n" : "") + FINAL_POEM[poemIdx];
-            // Không truyền màu cố định nữa, để loop tự xử lý RGB
-            formText(currentPoemText, "#FFF"); 
+            // Chỉ hiện dòng hiện tại (hoặc 2 dòng) để chữ TO và RÕ
+            let textToShow = FINAL_POEM[poemIdx];
+            
+            // Vẽ chữ to đùng, dùng màu trắng tạm để tính toán, màu thật sẽ do loop xử lý RGB
+            formText(textToShow, "#FFF"); 
+            
             poemIdx++;
-            setTimeout(nextPoemLine, 3500);
+            setTimeout(nextPoemLine, 4000); // 4 giây một câu
         }
     }
 
-    // --- LOGIC VẼ ---
+    // --- LOGIC VẼ (TỐI ƯU ĐỘ NÉT) ---
     function formText(txt, color) {
         const lines = txt.split('\n');
         const tmp = document.createElement('canvas');
         const tCtx = tmp.getContext('2d');
         
-        let baseFontSize = state === "FINALE" ? (isMobile ? 50 : 80) : (isMobile ? 80 : 140);
+        // Font size cực đại để lấy mẫu nét
+        let fSize = isMobile ? 100 : 180;
         let fontName = state === "FINALE" ? "Arial" : "Arial Black";
 
-        tCtx.font = `900 ${baseFontSize}px "${fontName}"`;
+        tCtx.font = `900 ${fSize}px "${fontName}"`;
         let maxW = 0;
         lines.forEach(l => {
             let m = tCtx.measureText(l);
             if(m.width > maxW) maxW = m.width;
         });
         
-        tmp.width = maxW + 40; 
-        tmp.height = lines.length * baseFontSize * 1.8;
+        tmp.width = maxW + 50; 
+        tmp.height = lines.length * fSize * 1.5;
 
-        tCtx.font = `900 ${baseFontSize}px "${fontName}"`;
+        tCtx.font = `900 ${fSize}px "${fontName}"`;
         tCtx.fillStyle = '#fff'; tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
         
-        let startY = baseFontSize;
         lines.forEach((l, i) => { 
-            tCtx.fillText(l, tmp.width/2, startY + i * (baseFontSize * 1.2)); 
+            // Căn giữa canvas
+            tCtx.fillText(l, tmp.width/2, fSize + i * fSize); 
         });
         
         getPoints(tmp, color);
@@ -337,7 +351,7 @@ Happy Birthday, my special girl! ❤️
     function getTextPoints(txt, font) {
         const tmp = document.createElement('canvas');
         const tCtx = tmp.getContext('2d');
-        let fSize = isMobile ? 40 : 60;
+        let fSize = isMobile ? 60 : 80;
         tCtx.font = `bold ${fSize}px "${font}"`;
         let lines = txt.split('\n');
         let maxW = 0;
@@ -376,9 +390,12 @@ Happy Birthday, my special girl! ❤️
     function getPoints(tmp, color) {
         const data = tmp.getContext('2d').getImageData(0,0, tmp.width, tmp.height).data;
         let pts = [];
-        let scale = Math.min(w*0.95/tmp.width, h*0.8/tmp.height); 
+        // Scale sao cho chữ to nhất có thể nhưng không tràn màn hình
+        let scale = Math.min(w*0.9/tmp.width, h*0.6/tmp.height); 
         let sx = (w - tmp.width*scale)/2;
         let sy = (h - tmp.height*scale)/2;
+        
+        // Quét điểm ảnh
         for(let y=0; y<tmp.height; y+=DOT_GAP) {
             for(let x=0; x<tmp.width; x+=DOT_GAP) {
                 if(data[(y*tmp.width + x)*4 + 3] > 128) {
@@ -386,11 +403,14 @@ Happy Birthday, my special girl! ❤️
                 }
             }
         }
+        
+        // Tự động điều chỉnh số lượng hạt để hình luôn đầy đặn
         if(particles.length < pts.length) {
             let add = pts.length - particles.length;
             for(let i=0; i<add; i++) particles.push({x:Math.random()*w, y:Math.random()*h, tx:w/2, ty:h, c:color});
         }
-        // Shuffle
+        
+        // Shuffle để bay ngẫu nhiên
         pts.sort(() => Math.random() - 0.5);
 
         particles.forEach((p, i) => {
@@ -465,11 +485,12 @@ Happy Birthday, my special girl! ❤️
                 // Drone show
                 p.x += dx * 0.1; p.y += dy * 0.1;
                 
-                // HIỆU ỨNG RGB CHẬM CHO BÀI THƠ
+                // HIỆU ỨNG RGB CHẬM & SÁNG (Cho bài thơ)
                 if(state === "FINALE" && !p.isBg) {
-                    // Hue thay đổi theo vị trí X và thời gian (chậm: time * 0.2)
-                    let hue = (p.x / w * 180 + time * 0.2) % 360; 
-                    ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+                    // Hue trôi chậm: time * 0.2
+                    // Saturation 100%, Lightness 70% -> Rất sáng và rõ
+                    let hue = (p.x / w * 120 + time * 0.2) % 360; 
+                    ctx.fillStyle = `hsl(${hue}, 100%, 75%)`;
                 } else {
                     ctx.fillStyle = p.c;
                 }
