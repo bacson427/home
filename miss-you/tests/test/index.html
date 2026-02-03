@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_V26_THE_END</title>
+    <title>SON_V27_SPOTLIGHTS</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&family=Noto+Sans+Symbols+2&display=swap');
         
@@ -117,12 +117,12 @@ Happy Birthday, my special girl! ❤️
     ];
 
     const SCRIPT = [
-        { t: "GỬI ĐẾN\n❤️TRƯƠNG THỊ DƯƠNG❤️", c: "#0F0" },
-        { t: "CHÚC MỪNG\n🍀NĂM MỚI 2026🍀", c: "#FFD700" }, 
-        { t: "XUÂN BÍNH NGỌ\n🐴MÃ ĐÁO THÀNH CÔNG🦄", c: "#00FFFF" }, 
-        { t: "HAPPY VALENTINE\n💕14/02 NGỌT NGÀO💘", c: "#FF0055" }, 
-        { t: "QUỐC TẾ PHỤ NỮ\n👉8/3 VUI VẺ👈", c: "#FFF" }, 
-        { t: "HAPPY BIRTHDAY\n🎊SINH NHẬT TUỔI 19🎉", c: "#FFD700" },
+        { t: "GỬI ĐẾN\nTRƯƠNG THỊ DƯƠNG", c: "#0F0" },
+        { t: "CHÚC MỪNG\nNĂM MỚI 2026", c: "#FFD700" }, 
+        { t: "XUÂN BÍNH NGỌ\nMÃ ĐÁO THÀNH CÔNG", c: "#00FFFF" }, 
+        { t: "HAPPY VALENTINE\n14/02 NGỌT NGÀO", c: "#FF0055" }, 
+        { t: "QUỐC TẾ PHỤ NỮ\n8/3 VUI VẺ", c: "#FFF" }, 
+        { t: "HAPPY BIRTHDAY\nSINH NHẬT TUỔI 19", c: "#FFD700" },
         { action: "HEART_TREND" } 
     ];
 
@@ -131,7 +131,6 @@ Happy Birthday, my special girl! ❤️
     const isMobile = window.innerWidth < 768;
     let w, h;
 
-    // CẤU HÌNH NEON 
     const DOT_GAP = isMobile ? 3 : 3; 
     const DOT_SIZE = isMobile ? 2.5 : 2; 
 
@@ -140,6 +139,7 @@ Happy Birthday, my special girl! ❤️
     let scriptIdx = 0;
     let countdown = 10;
     let poemIdx = 0;
+    let spotlights = [];
     
     // Matrix
     const M_CHARS = "01"; 
@@ -150,6 +150,19 @@ Happy Birthday, my special girl! ❤️
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
         m_cols = Array(Math.floor(w/20)).fill(0);
+        
+        // Init Spotlights
+        spotlights = [];
+        let spotCount = 5;
+        for(let i=0; i<spotCount; i++) {
+            spotlights.push({
+                x: (w / (spotCount-1)) * i,
+                angle: -Math.PI/2 + (Math.random()-0.5), // Góc ngẫu nhiên
+                speed: (Math.random()-0.5) * 0.02, // Tốc độ quét
+                width: Math.random() * 0.1 + 0.1, // Độ rộng chùm sáng
+                color: `hsla(${Math.random()*60 + 200}, 100%, 80%, 0.15)` // Màu xanh/tím nhạt
+            });
+        }
     }
     window.addEventListener('resize', resize);
     resize();
@@ -188,9 +201,8 @@ Happy Birthday, my special girl! ❤️
         let logs = "";
         let count = 0;
         let t = setInterval(() => {
-            logs += `> CRITICAL ERROR: SYSTEM HACKED AT KERNEL LEVEL...\n`;
-            logs += `> ATTEMPTING RECOVERY... ${count}%\n`;
-            logs += `> UNKNOWN PROCESS TAKING OVER DISPLAY...\n`;
+            logs += `> SYSTEM OVERLOAD... ${count}%\n`;
+            logs += `> HACKER DETECTED...\n`;
             term.innerText = logs; 
             term.scrollTop = term.scrollHeight;
             count+=1;
@@ -277,7 +289,7 @@ Happy Birthday, my special girl! ❤️
         }, 40);
     }
 
-    // --- 6. FINALE (POEM) ---
+    // --- 6. FINALE ---
     window.startFinale = function() {
         const layer = document.getElementById('msg-layer');
         layer.classList.remove('visible'); 
@@ -300,16 +312,13 @@ Happy Birthday, my special girl! ❤️
             poemIdx++;
             setTimeout(nextPoemLine, 4000); 
         } else {
-            // Hết thơ -> Chuyển sang THE END
             setTimeout(runTheEnd, 4000);
         }
     }
 
-    // --- 7. THE END (MỚI) ---
     function runTheEnd() {
         state = "THE_END";
         formText("THE END", "#FFF");
-        
         setTimeout(() => {
             formText("THANK YOU\nFOR WATCHING", "#00FFFF");
         }, 6000);
@@ -321,11 +330,8 @@ Happy Birthday, my special girl! ❤️
         const tmp = document.createElement('canvas');
         const tCtx = tmp.getContext('2d');
         
-        // Font size to
         let fSize = isMobile ? 100 : 180;
-        // Nếu là đoạn Thank You thì font nhỏ hơn xíu cho vừa
         if (txt.includes("THANK YOU")) fSize = isMobile ? 60 : 120;
-
         let fontName = (state === "FINALE" || state === "THE_END") ? "Arial" : "Arial Black";
 
         tCtx.font = `900 ${fSize}px "${fontName}"`;
@@ -415,6 +421,33 @@ Happy Birthday, my special girl! ❤️
         });
     }
 
+    // --- DRAW SPOTLIGHTS ---
+    function drawSpotlights() {
+        ctx.globalCompositeOperation = 'lighter'; // Cộng màu để ánh sáng đẹp hơn
+        spotlights.forEach(s => {
+            s.angle += s.speed;
+            if(s.angle < -Math.PI*0.8 || s.angle > -Math.PI*0.2) s.speed = -s.speed; // Quét qua lại
+
+            // Vẽ chùm sáng tam giác
+            let lightLen = h * 1.2;
+            let endX = s.x + Math.cos(s.angle) * lightLen;
+            let endY = h + Math.sin(s.angle) * lightLen;
+
+            let grd = ctx.createLinearGradient(s.x, h, endX, endY);
+            grd.addColorStop(0, s.color);
+            grd.addColorStop(1, "rgba(0,0,0,0)");
+
+            ctx.fillStyle = grd;
+            ctx.beginPath();
+            ctx.moveTo(s.x, h);
+            ctx.lineTo(endX - lightLen * s.width, endY);
+            ctx.lineTo(endX + lightLen * s.width, endY);
+            ctx.closePath();
+            ctx.fill();
+        });
+        ctx.globalCompositeOperation = 'source-over';
+    }
+
     // --- EFFECTS ---
     function launchHeartFirework() {
         let x = Math.random() * w; let y = h;
@@ -455,6 +488,11 @@ Happy Birthday, my special girl! ❤️
             });
         }
 
+               // Vẽ Đèn Chiếu (Chỉ hiện khi Show bắt đầu)
+        if(state === "SHOW" || state === "HEART_TREND" || state === "FINALE" || state === "THE_END") {
+            drawSpotlights();
+        }
+
         let beat = 1;
         if(state === "HEART_TREND") beat = 1 + Math.sin(time*0.1)*0.03;
 
@@ -475,10 +513,8 @@ Happy Birthday, my special girl! ❤️
                     ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 2, 2);
                 }
             } else {
-                // Drone show
                 p.x += dx * 0.1; p.y += dy * 0.1;
                 
-                // HIỆU ỨNG RGB CHẬM (Cho bài thơ & The End)
                 if((state === "FINALE" || state === "THE_END") && !p.isBg) {
                     let hue = (p.x / w * 120 + time * 0.2) % 360; 
                     ctx.fillStyle = `hsl(${hue}, 100%, 75%)`;
