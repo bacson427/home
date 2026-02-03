@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_V30_CINEMATIC_END</title>
+    <title>SON_V31_FIXED_VISUALS</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&family=Noto+Sans+Symbols+2&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
         
         body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Share Tech Mono', monospace; }
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
@@ -19,57 +19,58 @@
 
         .cyber-btn {
             pointer-events: auto; background: #000; color: #0F0; border: 2px solid #0F0;
-            padding: 20px 45px; font-size: 22px; cursor: pointer; 
+            padding: 20px 50px; font-size: 22px; cursor: pointer; 
             font-family: 'Black Ops One', cursive; letter-spacing: 2px;
-            box-shadow: 0 0 15px #0F0; transition: 0.3s;
+            box-shadow: 0 0 20px #0F0; transition: 0.3s;
             animation: pulse 2s infinite; border-radius: 10px;
         }
-        .cyber-btn:hover { background: #0F0; color: #000; box-shadow: 0 0 40px #0F0; }
-
-        /* Cube */
-        #cube-container { display: none; perspective: 800px; width: 150px; height: 150px; margin-bottom: 20px;}
-        #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 4s infinite linear; }
+        
+        /* CUBE FIX: Làm rỗng ruột, chỉ hiện số to */
+        #cube-container { display: none; perspective: 800px; width: 200px; height: 200px; margin-bottom: 20px;}
+        #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 5s infinite linear; }
         .face {
-            position: absolute; width: 146px; height: 146px;
-            border: 2px solid #0F0; background: rgba(0, 255, 0, 0.05);
-            color: #0F0; font-size: 80px; display: flex;
-            justify-content: center; align-items: center;
+            position: absolute; width: 196px; height: 196px;
+            border: 4px solid #0F0; /* Viền dày hơn */
+            background: rgba(0, 20, 0, 0.7); /* Nền tối hơn để rõ số */
+            color: #0F0; font-size: 120px; /* Số cực to */
+            display: flex; justify-content: center; align-items: center;
             font-family: 'Black Ops One';
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
         }
-        .front { transform: translateZ(75px); } .back { transform: rotateY(180deg) translateZ(75px); }
-        .right { transform: rotateY(90deg) translateZ(75px); } .left { transform: rotateY(-90deg) translateZ(75px); }
-        .top { transform: rotateX(90deg) translateZ(75px); } .bottom { transform: rotateX(-90deg) translateZ(75px); }
+        .front { transform: translateZ(100px); } .back { transform: rotateY(180deg) translateZ(100px); }
+        .right { transform: rotateY(90deg) translateZ(100px); } .left { transform: rotateY(-90deg) translateZ(100px); }
+        .top { transform: rotateX(90deg) translateZ(100px); } .bottom { transform: rotateX(-90deg) translateZ(100px); }
         @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* Message Layer */
+        /* MESSAGE LAYER */
         #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(60, 0, 30, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%); 
-            display: none; z-index: 3000; opacity: 0;
+            background: rgba(0,0,0,0.95); display: none; z-index: 3000;
             flex-direction: column; justify-content: center; align-items: center;
-            padding: 15px; box-sizing: border-box;
-            transition: opacity 2s ease-in-out;
+            padding: 15px; box-sizing: border-box; transition: opacity 2s;
         }
-        #msg-layer.visible { opacity: 1; }
-
         #msg-content {
-            color: #FF69B4; font-size: clamp(16px, 4.5vw, 20px); 
+            color: #FF69B4; font-size: clamp(16px, 5vw, 20px); 
             line-height: 1.6; font-family: 'Dancing Script', cursive; font-weight: bold;
-            white-space: pre-wrap; width: 90%; max-width: 600px; max-height: 70vh; overflow-y: auto;
-            text-shadow: 0 0 5px #FF69B4; border-left: 3px solid #FF69B4; padding: 15px; 
+            white-space: pre-wrap; width: 90%; max-width: 600px;
+            text-shadow: 0 0 10px #FF69B4; border-left: 3px solid #FF69B4; padding: 20px; 
             background: rgba(30, 0, 15, 0.8); border-radius: 10px;
-            box-shadow: 0 0 20px rgba(255, 20, 147, 0.3);
         }
-        #skip-btn { 
-            margin-top: 20px; padding: 10px 25px; border: 1px solid #FFD700; 
-            background: transparent; color: #FFD700; display: none; pointer-events: auto; 
-            font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 20px; font-size: 16px;
-        }
+        #skip-btn { margin-top: 20px; padding: 10px 25px; border: 1px solid #FFD700; background: transparent; color: #FFD700; display: none; pointer-events: auto; font-weight: bold; cursor: pointer; border-radius: 20px; }
 
-        /* Virus */
+        /* VIRUS TERMINAL FIX: Tràn màn hình, chữ to, tự xuống dòng */
         .glitch-layer { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 2000; display:none; pointer-events:none; mix-blend-mode: hard-light; }
-        #virus-terminal { position: absolute; top:0; left:0; width:100%; height:100%; color:#F00; font-family:'Share Tech Mono'; font-size:14px; display:none; z-index:2001; text-shadow:0 0 5px #F00; background:#000; padding:10px; box-sizing:border-box; overflow:hidden;}
+        #virus-terminal { 
+            position: absolute; top:0; left:0; width:100%; height:100%; 
+            color: #F00; font-family: 'Share Tech Mono'; 
+            font-size: clamp(14px, 4vw, 20px); /* Font tự chỉnh theo màn hình */
+            display: none; z-index: 2001; 
+            text-shadow: 0 0 5px #F00; background: rgba(0,0,0,0.9); 
+            padding: 10px; box-sizing: border-box; overflow: hidden;
+            white-space: pre-wrap; /* Tự động xuống dòng */
+            word-break: break-all; /* Ngắt từ nếu quá dài */
+        }
 
     </style>
 </head>
@@ -79,7 +80,7 @@
     <div id="virus-terminal"></div>
     
     <div id="ui-layer">
-        <button id="btn-start" class="cyber-btn">KÍCH HOẠT HỆ THỐNG</button>
+        <button id="btn-start" class="cyber-btn">KÍCH HOẠT</button>
         <div id="cube-container">
             <div id="cube">
                 <div class="face front">10</div><div class="face back">10</div>
@@ -90,7 +91,7 @@
     </div>
 
     <div id="msg-layer">
-        <div style="color: #FFD700; font-size: clamp(20px, 6vw, 30px); margin-bottom: 15px; font-family: 'Dancing Script'; text-align:center;">💌 Thư gửi Dương</div>
+        <div style="color: #FFD700; font-size: 24px; margin-bottom: 15px; font-family: 'Dancing Script';">💌 Thư gửi Dương</div>
         <div id="msg-content"></div>
         <button id="skip-btn" onclick="startFinale()">TIẾP TỤC >></button>
     </div>
@@ -98,7 +99,7 @@
     <audio id="audio" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
 
 <script>
-    // --- NỘI DUNG ---
+    // --- DATA ---
     const LETTER = `Dương ơi, hôm nay 01/03/2026, cậu tròn 19 tuổi.
 
 Tớ chúc cậu tuổi mới luôn xinh đẹp rạng ngời, học tập thật giỏi và sớm đạt được mọi ước mơ.
@@ -131,22 +132,19 @@ Happy Birthday, my special girl! ❤️
     const isMobile = window.innerWidth < 768;
     let w, h;
 
-    const DOT_GAP = isMobile ? 4 : 3; 
-    const DOT_SIZE = isMobile ? 3 : 2.5; 
+    const DOT_GAP = isMobile ? 3 : 3; 
+    const DOT_SIZE = isMobile ? 3 : 2; 
 
     let state = "IDLE"; 
-    let particles = [], fireworks = [], sparkles = [];
+    let particles = [], fireworks = [], sparkles = [], smoke = [];
     let scriptIdx = 0;
     let countdown = 10;
     let poemIdx = 0;
     
-    // Super Beams
+    // Spotlights
     let beams = [];
     let globalHue = 0;
-    let beamOpacity = 1; // Biến điều khiển độ sáng đèn
-
-    // Smoke
-    let smokeParticles = [];
+    let beamOpacity = 1;
 
     // Matrix
     const M_CHARS = "01"; 
@@ -158,15 +156,13 @@ Happy Birthday, my special girl! ❤️
         h = canvas.height = window.innerHeight;
         m_cols = Array(Math.floor(w/20)).fill(0);
         
-        // Init Concert Beams
         beams = [];
         let count = 4;
         for(let i=0; i<count; i++) {
             beams.push({
                 x: (w/(count-1)) * i,
                 angle: -Math.PI/2,
-                speed: 0.02 + Math.random() * 0.03,
-                phase: Math.random() * Math.PI * 2
+                speed: 0.02 + Math.random() * 0.03
             });
         }
     }
@@ -180,7 +176,6 @@ Happy Birthday, my special girl! ❤️
         runCountdown();
     };
 
-    // --- 1. COUNTDOWN ---
     function runCountdown() {
         state = "COUNTDOWN";
         document.getElementById('cube-container').style.display = 'block';
@@ -196,7 +191,7 @@ Happy Birthday, my special girl! ❤️
         }, 1000);
     }
 
-    // --- 2. VIRUS ---
+    // --- VIRUS FIX ---
     function runVirus() {
         state = "VIRUS";
         const term = document.getElementById('virus-terminal');
@@ -207,25 +202,36 @@ Happy Birthday, my special girl! ❤️
         let logs = "";
         let count = 0;
         let t = setInterval(() => {
-            logs += `> CRITICAL ERROR: SYSTEM HACKED AT KERNEL LEVEL...\n`;
-            logs += `> ATTEMPTING RECOVERY... ${count}%\n`;
-            term.innerText = logs; 
-            term.scrollTop = term.scrollHeight;
-            count+=1;
+            // Text ngẫu nhiên nhưng có nghĩa Hacker
+            const errs = [
+                "CRITICAL ERROR: KERNEL PANIC", 
+                "ACCESS DENIED... BYPASSING...", 
+                "INJECTING PAYLOAD... 99%", 
+                "SYSTEM OVERRIDE BY USER 'SON'",
+                "WARNING: CPU OVERHEAT",
+                "DECRYPTING SECURE FILES..."
+            ];
+            logs += `> ${errs[Math.floor(Math.random()*errs.length)]}\n`;
             
-            canvas.style.transform = `translate(${Math.random()*10-5}px, ${Math.random()*10-5}px)`;
+            // Giới hạn độ dài log để không bị tràn bộ nhớ
+            if(logs.length > 2000) logs = logs.substring(logs.length - 2000);
+            
+            term.innerText = logs; 
+            term.scrollTop = term.scrollHeight; // Auto scroll
+            count++;
+            
+            canvas.style.transform = `translate(${Math.random()*5-2.5}px, ${Math.random()*5-2.5}px)`;
 
-            if(count > 100) {
+            if(count > 80) { // Chạy tầm 4-5 giây
                 clearInterval(t);
                 term.style.display = 'none'; glitch.style.display = 'none';
                 canvas.style.transform = "none";
                 matrixColor = "#003300"; 
                 runDroneShow(); 
             }
-        }, 30);
+        }, 50);
     }
 
-    // --- 3. DRONE SHOW ---
     function runDroneShow() {
         state = "SHOW";
         nextScene();
@@ -241,10 +247,10 @@ Happy Birthday, my special girl! ❤️
         }
 
         formText(s.t, s.c);
-        setTimeout(nextScene, 10000); 
+        setTimeout(nextScene, 8000); 
     }
 
-    // --- 4. HEART TREND ---
+    // --- HEART TREND (FIXED ORIGIN) ---
     function runHeartTrend() {
         state = "HEART_TREND";
         let heartPts = getHeartOutlinePoints();
@@ -258,7 +264,10 @@ Happy Birthday, my special girl! ❤️
 
         particles.forEach((p, i) => {
             if(i < allTargets.length) {
-                p.x = (i%2===0) ? 0 : w; p.y = h;
+                // XUẤT PHÁT TỪ 2 GÓC DƯỚI (Mèo bắn tim)
+                p.x = (i % 2 === 0) ? 0 : w; 
+                p.y = h;
+                
                 p.tx = allTargets[i].x; p.ty = allTargets[i].y;
                 p.c = (i < heartPts.length) ? "#FF1493" : "#FFF"; 
                 p.vx = (Math.random()-0.5)*2; p.vy = (Math.random()-0.5)*2;
@@ -272,7 +281,6 @@ Happy Birthday, my special girl! ❤️
         setTimeout(runMessage, 15000);
     }
 
-    // --- 5. MESSAGE ---
     function runMessage() {
         state = "MSG";
         const layer = document.getElementById('msg-layer');
@@ -280,7 +288,8 @@ Happy Birthday, my special girl! ❤️
         const btn = document.getElementById('skip-btn');
         
         layer.style.display = 'flex';
-        setTimeout(() => { layer.classList.add('visible'); }, 50);
+        // Hiệu ứng mờ dần
+        setTimeout(() => { layer.style.opacity = 1; }, 50);
         
         let i = 0;
         let t = setInterval(() => {
@@ -290,15 +299,16 @@ Happy Birthday, my special girl! ❤️
                 clearInterval(t);
                 content.innerText = LETTER;
                 btn.style.display = 'block';
+                // Tự động chuyển sau 25s
                 setTimeout(() => { if(state==="MSG") startFinale(); }, 25000);
             }
         }, 40);
     }
 
-    // --- 6. FINALE ---
     window.startFinale = function() {
         const layer = document.getElementById('msg-layer');
-        layer.classList.remove('visible'); 
+        layer.style.opacity = 0; // Fade out
+        
         state = "FINALE";
         setTimeout(() => { layer.style.display = 'none'; }, 2000);
 
@@ -324,31 +334,23 @@ Happy Birthday, my special girl! ❤️
     function runTheEnd() {
         state = "THE_END";
         formText("THE END", "#FFF");
-        
-        // Sau 4 giây, kích hoạt hiệu ứng khói và tắt đèn
         setTimeout(triggerSmokeAndLightsOut, 4000);
     }
 
-    // --- 7. SMOKE & THANK YOU (MỚI) ---
+    // --- SMOKE & ENDING ---
     function triggerSmokeAndLightsOut() {
-        state = "SMOKE_TRANSITION";
+        state = "SMOKE";
         
         // Tạo khói
-        for(let i=0; i<50; i++) {
-            smokeParticles.push({
-                x: Math.random()*w,
-                y: h + Math.random()*200,
-                vx: (Math.random()-0.5)*2,
-                vy: -Math.random()*2 - 1, // Bay lên
-                size: Math.random()*100 + 50, // Khói to
-                alpha: 0,
-                maxAlpha: Math.random()*0.3 + 0.1
+        for(let i=0; i<60; i++) {
+            smoke.push({
+                x: Math.random()*w, y: h,
+                vx: (Math.random()-0.5)*1, vy: -Math.random()*2 - 0.5,
+                size: Math.random()*80 + 40,
+                alpha: 0, maxAlpha: 0.4
             });
         }
 
-        // Tắt đèn từ từ (beamOpacity giảm trong loop)
-        
-        // Sau 3 giây (khói đã phủ), hiện Thank You
         setTimeout(() => {
             state = "THANK_YOU";
             formText("THANK YOU\nFOR WATCHING", "#00FFFF");
@@ -372,15 +374,10 @@ Happy Birthday, my special girl! ❤️
             if(m.width > maxW) maxW = m.width;
         });
         
-        tmp.width = maxW + 50; 
-        tmp.height = lines.length * fSize * 1.5;
-
+        tmp.width = maxW + 50; tmp.height = lines.length * fSize * 1.5;
         tCtx.font = `900 ${fSize}px "${fontName}"`;
         tCtx.fillStyle = '#fff'; tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
-        
-        lines.forEach((l, i) => { 
-            tCtx.fillText(l, tmp.width/2, fSize + i * fSize); 
-        });
+        lines.forEach((l, i) => { tCtx.fillText(l, tmp.width/2, fSize + i * fSize); });
         
         getPoints(tmp, color);
     }
@@ -427,7 +424,7 @@ Happy Birthday, my special girl! ❤️
     function getPoints(tmp, color) {
         const data = tmp.getContext('2d').getImageData(0,0, tmp.width, tmp.height).data;
         let pts = [];
-        let scale = Math.min(w*0.95/tmp.width, h*0.7/tmp.height); 
+        let scale = Math.min(w*0.95/tmp.width, h*0.8/tmp.height); 
         let sx = (w - tmp.width*scale)/2;
         let sy = (h - tmp.height*scale)/2;
         for(let y=0; y<tmp.height; y+=DOT_GAP) {
@@ -452,29 +449,23 @@ Happy Birthday, my special girl! ❤️
         });
     }
 
-    // --- DRAW SUPER BEAMS ---
+    // --- BEAMS ---
     function drawBeams(time) {
         ctx.globalCompositeOperation = 'lighter';
-        
         beams.forEach((b, i) => {
-            // Smart Angle: Hướng về tâm
-            let targetAngle = Math.atan2(h/2 - b.y, w/2 - b.x);
+            let targetAngle = Math.atan2(h/2 - h, w/2 - b.x); // Hướng về giữa
             b.angle += (targetAngle - b.angle) * 0.05;
-
-            // Opacity control (Tắt đèn khi khói lên)
-            let currentOpacity = beamOpacity;
             
-            let lightLen = h * 1.5;
-            let endX = b.x + Math.cos(b.angle) * lightLen;
-            let endY = b.y + Math.sin(b.angle) * lightLen;
+            let len = h * 1.5;
+            let endX = b.x + Math.cos(b.angle) * len;
+            let endY = h + Math.sin(b.angle) * len;
 
             let grd = ctx.createLinearGradient(b.x, h, endX, endY);
             let hue = (globalHue + i * 30) % 360;
-            
-            grd.addColorStop(0, `hsla(${hue}, 100%, 70%, ${0.4 * currentOpacity})`); 
+            grd.addColorStop(0, `hsla(${hue}, 100%, 70%, ${0.4 * beamOpacity})`); 
             grd.addColorStop(1, "rgba(0,0,0,0)");
 
-            if(currentOpacity > 0.01) { // Chỉ vẽ khi còn sáng
+            if(beamOpacity > 0.01) {
                 ctx.fillStyle = grd;
                 ctx.beginPath();
                 ctx.moveTo(b.x - 10, h);
@@ -485,25 +476,21 @@ Happy Birthday, my special girl! ❤️
                 ctx.fill();
             }
         });
-        
         ctx.globalCompositeOperation = 'source-over';
     }
 
-    // --- DRAW SMOKE ---
+    // --- SMOKE ---
     function drawSmoke() {
-        smokeParticles.forEach(p => {
-            p.y += p.vy;
-            p.x += p.vx;
-            if(p.alpha < p.maxAlpha) p.alpha += 0.005; // Hiện dần
+        smoke.forEach(s => {
+            s.y += s.vy; s.x += s.vx;
+            if(s.alpha < s.maxAlpha) s.alpha += 0.005;
             
-            let grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
-            grd.addColorStop(0, `rgba(100, 100, 100, ${p.alpha})`);
-            grd.addColorStop(1, `rgba(0, 0, 0, 0)`);
+            let grd = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.size);
+            grd.addColorStop(0, `rgba(50, 50, 50, ${s.alpha})`);
+            grd.addColorStop(1, "rgba(0,0,0,0)");
             
             ctx.fillStyle = grd;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-            ctx.fill();
+            ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
         });
     }
 
@@ -531,19 +518,18 @@ Happy Birthday, my special girl! ❤️
         time++;
         globalHue += 0.5;
 
-        // Xử lý fade đèn khi có khói
-        if(state === "SMOKE_TRANSITION" || state === "THANK_YOU") {
+        // FADE OUT BEAMS
+        if(state === "SMOKE" || state === "THANK_YOU") {
             if(beamOpacity > 0) beamOpacity -= 0.01;
         }
 
-        // Background
+             // BACKGROUND
         ctx.fillStyle = "rgba(0,0,0,0.2)"; 
         if(state === "HEART_TREND") ctx.fillStyle = "rgba(20,0,20,0.2)";
         if(state === "VIRUS") ctx.fillStyle = "rgba(50,0,0,0.2)";
-        
         ctx.fillRect(0,0,w,h);
         
-        // Matrix
+        // Matrix Rain (Always on except Msg)
         if(state !== "MSG") {
             ctx.font = "14px monospace";
             m_cols.forEach((y, i) => {
@@ -555,12 +541,12 @@ Happy Birthday, my special girl! ❤️
         }
 
         // Beams
-        if((state === "SHOW" || state === "HEART_TREND" || state === "FINALE" || state === "THE_END" || state === "SMOKE_TRANSITION") && state !== "MSG") {
+        if((state === "SHOW" || state === "HEART_TREND" || state === "FINALE" || state === "THE_END" || state === "SMOKE") && state !== "MSG") {
             drawBeams(time);
         }
 
         // Smoke
-        if(state === "SMOKE_TRANSITION" || state === "THANK_YOU") {
+        if(state === "SMOKE" || state === "THANK_YOU") {
             drawSmoke();
         }
 
@@ -585,29 +571,24 @@ Happy Birthday, my special girl! ❤️
                 }
             } else {
                 p.x += dx * 0.1; p.y += dy * 0.1;
-                
                 if((state === "FINALE" || state === "THE_END" || state === "THANK_YOU") && !p.isBg) {
                     let hue = (p.x / w * 120 + time * 0.2) % 360; 
                     ctx.fillStyle = `hsl(${hue}, 100%, 75%)`;
                 } else {
                     ctx.fillStyle = p.c;
                 }
-                
                 ctx.fillRect(p.x, p.y, DOT_SIZE, DOT_SIZE);
             }
         });
 
-        // Fireworks
+        // Fireworks & Sparkles
         for(let i=fireworks.length-1; i>=0; i--) {
-            let f = fireworks[i];
-            f.y += f.vy; f.vy += 0.2;
+            let f = fireworks[i]; f.y += f.vy; f.vy += 0.2;
             ctx.fillStyle = f.c; ctx.fillRect(f.x, f.y, 3, 3);
             if(f.vy >= 0) { explode(f); fireworks.splice(i, 1); }
         }
-        
-        // Sparkles
         for(let i=sparkles.length-1; i>=0; i--) {
-            let s = sparkles[i]; s.x += s.vx; s.y += s.vy; s.vy += s.g; s.l -= 0.02;
+            let s = sparkles[i]; s.x += s.vx; s.y += s.vy; s.vy += s.g; s.l -= 0.03;
             if(s.l <= 0) sparkles.splice(i, 1);
             else { ctx.globalAlpha = Math.min(s.l, 1); ctx.fillStyle = s.c; ctx.fillRect(s.x, s.y, 2, 2); ctx.globalAlpha=1; }
         }
