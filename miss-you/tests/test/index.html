@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_V29_SUPER_BEAMS</title>
+    <title>SON_V30_CINEMATIC_END</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&family=Noto+Sans+Symbols+2&display=swap');
         
@@ -131,8 +131,8 @@ Happy Birthday, my special girl! ❤️
     const isMobile = window.innerWidth < 768;
     let w, h;
 
-    const DOT_GAP = isMobile ? 3 : 3; 
-    const DOT_SIZE = isMobile ? 2.5 : 2; 
+    const DOT_GAP = isMobile ? 4 : 3; 
+    const DOT_SIZE = isMobile ? 3 : 2.5; 
 
     let state = "IDLE"; 
     let particles = [], fireworks = [], sparkles = [];
@@ -143,6 +143,10 @@ Happy Birthday, my special girl! ❤️
     // Super Beams
     let beams = [];
     let globalHue = 0;
+    let beamOpacity = 1; // Biến điều khiển độ sáng đèn
+
+    // Smoke
+    let smokeParticles = [];
 
     // Matrix
     const M_CHARS = "01"; 
@@ -154,16 +158,15 @@ Happy Birthday, my special girl! ❤️
         h = canvas.height = window.innerHeight;
         m_cols = Array(Math.floor(w/20)).fill(0);
         
-        // Init Concert Beams (Đèn Beam sân khấu)
+        // Init Concert Beams
         beams = [];
-        let count = 4; // 4 đèn lớn
+        let count = 4;
         for(let i=0; i<count; i++) {
             beams.push({
-                x: (w/(count-1)) * i, // Vị trí chân đèn
-                angle: -Math.PI/2, // Góc chiếu
-                targetAngle: -Math.PI/2,
-                speed: 0.02 + Math.random() * 0.03, // Tốc độ quét
-                phase: Math.random() * Math.PI * 2 // Pha dao động
+                x: (w/(count-1)) * i,
+                angle: -Math.PI/2,
+                speed: 0.02 + Math.random() * 0.03,
+                phase: Math.random() * Math.PI * 2
             });
         }
     }
@@ -204,11 +207,13 @@ Happy Birthday, my special girl! ❤️
         let logs = "";
         let count = 0;
         let t = setInterval(() => {
-            logs += `> SYSTEM CRITICAL... ${count}%\n`;
+            logs += `> CRITICAL ERROR: SYSTEM HACKED AT KERNEL LEVEL...\n`;
+            logs += `> ATTEMPTING RECOVERY... ${count}%\n`;
             term.innerText = logs; 
             term.scrollTop = term.scrollHeight;
             count+=1;
-            canvas.style.transform = `translate(${Math.random()*5-2.5}px, ${Math.random()*5-2.5}px)`; // Rung nhẹ hơn để đỡ đau mắt
+            
+            canvas.style.transform = `translate(${Math.random()*10-5}px, ${Math.random()*10-5}px)`;
 
             if(count > 100) {
                 clearInterval(t);
@@ -319,12 +324,38 @@ Happy Birthday, my special girl! ❤️
     function runTheEnd() {
         state = "THE_END";
         formText("THE END", "#FFF");
-        setTimeout(() => {
-            formText("THANK YOU\nFOR WATCHING", "#00FFFF");
-        }, 6000);
+        
+        // Sau 4 giây, kích hoạt hiệu ứng khói và tắt đèn
+        setTimeout(triggerSmokeAndLightsOut, 4000);
     }
 
-    // --- LOGIC VẼ DRONE ---
+    // --- 7. SMOKE & THANK YOU (MỚI) ---
+    function triggerSmokeAndLightsOut() {
+        state = "SMOKE_TRANSITION";
+        
+        // Tạo khói
+        for(let i=0; i<50; i++) {
+            smokeParticles.push({
+                x: Math.random()*w,
+                y: h + Math.random()*200,
+                vx: (Math.random()-0.5)*2,
+                vy: -Math.random()*2 - 1, // Bay lên
+                size: Math.random()*100 + 50, // Khói to
+                alpha: 0,
+                maxAlpha: Math.random()*0.3 + 0.1
+            });
+        }
+
+        // Tắt đèn từ từ (beamOpacity giảm trong loop)
+        
+        // Sau 3 giây (khói đã phủ), hiện Thank You
+        setTimeout(() => {
+            state = "THANK_YOU";
+            formText("THANK YOU\nFOR WATCHING", "#00FFFF");
+        }, 3000);
+    }
+
+    // --- LOGIC VẼ ---
     function formText(txt, color) {
         const lines = txt.split('\n');
         const tmp = document.createElement('canvas');
@@ -332,7 +363,7 @@ Happy Birthday, my special girl! ❤️
         
         let fSize = isMobile ? 100 : 180;
         if (txt.includes("THANK YOU")) fSize = isMobile ? 60 : 120;
-        let fontName = (state === "FINALE" || state === "THE_END") ? "Arial" : "Arial Black";
+        let fontName = (state === "FINALE" || state === "THE_END" || state === "THANK_YOU") ? "Arial" : "Arial Black";
 
         tCtx.font = `900 ${fSize}px "${fontName}"`;
         let maxW = 0;
@@ -396,7 +427,7 @@ Happy Birthday, my special girl! ❤️
     function getPoints(tmp, color) {
         const data = tmp.getContext('2d').getImageData(0,0, tmp.width, tmp.height).data;
         let pts = [];
-        let scale = Math.min(w*0.95/tmp.width, h*0.8/tmp.height); 
+        let scale = Math.min(w*0.95/tmp.width, h*0.7/tmp.height); 
         let sx = (w - tmp.width*scale)/2;
         let sy = (h - tmp.height*scale)/2;
         for(let y=0; y<tmp.height; y+=DOT_GAP) {
@@ -421,43 +452,59 @@ Happy Birthday, my special girl! ❤️
         });
     }
 
-    // --- DRAW SUPER BEAMS (NEW) ---
+    // --- DRAW SUPER BEAMS ---
     function drawBeams(time) {
-        ctx.globalCompositeOperation = 'lighter'; // Cộng màu
+        ctx.globalCompositeOperation = 'lighter';
         
         beams.forEach((b, i) => {
-            // Dao động góc quét (Sine wave)
-            let angle = -Math.PI/2 + Math.sin(time * 0.002 + b.phase) * 0.5;
-            
-            // Vẽ tia sáng (Hình thang dài)
-            let len = h * 1.5;
-            let topW = w * 0.15; // Độ rộng chùm sáng ở đỉnh
-            let endX = b.x + Math.cos(angle) * len;
-            let endY = h + Math.sin(angle) * len;
+            // Smart Angle: Hướng về tâm
+            let targetAngle = Math.atan2(h/2 - b.y, w/2 - b.x);
+            b.angle += (targetAngle - b.angle) * 0.05;
 
-            // Gradient: Sáng ở gốc, mờ dần ra xa
+            // Opacity control (Tắt đèn khi khói lên)
+            let currentOpacity = beamOpacity;
+            
+            let lightLen = h * 1.5;
+            let endX = b.x + Math.cos(b.angle) * lightLen;
+            let endY = b.y + Math.sin(b.angle) * lightLen;
+
             let grd = ctx.createLinearGradient(b.x, h, endX, endY);
-            // Màu đèn đổi theo Global Hue (đồng bộ với chữ)
             let hue = (globalHue + i * 30) % 360;
-            grd.addColorStop(0, `hsla(${hue}, 100%, 70%, 0.4)`); // Gốc sáng
-            grd.addColorStop(0.5, `hsla(${hue}, 100%, 70%, 0.1)`);
-            grd.addColorStop(1, "rgba(0,0,0,0)"); // Đỉnh tắt
-
-            ctx.fillStyle = grd;
-            ctx.beginPath();
-            ctx.moveTo(b.x - 10, h); // Chân đèn nhỏ
-            ctx.lineTo(endX - topW, endY);
-            ctx.lineTo(endX + topW, endY);
-            ctx.lineTo(b.x + 10, h);
-            ctx.closePath();
-            ctx.fill();
             
-            // Vẽ điểm sáng ở chân đèn
-            ctx.fillStyle = `hsl(${hue}, 100%, 80%)`;
-            ctx.beginPath(); ctx.arc(b.x, h-10, 15, 0, Math.PI*2); ctx.fill();
+            grd.addColorStop(0, `hsla(${hue}, 100%, 70%, ${0.4 * currentOpacity})`); 
+            grd.addColorStop(1, "rgba(0,0,0,0)");
+
+            if(currentOpacity > 0.01) { // Chỉ vẽ khi còn sáng
+                ctx.fillStyle = grd;
+                ctx.beginPath();
+                ctx.moveTo(b.x - 10, h);
+                ctx.lineTo(endX - w*0.15, endY);
+                ctx.lineTo(endX + w*0.15, endY);
+                ctx.lineTo(b.x + 10, h);
+                ctx.closePath();
+                ctx.fill();
+            }
         });
         
         ctx.globalCompositeOperation = 'source-over';
+    }
+
+    // --- DRAW SMOKE ---
+    function drawSmoke() {
+        smokeParticles.forEach(p => {
+            p.y += p.vy;
+            p.x += p.vx;
+            if(p.alpha < p.maxAlpha) p.alpha += 0.005; // Hiện dần
+            
+            let grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+            grd.addColorStop(0, `rgba(100, 100, 100, ${p.alpha})`);
+            grd.addColorStop(1, `rgba(0, 0, 0, 0)`);
+            
+            ctx.fillStyle = grd;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+            ctx.fill();
+        });
     }
 
     // --- EFFECTS ---
@@ -484,13 +531,19 @@ Happy Birthday, my special girl! ❤️
         time++;
         globalHue += 0.5;
 
+        // Xử lý fade đèn khi có khói
+        if(state === "SMOKE_TRANSITION" || state === "THANK_YOU") {
+            if(beamOpacity > 0) beamOpacity -= 0.01;
+        }
+
         // Background
-        if(state === "HEART_TREND") ctx.fillStyle = "rgba(20,0,20,0.2)"; 
-        else if(state === "VIRUS") ctx.fillStyle = "rgba(50,0,0,0.2)";
-        else ctx.fillStyle = "rgba(0,0,0,0.2)";
+        ctx.fillStyle = "rgba(0,0,0,0.2)"; 
+        if(state === "HEART_TREND") ctx.fillStyle = "rgba(20,0,20,0.2)";
+        if(state === "VIRUS") ctx.fillStyle = "rgba(50,0,0,0.2)";
         
         ctx.fillRect(0,0,w,h);
         
+        // Matrix
         if(state !== "MSG") {
             ctx.font = "14px monospace";
             m_cols.forEach((y, i) => {
@@ -501,9 +554,14 @@ Happy Birthday, my special girl! ❤️
             });
         }
 
-        // DRAW BEAMS (Chỉ hiện khi Show bắt đầu và không phải lúc đọc thư)
-        if((state === "SHOW" || state === "HEART_TREND" || state === "FINALE" || state === "THE_END") && state !== "MSG") {
+        // Beams
+        if((state === "SHOW" || state === "HEART_TREND" || state === "FINALE" || state === "THE_END" || state === "SMOKE_TRANSITION") && state !== "MSG") {
             drawBeams(time);
+        }
+
+        // Smoke
+        if(state === "SMOKE_TRANSITION" || state === "THANK_YOU") {
+            drawSmoke();
         }
 
         let beat = 1;
@@ -528,8 +586,7 @@ Happy Birthday, my special girl! ❤️
             } else {
                 p.x += dx * 0.1; p.y += dy * 0.1;
                 
-                // RGB Effect cho thơ
-                if((state === "FINALE" || state === "THE_END") && !p.isBg) {
+                if((state === "FINALE" || state === "THE_END" || state === "THANK_YOU") && !p.isBg) {
                     let hue = (p.x / w * 120 + time * 0.2) % 360; 
                     ctx.fillStyle = `hsl(${hue}, 100%, 75%)`;
                 } else {
