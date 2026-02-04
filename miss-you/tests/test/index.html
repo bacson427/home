@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_V31_FIXED_VISUALS</title>
+    <title>SON_V27_SPOTLIGHTS_STARDUST</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
         
@@ -19,68 +19,67 @@
 
         .cyber-btn {
             pointer-events: auto; background: #000; color: #0F0; border: 2px solid #0F0;
-            padding: 20px 50px; font-size: 22px; cursor: pointer; 
+            padding: 15px 35px; font-size: 20px; cursor: pointer; 
             font-family: 'Black Ops One', cursive; letter-spacing: 2px;
-            box-shadow: 0 0 20px #0F0; transition: 0.3s;
+            box-shadow: 0 0 15px #0F0; transition: 0.3s;
             animation: pulse 2s infinite; border-radius: 10px;
         }
-        
-        /* CUBE FIX: Làm rỗng ruột, chỉ hiện số to */
-        #cube-container { display: none; perspective: 800px; width: 200px; height: 200px; margin-bottom: 20px;}
-        #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 5s infinite linear; }
-        .face {
-            position: absolute; width: 196px; height: 196px;
-            border: 4px solid #0F0; /* Viền dày hơn */
-            background: rgba(0, 20, 0, 0.7); /* Nền tối hơn để rõ số */
-            color: #0F0; font-size: 120px; /* Số cực to */
-            display: flex; justify-content: center; align-items: center;
-            font-family: 'Black Ops One';
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
-        }
-        .front { transform: translateZ(100px); } .back { transform: rotateY(180deg) translateZ(100px); }
-        .right { transform: rotateY(90deg) translateZ(100px); } .left { transform: rotateY(-90deg) translateZ(100px); }
-        .top { transform: rotateX(90deg) translateZ(100px); } .bottom { transform: rotateX(-90deg) translateZ(100px); }
-        @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .cyber-btn:hover { background: #0F0; color: #000; box-shadow: 0 0 40px #0F0; }
 
-        /* MESSAGE LAYER */
+        /* Cube Countdown */
+        #cube-container { display: none; perspective: 800px; width: 150px; height: 150px; margin-bottom: 20px;}
+        #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 4s infinite linear; }
+        .face {
+            position: absolute; width: 146px; height: 146px;
+            border: 2px solid #0F0; background: rgba(0, 255, 0, 0.05);
+            color: #0F0; font-size: 80px; display: flex;
+            justify-content: center; align-items: center;
+            font-family: 'Black Ops One';
+        }
+        .front { transform: translateZ(75px); } .back { transform: rotateY(180deg) translateZ(75px); }
+        .right { transform: rotateY(90deg) translateZ(75px); } .left { transform: rotateY(-90deg) translateZ(75px); }
+        .top { transform: rotateX(90deg) translateZ(75px); } .bottom { transform: rotateX(-90deg) translateZ(75px); }
+
+        /* Message Layer */
         #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); display: none; z-index: 3000;
+            background: radial-gradient(circle, rgba(30, 0, 15, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%); 
+            display: none; z-index: 3000; opacity: 0;
             flex-direction: column; justify-content: center; align-items: center;
-            padding: 15px; box-sizing: border-box; transition: opacity 2s;
+            padding: 20px; box-sizing: border-box; transition: opacity 2s ease-in-out;
         }
+        #msg-layer.visible { opacity: 1; }
+
         #msg-content {
-            color: #FF69B4; font-size: clamp(16px, 5vw, 20px); 
+            color: #FF69B4; font-size: clamp(16px, 4.5vw, 22px); 
             line-height: 1.6; font-family: 'Dancing Script', cursive; font-weight: bold;
-            white-space: pre-wrap; width: 90%; max-width: 600px;
-            text-shadow: 0 0 10px #FF69B4; border-left: 3px solid #FF69B4; padding: 20px; 
-            background: rgba(30, 0, 15, 0.8); border-radius: 10px;
+            white-space: pre-wrap; width: 90%; max-width: 600px; max-height: 60vh; overflow-y: auto;
+            text-shadow: 0 0 5px #FF69B4; border-left: 3px solid #FF69B4; padding: 15px; 
+            background: rgba(20, 0, 10, 0.8); border-radius: 10px;
         }
-        #skip-btn { margin-top: 20px; padding: 10px 25px; border: 1px solid #FFD700; background: transparent; color: #FFD700; display: none; pointer-events: auto; font-weight: bold; cursor: pointer; border-radius: 20px; }
+        #skip-btn { 
+            margin-top: 25px; padding: 10px 30px; border: 1px solid #FFD700; 
+            background: transparent; color: #FFD700; display: none; pointer-events: auto; 
+            font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 20px;
+        }
 
-        /* VIRUS TERMINAL FIX: Tràn màn hình, chữ to, tự xuống dòng */
-        .glitch-layer { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 2000; display:none; pointer-events:none; mix-blend-mode: hard-light; }
+        /* Terminal Overlay */
         #virus-terminal { 
-            position: absolute; top:0; left:0; width:100%; height:100%; 
-            color: #F00; font-family: 'Share Tech Mono'; 
-            font-size: clamp(14px, 4vw, 20px); /* Font tự chỉnh theo màn hình */
-            display: none; z-index: 2001; 
-            text-shadow: 0 0 5px #F00; background: rgba(0,0,0,0.9); 
-            padding: 10px; box-sizing: border-box; overflow: hidden;
-            white-space: pre-wrap; /* Tự động xuống dòng */
-            word-break: break-all; /* Ngắt từ nếu quá dài */
+            position: absolute; top:0; left:0; width:100%; height:100%; color:#F00; 
+            font-family:'Share Tech Mono'; font-size:14px; display:none; z-index:2001; 
+            background:#000; padding:20px; box-sizing:border-box; 
         }
 
+        @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
     <canvas id="c"></canvas>
-    <div id="glitch-div" class="glitch-layer"></div>
     <div id="virus-terminal"></div>
     
     <div id="ui-layer">
-        <button id="btn-start" class="cyber-btn">KÍCH HOẠT</button>
+        <button id="btn-start" class="cyber-btn">KÍCH HOẠT HỆ THỐNG</button>
         <div id="cube-container">
             <div id="cube">
                 <div class="face front">10</div><div class="face back">10</div>
@@ -91,7 +90,7 @@
     </div>
 
     <div id="msg-layer">
-        <div style="color: #FFD700; font-size: 24px; margin-bottom: 15px; font-family: 'Dancing Script';">💌 Thư gửi Dương</div>
+        <div style="color: #FFD700; font-size: clamp(24px, 7vw, 36px); margin-bottom: 20px; font-family: 'Dancing Script'; text-align:center;">💌 Thư gửi Dương</div>
         <div id="msg-content"></div>
         <button id="skip-btn" onclick="startFinale()">TIẾP TỤC >></button>
     </div>
@@ -99,7 +98,7 @@
     <audio id="audio" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
 
 <script>
-    // --- DATA ---
+    // --- NỘI DUNG ---
     const LETTER = `Dương ơi, hôm nay 01/03/2026, cậu tròn 19 tuổi.
 
 Tớ chúc cậu tuổi mới luôn xinh đẹp rạng ngời, học tập thật giỏi và sớm đạt được mọi ước mơ.
@@ -110,19 +109,8 @@ Happy Birthday, my special girl! ❤️
 
 -- Nguyễn Bắc Sơn --`;
 
-    const FINAL_POEM = [
-        "❤️ Sinh Nhật Vui Vẻ ❤️",
-        "♦️ Thêm tuổi thêm xinh ♦️",
-        "♣️ Thêm nhiều sức khỏe ♣️",
-        "♠️ Với tới ước mơ ♠️"
-    ];
-
     const SCRIPT = [
         { t: "GỬI ĐẾN\nTRƯƠNG THỊ DƯƠNG", c: "#0F0" },
-        { t: "CHÚC MỪNG\nNĂM MỚI 2026", c: "#FFD700" }, 
-        { t: "XUÂN BÍNH NGỌ\nMÃ ĐÁO THÀNH CÔNG", c: "#00FFFF" }, 
-        { t: "HAPPY VALENTINE\n14/02 NGỌT NGÀO", c: "#FF0055" }, 
-        { t: "QUỐC TẾ PHỤ NỮ\n8/3 VUI VẺ", c: "#FFF" }, 
         { t: "HAPPY BIRTHDAY\nSINH NHẬT TUỔI 19", c: "#FFD700" },
         { action: "HEART_TREND" } 
     ];
@@ -132,51 +120,39 @@ Happy Birthday, my special girl! ❤️
     const isMobile = window.innerWidth < 768;
     let w, h;
 
-    const DOT_GAP = isMobile ? 3 : 3; 
-    const DOT_SIZE = isMobile ? 3 : 2; 
-
+    // Tối ưu hóa các hạt sao (Stardust)
+    const DOT_GAP = isMobile ? 4 : 3; 
+    const DOT_SIZE = isMobile ? 1.5 : 1.2; 
     let state = "IDLE"; 
-    let particles = [], fireworks = [], sparkles = [], smoke = [];
-    let scriptIdx = 0;
-    let countdown = 10;
-    let poemIdx = 0;
-    
-    // Spotlights
-    let beams = [];
-    let globalHue = 0;
-    let beamOpacity = 1;
-
-    // Matrix
-    const M_CHARS = "01"; 
-    let m_cols = [];
-    let matrixColor = "#003300";
+    let particles = [], fireworks = [], sparkles = [], spotlights = [];
+    let scriptIdx = 0, countdown = 10;
 
     function resize() {
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
-        m_cols = Array(Math.floor(w/20)).fill(0);
         
-        beams = [];
-        let count = 4;
-        for(let i=0; i<count; i++) {
-            beams.push({
-                x: (w/(count-1)) * i,
+        // Cấu hình Đèn Chiếu siêu mảnh
+        spotlights = [];
+        let spotCount = isMobile ? 4 : 6;
+        for(let i=0; i<spotCount; i++) {
+            spotlights.push({
+                x: (w / (spotCount-1)) * i,
                 angle: -Math.PI/2,
-                speed: 0.02 + Math.random() * 0.03
+                baseAngle: -Math.PI/2 + (Math.random()-0.5) * 0.4,
+                speed: 0.005 + Math.random() * 0.01,
+                width: 0.03, // Độ rộng mảnh mai
+                range: 0.2,
+                color: `hsla(${Math.random()*40 + 200}, 100%, 80%, 0.1)` 
             });
         }
     }
     window.addEventListener('resize', resize);
     resize();
 
-    // --- START ---
+    // --- LOGIC KHỞI CHẠY ---
     document.getElementById('btn-start').onclick = function() {
         this.style.display = 'none';
         document.getElementById('audio').play().catch(()=>{});
-        runCountdown();
-    };
-
-    function runCountdown() {
         state = "COUNTDOWN";
         document.getElementById('cube-container').style.display = 'block';
         const faces = document.querySelectorAll('.face');
@@ -189,421 +165,189 @@ Happy Birthday, my special girl! ❤️
                 runVirus();
             }
         }, 1000);
-    }
+    };
 
-    // --- VIRUS FIX ---
     function runVirus() {
         state = "VIRUS";
         const term = document.getElementById('virus-terminal');
-        const glitch = document.getElementById('glitch-div');
-        term.style.display = 'block'; glitch.style.display = 'block';
-        matrixColor = "#300"; 
-
-        let logs = "";
+        term.style.display = 'block';
         let count = 0;
         let t = setInterval(() => {
-            // Text ngẫu nhiên nhưng có nghĩa Hacker
-            const errs = [
-                "CRITICAL ERROR: KERNEL PANIC", 
-                "ACCESS DENIED... BYPASSING...", 
-                "INJECTING PAYLOAD... 99%", 
-                "SYSTEM OVERRIDE BY USER 'SON'",
-                "WARNING: CPU OVERHEAT",
-                "DECRYPTING SECURE FILES..."
-            ];
-            logs += `> ${errs[Math.floor(Math.random()*errs.length)]}\n`;
-            
-            // Giới hạn độ dài log để không bị tràn bộ nhớ
-            if(logs.length > 2000) logs = logs.substring(logs.length - 2000);
-            
-            term.innerText = logs; 
-            term.scrollTop = term.scrollHeight; // Auto scroll
-            count++;
-            
-            canvas.style.transform = `translate(${Math.random()*5-2.5}px, ${Math.random()*5-2.5}px)`;
-
-            if(count > 80) { // Chạy tầm 4-5 giây
+            term.innerText = `> LOAD_STARDUST_ENGINE... ${count}%\n> TARGET_LIFETIME: 19_YEARS\n> BOOTING_DRONE_SWARM... DONE.`; 
+            count += 4;
+            if(count > 100) {
                 clearInterval(t);
-                term.style.display = 'none'; glitch.style.display = 'none';
-                canvas.style.transform = "none";
-                matrixColor = "#003300"; 
-                runDroneShow(); 
+                term.style.display = 'none';
+                state = "SHOW";
+                nextScene();
             }
         }, 50);
-    }
-
-    function runDroneShow() {
-        state = "SHOW";
-        nextScene();
     }
 
     function nextScene() {
         if(scriptIdx >= SCRIPT.length) return;
         let s = SCRIPT[scriptIdx++];
-        
-        if(s.action === "HEART_TREND") {
-            runHeartTrend();
-            return;
-        }
-
+        if(s.action === "HEART_TREND") { runHeartTrend(); return; }
         formText(s.t, s.c);
-        setTimeout(nextScene, 8000); 
+        setTimeout(nextScene, 7000); 
     }
 
-    // --- HEART TREND (FIXED ORIGIN) ---
-    function runHeartTrend() {
-        state = "HEART_TREND";
-        let heartPts = getHeartOutlinePoints();
-        let textPts = getTextPoints("Trương Thị\nDương", "Dancing Script");
-        let allTargets = [...heartPts, ...textPts];
+    function formText(txt, color) {
+        const lines = txt.split('\n');
+        const tmp = document.createElement('canvas');
+        const tCtx = tmp.getContext('2d');
+        let fSize = isMobile ? 50 : 80;
+        tCtx.font = `bold ${fSize}px Arial`;
         
-        if(particles.length < allTargets.length) {
-            let add = allTargets.length - particles.length;
-            for(let i=0; i<add; i++) particles.push({x:w/2, y:h, tx:w/2, ty:h, c:'#FFF'});
+        let maxW = 0;
+        lines.forEach(l => maxW = Math.max(maxW, tCtx.measureText(l).width));
+        tmp.width = maxW + 40; 
+        tmp.height = lines.length * fSize * 1.5;
+
+        tCtx.font = `bold ${fSize}px Arial`;
+        tCtx.fillStyle = 'white';
+        tCtx.textAlign = 'center';
+        tCtx.textBaseline = 'middle';
+        lines.forEach((l, i) => tCtx.fillText(l, tmp.width/2, fSize + i * fSize * 1.2));
+        
+        const data = tCtx.getImageData(0,0, tmp.width, tmp.height).data;
+        let pts = [];
+        for(let y=0; y<tmp.height; y+=DOT_GAP) {
+            for(let x=0; x<tmp.width; x+=DOT_GAP) {
+                if(data[(y*tmp.width + x)*4 + 3] > 128) {
+                    pts.push({x: (w - tmp.width)/2 + x, y: (h - tmp.height)/2 + y});
+                }
+            }
+        }
+
+        while(particles.length < pts.length) {
+            particles.push({x: Math.random()*w, y: Math.random()*h, tx: Math.random()*w, ty: Math.random()*h, c: color, active: true});
         }
 
         particles.forEach((p, i) => {
-            if(i < allTargets.length) {
-                // XUẤT PHÁT TỪ 2 GÓC DƯỚI (Mèo bắn tim)
-                p.x = (i % 2 === 0) ? 0 : w; 
-                p.y = h;
-                
-                p.tx = allTargets[i].x; p.ty = allTargets[i].y;
-                p.c = (i < heartPts.length) ? "#FF1493" : "#FFF"; 
-                p.vx = (Math.random()-0.5)*2; p.vy = (Math.random()-0.5)*2;
-                p.isBg = false;
+            if(i < pts.length) {
+                p.tx = pts[i].x; p.ty = pts[i].y; p.c = color; p.active = true;
             } else {
+                p.active = false;
                 p.tx = Math.random()*w; p.ty = Math.random()*h;
-                p.c = "rgba(255,105,180,0.1)"; p.isBg = true;
             }
         });
+    }
 
-        setTimeout(runMessage, 15000);
+    function drawSpotlights() {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        spotlights.forEach(s => {
+            s.angle = s.baseAngle + Math.sin(Date.now() * 0.0005 * 50) * s.range;
+            let len = h * 1.5;
+            let ex = s.x + Math.cos(s.angle) * len;
+            let ey = h + Math.sin(s.angle) * len;
+
+            let g = ctx.createLinearGradient(s.x, h, ex, ey);
+            g.addColorStop(0, s.color);
+            g.addColorStop(0.4, "transparent");
+
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.moveTo(s.x, h);
+            ctx.lineTo(ex - len * s.width, ey);
+            ctx.lineTo(ex + len * s.width, ey);
+            ctx.fill();
+        });
+        ctx.restore();
+    }
+
+    function runHeartTrend() {
+        state = "HEART_TREND";
+        let heartPts = [];
+        let r = isMobile ? 12 : 18;
+        for(let t=0; t<Math.PI*2; t+=0.04) {
+            heartPts.push({
+                x: w/2 + r * 16 * Math.pow(Math.sin(t), 3),
+                y: h/2 - r * (13 * Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t))
+            });
+        }
+        particles.forEach((p, i) => {
+            if(i < heartPts.length) {
+                p.tx = heartPts[i].x; p.ty = heartPts[i].y; p.c = "#FF1493"; p.active = true;
+            } else { p.active = false; }
+        });
+        setTimeout(runMessage, 10000);
     }
 
     function runMessage() {
         state = "MSG";
         const layer = document.getElementById('msg-layer');
-        const content = document.getElementById('msg-content');
-        const btn = document.getElementById('skip-btn');
-        
         layer.style.display = 'flex';
-        // Hiệu ứng mờ dần
-        setTimeout(() => { layer.style.opacity = 1; }, 50);
-        
+        setTimeout(() => layer.classList.add('visible'), 50);
         let i = 0;
         let t = setInterval(() => {
-            content.innerText = LETTER.substring(0, i) + "_";
-            i++;
-            if(i > LETTER.length) {
-                clearInterval(t);
-                content.innerText = LETTER;
-                btn.style.display = 'block';
-                // Tự động chuyển sau 25s
-                setTimeout(() => { if(state==="MSG") startFinale(); }, 25000);
+            document.getElementById('msg-content').innerText = LETTER.substring(0, i) + "_";
+            if(++i > LETTER.length) { 
+                clearInterval(t); 
+                document.getElementById('skip-btn').style.display = 'block'; 
             }
         }, 40);
     }
 
     window.startFinale = function() {
-        const layer = document.getElementById('msg-layer');
-        layer.style.opacity = 0; // Fade out
-        
         state = "FINALE";
-        setTimeout(() => { layer.style.display = 'none'; }, 2000);
-
-        poemIdx = 0;
-        nextPoemLine(); 
-
-        setInterval(() => {
-            if(Math.random()>0.3) launchHeartFirework();
-        }, 800);
-    };
-
-    function nextPoemLine() {
-        if(poemIdx < FINAL_POEM.length) {
-            let textToShow = FINAL_POEM[poemIdx];
-            formText(textToShow, "#FFF"); 
-            poemIdx++;
-            setTimeout(nextPoemLine, 4000); 
-        } else {
-            setTimeout(runTheEnd, 4000);
-        }
+        document.getElementById('msg-layer').style.display = 'none';
+        setInterval(() => { if(fireworks.length < 5) launchFirework(); }, 600);
+        formText("TUỔI 19\nRỰC RỠ NHÉ!", "#FFD700");
     }
 
-    function runTheEnd() {
-        state = "THE_END";
-        formText("THE END", "#FFF");
-        setTimeout(triggerSmokeAndLightsOut, 4000);
+    function launchFirework() {
+        fireworks.push({x: Math.random()*w, y: h, ty: Math.random()*h*0.5, vy: -7 - Math.random()*5, c: `hsl(${Math.random()*360},100%,75%)`});
     }
 
-    // --- SMOKE & ENDING ---
-    function triggerSmokeAndLightsOut() {
-        state = "SMOKE";
-        
-        // Tạo khói
-        for(let i=0; i<60; i++) {
-            smoke.push({
-                x: Math.random()*w, y: h,
-                vx: (Math.random()-0.5)*1, vy: -Math.random()*2 - 0.5,
-                size: Math.random()*80 + 40,
-                alpha: 0, maxAlpha: 0.4
-            });
-        }
-
-        setTimeout(() => {
-            state = "THANK_YOU";
-            formText("THANK YOU\nFOR WATCHING", "#00FFFF");
-        }, 3000);
-    }
-
-    // --- LOGIC VẼ ---
-    function formText(txt, color) {
-        const lines = txt.split('\n');
-        const tmp = document.createElement('canvas');
-        const tCtx = tmp.getContext('2d');
-        
-        let fSize = isMobile ? 100 : 180;
-        if (txt.includes("THANK YOU")) fSize = isMobile ? 60 : 120;
-        let fontName = (state === "FINALE" || state === "THE_END" || state === "THANK_YOU") ? "Arial" : "Arial Black";
-
-        tCtx.font = `900 ${fSize}px "${fontName}"`;
-        let maxW = 0;
-        lines.forEach(l => {
-            let m = tCtx.measureText(l);
-            if(m.width > maxW) maxW = m.width;
-        });
-        
-        tmp.width = maxW + 50; tmp.height = lines.length * fSize * 1.5;
-        tCtx.font = `900 ${fSize}px "${fontName}"`;
-        tCtx.fillStyle = '#fff'; tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
-        lines.forEach((l, i) => { tCtx.fillText(l, tmp.width/2, fSize + i * fSize); });
-        
-        getPoints(tmp, color);
-    }
-
-    function getTextPoints(txt, font) {
-        const tmp = document.createElement('canvas');
-        const tCtx = tmp.getContext('2d');
-        let fSize = isMobile ? 40 : 60;
-        tCtx.font = `bold ${fSize}px "${font}"`;
-        let lines = txt.split('\n');
-        let maxW = 0;
-        lines.forEach(l => maxW = Math.max(maxW, tCtx.measureText(l).width));
-        tmp.width = maxW + 20; tmp.height = lines.length * fSize * 1.5;
-        tCtx.font = `bold ${fSize}px "${font}"`;
-        tCtx.fillStyle = '#fff'; tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
-        lines.forEach((l, i) => { tCtx.fillText(l, tmp.width/2, fSize + i*fSize); });
-        
-        let data = tCtx.getImageData(0,0,tmp.width,tmp.height).data;
-        let pts = [];
-        let gap = 3;
-        for(let y=0; y<tmp.height; y+=gap) {
-            for(let x=0; x<tmp.width; x+=gap) {
-                if(data[(y*tmp.width+x)*4+3] > 128) {
-                    pts.push({x: w/2 - tmp.width/2 + x, y: h/2 - tmp.height/2 + y});
-                }
-            }
-        }
-        return pts;
-    }
-
-    function getHeartOutlinePoints() {
-        let pts = [];
-        let r = Math.min(w, h) * (isMobile ? 0.015 : 0.012);
-        let count = isMobile ? 600 : 1000;
-        for(let i=0; i<count; i++) {
-            let t = (i/count) * Math.PI * 2;
-            let x = 16 * Math.pow(Math.sin(t), 3);
-            let y = -(13 * Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
-            pts.push({x: w/2 + x*r, y: h/2 + y*r - h*0.05});
-        }
-        return pts;
-    }
-
-    function getPoints(tmp, color) {
-        const data = tmp.getContext('2d').getImageData(0,0, tmp.width, tmp.height).data;
-        let pts = [];
-        let scale = Math.min(w*0.95/tmp.width, h*0.8/tmp.height); 
-        let sx = (w - tmp.width*scale)/2;
-        let sy = (h - tmp.height*scale)/2;
-        for(let y=0; y<tmp.height; y+=DOT_GAP) {
-            for(let x=0; x<tmp.width; x+=DOT_GAP) {
-                if(data[(y*tmp.width + x)*4 + 3] > 128) {
-                    pts.push({x: sx + x*scale, y: sy + y*scale});
-                }
-            }
-        }
-        if(particles.length < pts.length) {
-            let add = pts.length - particles.length;
-            for(let i=0; i<add; i++) particles.push({x:Math.random()*w, y:Math.random()*h, tx:w/2, ty:h, c:color});
-        }
-        pts.sort(() => Math.random() - 0.5);
-
-        particles.forEach((p, i) => {
-            if(i < pts.length) {
-                p.tx = pts[i].x; p.ty = pts[i].y; p.c = color; p.isBg = false;
-            } else {
-                p.tx = Math.random()*w; p.ty = Math.random()*h; p.c = "rgba(0,0,0,0)"; p.isBg = true;
-            }
-        });
-    }
-
-    // --- BEAMS ---
-    function drawBeams(time) {
-        ctx.globalCompositeOperation = 'lighter';
-        beams.forEach((b, i) => {
-            let targetAngle = Math.atan2(h/2 - h, w/2 - b.x); // Hướng về giữa
-            b.angle += (targetAngle - b.angle) * 0.05;
-            
-            let len = h * 1.5;
-            let endX = b.x + Math.cos(b.angle) * len;
-            let endY = h + Math.sin(b.angle) * len;
-
-            let grd = ctx.createLinearGradient(b.x, h, endX, endY);
-            let hue = (globalHue + i * 30) % 360;
-            grd.addColorStop(0, `hsla(${hue}, 100%, 70%, ${0.4 * beamOpacity})`); 
-            grd.addColorStop(1, "rgba(0,0,0,0)");
-
-            if(beamOpacity > 0.01) {
-                ctx.fillStyle = grd;
-                ctx.beginPath();
-                ctx.moveTo(b.x - 10, h);
-                ctx.lineTo(endX - w*0.15, endY);
-                ctx.lineTo(endX + w*0.15, endY);
-                ctx.lineTo(b.x + 10, h);
-                ctx.closePath();
-                ctx.fill();
-            }
-        });
-        ctx.globalCompositeOperation = 'source-over';
-    }
-
-    // --- SMOKE ---
-    function drawSmoke() {
-        smoke.forEach(s => {
-            s.y += s.vy; s.x += s.vx;
-            if(s.alpha < s.maxAlpha) s.alpha += 0.005;
-            
-            let grd = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.size);
-            grd.addColorStop(0, `rgba(50, 50, 50, ${s.alpha})`);
-            grd.addColorStop(1, "rgba(0,0,0,0)");
-            
-            ctx.fillStyle = grd;
-            ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
-        });
-    }
-
-    // --- EFFECTS ---
-    function launchHeartFirework() {
-        let x = Math.random() * w; let y = h;
-        let ty = h*0.2 + Math.random()*h*0.3;
-        fireworks.push({x:x, y:y, tx:x, ty:ty, vy:-12, c:`hsl(${Math.random()*60+330},100%,60%)`});
-    }
-
-    function explode(fw) {
-        for(let i=0; i<30; i++) {
-            let t = (i/30) * Math.PI * 2;
-            let dx = 16 * Math.pow(Math.sin(t), 3);
-            let dy = -(13 * Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
-            let s = Math.random() * 0.1 + 0.05; 
-            sparkles.push({x:fw.x, y:fw.y, vx:dx*s, vy:dy*s, c:fw.c, l:1.5, g:0.05});
-        }
-    }
-
-    // --- LOOP ---
-    let time = 0;
     function loop() {
-        requestAnimationFrame(loop);
-        time++;
-        globalHue += 0.5;
-
-        // Fade Out Beams Logic
-        if(state === "SMOKE" || state === "THANK_YOU") {
-            if(beamOpacity > 0) beamOpacity -= 0.01;
-        }
-
-                // BACKGROUND FIX: MATRIX RAIN EFFECT
-        // 1. Fade nền
-        ctx.fillStyle = "rgba(0,0,0,0.1)"; 
-        if(state === "HEART_TREND") ctx.fillStyle = "rgba(20,0,20,0.2)";
-        if(state === "VIRUS") ctx.fillStyle = "rgba(50,0,0,0.2)";
+        ctx.fillStyle = "rgba(0,0,0,0.12)";
         ctx.fillRect(0,0,w,h);
-        
-        // 2. Draw Matrix Rain (FIXED LOGIC)
-        if(state !== "MSG") {
-            ctx.fillStyle = matrixColor;
-            ctx.font = "14px monospace";
-            for(let i=0; i<m_cols.length; i++) {
-                let char = M_CHARS[Math.floor(Math.random()*2)];
-                let x = i * 20;
-                let y = m_cols[i] * 20;
-                ctx.fillText(char, x, y);
-                
-                // Random reset to top
-                if(y > h && Math.random() > 0.975) {
-                    m_cols[i] = 0;
-                }
-                m_cols[i]++;
-            }
-        }
 
-        // Beams
-        if((state === "SHOW" || state === "HEART_TREND" || state === "FINALE" || state === "THE_END" || state === "SMOKE") && state !== "MSG") {
-            drawBeams(time);
-        }
+        if(state !== "MSG") drawSpotlights();
 
-        // Smoke
-        if(state === "SMOKE" || state === "THANK_YOU") {
-            drawSmoke();
-        }
-
-        let beat = 1;
-        if(state === "HEART_TREND") beat = 1 + Math.sin(time*0.1)*0.03;
-
-        // Particles
         particles.forEach(p => {
-            let dx = p.tx - p.x;
-            let dy = p.ty - p.y;
-            
-            if(state === "HEART_TREND") {
-                if(!p.isBg) {
-                    // Easing về tim (Mượt)
-                    p.x += dx * 0.05; p.y += dy * 0.05; 
-                    let cx = w/2; let cy = h/2;
-                    let fx = cx + (p.x-cx)*beat;
-                    let fy = cy + (p.y-cy)*beat;
-                    ctx.fillStyle = p.c; ctx.fillRect(fx, fy, DOT_SIZE, DOT_SIZE);
-                } else {
-                    p.y -= 1; if(p.y < 0) p.y = h;
-                    ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 2, 2);
-                }
+            p.x += (p.tx - p.x) * 0.08;
+            p.y += (p.ty - p.y) * 0.08;
+
+            if(p.active || state === "HEART_TREND") {
+                ctx.fillStyle = p.c;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, DOT_SIZE, 0, Math.PI*2);
+                ctx.fill();
             } else {
-                p.x += dx * 0.1; p.y += dy * 0.1;
-                if((state === "FINALE" || state === "THE_END" || state === "THANK_YOU") && !p.isBg) {
-                    let hue = (p.x / w * 120 + time * 0.2) % 360; 
-                    ctx.fillStyle = `hsl(${hue}, 100%, 75%)`;
-                } else {
-                    ctx.fillStyle = p.c;
-                }
-                ctx.fillRect(p.x, p.y, DOT_SIZE, DOT_SIZE);
+                ctx.fillStyle = "rgba(255,255,255,0.1)";
+                ctx.fillRect(p.x, p.y, 1, 1);
             }
         });
 
-        // Fireworks & Sparkles
+        // Firework Logic
         for(let i=fireworks.length-1; i>=0; i--) {
-            let f = fireworks[i]; f.y += f.vy; f.vy += 0.2;
-            ctx.fillStyle = f.c; ctx.fillRect(f.x, f.y, 3, 3);
-            if(f.vy >= 0) { explode(f); fireworks.splice(i, 1); }
+            let f = fireworks[i];
+            f.y += f.vy; f.vy += 0.15;
+            ctx.fillStyle = f.c;
+            ctx.fillRect(f.x, f.y, 2, 2);
+            if(f.vy >= 0) {
+                for(let j=0; j<30; j++) sparkles.push({x: f.x, y: f.y, vx: (Math.random()-0.5)*5, vy: (Math.random()-0.5)*5, c: f.c, l: 1});
+                fireworks.splice(i,1);
+            }
         }
+
         for(let i=sparkles.length-1; i>=0; i--) {
-            let s = sparkles[i]; s.x += s.vx; s.y += s.vy; s.vy += s.g; s.l -= 0.03;
-            if(s.l <= 0) sparkles.splice(i, 1);
-            else { ctx.globalAlpha = Math.min(s.l, 1); ctx.fillStyle = s.c; ctx.fillRect(s.x, s.y, 2, 2); ctx.globalAlpha=1; }
+            let s = sparkles[i]; s.x += s.vx; s.y += s.vy; s.l -= 0.025;
+            if(s.l <= 0) sparkles.splice(i,1);
+            else { 
+                ctx.fillStyle = s.c; 
+                ctx.globalAlpha = s.l; 
+                ctx.fillRect(s.x, s.y, 1.5, 1.5); 
+                ctx.globalAlpha = 1; 
+            }
         }
+
+        requestAnimationFrame(loop);
     }
     loop();
-
 </script>
 </body>
 </html>
