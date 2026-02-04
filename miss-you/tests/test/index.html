@@ -3,103 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_V27_SPOTLIGHTS_STARDUST_LITE</title>
+    <title>SON_V27_ULTIMATE_SMOOTH</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Dancing+Script:wght@700&family=Share+Tech+Mono&display=swap');
         
-        body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Share Tech Mono', monospace; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: #000; overflow: hidden; 
+            font-family: 'Share Tech Mono', monospace;
+        }
+
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
 
         /* UI Layer */
         #ui-layer {
             position: absolute; width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center;
-            flex-direction: column; z-index: 999; pointer-events: none;
-        }
-
-        .cyber-btn {
-            pointer-events: auto; background: #000; color: #0F0; border: 2px solid #0F0;
-            padding: 15px 35px; font-size: 20px; cursor: pointer; 
-            font-family: 'Black Ops One', cursive; letter-spacing: 2px;
-            box-shadow: 0 0 15px #0F0; transition: 0.3s;
-            animation: pulse 2s infinite; border-radius: 10px;
-        }
-        .cyber-btn:hover { background: #0F0; color: #000; box-shadow: 0 0 40px #0F0; }
-
-        /* Cube Countdown */
-        #cube-container { display: none; perspective: 800px; width: 150px; height: 150px; margin-bottom: 20px;}
-        #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 4s infinite linear; }
-        .face {
-            position: absolute; width: 146px; height: 146px;
-            border: 2px solid #0F0; background: rgba(0, 255, 0, 0.05);
-            color: #0F0; font-size: 80px; display: flex;
+            display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            font-family: 'Black Ops One';
+            z-index: 100; pointer-events: none;
         }
-        .front { transform: translateZ(75px); } .back { transform: rotateY(180deg) translateZ(75px); }
-        .right { transform: rotateY(90deg) translateZ(75px); } .left { transform: rotateY(-90deg) translateZ(75px); }
-        .top { transform: rotateX(90deg) translateZ(75px); } .bottom { transform: rotateX(-90deg) translateZ(75px); }
 
-        /* Message Layer */
+        /* Nút bấm phong cách Cyberpunk Neon */
+        .neon-btn {
+            pointer-events: auto;
+            background: rgba(0, 20, 0, 0.6);
+            color: #0F0;
+            border: 1px solid #0F0;
+            padding: 18px 40px;
+            font-size: 18px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .neon-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .neon-btn:hover {
+            background: #0F0; color: #000;
+            box-shadow: 0 0 30px #0F0, 0 0 60px #0F0;
+            transform: scale(1.05);
+        }
+        .neon-btn:hover::before { left: 100%; }
+
+        /* Cube 3D */
+        #cube-container { 
+            display: none; width: 120px; height: 120px; 
+            perspective: 800px; margin-bottom: 30px; 
+        }
+        #cube {
+            width: 100%; height: 100%; position: relative;
+            transform-style: preserve-3d;
+            animation: rotateCube 5s infinite linear;
+        }
+        .face {
+            position: absolute; width: 116px; height: 116px;
+            border: 1px solid rgba(0, 255, 0, 0.8);
+            background: rgba(0, 255, 0, 0.05);
+            color: #0F0; font-size: 60px;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Orbitron';
+            box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.2);
+            backface-visibility: visible;
+        }
+        .f-front { transform: translateZ(60px); }
+        .f-back { transform: rotateY(180deg) translateZ(60px); }
+        .f-right { transform: rotateY(90deg) translateZ(60px); }
+        .f-left { transform: rotateY(-90deg) translateZ(60px); }
+        .f-top { transform: rotateX(90deg) translateZ(60px); }
+        .f-bottom { transform: rotateX(-90deg) translateZ(60px); }
+
+        @keyframes rotateCube {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        /* Message Box Effect */
         #msg-layer {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(30, 0, 15, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%); 
-            display: none; z-index: 3000; opacity: 0;
+            position: absolute; inset: 0;
+            background: radial-gradient(circle, rgba(10,0,5,0.9) 0%, rgba(0,0,0,0.98) 100%);
+            display: none; z-index: 200;
             flex-direction: column; justify-content: center; align-items: center;
-            padding: 20px; box-sizing: border-box; transition: opacity 2s ease-in-out;
+            opacity: 0; transition: opacity 1.5s ease;
         }
-        #msg-layer.visible { opacity: 1; }
+        #msg-layer.show { opacity: 1; }
 
-        #msg-content {
-            color: #FF69B4; font-size: clamp(16px, 4.5vw, 22px); 
-            line-height: 1.6; font-family: 'Dancing Script', cursive; font-weight: bold;
-            white-space: pre-wrap; width: 90%; max-width: 600px; max-height: 60vh; overflow-y: auto;
-            text-shadow: 0 0 5px #FF69B4; border-left: 3px solid #FF69B4; padding: 15px; 
-            background: rgba(20, 0, 10, 0.8); border-radius: 10px;
+        #msg-box {
+            width: 85%; max-width: 550px;
+            padding: 30px;
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid rgba(255, 105, 180, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(255, 20, 147, 0.15);
+            backdrop-filter: blur(10px);
+            transform: translateY(20px);
+            transition: transform 1s ease;
         }
-        #skip-btn { 
-            margin-top: 25px; padding: 10px 30px; border: 1px solid #FFD700; 
-            background: transparent; color: #FFD700; display: none; pointer-events: auto; 
-            font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 20px;
+        #msg-layer.show #msg-box { transform: translateY(0); }
+
+        #letter-content {
+            color: #FFB7C5; font-family: 'Dancing Script', cursive;
+            font-size: clamp(18px, 5vw, 24px); line-height: 1.6;
+            text-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
+            white-space: pre-wrap;
+            min-height: 100px;
         }
 
-        /* Terminal Overlay */
-        #virus-terminal { 
-            position: absolute; top:0; left:0; width:100%; height:100%; color:#F00; 
-            font-family:'Share Tech Mono'; font-size:14px; display:none; z-index:2001; 
-            background:#000; padding:20px; box-sizing:border-box; 
+        #skip-btn {
+            margin-top: 25px; padding: 10px 30px;
+            background: transparent; border: 1px solid #FFD700;
+            color: #FFD700; border-radius: 25px;
+            font-family: 'Share Tech Mono'; font-weight: bold;
+            cursor: pointer; opacity: 0; transition: 0.5s;
+            pointer-events: none;
         }
+        #skip-btn.active { opacity: 1; pointer-events: auto; }
+        #skip-btn:hover { background: rgba(255, 215, 0, 0.1); box-shadow: 0 0 15px #FFD700; }
 
-        @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        /* Virus Terminal */
+        #terminal {
+            position: absolute; inset: 0; background: #000;
+            color: #F00; font-family: 'Share Tech Mono'; padding: 20px;
+            font-size: 14px; z-index: 50; display: none;
+        }
     </style>
 </head>
 <body>
-    <canvas id="c"></canvas>
-    <div id="virus-terminal"></div>
-    
+    <canvas id="canvas"></canvas>
+
+    <div id="terminal"></div>
+
     <div id="ui-layer">
-        <button id="btn-start" class="cyber-btn">KÍCH HOẠT HỆ THỐNG</button>
         <div id="cube-container">
             <div id="cube">
-                <div class="face front">10</div><div class="face back">10</div>
-                <div class="face right">10</div><div class="face left">10</div>
-                <div class="face top">10</div><div class="face bottom">10</div>
+                <div class="face f-front">10</div><div class="face f-back">10</div>
+                <div class="face f-right">10</div><div class="face f-left">10</div>
+                <div class="face f-top">10</div><div class="face f-bottom">10</div>
             </div>
         </div>
+        <button id="start-btn" class="neon-btn">KHỞI ĐỘNG HỆ THỐNG</button>
     </div>
 
     <div id="msg-layer">
-        <div style="color: #FFD700; font-size: clamp(24px, 7vw, 36px); margin-bottom: 20px; font-family: 'Dancing Script'; text-align:center;">💌 Thư gửi Dương</div>
-        <div id="msg-content"></div>
-        <button id="skip-btn" onclick="startFinale()">TIẾP TỤC >></button>
+        <div id="msg-box">
+            <div style="text-align:center; color: #FFD700; font-family: 'Dancing Script'; font-size: 32px; margin-bottom: 15px;">💌 Gửi Dương</div>
+            <div id="letter-content"></div>
+        </div>
+        <button id="skip-btn" onclick="endMessage()">TIẾP TỤC >></button>
     </div>
 
-    <audio id="audio" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
+    <audio id="bg-music" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
 
 <script>
-    // --- NỘI DUNG ---
-    const LETTER = `Dương ơi, hôm nay 01/03/2026, cậu tròn 19 tuổi.
+    /* --- CONFIGURATION --- */
+    const CONFIG = {
+        particleCount: window.innerWidth < 768 ? 900 : 2500, // Tự động giảm hạt trên mobile
+        particleSpeed: 0.08, // Tốc độ bay về (Physics damping)
+        colors: {
+            primary: '#0F0',
+            gold: '#FFD700',
+            heart: '#FF1493',
+            blue: '#00FFFF'
+        }
+    };
+
+    const LETTER_TEXT = `Dương ơi, hôm nay 01/03/2026, cậu tròn 19 tuổi.
 
 Tớ chúc cậu tuổi mới luôn xinh đẹp rạng ngời, học tập thật giỏi và sớm đạt được mọi ước mơ.
 
@@ -109,244 +188,387 @@ Happy Birthday, my special girl! ❤️
 
 -- Nguyễn Bắc Sơn --`;
 
-    const SCRIPT = [
-        { t: "GỬI ĐẾN\nTRƯƠNG THỊ DƯƠNG", c: "#0F0" },
-        { t: "HAPPY BIRTHDAY\nSINH NHẬT TUỔI 19", c: "#FFD700" },
-        { action: "HEART_TREND" } 
+    const SCENES = [
+        { text: "GỬI ĐẾN\nTRƯƠNG THỊ DƯƠNG", color: "#0F0", time: 6000 },
+        { text: "CHÚC MỪNG\nNĂM MỚI 2026", color: "#FFD700", time: 6000 },
+        { text: "TUỔI 19\nRỰC RỠ NHÉ", color: "#00FFFF", time: 6000 },
+        { mode: "HEART" }
     ];
 
-    const canvas = document.getElementById('c');
+    /* --- INIT --- */
+    const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    const isMobile = window.innerWidth < 768;
-    let w, h;
+    let width, height;
+    
+    let particles = [];
+    let fireworks = [];
+    let sparkles = [];
+    let spotlights = [];
+    let state = "IDLE"; // IDLE, COUNTDOWN, VIRUS, SCENE, HEART, MSG, FINALE
+    let sceneIndex = 0;
+    let countdownVal = 10;
 
-    // Tối ưu hóa các hạt sao (Stardust)
-    const DOT_GAP = isMobile ? 4 : 3; 
-    const DOT_SIZE = isMobile ? 1.5 : 1.2; 
-    let state = "IDLE"; 
-    let particles = [], fireworks = [], sparkles = [], spotlights = [];
-    let scriptIdx = 0, countdown = 10;
-
+    // Resize handling
     function resize() {
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
-        
-        // --- CHỈNH SỬA Ở ĐÂY: Cấu hình Đèn Chiếu nhỏ hơn ---
-        spotlights = [];
-        let spotCount = isMobile ? 4 : 6;
-        for(let i=0; i<spotCount; i++) {
-            spotlights.push({
-                x: (w / (spotCount-1)) * i,
-                angle: -Math.PI/2,
-                baseAngle: -Math.PI/2 + (Math.random()-0.5) * 0.4,
-                speed: 0.005 + Math.random() * 0.01,
-                width: 0.01, // Đã chỉnh bé lại (cũ là 0.03)
-                range: 0.1,  // Giảm biên độ lắc (cũ là 0.2)
-                color: `hsla(${Math.random()*40 + 200}, 100%, 80%, 0.05)` // Giảm độ đậm màu (cũ là 0.1)
-            });
-        }
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        initSpotlights();
     }
     window.addEventListener('resize', resize);
     resize();
 
-    // --- LOGIC KHỞI CHẠY ---
-    document.getElementById('btn-start').onclick = function() {
-        this.style.display = 'none';
-        document.getElementById('audio').play().catch(()=>{});
+    /* --- SPOTLIGHTS (ATMOSPHERIC) --- */
+    function initSpotlights() {
+        spotlights = [];
+        const count = window.innerWidth < 768 ? 4 : 7;
+        for (let i = 0; i < count; i++) {
+            spotlights.push({
+                x: (width / count) * i + (width/count)/2,
+                angle: -Math.PI / 2,
+                targetAngle: -Math.PI / 2 + (Math.random() - 0.5),
+                width: 0.1 + Math.random() * 0.1,
+                speed: 0.002 + Math.random() * 0.003,
+                color: `hsla(${200 + Math.random()*50}, 80%, 60%, 0.08)`
+            });
+        }
+    }
+
+    function drawSpotlights() {
+        ctx.globalCompositeOperation = 'lighter'; // Key for beauty
+        spotlights.forEach(s => {
+            // Smooth movement
+            s.angle += Math.sin(Date.now() * s.speed) * 0.002;
+            
+            const len = height * 1.2;
+            const ex = s.x + Math.cos(s.angle) * len;
+            const ey = height + Math.sin(s.angle) * len;
+
+            const grad = ctx.createLinearGradient(s.x, height, ex, ey);
+            grad.addColorStop(0, s.color);
+            grad.addColorStop(0.5, s.color.replace('0.08', '0.02'));
+            grad.addColorStop(1, 'transparent');
+
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.moveTo(s.x, height);
+            ctx.lineTo(ex - len * s.width, ey);
+            ctx.lineTo(ex + len * s.width, ey);
+            ctx.fill();
+        });
+        ctx.globalCompositeOperation = 'source-over';
+    }
+
+    /* --- PARTICLE ENGINE --- */
+    class Particle {
+        constructor(x, y) {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.tx = x; // Target X
+            this.ty = y; // Target Y
+            this.vx = 0; // Velocity
+            this.vy = 0;
+            this.color = '#FFF';
+            this.size = Math.random() * 2 + 1;
+            this.friction = 0.94; // Smooth stop
+            this.ease = 0.05 + Math.random() * 0.05; // Random responsiveness
+            this.drift = Math.random() * 0.5; // Idle floating
+            this.alpha = 1;
+        }
+
+        update(isHeartMode) {
+            // Physics based movement to target
+            const dx = this.tx - this.x;
+            const dy = this.ty - this.y;
+            
+            this.vx += dx * this.ease * 0.1;
+            this.vy += dy * this.ease * 0.1;
+            
+            // Apply friction
+            this.vx *= this.friction;
+            this.vy *= this.friction;
+
+            // Add organic drift (floating effect)
+            if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
+                this.x += Math.sin(Date.now() * 0.002 + this.drift) * 0.3;
+                this.y += Math.cos(Date.now() * 0.003 + this.drift) * 0.3;
+            } else {
+                this.x += this.vx;
+                this.y += this.vy;
+            }
+
+            // Heart beat effect
+            if (isHeartMode) {
+                const beat = 1 + Math.sin(Date.now() * 0.01) * 0.05;
+                const cx = width/2;
+                const cy = height/2;
+                this.x = cx + (this.x - cx) * beat;
+                this.y = cy + (this.y - cy) * beat;
+            }
+        }
+
+        draw() {
+            ctx.globalAlpha = this.alpha;
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    /* --- TEXT & SHAPE GENERATION --- */
+    function getPointsFromText(text, color) {
+        const offCanvas = document.createElement('canvas');
+        const offCtx = offCanvas.getContext('2d');
+        offCanvas.width = width;
+        offCanvas.height = height;
+        
+        const fontSize = window.innerWidth < 768 ? 50 : 100;
+        offCtx.font = `900 ${fontSize}px 'Arial'`;
+        offCtx.fillStyle = '#FFF';
+        offCtx.textAlign = 'center';
+        offCtx.textBaseline = 'middle';
+        
+        const lines = text.split('\n');
+        const lineHeight = fontSize * 1.2;
+        const totalHeight = lines.length * lineHeight;
+        const startY = (height - totalHeight) / 2 + lineHeight/2;
+
+        lines.forEach((line, i) => {
+            offCtx.fillText(line, width / 2, startY + i * lineHeight);
+        });
+
+        const data = offCtx.getImageData(0, 0, width, height).data;
+        const points = [];
+        const gap = window.innerWidth < 768 ? 4 : 5; // Độ phân giải điểm
+
+        for (let y = 0; y < height; y += gap) {
+            for (let x = 0; x < width; x += gap) {
+                if (data[(y * width + x) * 4 + 3] > 128) {
+                    points.push({x, y, c: color});
+                }
+            }
+        }
+        return points;
+    }
+
+    function getHeartPoints() {
+        const points = [];
+        const r = Math.min(width, height) * 0.025; // Scale heart
+        const totalPoints = CONFIG.particleCount * 0.6;
+        
+        for (let i = 0; i < totalPoints; i++) {
+            const t = (i / totalPoints) * Math.PI * 2;
+            const x = 16 * Math.pow(Math.sin(t), 3);
+            const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+            
+            // Random fill inside heart
+            const scale = Math.random() > 0.3 ? 1 : Math.random(); 
+            
+            points.push({
+                x: width / 2 + (x * r * scale),
+                y: height / 2 + (y * r * scale),
+                c: CONFIG.colors.heart
+            });
+        }
+        return points;
+    }
+
+    function morphTo(points) {
+        // Shuffle particles for cool effect
+        particles.sort(() => Math.random() - 0.5);
+        points.sort(() => Math.random() - 0.5);
+
+        // Add or remove particles
+        if (particles.length < points.length) {
+            const needed = points.length - particles.length;
+            for(let i=0; i<needed; i++) particles.push(new Particle(width/2, height/2));
+        } else {
+            particles.splice(points.length);
+        }
+
+        // Assign targets
+        particles.forEach((p, i) => {
+            p.tx = points[i].x;
+            p.ty = points[i].y;
+            p.color = points[i].c;
+        });
+    }
+
+    /* --- GAME LOOP CONTROL --- */
+    document.getElementById('start-btn').onclick = () => {
+        document.getElementById('start-btn').style.display = 'none';
+        document.getElementById('bg-music').play().catch(()=>{});
         state = "COUNTDOWN";
         document.getElementById('cube-container').style.display = 'block';
+        runCountdown();
+    };
+
+    function runCountdown() {
         const faces = document.querySelectorAll('.face');
-        let tmr = setInterval(() => {
-            countdown--;
-            faces.forEach(f => f.innerText = countdown);
-            if(countdown <= 0) {
-                clearInterval(tmr);
+        const timer = setInterval(() => {
+            countdownVal--;
+            faces.forEach(f => f.innerText = countdownVal);
+            if (countdownVal <= 0) {
+                clearInterval(timer);
                 document.getElementById('cube-container').style.display = 'none';
                 runVirus();
             }
         }, 1000);
-    };
+    }
 
     function runVirus() {
         state = "VIRUS";
-        const term = document.getElementById('virus-terminal');
+        const term = document.getElementById('terminal');
         term.style.display = 'block';
-        let count = 0;
-        let t = setInterval(() => {
-            term.innerText = `> LOAD_STARDUST_ENGINE... ${count}%\n> TARGET_LIFETIME: 19_YEARS\n> BOOTING_DRONE_SWARM... DONE.`; 
-            count += 4;
-            if(count > 100) {
-                clearInterval(t);
+        let log = "";
+        let p = 0;
+        const vTimer = setInterval(() => {
+            log += `> SYSTEM OVERRIDE... ${p}%\n`;
+            if (Math.random() > 0.7) log += `> BYPASSING FIREWALL... SUCCESS\n`;
+            term.innerText = log;
+            term.scrollTop = term.scrollHeight;
+            p += 2;
+            if (p > 100) {
+                clearInterval(vTimer);
                 term.style.display = 'none';
-                state = "SHOW";
+                state = "SCENE";
                 nextScene();
             }
         }, 50);
     }
 
     function nextScene() {
-        if(scriptIdx >= SCRIPT.length) return;
-        let s = SCRIPT[scriptIdx++];
-        if(s.action === "HEART_TREND") { runHeartTrend(); return; }
-        formText(s.t, s.c);
-        setTimeout(nextScene, 7000); 
-    }
-
-    function formText(txt, color) {
-        const lines = txt.split('\n');
-        const tmp = document.createElement('canvas');
-        const tCtx = tmp.getContext('2d');
-        let fSize = isMobile ? 50 : 80;
-        tCtx.font = `bold ${fSize}px Arial`;
+        if (sceneIndex >= SCENES.length) return;
         
-        let maxW = 0;
-        lines.forEach(l => maxW = Math.max(maxW, tCtx.measureText(l).width));
-        tmp.width = maxW + 40; 
-        tmp.height = lines.length * fSize * 1.5;
-
-        tCtx.font = `bold ${fSize}px Arial`;
-        tCtx.fillStyle = 'white';
-        tCtx.textAlign = 'center';
-        tCtx.textBaseline = 'middle';
-        lines.forEach((l, i) => tCtx.fillText(l, tmp.width/2, fSize + i * fSize * 1.2));
-        
-        const data = tCtx.getImageData(0,0, tmp.width, tmp.height).data;
-        let pts = [];
-        for(let y=0; y<tmp.height; y+=DOT_GAP) {
-            for(let x=0; x<tmp.width; x+=DOT_GAP) {
-                if(data[(y*tmp.width + x)*4 + 3] > 128) {
-                    pts.push({x: (w - tmp.width)/2 + x, y: (h - tmp.height)/2 + y});
-                }
-            }
+        const scene = SCENES[sceneIndex];
+        if (scene.mode === "HEART") {
+            state = "HEART";
+            morphTo(getHeartPoints());
+            setTimeout(showMessage, 8000);
+        } else {
+            morphTo(getPointsFromText(scene.text, scene.color));
+            setTimeout(nextScene, scene.time);
+            sceneIndex++;
         }
-
-        while(particles.length < pts.length) {
-            particles.push({x: Math.random()*w, y: Math.random()*h, tx: Math.random()*w, ty: Math.random()*h, c: color, active: true});
-        }
-
-        particles.forEach((p, i) => {
-            if(i < pts.length) {
-                p.tx = pts[i].x; p.ty = pts[i].y; p.c = color; p.active = true;
-            } else {
-                p.active = false;
-                p.tx = Math.random()*w; p.ty = Math.random()*h;
-            }
-        });
     }
 
-    function drawSpotlights() {
-        ctx.save();
-        ctx.globalCompositeOperation = 'lighter';
-        spotlights.forEach(s => {
-            s.angle = s.baseAngle + Math.sin(Date.now() * 0.0005 * 50) * s.range;
-            let len = h * 1.5;
-            let ex = s.x + Math.cos(s.angle) * len;
-            let ey = h + Math.sin(s.angle) * len;
-
-            let g = ctx.createLinearGradient(s.x, h, ex, ey);
-            g.addColorStop(0, s.color);
-            g.addColorStop(0.4, "transparent");
-
-            ctx.fillStyle = g;
-            ctx.beginPath();
-            ctx.moveTo(s.x, h);
-            ctx.lineTo(ex - len * s.width, ey);
-            ctx.lineTo(ex + len * s.width, ey);
-            ctx.fill();
-        });
-        ctx.restore();
-    }
-
-    function runHeartTrend() {
-        state = "HEART_TREND";
-        let heartPts = [];
-        let r = isMobile ? 12 : 18;
-        for(let t=0; t<Math.PI*2; t+=0.04) {
-            heartPts.push({
-                x: w/2 + r * 16 * Math.pow(Math.sin(t), 3),
-                y: h/2 - r * (13 * Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t))
-            });
-        }
-        particles.forEach((p, i) => {
-            if(i < heartPts.length) {
-                p.tx = heartPts[i].x; p.ty = heartPts[i].y; p.c = "#FF1493"; p.active = true;
-            } else { p.active = false; }
-        });
-        setTimeout(runMessage, 10000);
-    }
-
-    function runMessage() {
+    function showMessage() {
         state = "MSG";
         const layer = document.getElementById('msg-layer');
         layer.style.display = 'flex';
-        setTimeout(() => layer.classList.add('visible'), 50);
+        // Force reflow
+        void layer.offsetWidth;
+        layer.classList.add('show');
+
+        // Typewriter effect
+        const content = document.getElementById('letter-content');
         let i = 0;
-        let t = setInterval(() => {
-            document.getElementById('msg-content').innerText = LETTER.substring(0, i) + "_";
-            if(++i > LETTER.length) { 
-                clearInterval(t); 
-                document.getElementById('skip-btn').style.display = 'block'; 
+        const typeTimer = setInterval(() => {
+            content.innerText = LETTER_TEXT.substring(0, i) + "|";
+            i++;
+            if (i > LETTER_TEXT.length) {
+                clearInterval(typeTimer);
+                content.innerText = LETTER_TEXT;
+                document.getElementById('skip-btn').classList.add('active');
             }
-        }, 40);
+        }, 30);
     }
 
-    window.startFinale = function() {
+    window.endMessage = function() {
+        document.getElementById('msg-layer').classList.remove('show');
+        setTimeout(() => {
+            document.getElementById('msg-layer').style.display = 'none';
+            startFinale();
+        }, 1000);
+    }
+
+    function startFinale() {
         state = "FINALE";
-        document.getElementById('msg-layer').style.display = 'none';
-        setInterval(() => { if(fireworks.length < 5) launchFirework(); }, 600);
-        formText("TUỔI 19\nRỰC RỠ NHÉ!", "#FFD700");
+        morphTo(getPointsFromText("HAPPY\nBIRTHDAY", "#FFD700"));
+        
+        setInterval(() => {
+            // Fireworks loop
+            fireworks.push({
+                x: Math.random() * width,
+                y: height,
+                vx: (Math.random() - 0.5) * 4,
+                vy: -(Math.random() * 5 + 10),
+                color: `hsl(${Math.random()*360}, 100%, 70%)`,
+                exploded: false
+            });
+        }, 800);
     }
 
-    function launchFirework() {
-        fireworks.push({x: Math.random()*w, y: h, ty: Math.random()*h*0.5, vy: -7 - Math.random()*5, c: `hsl(${Math.random()*360},100%,75%)`});
-    }
-
+    /* --- ANIMATION LOOP --- */
     function loop() {
-        ctx.fillStyle = "rgba(0,0,0,0.12)";
-        ctx.fillRect(0,0,w,h);
+        // Clear screen with trail effect (smoothness)
+        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+        ctx.fillRect(0, 0, width, height);
 
-        if(state !== "MSG") drawSpotlights();
-
-        particles.forEach(p => {
-            p.x += (p.tx - p.x) * 0.08;
-            p.y += (p.ty - p.y) * 0.08;
-
-            if(p.active || state === "HEART_TREND") {
-                ctx.fillStyle = p.c;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, DOT_SIZE, 0, Math.PI*2);
-                ctx.fill();
-            } else {
-                ctx.fillStyle = "rgba(255,255,255,0.1)";
-                ctx.fillRect(p.x, p.y, 1, 1);
-            }
-        });
-
-        // Firework Logic
-        for(let i=fireworks.length-1; i>=0; i--) {
-            let f = fireworks[i];
-            f.y += f.vy; f.vy += 0.15;
-            ctx.fillStyle = f.c;
-            ctx.fillRect(f.x, f.y, 2, 2);
-            if(f.vy >= 0) {
-                for(let j=0; j<30; j++) sparkles.push({x: f.x, y: f.y, vx: (Math.random()-0.5)*5, vy: (Math.random()-0.5)*5, c: f.c, l: 1});
-                fireworks.splice(i,1);
-            }
+        if (state === "SCENE" || state === "HEART" || state === "FINALE") {
+            drawSpotlights();
+            
+            // Set blending for glow effect
+            ctx.globalCompositeOperation = 'lighter';
+            particles.forEach(p => {
+                p.update(state === "HEART");
+                p.draw();
+            });
+            ctx.globalCompositeOperation = 'source-over';
         }
 
-        for(let i=sparkles.length-1; i>=0; i--) {
-            let s = sparkles[i]; s.x += s.vx; s.y += s.vy; s.l -= 0.025;
-            if(s.l <= 0) sparkles.splice(i,1);
-            else { 
-                ctx.fillStyle = s.c; 
-                ctx.globalAlpha = s.l; 
-                ctx.fillRect(s.x, s.y, 1.5, 1.5); 
-                ctx.globalAlpha = 1; 
-            }
+        if (state === "FINALE") {
+            updateFireworks();
         }
 
         requestAnimationFrame(loop);
     }
+
+    function updateFireworks() {
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+            let f = fireworks[i];
+            if (!f.exploded) {
+                f.x += f.vx;
+                f.y += f.vy;
+                f.vy += 0.2; // Gravity
+                
+                ctx.fillStyle = f.color;
+                ctx.fillRect(f.x, f.y, 3, 3);
+
+                if (f.vy >= 0) {
+                    f.exploded = true;
+                    // Explosion
+                    for (let j = 0; j < 40; j++) {
+                        sparkles.push({
+                            x: f.x, y: f.y,
+                            vx: Math.cos(j/20 * Math.PI) * Math.random() * 6,
+                            vy: Math.sin(j/20 * Math.PI) * Math.random() * 6,
+                            color: f.color,
+                            alpha: 1
+                        });
+                    }
+                }
+            } else {
+                fireworks.splice(i, 1);
+            }
+        }
+
+        for (let i = sparkles.length - 1; i >= 0; i--) {
+            let s = sparkles[i];
+            s.x += s.vx;
+            s.y += s.vy;
+            s.vy += 0.1;
+            s.alpha -= 0.02;
+            
+            ctx.globalAlpha = s.alpha;
+            ctx.fillStyle = s.color;
+            ctx.fillRect(s.x, s.y, 2, 2);
+            ctx.globalAlpha = 1;
+
+            if (s.alpha <= 0) sparkles.splice(i, 1);
+        }
+    }
+
     loop();
 </script>
 </body>
