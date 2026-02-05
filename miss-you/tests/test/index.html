@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_V27_SPOTLIGHTS_STARDUST</title>
+    <title>SON_V27_SPOTLIGHTS_STARDUST_PRO</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
         
@@ -63,11 +63,13 @@
             font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 20px;
         }
 
-        /* Terminal Overlay */
+        /* Terminal Overlay - ĐÃ CHỈNH SỬA */
         #virus-terminal { 
-            position: absolute; top:0; left:0; width:100%; height:100%; color:#F00; 
-            font-family:'Share Tech Mono'; font-size:14px; display:none; z-index:2001; 
-            background:#000; padding:20px; box-sizing:border-box; 
+            position: absolute; top:0; left:0; width:100%; height:100%; color:#0F0; 
+            font-family:'Share Tech Mono'; font-size:16px; display:none; z-index:2001; 
+            background:#000; padding:40px 20px; box-sizing:border-box; 
+            line-height: 1.5; text-shadow: 0 0 5px #0F0;
+            overflow: hidden;
         }
 
         @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
@@ -114,13 +116,28 @@ Happy Birthday, my special girl! ❤️
         { t: "HAPPY BIRTHDAY\nSINH NHẬT TUỔI 19", c: "#FFD700" },
         { action: "HEART_TREND" } 
     ];
+    
+    // --- NỘI DUNG TERMINAL MỚI ---
+    const TERMINAL_LOGS = [
+        "> INITIALIZING_SYSTEM_KERNEL...",
+        "> ACCESSING_DATABASE: [MEMORY_BANK_V27]",
+        "> CONNECTING_TO_SATELLITE... [OK]",
+        "> TARGET_IDENTIFIED: TRUONG_THI_DUONG",
+        "> SCANNING_ATTRIBUTES: CUTE, SMART, SPECIAL...",
+        "> DETECTED_EVENT: BIRTHDAY_19TH",
+        "> UPGRADING_AGE_MODULE: 18 -> 19 [COMPLETE]",
+        "> LOADING_HAPPINESS_PROTOCOL... 100%",
+        "> CALIBRATING_STARDUST_ENGINE...",
+        "> SYNCING_HEARTBEAT_RHYTHM... [SYNCED]",
+        "> DECRYPTING_MESSAGE_FROM_SON...",
+        "> SYSTEM_READY. EXECUTE_SHOW_TIME!"
+    ];
 
     const canvas = document.getElementById('c');
     const ctx = canvas.getContext('2d');
     const isMobile = window.innerWidth < 768;
     let w, h;
 
-    // Tối ưu hóa các hạt sao (Stardust)
     const DOT_GAP = isMobile ? 4 : 3; 
     const DOT_SIZE = isMobile ? 1.5 : 1.2; 
     let state = "IDLE"; 
@@ -130,8 +147,6 @@ Happy Birthday, my special girl! ❤️
     function resize() {
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
-        
-        // --- CHỈNH SỬA ĐÈN CHIẾU TẠI ĐÂY ---
         spotlights = [];
         let spotCount = isMobile ? 4 : 6;
         for(let i=0; i<spotCount; i++) {
@@ -140,9 +155,9 @@ Happy Birthday, my special girl! ❤️
                 angle: -Math.PI/2,
                 baseAngle: -Math.PI/2 + (Math.random()-0.5) * 0.4,
                 speed: 0.005 + Math.random() * 0.01,
-                width: 0.01, // Đã chỉnh bé lại (cũ: 0.03)
-                range: 0.15, // Giảm biên độ lắc (cũ: 0.2)
-                color: `hsla(${Math.random()*40 + 200}, 100%, 80%, 0.05)` // Giảm opacity (cũ: 0.1)
+                width: 0.01, 
+                range: 0.15, 
+                color: `hsla(${Math.random()*40 + 200}, 100%, 80%, 0.05)` 
             });
         }
     }
@@ -167,21 +182,46 @@ Happy Birthday, my special girl! ❤️
         }, 1000);
     };
 
+    // --- HÀM TERMINAL MỚI ---
     function runVirus() {
         state = "VIRUS";
         const term = document.getElementById('virus-terminal');
         term.style.display = 'block';
-        let count = 0;
-        let t = setInterval(() => {
-            term.innerText = `> LOAD_STARDUST_ENGINE... ${count}%\n> TARGET_LIFETIME: 19_YEARS\n> BOOTING_DRONE_SWARM... DONE.`; 
-            count += 4;
-            if(count > 100) {
-                clearInterval(t);
-                term.style.display = 'none';
-                state = "SHOW";
-                nextScene();
+        
+        let lineIdx = 0;
+        let charIdx = 0;
+        let currentText = "";
+        
+        // Hiệu ứng gõ từng dòng một
+        function typeLine() {
+            if(lineIdx >= TERMINAL_LOGS.length) {
+                setTimeout(() => {
+                    term.style.display = 'none';
+                    state = "SHOW";
+                    nextScene();
+                }, 1000);
+                return;
             }
-        }, 50);
+
+            let line = TERMINAL_LOGS[lineIdx];
+            // In dòng hiện tại + con trỏ nhấp nháy
+            term.innerHTML = currentText + line.substring(0, charIdx) + "<span style='color:#fff'>_</span>";
+
+            if(charIdx < line.length) {
+                charIdx++;
+                // Tốc độ gõ chữ ngẫu nhiên cho giống hacker
+                setTimeout(typeLine, Math.random() * 30 + 10); 
+            } else {
+                // Xong 1 dòng, xuống dòng
+                currentText += line + "<br>";
+                lineIdx++;
+                charIdx = 0;
+                term.scrollTop = term.scrollHeight; // Tự cuộn xuống dưới
+                setTimeout(typeLine, 300); // Nghỉ 1 chút trước khi qua dòng mới
+            }
+        }
+        
+        typeLine();
     }
 
     function nextScene() {
@@ -245,7 +285,6 @@ Happy Birthday, my special girl! ❤️
 
             let g = ctx.createLinearGradient(s.x, h, ex, ey);
             g.addColorStop(0, s.color);
-            // GIẢM ĐIỂM DỪNG GRADIENT (TỪ 0.4 XUỐNG 0.25) ĐỂ ĐÈN KHÔNG CHIẾU QUÁ CAO
             g.addColorStop(0.25, "transparent"); 
 
             ctx.fillStyle = g;
