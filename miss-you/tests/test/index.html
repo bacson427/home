@@ -3,17 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SON_V27_FIXED_FORM</title>
+    <title>SON_V27_SPOTLIGHTS_STARDUST</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
         
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            margin: 0; overflow: hidden; background-color: #000; 
-            font-family: 'Share Tech Mono', monospace;
-        }
-        
+        body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Share Tech Mono', monospace; }
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
 
         /* UI Layer */
@@ -24,67 +18,60 @@
         }
 
         .cyber-btn {
-            pointer-events: auto; 
-            background: rgba(0, 30, 0, 0.8); 
-            color: #0F0; border: 2px solid #0F0;
-            padding: 20px 50px; font-size: 22px; cursor: pointer; 
+            pointer-events: auto; background: #000; color: #0F0; border: 2px solid #0F0;
+            padding: 15px 35px; font-size: 20px; cursor: pointer; 
             font-family: 'Black Ops One', cursive; letter-spacing: 2px;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5); 
-            transition: 0.3s; border-radius: 8px; text-transform: uppercase;
+            box-shadow: 0 0 15px #0F0; transition: 0.3s;
+            animation: pulse 2s infinite; border-radius: 10px;
         }
-        .cyber-btn:hover { background: #0F0; color: #000; box-shadow: 0 0 50px #0F0; transform: scale(1.05); }
+        .cyber-btn:hover { background: #0F0; color: #000; box-shadow: 0 0 40px #0F0; }
 
-        /* Cube */
-        #cube-container { display: none; perspective: 800px; width: 120px; height: 120px; margin-bottom: 40px; }
-        #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 5s infinite linear; }
+        /* Cube Countdown */
+        #cube-container { display: none; perspective: 800px; width: 150px; height: 150px; margin-bottom: 20px;}
+        #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 4s infinite linear; }
         .face {
-            position: absolute; width: 116px; height: 116px;
-            border: 2px solid #0F0; background: rgba(0, 255, 0, 0.1);
-            color: #0F0; font-size: 60px; display: flex;
+            position: absolute; width: 146px; height: 146px;
+            border: 2px solid #0F0; background: rgba(0, 255, 0, 0.05);
+            color: #0F0; font-size: 80px; display: flex;
             justify-content: center; align-items: center;
-            font-family: 'Black Ops One'; box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.3);
+            font-family: 'Black Ops One';
         }
-        .front { transform: translateZ(60px); } .back { transform: rotateY(180deg) translateZ(60px); }
-        .right { transform: rotateY(90deg) translateZ(60px); } .left { transform: rotateY(-90deg) translateZ(60px); }
-        .top { transform: rotateX(90deg) translateZ(60px); } .bottom { transform: rotateX(-90deg) translateZ(60px); }
-        @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
+        .front { transform: translateZ(75px); } .back { transform: rotateY(180deg) translateZ(75px); }
+        .right { transform: rotateY(90deg) translateZ(75px); } .left { transform: rotateY(-90deg) translateZ(75px); }
+        .top { transform: rotateX(90deg) translateZ(75px); } .bottom { transform: rotateX(-90deg) translateZ(75px); }
 
-        /* Message */
+        /* Message Layer */
         #msg-layer {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle, rgba(0,0,0,0.95) 0%, #000 100%); 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(30, 0, 15, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%); 
             display: none; z-index: 3000; opacity: 0;
             flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1.5s ease;
+            padding: 20px; box-sizing: border-box; transition: opacity 2s ease-in-out;
         }
         #msg-layer.visible { opacity: 1; }
 
-        #msg-box {
-            width: 90%; max-width: 600px; padding: 40px;
-            background: rgba(20, 20, 20, 0.8); border: 1px solid rgba(255, 105, 180, 0.3);
-            border-radius: 20px; backdrop-filter: blur(10px);
-            box-shadow: 0 0 30px rgba(255, 20, 147, 0.2); transform: translateY(30px);
-            transition: transform 1s ease;
-        }
-        #msg-layer.visible #msg-box { transform: translateY(0); }
-
         #msg-content {
-            color: #FFB7C5; font-size: clamp(18px, 4vw, 22px); 
-            line-height: 1.8; font-family: 'Dancing Script', cursive; 
-            white-space: pre-wrap; text-align: center;
+            color: #FF69B4; font-size: clamp(16px, 4.5vw, 22px); 
+            line-height: 1.6; font-family: 'Dancing Script', cursive; font-weight: bold;
+            white-space: pre-wrap; width: 90%; max-width: 600px; max-height: 60vh; overflow-y: auto;
+            text-shadow: 0 0 5px #FF69B4; border-left: 3px solid #FF69B4; padding: 15px; 
+            background: rgba(20, 0, 10, 0.8); border-radius: 10px;
         }
-        
         #skip-btn { 
-            margin-top: 30px; padding: 12px 35px; 
-            border: 1px solid #FFD700; background: transparent; color: #FFD700; 
-            display: none; cursor: pointer; border-radius: 50px; 
-            font-family: 'Share Tech Mono'; font-weight: bold; pointer-events: auto;
+            margin-top: 25px; padding: 10px 30px; border: 1px solid #FFD700; 
+            background: transparent; color: #FFD700; display: none; pointer-events: auto; 
+            font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 20px;
         }
 
+        /* Terminal Overlay */
         #virus-terminal { 
-            position: absolute; inset: 0; color: #0F0; font-family: 'Share Tech Mono'; 
-            padding: 20px; background: #000; display: none; z-index: 2001; opacity: 0.95; 
+            position: absolute; top:0; left:0; width:100%; height:100%; color:#F00; 
+            font-family:'Share Tech Mono'; font-size:14px; display:none; z-index:2001; 
+            background:#000; padding:20px; box-sizing:border-box; 
         }
+
+        @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -103,17 +90,15 @@
     </div>
 
     <div id="msg-layer">
-        <div id="msg-box">
-            <div style="color: #FFD700; font-family: 'Dancing Script'; font-size: 32px; margin-bottom: 20px; text-align: center;">💌 Gửi Dương</div>
-            <div id="msg-content"></div>
-        </div>
+        <div style="color: #FFD700; font-size: clamp(24px, 7vw, 36px); margin-bottom: 20px; font-family: 'Dancing Script'; text-align:center;">💌 Thư gửi Dương</div>
+        <div id="msg-content"></div>
         <button id="skip-btn" onclick="startFinale()">TIẾP TỤC >></button>
     </div>
 
     <audio id="audio" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
 
 <script>
-    /* --- CONFIG --- */
+    // --- NỘI DUNG ---
     const LETTER = `Dương ơi, hôm nay 01/03/2026, cậu tròn 19 tuổi.
 
 Tớ chúc cậu tuổi mới luôn xinh đẹp rạng ngời, học tập thật giỏi và sớm đạt được mọi ước mơ.
@@ -125,109 +110,169 @@ Happy Birthday, my special girl! ❤️
 -- Nguyễn Bắc Sơn --`;
 
     const SCRIPT = [
-        { t: "GỬI ĐẾN\nTRƯƠNG THỊ DƯƠNG", c: "#A6FFCB", dur: 7000 },
-        { t: "CHÚC MỪNG\nNĂM MỚI 2026", c: "#FFD700", dur: 7000 }, 
-        { t: "XUÂN BÍNH NGỌ\nMÃ ĐÁO THÀNH CÔNG", c: "#00FFFF", dur: 7000 }, 
-        { t: "HAPPY BIRTHDAY\nSINH NHẬT TUỔI 19", c: "#FF69B4", dur: 8000 },
+        { t: "GỬI ĐẾN\nTRƯƠNG THỊ DƯƠNG", c: "#0F0" },
+        { t: "HAPPY BIRTHDAY\nSINH NHẬT TUỔI 19", c: "#FFD700" },
         { action: "HEART_TREND" } 
     ];
 
-    const FINAL_POEM = [
-        "❤️ Sinh Nhật Vui Vẻ ❤️",
-        "✨ Tuổi 19 Rực Rỡ ✨",
-        "🍀 Luôn Mạnh Khỏe 🍀",
-        "🌟 Đạt Mọi Ước Mơ 🌟"
-    ];
-
-    /* --- VARS --- */
     const canvas = document.getElementById('c');
     const ctx = canvas.getContext('2d');
-    let width, height, dpr;
-    let particles = [], fireworks = [], sparkles = [], spotlights = [];
+    const isMobile = window.innerWidth < 768;
+    let w, h;
+
+    // Tối ưu hóa các hạt sao (Stardust)
+    const DOT_GAP = isMobile ? 4 : 3; 
+    const DOT_SIZE = isMobile ? 1.5 : 1.2; 
     let state = "IDLE"; 
-    let scriptIdx = 0, poemIdx = 0, countdown = 10;
-    const M_CHARS = "01"; let m_drops = [];
+    let particles = [], fireworks = [], sparkles = [], spotlights = [];
+    let scriptIdx = 0, countdown = 10;
 
-    /* --- RESIZE --- */
     function resize() {
-        dpr = window.devicePixelRatio || 1;
-        width = window.innerWidth;
-        height = window.innerHeight;
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
-        ctx.scale(dpr, dpr);
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
         
-        const columns = Math.floor(width / 20);
-        m_drops = Array(columns).fill(1);
-
+        // --- CHỈNH SỬA ĐÈN CHIẾU TẠI ĐÂY ---
         spotlights = [];
-        const spotCount = width < 768 ? 4 : 7;
+        let spotCount = isMobile ? 4 : 6;
         for(let i=0; i<spotCount; i++) {
             spotlights.push({
-                x: (width / spotCount) * i + (width/spotCount)/2,
-                angle: -Math.PI/2, targetAngle: -Math.PI/2 + (Math.random()-0.5),
-                speed: 0.005, color: `hsla(${200 + Math.random()*50}, 100%, 70%, 0.15)`
+                x: (w / (spotCount-1)) * i,
+                angle: -Math.PI/2,
+                baseAngle: -Math.PI/2 + (Math.random()-0.5) * 0.4,
+                speed: 0.005 + Math.random() * 0.01,
+                width: 0.01, // Đã chỉnh bé lại (cũ: 0.03)
+                range: 0.15, // Giảm biên độ lắc (cũ: 0.2)
+                color: `hsla(${Math.random()*40 + 200}, 100%, 80%, 0.05)` // Giảm opacity (cũ: 0.1)
             });
         }
     }
     window.addEventListener('resize', resize);
     resize();
 
-    /* --- CONTROLS --- */
+    // --- LOGIC KHỞI CHẠY ---
     document.getElementById('btn-start').onclick = function() {
         this.style.display = 'none';
-        const audio = document.getElementById('audio');
-        audio.volume = 0.8;
-        audio.play().catch(()=>{});
-        runCountdown();
-    };
-
-    function runCountdown() {
+        document.getElementById('audio').play().catch(()=>{});
         state = "COUNTDOWN";
         document.getElementById('cube-container').style.display = 'block';
         const faces = document.querySelectorAll('.face');
-        const iv = setInterval(() => {
+        let tmr = setInterval(() => {
             countdown--;
             faces.forEach(f => f.innerText = countdown);
             if(countdown <= 0) {
-                clearInterval(iv);
+                clearInterval(tmr);
                 document.getElementById('cube-container').style.display = 'none';
                 runVirus();
             }
         }, 1000);
-    }
+    };
 
     function runVirus() {
         state = "VIRUS";
         const term = document.getElementById('virus-terminal');
         term.style.display = 'block';
-        let p = 0;
-        const iv = setInterval(() => {
-            term.innerText += `> DECRYPTING MEMORIES... ${p}%\n`;
-            term.scrollTop = term.scrollHeight;
-            p += 2;
-            if(p > 100) {
-                clearInterval(iv);
+        let count = 0;
+        let t = setInterval(() => {
+            term.innerText = `> LOAD_STARDUST_ENGINE... ${count}%\n> TARGET_LIFETIME: 19_YEARS\n> BOOTING_DRONE_SWARM... DONE.`; 
+            count += 4;
+            if(count > 100) {
+                clearInterval(t);
                 term.style.display = 'none';
                 state = "SHOW";
                 nextScene();
             }
-        }, 30);
+        }, 50);
     }
 
     function nextScene() {
         if(scriptIdx >= SCRIPT.length) return;
-        const s = SCRIPT[scriptIdx++];
-        if(s.action === "HEART_TREND") runHeartTrend();
-        else {
-            createDustText(s.t, s.c);
-            setTimeout(nextScene, s.dur);
+        let s = SCRIPT[scriptIdx++];
+        if(s.action === "HEART_TREND") { runHeartTrend(); return; }
+        formText(s.t, s.c);
+        setTimeout(nextScene, 7000); 
+    }
+
+    function formText(txt, color) {
+        const lines = txt.split('\n');
+        const tmp = document.createElement('canvas');
+        const tCtx = tmp.getContext('2d');
+        let fSize = isMobile ? 50 : 80;
+        tCtx.font = `bold ${fSize}px Arial`;
+        
+        let maxW = 0;
+        lines.forEach(l => maxW = Math.max(maxW, tCtx.measureText(l).width));
+        tmp.width = maxW + 40; 
+        tmp.height = lines.length * fSize * 1.5;
+
+        tCtx.font = `bold ${fSize}px Arial`;
+        tCtx.fillStyle = 'white';
+        tCtx.textAlign = 'center';
+        tCtx.textBaseline = 'middle';
+        lines.forEach((l, i) => tCtx.fillText(l, tmp.width/2, fSize + i * fSize * 1.2));
+        
+        const data = tCtx.getImageData(0,0, tmp.width, tmp.height).data;
+        let pts = [];
+        for(let y=0; y<tmp.height; y+=DOT_GAP) {
+            for(let x=0; x<tmp.width; x+=DOT_GAP) {
+                if(data[(y*tmp.width + x)*4 + 3] > 128) {
+                    pts.push({x: (w - tmp.width)/2 + x, y: (h - tmp.height)/2 + y});
+                }
+            }
         }
+
+        while(particles.length < pts.length) {
+            particles.push({x: Math.random()*w, y: Math.random()*h, tx: Math.random()*w, ty: Math.random()*h, c: color, active: true});
+        }
+
+        particles.forEach((p, i) => {
+            if(i < pts.length) {
+                p.tx = pts[i].x; p.ty = pts[i].y; p.c = color; p.active = true;
+            } else {
+                p.active = false;
+                p.tx = Math.random()*w; p.ty = Math.random()*h;
+            }
+        });
+    }
+
+    function drawSpotlights() {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        spotlights.forEach(s => {
+            s.angle = s.baseAngle + Math.sin(Date.now() * 0.0005 * 50) * s.range;
+            let len = h * 1.5;
+            let ex = s.x + Math.cos(s.angle) * len;
+            let ey = h + Math.sin(s.angle) * len;
+
+            let g = ctx.createLinearGradient(s.x, h, ex, ey);
+            g.addColorStop(0, s.color);
+            // GIẢM ĐIỂM DỪNG GRADIENT (TỪ 0.4 XUỐNG 0.25) ĐỂ ĐÈN KHÔNG CHIẾU QUÁ CAO
+            g.addColorStop(0.25, "transparent"); 
+
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.moveTo(s.x, h);
+            ctx.lineTo(ex - len * s.width, ey);
+            ctx.lineTo(ex + len * s.width, ey);
+            ctx.fill();
+        });
+        ctx.restore();
     }
 
     function runHeartTrend() {
-        state = "HEART";
-        createDustHeart();
+        state = "HEART_TREND";
+        let heartPts = [];
+        let r = isMobile ? 12 : 18;
+        for(let t=0; t<Math.PI*2; t+=0.04) {
+            heartPts.push({
+                x: w/2 + r * 16 * Math.pow(Math.sin(t), 3),
+                y: h/2 - r * (13 * Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t))
+            });
+        }
+        particles.forEach((p, i) => {
+            if(i < heartPts.length) {
+                p.tx = heartPts[i].x; p.ty = heartPts[i].y; p.c = "#FF1493"; p.active = true;
+            } else { p.active = false; }
+        });
         setTimeout(runMessage, 10000);
     }
 
@@ -236,205 +281,73 @@ Happy Birthday, my special girl! ❤️
         const layer = document.getElementById('msg-layer');
         layer.style.display = 'flex';
         setTimeout(() => layer.classList.add('visible'), 50);
-        const content = document.getElementById('msg-content');
         let i = 0;
-        const iv = setInterval(() => {
-            content.innerText = LETTER.substring(0, i);
-            i++;
-            if(i > LETTER.length) {
-                clearInterval(iv);
-                document.getElementById('skip-btn').style.display = 'block';
+        let t = setInterval(() => {
+            document.getElementById('msg-content').innerText = LETTER.substring(0, i) + "_";
+            if(++i > LETTER.length) { 
+                clearInterval(t); 
+                document.getElementById('skip-btn').style.display = 'block'; 
             }
-        }, 30);
+        }, 40);
     }
 
     window.startFinale = function() {
         state = "FINALE";
-        document.getElementById('msg-layer').classList.remove('visible');
-        setTimeout(() => {
-            document.getElementById('msg-layer').style.display = 'none';
-            poemIdx = 0;
-            showPoem();
-            setInterval(launchFirework, 700);
-        }, 1000);
-    }
-
-    function showPoem() {
-        if(poemIdx >= FINAL_POEM.length) {
-            setTimeout(() => createDustText("THE END\nTHANK YOU", "#FFF"), 4000);
-            return;
-        }
-        createDustText(FINAL_POEM[poemIdx], `hsl(${poemIdx*90}, 100%, 75%)`);
-        poemIdx++;
-        setTimeout(showPoem, 4000);
-    }
-
-    /* --- PARTICLE ENGINE (FIXED FORM) --- */
-    function createDustText(text, color) {
-        const tCan = document.createElement('canvas');
-        const tCtx = tCan.getContext('2d');
-        const fSize = width < 768 ? 60 : 120;
-        tCtx.font = `900 ${fSize}px Arial`;
-        
-        const lines = text.split('\n');
-        let maxW = 0;
-        lines.forEach(l => maxW = Math.max(maxW, tCtx.measureText(l).width));
-        
-        tCan.width = maxW + 20;
-        tCan.height = lines.length * fSize * 1.3;
-        
-        tCtx.font = `900 ${fSize}px Arial`;
-        tCtx.fillStyle = '#FFF';
-        tCtx.textAlign = 'center';
-        tCtx.textBaseline = 'middle';
-        
-        lines.forEach((l, i) => tCtx.fillText(l, tCan.width/2, fSize/2 + i*fSize*1.1));
-        
-        const data = tCtx.getImageData(0,0, tCan.width, tCan.height).data;
-        const targets = [];
-        // GIẢM STEP ĐỂ TĂNG MẬT ĐỘ HẠT (LÀM NÉT CHỮ)
-        const step = width < 768 ? 2 : 4; 
-        const offX = (width - tCan.width)/2;
-        const offY = (height - tCan.height)/2;
-
-        for(let y=0; y<tCan.height; y+=step) {
-            for(let x=0; x<tCan.width; x+=step) {
-                if(data[(y*tCan.width+x)*4 + 3] > 128) {
-                    targets.push({ x: offX + x, y: offY + y, color: color });
-                }
-            }
-        }
-        morphParticles(targets);
-    }
-
-    function createDustHeart() {
-        const targets = [];
-        // TĂNG SỐ LƯỢNG HẠT ĐỂ TIM ĐẶC HƠN
-        const count = width < 768 ? 2000 : 4000; 
-        const scale = Math.min(width, height) * 0.02; 
-        
-        for(let i=0; i<count; i++) {
-            const t = Math.PI * 2 * Math.random();
-            const x = 16 * Math.pow(Math.sin(t), 3);
-            const y = -(13 * Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
-            
-            // GIỮ FORM TIM CHẶT HƠN (Ít random ra ngoài)
-            const s = Math.random() > 0.4 ? 1 : Math.sqrt(Math.random()); 
-            
-            targets.push({
-                x: width/2 + x * scale * s, // Bỏ jitter để giữ nét
-                y: height/2 + y * scale * s - height * 0.05,
-                color: "#FF1493"
-            });
-        }
-        morphParticles(targets);
-    }
-
-    function morphParticles(targets) {
-        if(particles.length < targets.length) {
-            const add = targets.length - particles.length;
-            for(let i=0; i<add; i++) particles.push({ x: Math.random()*width, y: Math.random()*height, size: Math.random()*1.5+0.5, alpha: 0 });
-        }
-        
-        targets.sort(() => Math.random()-0.5);
-        particles.forEach((p, i) => {
-            if(i < targets.length) {
-                p.tx = targets[i].x; p.ty = targets[i].y; p.tc = targets[i].color; p.active = true;
-                // GIẢM DRIFT ĐỂ HÌNH KHÔNG BỊ RUNG MẠNH
-                p.dx = Math.random() * 2; p.dy = Math.random() * 2;
-            } else { p.active = false; }
-        });
-    }
-
-    /* --- LOOP --- */
-    function loop() {
-        // QUAN TRỌNG: XÓA NỀN MẠNH HƠN ĐỂ KHÔNG BỊ VỆT (0.35)
-        ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
-        ctx.fillRect(0, 0, width, height);
-
-        // Matrix Rain
-        if(state !== "MSG") {
-            ctx.fillStyle = "rgba(0, 255, 0, 0.05)";
-            ctx.font = "14px monospace";
-            for(let i=0; i<m_drops.length; i++) {
-                ctx.fillText(M_CHARS[Math.floor(Math.random()*2)], i*20, m_drops[i]*20);
-                if(m_drops[i]*20 > height && Math.random()>0.98) m_drops[i]=0;
-                m_drops[i]++;
-            }
-        }
-
-        // Spotlights
-        if(state !== "VIRUS" && state !== "MSG") {
-            ctx.globalCompositeOperation = 'lighter';
-            spotlights.forEach(s => {
-                s.angle += (s.targetAngle - s.angle)*0.01;
-                if(Math.abs(s.targetAngle - s.angle)<0.05) s.targetAngle = -Math.PI/2 + (Math.random()-0.5);
-                const ex = s.x + Math.cos(s.angle)*height*1.5;
-                const ey = height + Math.sin(s.angle)*height*1.5;
-                const g = ctx.createLinearGradient(s.x, height, ex, ey);
-                g.addColorStop(0, s.color); g.addColorStop(1, "transparent");
-                ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(s.x, height); ctx.lineTo(ex-60, ey); ctx.lineTo(ex+60, ey); ctx.fill();
-            });
-            ctx.globalCompositeOperation = 'source-over';
-        }
-
-        // Particles
-        ctx.globalCompositeOperation = 'lighter';
-        const time = Date.now() * 0.001;
-        const beat = state === "HEART" ? 1 + Math.sin(time * 6) * 0.02 : 1; // Nhịp tim nhẹ
-
-        particles.forEach(p => {
-            if(!p.active) {
-                p.x += Math.sin(time+p.dx)*0.5; p.y += Math.cos(time+p.dy)*0.5; p.alpha *= 0.95;
-            } else {
-                p.x += (p.tx - p.x)*0.1; // Tăng tốc độ bay về đích (0.08 -> 0.1)
-                p.y += (p.ty - p.y)*0.1;
-                p.alpha += (1 - p.alpha)*0.1;
-                
-                // GIẢM RUNG LẮC (Floating) ĐỂ GIỮ FORM
-                const driftX = Math.sin(time + p.dx) * 0.5; 
-                const driftY = Math.cos(time * 0.8 + p.dy) * 0.5;
-                
-                let dx = p.x + driftX;
-                let dy = p.y + driftY;
-                
-                if(state === "HEART") {
-                    dx = width/2 + (dx - width/2)*beat;
-                    dy = height/2 + (dy - height/2)*beat;
-                }
-
-                ctx.fillStyle = p.tc || "#FFF";
-                ctx.globalAlpha = p.alpha * (0.6 + Math.random()*0.4);
-                ctx.beginPath(); ctx.arc(dx, dy, p.size, 0, Math.PI*2); ctx.fill();
-            }
-        });
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.globalAlpha = 1;
-
-        if(state === "FINALE") updateFireworks();
-        requestAnimationFrame(loop);
+        document.getElementById('msg-layer').style.display = 'none';
+        setInterval(() => { if(fireworks.length < 5) launchFirework(); }, 600);
+        formText("TUỔI 19\nRỰC RỠ NHÉ!", "#FFD700");
     }
 
     function launchFirework() {
-        fireworks.push({ x: Math.random()*width, y: height, vx: (Math.random()-0.5)*4, vy: -(12+Math.random()*5), color: `hsl(${Math.random()*360},100%,70%)` });
+        fireworks.push({x: Math.random()*w, y: h, ty: Math.random()*h*0.5, vy: -7 - Math.random()*5, c: `hsl(${Math.random()*360},100%,75%)`});
     }
-    function updateFireworks() {
+
+    function loop() {
+        ctx.fillStyle = "rgba(0,0,0,0.12)";
+        ctx.fillRect(0,0,w,h);
+
+        if(state !== "MSG") drawSpotlights();
+
+        particles.forEach(p => {
+            p.x += (p.tx - p.x) * 0.08;
+            p.y += (p.ty - p.y) * 0.08;
+
+            if(p.active || state === "HEART_TREND") {
+                ctx.fillStyle = p.c;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, DOT_SIZE, 0, Math.PI*2);
+                ctx.fill();
+            } else {
+                ctx.fillStyle = "rgba(255,255,255,0.1)";
+                ctx.fillRect(p.x, p.y, 1, 1);
+            }
+        });
+
+        // Firework Logic
         for(let i=fireworks.length-1; i>=0; i--) {
-            let f = fireworks[i]; f.x+=f.vx; f.y+=f.vy; f.vy+=0.2;
-            ctx.fillStyle = f.color; ctx.fillRect(f.x, f.y, 3, 3);
-            if(f.vy>=0) {
-                for(let j=0; j<30; j++) sparkles.push({x:f.x, y:f.y, vx:Math.cos(j/15*Math.PI)*Math.random()*5, vy:Math.sin(j/15*Math.PI)*Math.random()*5, alpha:1, color:f.color});
+            let f = fireworks[i];
+            f.y += f.vy; f.vy += 0.15;
+            ctx.fillStyle = f.c;
+            ctx.fillRect(f.x, f.y, 2, 2);
+            if(f.vy >= 0) {
+                for(let j=0; j<30; j++) sparkles.push({x: f.x, y: f.y, vx: (Math.random()-0.5)*5, vy: (Math.random()-0.5)*5, c: f.c, l: 1});
                 fireworks.splice(i,1);
             }
         }
-        for(let i=sparkles.length-1; i>=0; i--) {
-            let s=sparkles[i]; s.x+=s.vx; s.y+=s.vy; s.vy+=0.1; s.alpha-=0.02;
-            ctx.globalAlpha=Math.max(0, s.alpha); ctx.fillStyle=s.color; ctx.fillRect(s.x, s.y, 2, 2);
-            if(s.alpha<=0) sparkles.splice(i,1);
-        }
-        ctx.globalAlpha=1;
-    }
 
+        for(let i=sparkles.length-1; i>=0; i--) {
+            let s = sparkles[i]; s.x += s.vx; s.y += s.vy; s.l -= 0.025;
+            if(s.l <= 0) sparkles.splice(i,1);
+            else { 
+                ctx.fillStyle = s.c; 
+                ctx.globalAlpha = s.l; 
+                ctx.fillRect(s.x, s.y, 1.5, 1.5); 
+                ctx.globalAlpha = 1; 
+            }
+        }
+
+        requestAnimationFrame(loop);
+    }
     loop();
 </script>
 </body>
