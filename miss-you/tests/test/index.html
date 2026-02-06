@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HPBD_DUONG_19_FINAL</title>
+    <title>HPBD_DUONG_19_GALAXY</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
         
@@ -156,15 +156,14 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     const DOT_SIZE = isMobile ? 1.5 : 1.2; 
     let state = "IDLE"; 
     
-    // Thêm mảng bgStars để chứa các ngôi sao nền
-    let particles = [], fireworks = [], sparkles = [], spotlights = [], bgStars = [];
+    // Thêm mảng shootingStars để quản lý sao băng riêng biệt
+    let particles = [], fireworks = [], sparkles = [], spotlights = [], bgStars = [], shootingStars = [];
     let scriptIdx = 0, countdown = 10;
 
     function resize() {
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
         
-        // Khởi tạo đèn chiếu
         spotlights = [];
         let spotCount = isMobile ? 4 : 6;
         for(let i=0; i<spotCount; i++) {
@@ -179,23 +178,75 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
             });
         }
 
-        // Khởi tạo Sao Nền (Background Stars)
+        // Khởi tạo Sao Nền
         bgStars = [];
-        // Số lượng sao: 150 (PC) hoặc 80 (Mobile)
-        let starCount = isMobile ? 80 : 150;
+        let starCount = isMobile ? 80 : 200;
         for(let i=0; i<starCount; i++) {
             bgStars.push({
                 x: Math.random() * w,
                 y: Math.random() * h,
-                size: Math.random() * 1.5, // Kích thước ngẫu nhiên
-                speed: Math.random() * 0.5 + 0.1, // Tốc độ trôi
+                size: Math.random() * 1.5,
                 opacity: Math.random(),
-                blinkSpeed: 0.01 + Math.random() * 0.03
+                blinkSpeed: 0.005 + Math.random() * 0.02
             });
         }
     }
     window.addEventListener('resize', resize);
     resize();
+
+    // --- LỚP ĐỐI TƯỢNG SAO BĂNG (MỚI) ---
+    class ShootingStar {
+        constructor() {
+            this.x = Math.random() * w * 0.8; // Xuất phát ngẫu nhiên
+            this.y = Math.random() * h * 0.5; 
+            this.len = Math.random() * 80 + 100; // Độ dài đuôi (100-180px)
+            this.speed = Math.random() * 3 + 4; // Tốc độ di chuyển (vừa phải)
+            this.size = Math.random() * 1 + 1.5;
+            this.angle = Math.PI / 4; // Góc chéo 45 độ
+            this.active = true;
+        }
+
+        update() {
+            // Di chuyển chéo xuống dưới bên phải
+            this.x += this.speed * Math.cos(this.angle);
+            this.y += this.speed * Math.sin(this.angle);
+
+            // Nếu bay ra khỏi màn hình thì xóa
+            if (this.x > w + this.len || this.y > h + this.len) {
+                this.active = false;
+            }
+        }
+
+        draw() {
+            // Tính toán điểm đuôi
+            let tailX = this.x - this.len * Math.cos(this.angle);
+            let tailY = this.y - this.len * Math.sin(this.angle);
+
+            // Vẽ đuôi (Gradient từ trắng -> trong suốt)
+            let grad = ctx.createLinearGradient(this.x, this.y, tailX, tailY);
+            grad.addColorStop(0, "rgba(255,255,255,1)");
+            grad.addColorStop(1, "rgba(255,255,255,0)");
+
+            ctx.beginPath();
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 2;
+            ctx.lineCap = "round";
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(tailX, tailY);
+            ctx.stroke();
+
+            // Vẽ đầu sao sáng hơn
+            ctx.beginPath();
+            ctx.fillStyle = "white";
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Hiệu ứng glow nhẹ ở đầu
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "white";
+            ctx.shadowBlur = 0;
+        }
+    }
 
     document.getElementById('btn-start').onclick = function() {
         this.style.display = 'none';
@@ -324,41 +375,29 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         ctx.restore();
     }
 
-    // Hàm vẽ nền động (Sao + Sao băng)
+    // --- HÀM VẼ NỀN & SAO BĂNG ---
     function drawDynamicBackground() {
-        // 1. Vẽ sao lấp lánh
+        // 1. Sao nền nhấp nháy
         bgStars.forEach(s => {
-            s.y += s.speed; // Sao trôi xuống dưới
             s.opacity += s.blinkSpeed;
-            
-            // Nếu sao đi quá màn hình hoặc nhấp nháy xong, reset lại
-            if(s.y > h) { s.y = 0; s.x = Math.random() * w; }
             if(s.opacity > 1 || s.opacity < 0.2) s.blinkSpeed *= -1;
-
             ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
             ctx.beginPath();
             ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
             ctx.fill();
         });
 
-        // 2. Vẽ sao băng (Shooting Star) - Xác suất thấp
-        if(Math.random() < 0.02) { 
-            let sx = Math.random() * w;
-            let sy = Math.random() * h/2;
-            let len = 100 + Math.random() * 200;
-            
-            // Tạo hiệu ứng vệt sáng
-            let grad = ctx.createLinearGradient(sx, sy, sx - len, sy + len);
-            grad.addColorStop(0, "rgba(255,255,255,0)");
-            grad.addColorStop(0.5, "rgba(255,255,255,0.8)");
-            grad.addColorStop(1, "rgba(255,255,255,0)");
-            
-            ctx.strokeStyle = grad;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(sx, sy);
-            ctx.lineTo(sx - 100, sy + 100); // Bay chéo xuống
-            ctx.stroke();
+        // 2. Quản lý Sao Băng (Spawn & Draw)
+        // Tỉ lệ xuất hiện thấp để không bị rối (0.005)
+        if(Math.random() < 0.01) { 
+            shootingStars.push(new ShootingStar());
+        }
+
+        for(let i = shootingStars.length - 1; i >= 0; i--) {
+            let s = shootingStars[i];
+            s.update();
+            s.draw();
+            if(!s.active) shootingStars.splice(i, 1);
         }
     }
 
@@ -407,12 +446,10 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     }
 
     function loop() {
-        // Làm mờ frame cũ để tạo vệt chuyển động (trail effect)
-        // Dùng màu tối có độ trong suốt thấp
+        // Tạo hiệu ứng vệt mờ cho chuyển động (Trail effect)
         ctx.fillStyle = "rgba(0, 5, 15, 0.2)"; 
         ctx.fillRect(0,0,w,h);
 
-        // Vẽ nền động LUÔN LUÔN chạy (dù đang ở state nào)
         drawDynamicBackground();
 
         if(state !== "MSG") drawSpotlights();
@@ -427,8 +464,6 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
                 ctx.arc(p.x, p.y, DOT_SIZE, 0, Math.PI*2);
                 ctx.fill();
             } else {
-                // Hạt chưa dùng đến thì ẩn đi hoặc cho nó trôi nhẹ như bụi
-                // Nhưng để performance tốt thì ta ẩn đi hoặc vẽ rất mờ
                 ctx.fillStyle = "rgba(255,255,255,0.02)";
                 ctx.fillRect(p.x, p.y, 1, 1);
             }
