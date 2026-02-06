@@ -3,190 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gửi Người Tớ Thương</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500&display=swap" rel="stylesheet">
+    <title>Màn Trình Diễn Dành Tặng Cậu</title>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #000;
-            font-family: 'Quicksand', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-        }
-
-        /* Hiệu ứng nền tim bay */
-        #canvas {
+        body { margin: 0; overflow: hidden; background-color: #050510; }
+        canvas { display: block; }
+        #message {
             position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-
-        .container {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            padding: 20px;
-        }
-
-        /* Nút bắt đầu */
-        #start-btn {
-            padding: 15px 40px;
-            font-size: 20px;
-            background: #ff4d6d;
-            border: none;
-            border-radius: 50px;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 77, 109, 0.6);
-            transition: 0.3s;
-            font-family: 'Dancing Script', cursive;
-        }
-
-        #start-btn:hover {
-            transform: scale(1.1);
-            background: #ff758f;
-        }
-
-        /* Lời tỏ tình ẩn */
-        #confession {
-            display: none;
-            opacity: 0;
-            transition: opacity 2s ease-in;
-        }
-
-        #confession h1 {
-            font-family: 'Dancing Script', cursive;
-            font-size: 4rem;
-            margin-bottom: 10px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
             color: #ff4d6d;
-            text-shadow: 0 0 15px rgba(255, 77, 109, 0.8);
+            font-family: 'Arial', sans-serif;
+            font-size: 2em;
+            opacity: 0;
+            transition: opacity 2s;
+            text-align: center;
+            pointer-events: none; /* Để không che canvas */
         }
-
-        #confession p {
-            font-size: 1.5rem;
-            line-height: 1.6;
-        }
-
-        .typing {
-            border-right: 3px solid #ff4d6d;
-            white-space: nowrap;
-            overflow: hidden;
-            display: inline-block;
-            animation: blink 0.7s infinite;
-        }
-
-        @keyframes blink { 0% { border-color: transparent } 50% { border-color: #ff4d6d } 100% { border-color: transparent } }
-        
-        @media (max-width: 600px) {
-            #confession h1 { font-size: 2.5rem; }
-            #confession p { font-size: 1.1rem; }
-        }
+        .show-message { opacity: 1 !important; }
     </style>
 </head>
 <body>
-
-    <canvas id="canvas"></canvas>
-
-    <div class="container">
-        <div id="init-screen">
-            <button id="start-btn">Nhấn để nghe lời trái tim tớ...</button>
-        </div>
-
-        <div id="confession">
-            <h1 id="main-text">Làm người yêu tớ nhé?</h1>
-            <p id="sub-text">Cảm ơn cậu đã đến bên và cho "chàng Ngố" này biết yêu thương là gì.</p>
-        </div>
+    <canvas id="droneCanvas"></canvas>
+    <div id="message">
+        <div>Kỷ niệm của chúng ta...</div>
+        <div style="font-size: 0.6em; color: #fff;">(Nhìn lên bầu trời này nhé)</div>
     </div>
 
-    <audio id="myAudio" src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3"></audio>
-
     <script>
-        const canvas = document.getElementById('canvas');
+        const canvas = document.getElementById('droneCanvas');
         const ctx = canvas.getContext('2d');
-        const startBtn = document.getElementById('start-btn');
-        const audio = document.getElementById('myAudio');
-        const initScreen = document.getElementById('init-screen');
-        const confession = document.getElementById('confession');
+        const msgDiv = document.getElementById('message');
 
-        let hearts = [];
+        let width, height;
+        let drones = [];
+        const numDrones = 400; // Số lượng "drone"
+        let targetShape = 'chaos'; // Trạng thái hiện tại
+        let animationSpeed = 0.05; // Tốc độ di chuyển về vị trí
 
-        // Chỉnh kích thước canvas
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        // Khởi tạo hạt trái tim
-        class Heart {
+        // Cấu hình "Drone"
+        class Drone {
             constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = canvas.height + 100;
-                this.size = Math.random() * 15 + 5;
-                this.speed = Math.random() * 2 + 1;
-                this.opacity = Math.random() * 0.5 + 0.3;
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.targetX = this.x;
+                this.targetY = this.y;
+                this.color = `hsl(${Math.random() * 60 + 180}, 100%, 70%)`; // Màu xanh/tím
+                this.size = Math.random() * 2 + 1;
             }
-            draw() {
-                ctx.globalAlpha = this.opacity;
-                ctx.fillStyle = '#ff4d6d';
-                ctx.beginPath();
-                ctx.moveTo(this.x, this.y);
-                ctx.bezierCurveTo(this.x - this.size / 2, this.y - this.size / 2, this.x - this.size, this.y + this.size / 3, this.x, this.y + this.size);
-                ctx.bezierCurveTo(this.x + this.size, this.y + this.size / 3, this.x + this.size / 2, this.y - this.size / 2, this.x, this.y);
-                ctx.fill();
-            }
+
             update() {
-                this.y -= this.speed;
-                if (this.y < -50) {
-                    this.y = canvas.height + 100;
-                    this.x = Math.random() * canvas.width;
-                }
+                // Thuật toán di chuyển mượt mà về đích (Easing)
+                const dx = this.targetX - this.x;
+                const dy = this.targetY - this.y;
+                this.x += dx * animationSpeed;
+                this.y += dy * animationSpeed;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                // Hiệu ứng phát sáng nhẹ
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
             }
         }
 
         function init() {
-            for (let i = 0; i < 50; i++) {
-                hearts.push(new Heart());
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            drones = [];
+            for (let i = 0; i < numDrones; i++) {
+                drones.push(new Drone());
+            }
+            
+            // Bắt đầu kịch bản
+            setTimeout(() => { formShape('starbucks'); }, 3000); // Sau 3s xếp hình cốc
+            setTimeout(() => { formShape('heart'); }, 10000); // Sau 10s xếp hình tim
+            setTimeout(() => { msgDiv.classList.add('show-message'); }, 12000); // Hiện thông báo
+        }
+
+        // --- ĐỊNH NGHĨA CÁC HÌNH DẠNG (TỌA ĐỘ) ---
+        function getShapeCoordinates(shapeType) {
+            let coords = [];
+            const centerX = width / 2;
+            const centerY = height / 2;
+            
+            if (shapeType === 'chaos') {
+                for (let i = 0; i < numDrones; i++) {
+                    coords.push({x: Math.random() * width, y: Math.random() * height});
+                }
+            } 
+            // --- HÌNH TRÁI TIM ---
+            else if (shapeType === 'heart') {
+                 for (let i = 0; i < numDrones; i++) {
+                    let t = (i / numDrones) * Math.PI * 2;
+                    let r = Math.min(width, height) * 0.015; // Bán kính nền
+                    // Công thức toán học hình trái tim
+                    let x = 16 * Math.pow(Math.sin(t), 3);
+                    let y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                    coords.push({
+                        x: centerX + x * r * 15 + (Math.random()-0.5)*20, // Thêm chút ngẫu nhiên cho tự nhiên
+                        y: centerY + y * r * 15 + (Math.random()-0.5)*20,
+                        color: '#ff4d6d' // Đổi màu sang hồng
+                    });
+                }
+            }
+            // --- GIẢ LẬP HÌNH CỐC STARBUCKS (Đơn giản hóa) ---
+            else if (shapeType === 'starbucks') {
+                const scale = Math.min(width, height) * 0.002;
+                for (let i = 0; i < numDrones; i++) {
+                    let x, y, color;
+                    // Tạo hình thang làm thân cốc (khoảng 70% số drone)
+                    if (i < numDrones * 0.7) {
+                        let p = i / (numDrones * 0.7); // Tiến trình từ 0 -> 1
+                        let cupHeight = 200 * scale;
+                        let topWidth = 150 * scale;
+                        let bottomWidth = 100 * scale;
+                        
+                        y = centerY - cupHeight/2 + p * cupHeight;
+                        // Chiều rộng tại độ cao y hiện tại (nội suy tuyến tính)
+                        let currentWidth = topWidth - (p * (topWidth - bottomWidth));
+                        // Phân bố hạt sang 2 bên cạnh cốc
+                        x = centerX + (Math.random() > 0.5 ? 1 : -1) * (currentWidth/2 - Math.random()*5);
+                        color = '#00704A'; // Màu xanh Starbucks
+                    } 
+                    // Tạo nắp và ống hút (30% còn lại)
+                    else {
+                         x = centerX + (Math.random() - 0.5) * 160 * scale;
+                         y = centerY - 110 * scale + (Math.random() * 20 * scale);
+                         color = '#ffffff'; // Màu trắng nắp
+                         if (i > numDrones * 0.95) { // Ống hút
+                             x = centerX + 30 * scale;
+                             y = centerY - 150 * scale - Math.random() * 50;
+                             color = 'orange';
+                         }
+                    }
+
+                    coords.push({
+                        x: x + (Math.random()-0.5)*10, 
+                        y: y + (Math.random()-0.5)*10,
+                        color: color
+                    });
+                }
+            }
+            return coords;
+        }
+
+        // Hàm điều phối việc chuyển hình
+        function formShape(shape) {
+            targetShape = shape;
+            const targets = getShapeCoordinates(shape);
+            
+            // Gán mục tiêu mới cho từng drone
+            for (let i = 0; i < numDrones; i++) {
+                if (targets[i]) {
+                    drones[i].targetX = targets[i].x;
+                    drones[i].targetY = targets[i].y;
+                    if (targets[i].color) drones[i].color = targets[i].color;
+                }
             }
         }
 
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            hearts.forEach(h => {
-                h.update();
-                h.draw();
+            ctx.fillStyle = 'rgba(5, 5, 16, 0.2)'; // Tạo hiệu ứng đuôi mờ (motion trail)
+            ctx.fillRect(0, 0, width, height);
+
+            drones.forEach(drone => {
+                drone.update();
+                drone.draw();
             });
+
             requestAnimationFrame(animate);
         }
 
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            formShape(targetShape); // Giữ nguyên hình dạng khi resize
+        });
+
         init();
         animate();
-
-        // Xử lý sự kiện nhấn nút
-        startBtn.addEventListener('click', () => {
-            initScreen.style.display = 'none';
-            audio.play();
-            
-            // Kiểm tra thời gian nhạc để hiện lời tỏ tình
-            const checkTime = setInterval(() => {
-                // Giây thứ 40 theo đúng yêu cầu của ông
-                if (audio.currentTime >= 40) {
-                    confession.style.display = 'block';
-                    setTimeout(() => {
-                        confession.style.opacity = '1';
-                    }, 100);
-                    clearInterval(checkTime);
-                }
-            }, 500);
-        });
     </script>
 </body>
 </html>
