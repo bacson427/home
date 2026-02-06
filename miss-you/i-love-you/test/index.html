@@ -4,32 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gửi Dương 01/03 ❤️</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta/dist/vanta.fog.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
     <style>
-        /* --- CẤU HÌNH CƠ BẢN --- */
+        /* --- CẤU HÌNH CHUNG --- */
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #4a0010 0%, #000000 100%);
+            /* Nền sẽ do Vanta.js quản lý */
             font-family: 'Montserrat', sans-serif;
             overflow: hidden;
             display: flex; justify-content: center; align-items: center;
+            background-color: #000; /* Màu nền dự phòng */
         }
 
-        #particles-js { position: absolute; width: 100%; height: 100%; z-index: 1; }
+        #vanta-bg { position: absolute; width: 100%; height: 100%; z-index: 0; }
+        #particles-js { position: absolute; width: 100%; height: 100%; z-index: 1; pointer-events: none;}
 
         .content {
             position: relative; z-index: 10; text-align: center;
             color: #ffb3c1; width: 90%; max-width: 800px;
-            transition: all 0.5s ease;
         }
 
         /* --- PHẦN TEXT CHÍNH --- */
         #main-text {
             font-size: 2.2rem; font-weight: bold;
-            text-shadow: 0 0 20px rgba(255, 0, 80, 0.6);
+            text-shadow: 0 0 20px rgba(255, 0, 80, 0.8);
             opacity: 0; transform: translateY(20px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-            line-height: 1.5; min-height: 100px; /* Giữ chỗ tránh giật layout */
+            line-height: 1.5; min-height: 120px;
         }
         .birthday-icon { font-size: 3rem; display: block; margin-bottom: 15px; animation: bounce 2s infinite; }
 
@@ -39,68 +44,74 @@
             background: rgba(0,0,0,0.3); color: #ff4d6d;
             cursor: pointer; border-radius: 50px; font-size: 1.2rem;
             box-shadow: 0 0 15px #ff4d6d; animation: pulse 2s infinite;
+            backdrop-filter: blur(5px);
         }
-        .btn-start:hover { background: #ff4d6d; color: white; box-shadow: 0 0 30px #ff4d6d; }
+        .btn-start:hover { background: #ff4d6d; color: white; box-shadow: 0 0 40px #ff4d6d; }
 
-        #ask-section { display: none; margin-top: 40px; animation: fadeInUp 1s ease; }
-        .btn-group { display: flex; gap: 30px; justify-content: center; }
+        #ask-section { display: none; margin-top: 50px; }
+        .btn-group { display: flex; gap: 30px; justify-content: center; position: relative; }
         .btn { 
             padding: 15px 45px; border-radius: 30px; border: none; 
             cursor: pointer; font-weight: bold; font-size: 1.3rem; color: white;
-            transition: 0.3s;
+            transition: transform 0.2s; z-index: 20;
         }
-        #yes { background: linear-gradient(45deg, #ff0055, #ff3377); box-shadow: 0 5px 20px rgba(255,0,85,0.5); }
-        #yes:hover { transform: scale(1.1) translateY(-3px); box-shadow: 0 10px 30px rgba(255,0,85,0.8); }
-        #no { background: #444; position: relative; }
+        #yes { 
+            background: linear-gradient(45deg, #ff0055, #ff5e88); 
+            box-shadow: 0 10px 30px rgba(255,0,85,0.6); 
+        }
+        #no { background: #444; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
 
-        /* --- PHẦN KẾT LÃNG MẠN (FINAL CARD) --- */
+        /* --- PHẦN KẾT GLASSMORPHISM --- */
         #final-message-container {
-            display: none; /* Ẩn lúc đầu */
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 20; width: 90%; max-width: 600px;
-            
-            /* Hiệu ứng kính mờ sang trọng */
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px; padding: 40px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            display: none; position: absolute; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%) scale(0.8); opacity: 0;
+            z-index: 30; width: 90%; max-width: 600px;
+            background: rgba(255, 25, 60, 0.15); /* Màu kính hồng đỏ */
+            backdrop-filter: blur(15px) saturate(150%);
+            -webkit-backdrop-filter: blur(15px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px; padding: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             text-align: center;
         }
         #final-message-container h2 {
-            color: #ff0055; font-size: 2.5rem; margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(255,0,85,0.5);
+            color: #fff; font-size: 2.8rem; margin-bottom: 20px;
+            text-shadow: 0 0 20px #ff0055;
         }
         #final-message-container p {
-            color: #ffd1dc; font-size: 1.2rem; line-height: 1.8; letter-spacing: 1px;
+            color: #ffd1dc; font-size: 1.3rem; line-height: 1.8; font-weight: 500;
         }
 
-        /* --- HIỆU ỨNG SVG HEART BAY --- */
+        /* --- CÁC ELEMENT HIỆU ỨNG --- */
         .flying-heart {
             position: fixed; bottom: -50px;
-            filter: drop-shadow(0 0 5px #ff0055);
-            animation: flyUp linear forwards;
-            z-index: 5; pointer-events: none;
+            filter: drop-shadow(0 0 8px #ff0055);
+            animation: flyUp linear forwards; z-index: 5; pointer-events: none;
         }
-        @keyframes flyUp {
-            to { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        /* Hạt nổ khi bấm nút */
+        .particle-explosion {
+            position: absolute; pointer-events: none; z-index: 25;
         }
-        
-        /* --- ANIMATIONS KHÁC --- */
+        /* Vệt sáng chuột */
+        .cursor-trail {
+            position: fixed; width: 8px; height: 8px; border-radius: 50%;
+            background: #ff4d6d; pointer-events: none; z-index: 9999;
+            box-shadow: 0 0 10px #ff4d6d; transition: opacity 0.5s ease;
+        }
+
+        /* --- ANIMATIONS --- */
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeOutDown { to { opacity: 0; transform: translateY(20px); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes flyUp { to { transform: translateY(-120vh) rotate(720deg); opacity: 0; } }
     </style>
 </head>
 <body>
-
+    <div id="vanta-bg"></div>
     <div id="particles-js"></div>
 
     <div class="content" id="main-content">
         <div id="start-screen">
-            <button class="btn-start" onclick="startExperience()">Nhấn vào đây đi cô nương ❤️</button>
+            <button class="btn-start" onclick="startExperience()">Chạm nhẹ vào đây đi nè ❤️</button>
         </div>
         
         <div id="display-area">
@@ -109,38 +120,63 @@
 
         <div id="ask-section">
             <div class="btn-group">
-                <button class="btn" id="yes" onclick="accepted()">Đồng ý</button>
-                <button class="btn" id="no" onmouseover="moveButton()">Đéo</button>
+                <div id="yes-wrapper" style="position: relative;">
+                     <button class="btn" id="yes" onclick="accepted(event)">Đồng ý ngay</button>
+                </div>
+                <button class="btn" id="no" onmouseover="moveButton()">Không nha</button>
             </div>
         </div>
     </div>
 
     <div id="final-message-container">
-        <h2>She Said YES! 🎉</h2>
+        <h2>She Said YES! 🥂</h2>
         <p>
-            Chào mừng em đến với chương tuyệt vời nhất của chúng ta.<br><br>
-            Sinh nhật tuổi 19 này, món quà lớn nhất của Sơn chính là cái gật đầu của Dương. 
-            Hứa với em, chặng đường phía trước sẽ luôn tràn ngập tiếng cười, sự chiều chuộng và tình yêu.<br><br>
-            <strong>Happy Birthday, My Love! ❤️</strong>
+            Chào mừng em đến với thế giới của Sơn.<br><br>
+            Sinh nhật 19 tuổi này, món quà tuyệt vời nhất không phải là bánh kem hay nến, mà là khoảnh khắc em gật đầu. 
+            Hứa với Dương, từ nay về sau sẽ chỉ có chiều chuộng và yêu thương.<br><br>
+            <strong>Happy Birthday, My Everything! ❤️</strong>
         </p>
     </div>
 
     <audio id="bg-music" src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3"></audio>
 
     <script>
-        /* --- CẤU HÌNH PARTICLES NỀN --- */
+        /* --- 1. KHỞI TẠO NỀN VANTA.JS FOG --- */
+        VANTA.FOG({
+            el: "#vanta-bg",
+            mouseControls: true, touchControls: true, gyroControls: false,
+            minHeight: 200.00, minWidth: 200.00,
+            highlightColor: 0xff4d6d, // Màu sáng hồng
+            midtoneColor: 0x5e0028,  // Màu trung tính đỏ thẫm
+            lowlightColor: 0x1a0008, // Màu tối
+            baseColor: 0x000000,     // Màu nền gốc
+            blurFactor: 0.6, speed: 1.5, zoom: 1.2
+        });
+
+        /* --- 2. KHỞI TẠO PARTICLES.JS (Lớp trên cùng) --- */
         particlesJS("particles-js", {
             "particles": {
-                "number": { "value": 80 },
-                "color": { "value": "#ff8fa3" },
+                "number": { "value": 60 },
+                "color": { "value": "#ffb3c1" },
                 "shape": { "type": "circle" },
                 "opacity": { "value": 0.5, "random": true },
                 "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": "#ff4d6d", "opacity": 0.2, "width": 1 },
-                "move": { "enable": true, "speed": 2 }
+                "line_linked": { "enable": true, "distance": 180, "color": "#ff4d6d", "opacity": 0.25, "width": 1 },
+                "move": { "enable": true, "speed": 1.5 }
             }
         });
 
+        /* --- 3. HIỆU ỨNG VỆT SÁNG CHUỘT --- */
+        document.addEventListener('mousemove', function(e) {
+            let trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.left = e.pageX + 'px'; trail.style.top = e.pageY + 'px';
+            document.body.appendChild(trail);
+            setTimeout(() => { trail.style.opacity = '0'; }, 100);
+            setTimeout(() => { trail.remove(); }, 600);
+        });
+
+        /* --- LOGIC CHÍNH --- */
         const music = document.getElementById('bg-music');
         const mainText = document.getElementById('main-text');
         const startScreen = document.getElementById('start-screen');
@@ -149,97 +185,108 @@
         const finalMessageContainer = document.getElementById('final-message-container');
         let checkTime;
 
-        // Hàm cập nhật chữ mượt mà
+        // Dùng Anime.js để hiện text mượt hơn
         function updateText(text, icon = "") {
-            mainText.style.opacity = '0';
-            mainText.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                mainText.innerHTML = (icon ? `<span class="birthday-icon">${icon}</span>` : "") + text;
-                mainText.style.opacity = '1';
-                mainText.style.transform = 'translateY(0)';
-            }, 500);
+            anime({
+                targets: '#main-text', opacity: 0, translateY: 20, duration: 500, easing: 'easeInOutQuad',
+                complete: function() {
+                    mainText.innerHTML = (icon ? `<span class="birthday-icon">${icon}</span>` : "") + text;
+                    anime({ targets: '#main-text', opacity: 1, translateY: 0, duration: 800, easing: 'easeOutElastic(1, .6)' });
+                }
+            });
         }
 
-        // --- BẮT ĐẦU TRẢI NGHIỆM ---
         function startExperience() {
-            startScreen.style.display = 'none';
+            anime({ targets: '#start-screen', opacity: 0, duration: 800, complete: () => startScreen.style.display = 'none' });
             music.play();
             updateText("Xin chào Dương...");
 
             checkTime = setInterval(() => {
                 const t = Math.floor(music.currentTime);
-                // Timeline kịch bản
                 if (t === 8) updateText("Chúc mừng sinh nhật tuổi 19! 🎂<br>Tuổi mới thật rực rỡ nhé.", "🎉");
-                if (t === 20) updateText("Cảm ơn vì Dương đã xuất hiện<br>trong thanh xuân của Sơn.");
-                if (t === 32) updateText("Sơn có một món quà đặc biệt...<br>nhưng cần Dương trả lời câu này trước.");
+                if (t === 21) updateText("Cảm ơn vì Dương đã xuất hiện<br>trong thanh xuân của Sơn.");
+                if (t === 33) updateText("Sơn có một món quà đặc biệt...<br>nhưng cần Dương trả lời câu này trước.");
+                
                 // CHỐT HẠ GIÂY 40
                 if (t >= 40) {
                     clearInterval(checkTime);
-                    mainText.style.opacity = '0';
-                    setTimeout(() => {
-                        mainText.innerHTML = "Làm người yêu Sơn nhé? ❤️";
-                        mainText.style.fontSize = "3.5rem";
-                        mainText.style.color = "#ff0040";
-                        mainText.style.textShadow = "0 0 30px rgba(255,0,64,1)";
-                        mainText.style.opacity = '1';
-                        askSection.style.display = 'block';
-                    }, 500);
+                    anime({
+                        targets: '#main-text', opacity: 0, duration: 500,
+                        complete: function() {
+                            mainText.innerHTML = "Làm người yêu Sơn nhé? ❤️";
+                            mainText.style.fontSize = "3.2rem";
+                            mainText.style.color = "#ff0040";
+                            anime({ targets: '#main-text', opacity: 1, scale: [0.8, 1], duration: 1200, easing: 'easeOutElastic(1, .5)' });
+                            askSection.style.display = 'block';
+                            anime({ targets: '#ask-section', opacity: [0,1], translateY: [30,0], duration: 1000, delay: 500 });
+                        }
+                    });
                 }
             }, 1000);
         }
 
-        // Nút "Đéo" chạy trốn
         function moveButton() {
             const btn = document.getElementById('no');
-            const x = Math.random() * (window.innerWidth - btn.offsetWidth - 50);
-            const y = Math.random() * (window.innerHeight - btn.offsetHeight - 50);
-            btn.style.position = 'fixed'; btn.style.left = x + 'px'; btn.style.top = y + 'px';
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth - 100);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight - 100);
+            anime({ targets: '#no', left: x, top: y, duration: 400, easing: 'easeOutCubic' });
+            btn.style.position = 'fixed';
         }
 
-        // --- KHI NHẤN ĐỒNG Ý (Phần quan trọng nhất) ---
-        function accepted() {
-            // 1. Ẩn giao diện cũ
-            askSection.style.display = 'none';
-            mainText.style.animation = 'fadeOutDown 1s forwards';
-
-            // 2. Đổi màu nền rực rỡ hơn
-            document.body.style.background = "radial-gradient(circle at center, #7a0020 0%, #000000 100%)";
-            document.body.style.transition = "background 2s ease";
-
-            // 3. Hiện bảng thông điệp cuối sau 1s
-            setTimeout(() => {
-                mainContentDiv.style.display = 'none'; // Ẩn hẳn container cũ
-                finalMessageContainer.style.display = 'block';
-                finalMessageContainer.style.animation = 'fadeInUp 1.5s ease forwards';
-            }, 1000);
+        // --- KHI NHẤN ĐỒNG Ý (PHẦN NỔ NÚT QUAN TRỌNG) ---
+        function accepted(e) {
+            // 1. Tạo hiệu ứng nổ nút bằng Anime.js
+            const rect = e.target.getBoundingClientRect();
+            const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
             
-            // 4. Bắn tim SVG chất lượng cao liên tục
+            for (let i = 0; i < 50; i++) {
+                let particle = document.createElement('div');
+                particle.classList.add('particle-explosion');
+                particle.innerHTML = '❤️';
+                particle.style.color = i % 2 === 0 ? '#ff0055' : '#fff';
+                particle.style.fontSize = Math.random() * 20 + 10 + 'px';
+                document.body.appendChild(particle);
+                
+                anime({
+                    targets: particle,
+                    left: [center.x, center.x + (Math.random() - 0.5) * 400],
+                    top: [center.y, center.y + (Math.random() - 0.5) * 400],
+                    opacity: [1, 0], scale: [0, Math.random() * 2 + 1], rotate: Math.random() * 360,
+                    duration: Math.random() * 1000 + 800, easing: 'easeOutExpo',
+                    complete: () => particle.remove()
+                });
+            }
+
+            // 2. Ẩn nút và nội dung cũ
+            anime({ targets: '#main-content', opacity: 0, duration: 800, easing: 'easeInOutQuad', complete: () => mainContentDiv.style.display = 'none' });
+
+            // 3. Hiện bảng thông điệp cuối
+            setTimeout(() => {
+                finalMessageContainer.style.display = 'block';
+                anime({
+                    targets: '#final-message-container', opacity: [0, 1], scale: [0.8, 1],
+                    duration: 1200, easing: 'easeOutElastic(1, .8)'
+                });
+            }, 800);
+            
+            // 4. Bắn tim SVG bay lên
             setInterval(createFlyingHeart, 200);
-            // Bắn một đợt pháo hoa tim lớn ngay lập tức
-            for(let i=0; i<20; i++) setTimeout(createFlyingHeart, i*50);
+            for(let i=0; i<25; i++) setTimeout(createFlyingHeart, i*80);
         }
 
-        // Hàm tạo trái tim SVG bay (Đẹp hơn emoji nhiều)
         function createFlyingHeart() {
             const heart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             heart.setAttribute("viewBox", "0 0 24 24");
             heart.setAttribute("class", "flying-heart");
             heart.innerHTML = '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>';
-            
-            // Random màu sắc (Hồng/Đỏ)
-            const colors = ["#ff0055", "#ff4d6d", "#ff8fa3", "#ffc2d1"];
+            const colors = ["#ff0055", "#ff3377", "#ff8fa3", "#fff"];
             heart.style.fill = colors[Math.floor(Math.random() * colors.length)];
-            
-            // Random vị trí và kích thước
             heart.style.left = Math.random() * 100 + 'vw';
-            const size = Math.random() * 40 + 20;
+            const size = Math.random() * 35 + 15;
             heart.style.width = size + 'px'; heart.style.height = size + 'px';
-            
-            // Random tốc độ bay
-            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
-            
+            heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
             document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 6000);
+            setTimeout(() => heart.remove(), 7000);
         }
     </script>
 </body>
