@@ -34,26 +34,20 @@
 
         #text-wrapper { min-height: 180px; display: flex; align-items: center; justify-content: center; }
         
-        /* --- SỬA LẠI: CHỮ TRẮNG NỔI BẬT --- */
+        /* CHỮ TRẮNG NỔI BẬT */
         #main-text {
             font-family: 'Dancing Script', cursive; 
             font-size: 2.8rem; line-height: 1.4;
             white-space: pre-wrap;
-            
-            /* MÀU TRẮNG TUYỆT ĐỐI */
             color: #ffffff; 
-            
-            /* Đổ bóng màu hồng đậm để tách chữ khỏi nền */
             text-shadow: 2px 2px 0px #ff5e88, 0 0 15px rgba(255, 0, 80, 0.5);
-            
-            /* Đảm bảo không bị trong suốt */
             opacity: 1; 
         }
         
         .letter { display: inline-block; opacity: 0; transform:translateY(10px); }
 
         .glass-btn {
-            background: rgba(255, 255, 255, 0.8); /* Nền trắng đục hơn để dễ nhìn */
+            background: rgba(255, 255, 255, 0.8);
             color: #ff5e88;
             padding: 15px 40px; border-radius: 50px;
             font-size: 1.2rem; font-weight: bold;
@@ -64,17 +58,20 @@
 
         #ask-section { display: none; width: 100%; margin-top: 30px; }
         .btn-group { display: flex; flex-direction: column; gap: 20px; align-items: center; width: 100%; }
-        .btn { width: 85%; padding: 18px; border-radius: 50px; border: none; font-weight: bold; font-size: 1.2rem; transition: 0.3s; }
+        .btn { width: 85%; padding: 18px; border-radius: 50px; border: none; font-weight: bold; font-size: 1.2rem; transition: 0.1s; }
         
         #yes { 
-            background: #ff0055; color: white; /* Nút đỏ chữ trắng */
+            background: #ff0055; color: white;
             box-shadow: 0 10px 25px rgba(255, 0, 85, 0.3);
+            z-index: 100; /* Luôn nổi lên trên */
         }
         #no { 
-            background: rgba(255,255,255,0.5); color: #555; 
+            background: rgba(255,255,255,0.8); color: #555; 
             width: 60%; padding: 12px; font-size: 1rem;
+            position: relative; /* Để di chuyển được */
         }
 
+        /* Bảng thông báo cuối */
         #final-message {
             display: none; width: 90%; 
             background: rgba(255, 255, 255, 0.95); 
@@ -86,6 +83,15 @@
             color: #ff0055;
         }
         #final-message p { color: #555; font-size: 1.1rem; line-height: 1.6; font-weight: 600;}
+
+        /* Màn hình ĐÃ ĐỒNG Ý (cho lần vào sau) */
+        #already-accepted {
+            display: none; width: 90%; 
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #ff0055;
+            border-radius: 30px; padding: 30px;
+            color: #ff0055;
+        }
 
         .bg-heart {
             position: absolute; color: rgba(255, 255, 255, 0.8);
@@ -100,6 +106,7 @@
     <div id="hearts-container"></div>
 
     <div class="content" id="main-content">
+        
         <div id="start-screen">
             <button class="glass-btn" onclick="startExperience()">Mở quà sinh nhật 🎁</button>
             <p style="margin-top:15px; font-size: 0.9rem; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">(Bật âm lượng lên nhé)</p>
@@ -112,16 +119,25 @@
         <div id="ask-section">
             <div class="btn-group">
                 <button class="btn" id="yes" onclick="accepted()">Đồng ý ❤️</button>
-                <button class="btn" id="no" onclick="moveButton(this)">Suy nghĩ thêm</button>
+                <button class="btn" id="no" onclick="moveButton(this)" ontouchstart="moveButton(this)">Suy nghĩ thêm</button>
             </div>
         </div>
 
         <div id="final-message">
-            <h2>Happy Birthday! 🎉</h2>
+            <h2>Chốt đơn! 🎉</h2>
             <p>
                 Cảm ơn em đã đồng ý.<br>
-                Tuổi 19 này, món quà lớn nhất của Sơn chính là Dương.<br><br>
-                Yêu em rất nhiều! ❤️
+                Sơn đã chụp lại màn hình làm bằng chứng rồi nhé.<br>
+                Không đổi lại được đâu! ❤️
+            </p>
+        </div>
+
+        <div id="already-accepted">
+            <h2>Người yêu của Sơn ❤️</h2>
+            <p>
+                Dương đã đồng ý làm người yêu Sơn rồi.<br>
+                Hợp đồng tình yêu này có hiệu lực vĩnh viễn!<br><br>
+                <strong>Yêu em!</strong>
             </p>
         </div>
     </div>
@@ -129,7 +145,21 @@
     <audio id="bg-music" src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3"></audio>
 
     <script>
-        // Tạo mưa tim nền
+        // --- 1. KIỂM TRA XEM ĐÃ ĐỒNG Ý CHƯA (Logic mỗi máy 1 lần) ---
+        const isAccepted = localStorage.getItem('isDuongAccepted');
+        const startScreen = document.getElementById('start-screen');
+        const alreadyAccepted = document.getElementById('already-accepted');
+        const mainText = document.getElementById('main-text');
+
+        if (isAccepted === 'true') {
+            // Nếu đã đồng ý rồi -> Ẩn hết, hiện bảng thông báo vĩnh viễn
+            startScreen.style.display = 'none';
+            mainText.style.display = 'none';
+            alreadyAccepted.style.display = 'block';
+            createHeartRain(); // Vẫn cho mưa tim cho đẹp
+        }
+
+        // --- CÁC LOGIC KHÁC ---
         const container = document.getElementById('hearts-container');
         for (let i = 0; i < 25; i++) {
             let heart = document.createElement('div'); heart.className = 'bg-heart'; heart.innerHTML = '❤';
@@ -139,8 +169,6 @@
         }
 
         const music = document.getElementById('bg-music');
-        const mainText = document.getElementById('main-text');
-        const startScreen = document.getElementById('start-screen');
         const askSection = document.getElementById('ask-section');
         const finalMessage = document.getElementById('final-message');
         let checkTime;
@@ -171,6 +199,7 @@
         }
 
         function startExperience() {
+            if (isAccepted === 'true') return; // Chặn nếu đã đồng ý
             anime({ targets: '#start-screen', opacity: 0, scale: 0.9, duration: 500, easing: 'easeInOutQuad', complete: () => startScreen.style.display = 'none' });
             music.play();
             checkTime = setInterval(() => {
@@ -179,12 +208,7 @@
                 const clearScene = timeline.find(item => item.clearAt === t); if (clearScene) clearText();
                 if (t >= 40) {
                     clearInterval(checkTime); mainText.innerHTML = "";
-                    
-                    // Chữ chốt to, màu đỏ đậm cho cực rõ
-                    mainText.style.fontSize = "3.2rem"; 
-                    mainText.style.color = "#ff0055"; 
-                    mainText.style.textShadow = "2px 2px 0px #fff"; // Viền trắng cho chữ đỏ
-                    
+                    mainText.style.fontSize = "3.2rem"; mainText.style.color = "#ff0055"; mainText.style.textShadow = "2px 2px 0px #fff";
                     splitAndAnimate("Làm người yêu Sơn nhé? ❤️");
                     setTimeout(() => {
                         askSection.style.display = 'block';
@@ -194,18 +218,51 @@
             }, 1000);
         }
 
+        // --- NÚT LẦY LỘI (SIÊU KHÓ BẤM) ---
         function moveButton(btn) {
-            const w = window.innerWidth - 180; const h = window.innerHeight - 100;
-            btn.style.position = 'fixed'; btn.style.left = Math.random() * w + 'px'; btn.style.top = Math.random() * h + 'px';
-            btn.innerText = "Nút kia đẹp hơn :))";
+            // Lấy kích thước cửa sổ an toàn
+            const w = window.innerWidth - 150;
+            const h = window.innerHeight - 150;
+            
+            // Random vị trí
+            const newX = Math.random() * w + 20;
+            const newY = Math.random() * h + 20;
+            
+            btn.style.position = 'fixed';
+            btn.style.left = newX + 'px';
+            btn.style.top = newY + 'px';
+
+            // Random câu thoại "khịa"
+            const phrases = [
+                "Nút kia cơ mà! 😠",
+                "Đừng hòng thoát!",
+                "Mơ đi cưng 😎",
+                "Lêu lêu 😝",
+                "Bấm đồng ý đi!",
+                "Tay chậm thế?",
+                "Không có cửa đâu"
+            ];
+            btn.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+            
+            // Đổi màu nền nút cho rối mắt
+            btn.style.background = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.8)`;
+            btn.style.color = "#fff";
         }
 
         function accepted() {
-            askSection.style.display = 'none'; mainText.style.display = 'none';
-            finalMessage.style.display = 'block';
-            anime({ targets: '#final-message', opacity: [0, 1], scale: [0.8, 1], duration: 1000, easing: 'easeOutElastic(1, .6)' });
+            // --- LƯU TRẠNG THÁI VÀO BỘ NHỚ ---
+            localStorage.setItem('isDuongAccepted', 'true');
             
-            for (let i = 0; i < 50; i++) {
+            askSection.style.display = 'none'; 
+            mainText.style.display = 'none';
+            finalMessage.style.display = 'block';
+            
+            anime({ targets: '#final-message', opacity: [0, 1], scale: [0.8, 1], duration: 1000, easing: 'easeOutElastic(1, .6)' });
+            createHeartRain();
+        }
+
+        function createHeartRain() {
+            for (let i = 0; i < 60; i++) {
                 setTimeout(() => {
                     let heart = document.createElement('div'); heart.className = 'bg-heart'; heart.innerHTML = '❤️';
                     heart.style.left = Math.random() * 100 + 'vw'; heart.style.fontSize = Math.random() * 30 + 10 + 'px';
