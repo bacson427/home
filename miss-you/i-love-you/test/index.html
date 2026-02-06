@@ -14,17 +14,14 @@
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden;
-            /* NỀN HỒNG CHỦ ĐẠO - KHÔNG CÒN MÀU ĐEN */
-            background: linear-gradient(180deg, #ff758c 0%, #ff7eb3 100%);
+            background: linear-gradient(180deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
             font-family: 'Quicksand', sans-serif;
         }
 
-        /* Lớp phủ họa tiết trái tim mờ ở nền cho đỡ trống */
         .bg-pattern {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: radial-gradient(rgba(255,255,255,0.3) 1px, transparent 1px);
-            background-size: 30px 30px;
-            z-index: 0; pointer-events: none;
+            background-image: radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px);
+            background-size: 20px 20px; z-index: 0; pointer-events: none;
         }
 
         .content {
@@ -34,65 +31,79 @@
             padding: 20px; text-align: center;
         }
 
-        /* --- CHỮ TRẮNG NỔI BẬT --- */
         #text-wrapper { min-height: 180px; display: flex; align-items: center; justify-content: center; }
         
+        /* --- CHỮ ĐỔI MÀU LUNG LINH (SHIMMER TEXT) --- */
         #main-text {
             font-family: 'Dancing Script', cursive; 
-            font-size: 2.5rem; line-height: 1.4;
-            color: #ffffff; /* CHỮ MÀU TRẮNG TUYỆT ĐỐI */
-            text-shadow: 2px 2px 0px rgba(255, 100, 150, 0.5), 0 0 20px rgba(255,255,255,0.5);
+            font-size: 2.8rem; line-height: 1.3;
             white-space: pre-wrap;
+
+            /* Tạo dải màu gradient nền */
+            background: linear-gradient(
+                to right, 
+                #FFF,    /* Trắng */
+                #ff5e88, /* Hồng đậm */
+                #ffeb3b, /* Vàng kim (tạo điểm nhấn lấp lánh) */
+                #c77dff, /* Tím nhạt */
+                #FFF     /* Quay lại Trắng để lặp vòng tròn */
+            );
+            background-size: 200% auto; /* Kéo dải màu rộng ra gấp đôi */
+            
+            /* Cắt nền theo hình dáng chữ */
+            color: #000; /* Màu dự phòng */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            
+            /* Hiệu ứng di chuyển màu và đổ bóng sáng */
+            animation: textShimmer 3s linear infinite;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+        }
+
+        /* Animation di chuyển dải màu nền */
+        @keyframes textShimmer {
+            to {
+                background-position: 200% center;
+            }
         }
         
         .letter { display: inline-block; opacity: 0; }
 
-        /* Nút bấm hiệu ứng kính trên nền hồng */
+        /* Các thành phần khác giữ nguyên vẻ sang trọng */
         .glass-btn {
-            background: rgba(255, 255, 255, 0.25);
-            border: 2px solid #fff;
-            color: #fff;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid #fff; color: #fff;
             padding: 15px 40px; border-radius: 50px;
             font-size: 1.2rem; font-weight: bold;
-            box-shadow: 0 5px 15px rgba(255, 0, 80, 0.3);
-            backdrop-filter: blur(5px);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(255, 100, 150, 0.3);
+            backdrop-filter: blur(5px); text-shadow: 0 1px 2px rgba(0,0,0,0.1);
             animation: pulse 2s infinite;
         }
 
         #ask-section { display: none; width: 100%; margin-top: 30px; }
         .btn-group { display: flex; flex-direction: column; gap: 20px; align-items: center; width: 100%; }
+        .btn { width: 85%; padding: 18px; border-radius: 50px; border: none; font-weight: bold; font-size: 1.2rem; transition: 0.3s; }
         
-        .btn { 
-            width: 85%; padding: 18px; border-radius: 50px; border: none; 
-            font-weight: bold; font-size: 1.2rem; transition: 0.3s;
-        }
-        
-        /* Nút Đồng ý màu Trắng chữ Hồng (Ngược lại cho nổi) */
         #yes { 
-            background: #fff; color: #ff477e;
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.4);
+            background: linear-gradient(45deg, #ff0055, #ff3377); color: white;
+            box-shadow: 0 10px 25px rgba(255, 0, 85, 0.4);
         }
-        
         #no { 
-            background: rgba(0,0,0,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.5); 
-            width: 60%; padding: 12px; font-size: 1rem;
+            background: rgba(255,255,255,0.2); color: #fff; border: 2px solid rgba(255,255,255,0.6); 
+            width: 60%; padding: 12px; font-size: 1rem; font-weight: normal;
         }
 
-        /* Bảng thông báo cuối */
         #final-message {
             display: none; width: 90%; 
-            background: rgba(255, 255, 255, 0.9); /* Nền trắng đục */
-            color: #ff477e; /* Chữ hồng đậm */
+            background: rgba(255, 255, 255, 0.95); color: #ff0055;
             border-radius: 30px; padding: 40px 30px;
             box-shadow: 0 20px 50px rgba(255, 60, 100, 0.3);
         }
         #final-message h2 { font-family: 'Dancing Script', cursive; font-size: 3rem; margin: 0 0 15px 0; }
         #final-message p { color: #555; font-size: 1.1rem; line-height: 1.6; font-weight: 600;}
 
-        /* Hiệu ứng tim bay nền */
         .bg-heart {
-            position: absolute; color: rgba(255, 255, 255, 0.6);
+            position: absolute; color: rgba(255, 255, 255, 0.7);
             animation: floatUp linear infinite; z-index: 1; pointer-events: none;
         }
         @keyframes floatUp { to { transform: translateY(-110vh) rotate(360deg); } }
@@ -101,7 +112,6 @@
 </head>
 <body>
     <div class="bg-pattern"></div>
-    
     <div id="hearts-container"></div>
 
     <div class="content" id="main-content">
@@ -134,16 +144,12 @@
     <audio id="bg-music" src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3"></audio>
 
     <script>
-        // Tạo mưa tim nền (Background Hearts)
+        // Javascript giữ nguyên như cũ
         const container = document.getElementById('hearts-container');
-        for (let i = 0; i < 20; i++) {
-            let heart = document.createElement('div');
-            heart.className = 'bg-heart';
-            heart.innerHTML = '❤';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.top = Math.random() * 100 + 'vh';
-            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
-            heart.style.animationDuration = Math.random() * 5 + 5 + 's';
+        for (let i = 0; i < 25; i++) {
+            let heart = document.createElement('div'); heart.className = 'bg-heart'; heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 100 + 'vw'; heart.style.top = Math.random() * 100 + 'vh';
+            heart.style.fontSize = Math.random() * 15 + 10 + 'px'; heart.style.animationDuration = Math.random() * 5 + 5 + 's';
             container.appendChild(heart);
         }
 
@@ -154,7 +160,6 @@
         const finalMessage = document.getElementById('final-message');
         let checkTime;
 
-        // TIMELINE - GIỮ NGUYÊN
         const timeline = [
             { time: 1, text: "Chào Dương...", clearAt: 4 },
             { time: 5, text: "Hôm nay là một ngày đặc biệt.", clearAt: 9 },
@@ -166,7 +171,8 @@
         ];
 
         function splitAndAnimate(text) {
-            mainText.innerHTML = text.replace(/\S/g, "<span class='letter'>$&</span>");
+            // Mẹo: Thêm một khoảng trắng nhỏ để drop-shadow không bị cắt
+            mainText.innerHTML = "&nbsp;" + text.replace(/\S/g, "<span class='letter'>$&</span>") + "&nbsp;";
             anime({
                 targets: '.letter', opacity: [0, 1], translateY: [20, 0], rotateZ: [-5, 0],
                 easing: "easeOutExpo", duration: 1200, delay: anime.stagger(50)
@@ -189,8 +195,7 @@
                 const clearScene = timeline.find(item => item.clearAt === t); if (clearScene) clearText();
                 if (t >= 40) {
                     clearInterval(checkTime); mainText.innerHTML = "";
-                    mainText.style.fontSize = "3rem"; 
-                    mainText.style.color = "#fff"; // Chữ chốt màu trắng
+                    mainText.style.fontSize = "3.5rem"; 
                     splitAndAnimate("Làm người yêu Sơn nhé? ❤️");
                     setTimeout(() => {
                         askSection.style.display = 'block';
@@ -210,17 +215,11 @@
             askSection.style.display = 'none'; mainText.style.display = 'none';
             finalMessage.style.display = 'block';
             anime({ targets: '#final-message', opacity: [0, 1], scale: [0.8, 1], duration: 1000, easing: 'easeOutElastic(1, .6)' });
-            
-            // Mưa tim kết thúc
             for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
-                    const heart = document.createElement('div'); 
-                    heart.className = 'bg-heart'; 
-                    heart.innerHTML = '❤️';
-                    heart.style.left = Math.random() * 100 + 'vw';
-                    heart.style.fontSize = Math.random() * 30 + 10 + 'px';
-                    heart.style.animationDuration = Math.random() * 2 + 3 + 's';
-                    heart.style.zIndex = 100;
+                    let heart = document.createElement('div'); heart.className = 'bg-heart'; heart.innerHTML = '❤️';
+                    heart.style.left = Math.random() * 100 + 'vw'; heart.style.fontSize = Math.random() * 30 + 10 + 'px';
+                    heart.style.animationDuration = Math.random() * 2 + 3 + 's'; heart.style.zIndex = 100;
                     document.body.appendChild(heart);
                 }, i * 50);
             }
