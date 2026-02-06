@@ -1,1 +1,100 @@
 
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Gửi Dương...</title>
+    <style>
+        body {
+            background-color: #fff5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 500px;
+        }
+        h1 { color: #ff4d4d; }
+        p { color: #555; line-height: 1.6; }
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        #yes { background-color: #ff4d4d; color: white; }
+        #no { background-color: #ddd; color: #333; position: relative; }
+        
+        /* Hiệu ứng trái tim bay */
+        .heart {
+            position: absolute;
+            color: #ff4d4d;
+            animation: float 3s linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 id="main-title">Dương ơi... ❤️</h1>
+    <p id="message">Sơn đã suy nghĩ rất lâu về quãng thời gian chúng mình ở Nguyễn Khang. Mình không muốn chỉ dừng lại ở "trên tình bạn" nữa. Làm người yêu mình nhé?</p>
+    
+    <div class="buttons">
+        <button class="btn" id="yes" onclick="accepted()">Đồng ý</button>
+        <button class="btn" id="no" onmouseover="moveButton()">Suy nghĩ thêm</button>
+    </div>
+</div>
+
+<script>
+    function moveButton() {
+        const btn = document.getElementById('no');
+        const x = Math.random() * (window.innerWidth - btn.offsetWidth);
+        const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+        btn.style.position = 'absolute';
+        btn.style.left = x + 'px';
+        btn.style.top = y + 'px';
+    }
+
+    function accepted() {
+        document.getElementById('main-title').innerHTML = "Yêu Dương rất nhiều! ❤️";
+        document.getElementById('message').innerHTML = "Cảm ơn em đã đồng ý. Sơn sẽ không làm em thất vọng đâu!";
+        document.querySelector('.buttons').style.display = 'none';
+        
+        // Tạo hiệu ứng trái tim
+        setInterval(createHeart, 300);
+    }
+
+    function createHeart() {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.innerHTML = '❤️';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.fontSize = Math.random() * 20 + 20 + 'px';
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 3000);
+    }
+</script>
+
+</body>
+</html>
