@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HPBD_DUONG_19_GALAXY</title>
+    <title>HPBD_DUONG_19_THE_REAL_GALAXY</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
         
@@ -156,7 +156,6 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     const DOT_SIZE = isMobile ? 1.5 : 1.2; 
     let state = "IDLE"; 
     
-    // Thêm mảng shootingStars để quản lý sao băng riêng biệt
     let particles = [], fireworks = [], sparkles = [], spotlights = [], bgStars = [], shootingStars = [];
     let scriptIdx = 0, countdown = 10;
 
@@ -178,7 +177,6 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
             });
         }
 
-        // Khởi tạo Sao Nền
         bgStars = [];
         let starCount = isMobile ? 80 : 200;
         for(let i=0; i<starCount; i++) {
@@ -194,35 +192,42 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     window.addEventListener('resize', resize);
     resize();
 
-    // --- LỚP ĐỐI TƯỢNG SAO BĂNG (MỚI) ---
+    // --- LỚP SAO BĂNG ĐÃ SỬA: XUẤT PHÁT TỪ RÌA ---
     class ShootingStar {
         constructor() {
-            this.x = Math.random() * w * 0.8; // Xuất phát ngẫu nhiên
-            this.y = Math.random() * h * 0.5; 
-            this.len = Math.random() * 80 + 100; // Độ dài đuôi (100-180px)
-            this.speed = Math.random() * 3 + 4; // Tốc độ di chuyển (vừa phải)
+            this.angle = Math.PI / 4; // Góc 45 độ
             this.size = Math.random() * 1 + 1.5;
-            this.angle = Math.PI / 4; // Góc chéo 45 độ
+            this.speed = Math.random() * 2 + 3; // Tốc độ vừa phải (3-5px/frame)
+            this.len = Math.random() * 80 + 120; // Độ dài đuôi
             this.active = true;
+
+            // Logic chọn vị trí xuất phát từ RÌA
+            if (Math.random() < 0.5) {
+                // Xuất phát từ cạnh TRÊN (y âm, x ngẫu nhiên)
+                this.x = Math.random() * w;
+                this.y = -this.len; // Bắt đầu ở trên hẳn màn hình
+            } else {
+                // Xuất phát từ cạnh TRÁI (x âm, y ngẫu nhiên ở nửa trên)
+                this.x = -this.len;
+                this.y = Math.random() * h * 0.5;
+            }
         }
 
         update() {
-            // Di chuyển chéo xuống dưới bên phải
             this.x += this.speed * Math.cos(this.angle);
             this.y += this.speed * Math.sin(this.angle);
 
-            // Nếu bay ra khỏi màn hình thì xóa
+            // Chỉ xóa khi CẢ ĐUÔI đã ra khỏi màn hình
             if (this.x > w + this.len || this.y > h + this.len) {
                 this.active = false;
             }
         }
 
         draw() {
-            // Tính toán điểm đuôi
             let tailX = this.x - this.len * Math.cos(this.angle);
             let tailY = this.y - this.len * Math.sin(this.angle);
 
-            // Vẽ đuôi (Gradient từ trắng -> trong suốt)
+            // Gradient mượt cho đuôi
             let grad = ctx.createLinearGradient(this.x, this.y, tailX, tailY);
             grad.addColorStop(0, "rgba(255,255,255,1)");
             grad.addColorStop(1, "rgba(255,255,255,0)");
@@ -235,16 +240,11 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
             ctx.lineTo(tailX, tailY);
             ctx.stroke();
 
-            // Vẽ đầu sao sáng hơn
+            // Đầu sao
             ctx.beginPath();
             ctx.fillStyle = "white";
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.fill();
-            
-            // Hiệu ứng glow nhẹ ở đầu
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = "white";
-            ctx.shadowBlur = 0;
         }
     }
 
@@ -375,9 +375,7 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         ctx.restore();
     }
 
-    // --- HÀM VẼ NỀN & SAO BĂNG ---
     function drawDynamicBackground() {
-        // 1. Sao nền nhấp nháy
         bgStars.forEach(s => {
             s.opacity += s.blinkSpeed;
             if(s.opacity > 1 || s.opacity < 0.2) s.blinkSpeed *= -1;
@@ -387,9 +385,8 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
             ctx.fill();
         });
 
-        // 2. Quản lý Sao Băng (Spawn & Draw)
-        // Tỉ lệ xuất hiện thấp để không bị rối (0.005)
-        if(Math.random() < 0.01) { 
+        // Xác suất xuất hiện sao băng (tăng nhẹ lên 0.015 để dễ thấy hơn)
+        if(Math.random() < 0.015) { 
             shootingStars.push(new ShootingStar());
         }
 
@@ -446,7 +443,6 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     }
 
     function loop() {
-        // Tạo hiệu ứng vệt mờ cho chuyển động (Trail effect)
         ctx.fillStyle = "rgba(0, 5, 15, 0.2)"; 
         ctx.fillRect(0,0,w,h);
 
@@ -469,7 +465,6 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
             }
         });
 
-        // Firework Logic
         for(let i=fireworks.length-1; i>=0; i--) {
             let f = fireworks[i];
             f.y += f.vy; f.vy += 0.15;
