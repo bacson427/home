@@ -1,100 +1,219 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Gửi Dương...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gửi Dương 01/03 ❤️</title>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
-        body {
-            background-color: #fff5f5;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            /* Nền chuyển màu từ Đỏ thẫm sang Đen */
+            background: radial-gradient(circle, #5e001f 0%, #000000 100%);
+            font-family: 'Montserrat', sans-serif;
             overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
         }
-        .container {
-            text-align: center;
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            max-width: 500px;
+
+        #particles-js {
+            position: absolute; width: 100%; height: 100%; z-index: 1;
         }
-        h1 { color: #ff4d4d; }
-        p { color: #555; line-height: 1.6; }
-        .buttons {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
+
+        .content {
+            position: relative; z-index: 2; text-align: center;
+            color: #ffb3c1;
+            transition: all 1s ease;
+            width: 90%;
+            max-width: 800px;
         }
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
+
+        #main-text {
+            font-size: 2.2rem; font-weight: bold;
+            text-shadow: 0 0 20px rgba(255, 0, 80, 0.6);
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 1s ease, transform 1s ease;
+            line-height: 1.4;
         }
-        #yes { background-color: #ff4d4d; color: white; }
-        #no { background-color: #ddd; color: #333; position: relative; }
+
+        /* Nút Start lúc đầu */
+        .btn-start {
+            padding: 15px 40px; 
+            border: 2px solid #ff4d6d;
+            background: rgba(0,0,0,0.5); 
+            color: #ff4d6d;
+            cursor: pointer; border-radius: 50px;
+            font-size: 1.2rem; transition: 0.3s;
+            box-shadow: 0 0 15px #ff4d6d;
+            animation: pulse 2s infinite;
+        }
+        .btn-start:hover { 
+            background: #ff4d6d; color: white; 
+            box-shadow: 0 0 30px #ff4d6d;
+        }
+
+        /* Khu vực 2 nút chọn */
+        #ask-section { display: none; margin-top: 30px; }
         
-        /* Hiệu ứng trái tim bay */
-        .heart {
-            position: absolute;
-            color: #ff4d4d;
-            animation: float 3s linear infinite;
+        .btn-group { display: flex; gap: 30px; justify-content: center; margin-top: 30px; }
+        .btn { 
+            padding: 15px 40px; border-radius: 30px; border: none; 
+            cursor: pointer; font-weight: bold; font-size: 1.2rem;
+            transition: 0.3s; color: white;
         }
-        @keyframes float {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+        #yes { 
+            background: #ff0055; 
+            box-shadow: 0 0 20px #ff0055;
         }
+        #yes:hover { transform: scale(1.1); background: #ff3377; }
+        
+        #no { 
+            background: #444; position: relative; 
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Hiệu ứng nến/bánh kem nhỏ (CSS vẽ) */
+        .birthday-icon { font-size: 4rem; display: block; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1 id="main-title">Dương ơi... ❤️</h1>
-    <p id="message">Sơn đã suy nghĩ rất lâu về quãng thời gian chúng mình ở Nguyễn Khang. Mình không muốn chỉ dừng lại ở "trên tình bạn" nữa. Làm người yêu mình nhé?</p>
-    
-    <div class="buttons">
-        <button class="btn" id="yes" onclick="accepted()">Đồng ý</button>
-        <button class="btn" id="no" onmouseover="moveButton()">Suy nghĩ thêm</button>
-    </div>
-</div>
+    <div id="particles-js"></div>
 
-<script>
-    function moveButton() {
-        const btn = document.getElementById('no');
-        const x = Math.random() * (window.innerWidth - btn.offsetWidth);
-        const y = Math.random() * (window.innerHeight - btn.offsetHeight);
-        btn.style.position = 'absolute';
-        btn.style.left = x + 'px';
-        btn.style.top = y + 'px';
-    }
-
-    function accepted() {
-        document.getElementById('main-title').innerHTML = "Yêu Dương rất nhiều! ❤️";
-        document.getElementById('message').innerHTML = "Cảm ơn em đã đồng ý. Sơn sẽ không làm em thất vọng đâu!";
-        document.querySelector('.buttons').style.display = 'none';
+    <div class="content">
+        <div id="start-screen">
+            <button class="btn-start" onclick="startExperience()">Nhấn vào đây đi cô nương ❤️</button>
+        </div>
         
-        // Tạo hiệu ứng trái tim
-        setInterval(createHeart, 300);
-    }
+        <div id="display-area">
+            <h1 id="main-text"></h1>
+        </div>
 
-    function createHeart() {
-        const heart = document.createElement('div');
-        heart.classList.add('heart');
-        heart.innerHTML = '❤️';
-        heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.fontSize = Math.random() * 20 + 20 + 'px';
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 3000);
-    }
-</script>
+        <div id="ask-section">
+            <div class="btn-group">
+                <button class="btn" id="yes" onclick="accepted()">Đồng ý</button>
+                <button class="btn" id="no" onmouseover="moveButton()">Đéo</button>
+            </div>
+        </div>
+    </div>
 
+    <audio id="bg-music" src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3"></audio>
+
+    <script>
+        /* Cấu hình hạt: Màu hồng phấn lãng mạn */
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 100, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#ff8fa3" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.6, "random": true },
+                "size": { "value": 4, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ff4d6d", "opacity": 0.3, "width": 1 },
+                "move": { "enable": true, "speed": 2.5, "direction": "none", "random": true, "out_mode": "out" }
+            },
+            "interactivity": {
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } }
+            }
+        });
+
+        const music = document.getElementById('bg-music');
+        const mainText = document.getElementById('main-text');
+        const startScreen = document.getElementById('start-screen');
+        const askSection = document.getElementById('ask-section');
+        let checkTime;
+
+        // Hàm cập nhật chữ với hiệu ứng mờ dần
+        function updateText(text, icon = "") {
+            mainText.style.opacity = '0';
+            setTimeout(() => {
+                mainText.innerHTML = (icon ? `<span class="birthday-icon">${icon}</span>` : "") + text;
+                mainText.style.opacity = '1';
+            }, 1000);
+        }
+
+        function startExperience() {
+            startScreen.style.display = 'none';
+            music.play();
+            
+            // 0s: Intro
+            updateText("Xin chào Dương...");
+
+            checkTime = setInterval(() => {
+                const t = Math.floor(music.currentTime);
+
+                // KỊCH BẢN TIMELINE
+                
+                // Giây thứ 8: Chúc mừng sinh nhật
+                if (t === 8) {
+                    updateText("Chúc mừng sinh nhật tuổi 19! 🎂<br>Tuổi mới thật rực rỡ nhé.", "🎉");
+                }
+                
+                // Giây thứ 20: Khen ngợi / Thả thính nhẹ
+                if (t === 20) {
+                    updateText("Cảm ơn vì Dương đã xuất hiện<br>trong thanh xuân của Sơn.");
+                }
+
+                // Giây thứ 32: Dẫn dắt vào vấn đề chính
+                if (t === 32) {
+                    updateText("Sơn có một món quà đặc biệt...<br>nhưng cần Dương trả lời câu này trước.");
+                }
+
+                // Giây thứ 40: CHỐT HẠ (Đoạn này nhạc thường là điệp khúc)
+                if (t >= 40) {
+                    clearInterval(checkTime); // Dừng vòng lặp
+                    mainText.style.opacity = '0';
+                    setTimeout(() => {
+                        mainText.innerHTML = "Làm người yêu Sơn nhé? ❤️";
+                        mainText.style.fontSize = "3rem";
+                        mainText.style.color = "#ff0040";
+                        mainText.style.opacity = '1';
+                        askSection.style.display = 'block'; // Hiện nút
+                    }, 500);
+                }
+            }, 1000);
+        }
+
+        function moveButton() {
+            const btn = document.getElementById('no');
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth - 20);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight - 20);
+            btn.style.position = 'fixed';
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+        }
+
+        function accepted() {
+            askSection.style.display = 'none';
+            // Khi đồng ý -> Chuyển thành lời hứa
+            updateText("Cảm ơn em đã đồng ý! <br> Hôm nay là sinh nhật em, nhưng Sơn mới là người nhận được quà to nhất. ❤️", "🎁");
+            
+            // Bắn tim tung toé
+            setInterval(createHeart, 100);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.style.position = 'fixed';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.bottom = '0';
+            heart.style.fontSize = Math.random() * 30 + 10 + 'px';
+            heart.style.transition = 'all 4s linear';
+            heart.style.opacity = '0.8';
+            heart.style.zIndex = '999';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.style.bottom = '100vh'; // Bay lên trời
+                heart.style.opacity = '0';
+            }, 100);
+
+            setTimeout(() => heart.remove(), 4000);
+        }
+    </script>
 </body>
 </html>
