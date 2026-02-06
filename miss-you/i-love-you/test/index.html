@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kỷ Niệm Lotte & Starbucks</title>
+    <title>Drone Show Kỷ Niệm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500&display=swap" rel="stylesheet">
     <style>
         body, html {
             margin: 0;
@@ -11,60 +12,99 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #050510; /* Màu trời đêm */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-color: #050505; /* Bầu trời đêm */
+            font-family: 'Quicksand', sans-serif;
         }
-        #drone-canvas {
+
+        #canvas {
+            display: block;
+        }
+
+        .ui-layer {
             position: absolute;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
         }
-        .message {
+
+        #start-btn {
+            padding: 15px 40px;
+            font-size: 20px;
+            background: linear-gradient(45deg, #ff4d6d, #ff758f);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: 0 0 20px rgba(255, 77, 109, 0.5);
+            font-family: 'Dancing Script', cursive;
+            transition: 0.3s;
+        }
+
+        #start-btn:hover { transform: scale(1.1); }
+
+        #confession-text {
             position: absolute;
-            bottom: 30px;
-            color: rgba(255, 255, 255, 0.7);
-            font-family: 'Arial', sans-serif;
-            font-size: 1.2rem;
+            bottom: 20%;
             text-align: center;
             width: 100%;
-            pointer-events: none;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: #ff4d6d;
+            text-shadow: 0 0 20px rgba(255, 77, 109, 0.8);
+            opacity: 0;
+            transition: opacity 2s ease;
         }
     </style>
 </head>
 <body>
 
-    <canvas id="drone-canvas"></canvas>
-    <div class="message" id="status-text">Đang khởi động drone...</div>
+    <canvas id="canvas"></canvas>
+
+    <div class="ui-layer">
+        <button id="start-btn">Bắt đầu màn trình diễn Drone đặc biệt...</button>
+        <div id="confession-text">Làm người yêu tớ nhé? ❤️</div>
+    </div>
+
+    <audio id="bg-music" src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3"></audio>
 
     <script>
-        const canvas = document.getElementById('drone-canvas');
+        const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        const statusText = document.getElementById('status-text');
+        const startBtn = document.getElementById('start-btn');
+        const music = document.getElementById('bg-music');
+        const confession = document.getElementById('confession-text');
 
-        let width, height;
         let drones = [];
-        const numDrones = 300; // Số lượng drone
+        const droneCount = 400; // Số lượng "drone"
         let currentFormation = 0;
-        const formations = [];
+        let showStarted = false;
 
-        // --- CẤU HÌNH DRONE ---
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
         class Drone {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.targetX = x;
-                this.targetY = y;
-                // Tốc độ di chuyển ngẫu nhiên để tạo cảm giác chân thực
-                this.speed = 0.03 + Math.random() * 0.02; 
-                this.color = '#ffffff';
-                this.size = 2 + Math.random() * 1.5;
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.targetX = this.x;
+                this.targetY = this.y;
+                this.size = Math.random() * 2 + 1;
+                this.color = `hsla(${Math.random() * 20 + 340}, 100%, 70%, ${Math.random() * 0.5 + 0.5})`;
+                this.speed = 0.05;
             }
 
             update() {
-                // Sử dụng Linear Interpolation (lerp) để di chuyển mượt mà
                 this.x += (this.targetX - this.x) * this.speed;
                 this.y += (this.targetY - this.y) * this.speed;
             }
@@ -73,155 +113,97 @@
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
-                // Hiệu ứng phát sáng (Glow effect)
                 ctx.shadowBlur = 10;
                 ctx.shadowColor = this.color;
                 ctx.fill();
-                ctx.shadowBlur = 0; // Reset shadow
             }
         }
 
-        // --- ĐỊNH NGHĨA CÁC HÌNH (FORMATIONS) ---
+        function createShape(type) {
+            const points = [];
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const scale = Math.min(canvas.width, canvas.height) / 15;
 
-        // Hình 1: Cốc Starbucks
-        function shapeStarbucksCup(i) {
-            const scale = Math.min(width, height) * 0.25;
-            const centerX = width / 2;
-            const centerY = height / 2 + scale * 0.2;
-            let x, y;
-
-            // Chia drone thành các phần để vẽ cốc
-            if (i < numDrones * 0.6) {
-                // Thân cốc (hình thang)
-                const progress = i / (numDrones * 0.6);
-                const angle = Math.PI * progress;
-                const bottomWidth = 0.6;
-                const topWidth = 1;
-                const heightRatio = 1.2;
-                
-                const currentWidth = bottomWidth + (topWidth - bottomWidth) * (1-progress);
-                // Vẽ viền cốc
-                if (i % 2 === 0) {
-                     x = centerX - scale * currentWidth / 2;
-                } else {
-                     x = centerX + scale * currentWidth / 2;
+            if (type === 'heart') {
+                for (let i = 0; i < droneCount; i++) {
+                    const t = Math.random() * Math.PI * 2;
+                    const x = 16 * Math.pow(Math.sin(t), 3);
+                    const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                    points.push({ x: centerX + x * scale, y: centerY + y * scale });
                 }
-                y = centerY + scale * (progress - 0.5) * heightRatio;
-                
-            } else if (i < numDrones * 0.8) {
-                // Nắp cốc
-                const progress = (i - numDrones * 0.6) / (numDrones * 0.2);
-                x = centerX + scale * 0.5 * Math.cos(progress * Math.PI * 2);
-                y = centerY - scale * 0.6 + scale * 0.1 * Math.sin(progress * Math.PI * 2);
-            } else {
-                // Ống hút / Hơi nóng
-                 const progress = (i - numDrones * 0.8) / (numDrones * 0.2);
-                 x = centerX + scale * 0.1 * Math.sin(progress * Math.PI * 4);
-                 y = centerY - scale * 0.7 - scale * 0.3 * progress;
+            } else if (type === 'SB') { // Spicy Box
+                ctx.font = `bold ${scale * 8}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.fillText('SB', centerX, centerY + scale * 2);
+                const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                for (let i = 0; i < data.length; i += 30) {
+                    if (data[i + 3] > 128) {
+                        const x = (i / 4) % canvas.width;
+                        const y = Math.floor((i / 4) / canvas.width);
+                        points.push({ x, y });
+                    }
+                }
+                ctx.clearRect(0,0, canvas.width, canvas.height);
+            } else if (type === '28km') {
+                ctx.font = `bold ${scale * 6}px Arial`;
+                ctx.fillText('28km', centerX, centerY + scale * 2);
+                const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                for (let i = 0; i < data.length; i += 35) {
+                    if (data[i + 3] > 128) {
+                        const x = (i / 4) % canvas.width;
+                        const y = Math.floor((i / 4) / canvas.width);
+                        points.push({ x, y });
+                    }
+                }
+                ctx.clearRect(0,0, canvas.width, canvas.height);
             }
-
-            return { x, y, color: '#00704A' }; // Màu xanh Starbucks
-        }
-
-        // Hình 2: Tòa tháp Lotte
-        function shapeLotteTower(i) {
-            const scale = Math.min(width, height) * 0.4;
-            const centerX = width / 2;
-            const centerY = height / 2 + scale * 0.4;
             
-            const progress = i / numDrones;
-            // Tạo hình tháp vuốt nhọn
-            const currentWidth = 0.3 * (1 - Math.pow(progress, 2)); 
-            
-            let x;
-             // Vẽ 2 cạnh bên
-            if (i % 2 === 0) {
-                 x = centerX - scale * currentWidth;
-            } else {
-                 x = centerX + scale * currentWidth;
-            }
-            const y = centerY - scale * progress * 1.8;
-
-            return { x, y, color: '#F4D03F' }; // Màu vàng ánh kim
-        }
-
-        // Hình 3: Trái tim
-        function shapeHeart(i) {
-            const scale = Math.min(width, height) * 0.015;
-            const centerX = width / 2;
-            const centerY = height / 2;
-            // Công thức toán học hình trái tim
-            const t = (i / numDrones) * Math.PI * 2;
-            const x = centerX + scale * 16 * Math.pow(Math.sin(t), 3);
-            const y = centerY - scale * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-            
-            return { x, y, color: '#E91E63' }; // Màu hồng/đỏ
-        }
-
-
-        // --- HỆ THỐNG ĐIỀU KHIỂN ---
-
-        function init() {
-            resize();
-            window.addEventListener('resize', resize);
-
-            // Tạo drone ở vị trí ngẫu nhiên ban đầu
-            for (let i = 0; i < numDrones; i++) {
-                drones.push(new Drone(Math.random() * width, Math.random() * height));
-            }
-
-            // Danh sách các hình
-            formations.push({ shape: shapeStarbucksCup, text: "Nhớ hôm mình đi Starbucks..." });
-            formations.push({ shape: shapeLotteTower, text: "...ở Lotte Center" });
-            formations.push({ shape: shapeHeart, text: "Từ đó tớ đã thích cậu rồi!" });
-
-            // Bắt đầu show sau 1 giây
-            setTimeout(() => {
-                nextFormation();
-                // Chuyển hình mỗi 6 giây
-                setInterval(nextFormation, 6000);
-            }, 1000);
-            
-            animate();
-        }
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-
-        function nextFormation() {
-            const format = formations[currentFormation];
-            statusText.textContent = format.text;
-            statusText.style.opacity = 0; // Fade text effect start
-            setTimeout(() => statusText.style.opacity = 1, 500); // Fade text in
-
-            // Cập nhật mục tiêu cho từng drone
-            for (let i = 0; i < numDrones; i++) {
-                const target = format.shape(i);
+            // Gán điểm cho drone
+            for (let i = 0; i < drones.length; i++) {
+                const target = points[i % points.length];
                 drones[i].targetX = target.x;
                 drones[i].targetY = target.y;
-                drones[i].color = target.color;
             }
+        }
 
-            currentFormation = (currentFormation + 1) % formations.length;
+        function initDrones() {
+            for (let i = 0; i < droneCount; i++) {
+                drones.push(new Drone());
+            }
         }
 
         function animate() {
-            ctx.clearRect(0, 0, width, height);
-            // Vẽ nền trời đêm mờ ảo
-            ctx.fillStyle = 'rgba(5, 5, 16, 0.3)';
-            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.2)'; // Tạo hiệu ứng đuôi sáng
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            drones.forEach(d => {
+                d.update();
+                d.draw();
+            });
 
-            for (let i = 0; i < numDrones; i++) {
-                drones[i].update();
-                drones[i].draw();
+            if (showStarted) {
+                const time = music.currentTime;
+                // Timeline trình diễn
+                if (time > 2 && time < 10) createShape('heart');
+                if (time > 12 && time < 25) createShape('SB'); // Nhắc về Spicy Box Lotte Tây Hồ
+                if (time > 27 && time < 38) createShape('28km'); // Nhắc về chuyến xe Cup 28km
+                if (time >= 40) {
+                    createShape('heart'); // Quay lại hình tim khi nhạc bùng nổ
+                    confession.style.opacity = '1';
+                }
             }
             requestAnimationFrame(animate);
         }
 
-        init();
+        startBtn.addEventListener('click', () => {
+            showStarted = true;
+            startBtn.style.display = 'none';
+            music.play();
+        });
 
+        initDrones();
+        animate();
     </script>
 </body>
 </html>
