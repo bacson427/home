@@ -6,85 +6,99 @@
     <title>Gửi Dương 01/03 ❤️</title>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
+        /* --- CẤU HÌNH CƠ BẢN --- */
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            /* Nền chuyển màu từ Đỏ thẫm sang Đen */
-            background: radial-gradient(circle, #5e001f 0%, #000000 100%);
+            background: radial-gradient(circle at center, #4a0010 0%, #000000 100%);
             font-family: 'Montserrat', sans-serif;
             overflow: hidden;
             display: flex; justify-content: center; align-items: center;
         }
 
-        #particles-js {
-            position: absolute; width: 100%; height: 100%; z-index: 1;
-        }
+        #particles-js { position: absolute; width: 100%; height: 100%; z-index: 1; }
 
         .content {
-            position: relative; z-index: 2; text-align: center;
-            color: #ffb3c1;
-            transition: all 1s ease;
-            width: 90%;
-            max-width: 800px;
+            position: relative; z-index: 10; text-align: center;
+            color: #ffb3c1; width: 90%; max-width: 800px;
+            transition: all 0.5s ease;
         }
 
+        /* --- PHẦN TEXT CHÍNH --- */
         #main-text {
             font-size: 2.2rem; font-weight: bold;
             text-shadow: 0 0 20px rgba(255, 0, 80, 0.6);
             opacity: 0; transform: translateY(20px);
-            transition: opacity 1s ease, transform 1s ease;
-            line-height: 1.4;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            line-height: 1.5; min-height: 100px; /* Giữ chỗ tránh giật layout */
         }
+        .birthday-icon { font-size: 3rem; display: block; margin-bottom: 15px; animation: bounce 2s infinite; }
 
-        /* Nút Start lúc đầu */
+        /* --- NÚT BẤM --- */
         .btn-start {
-            padding: 15px 40px; 
-            border: 2px solid #ff4d6d;
-            background: rgba(0,0,0,0.5); 
-            color: #ff4d6d;
-            cursor: pointer; border-radius: 50px;
-            font-size: 1.2rem; transition: 0.3s;
-            box-shadow: 0 0 15px #ff4d6d;
-            animation: pulse 2s infinite;
+            padding: 15px 40px; border: 2px solid #ff4d6d;
+            background: rgba(0,0,0,0.3); color: #ff4d6d;
+            cursor: pointer; border-radius: 50px; font-size: 1.2rem;
+            box-shadow: 0 0 15px #ff4d6d; animation: pulse 2s infinite;
         }
-        .btn-start:hover { 
-            background: #ff4d6d; color: white; 
-            box-shadow: 0 0 30px #ff4d6d;
-        }
+        .btn-start:hover { background: #ff4d6d; color: white; box-shadow: 0 0 30px #ff4d6d; }
 
-        /* Khu vực 2 nút chọn */
-        #ask-section { display: none; margin-top: 30px; }
-        
-        .btn-group { display: flex; gap: 30px; justify-content: center; margin-top: 30px; }
+        #ask-section { display: none; margin-top: 40px; animation: fadeInUp 1s ease; }
+        .btn-group { display: flex; gap: 30px; justify-content: center; }
         .btn { 
-            padding: 15px 40px; border-radius: 30px; border: none; 
-            cursor: pointer; font-weight: bold; font-size: 1.2rem;
-            transition: 0.3s; color: white;
+            padding: 15px 45px; border-radius: 30px; border: none; 
+            cursor: pointer; font-weight: bold; font-size: 1.3rem; color: white;
+            transition: 0.3s;
         }
-        #yes { 
-            background: #ff0055; 
-            box-shadow: 0 0 20px #ff0055;
+        #yes { background: linear-gradient(45deg, #ff0055, #ff3377); box-shadow: 0 5px 20px rgba(255,0,85,0.5); }
+        #yes:hover { transform: scale(1.1) translateY(-3px); box-shadow: 0 10px 30px rgba(255,0,85,0.8); }
+        #no { background: #444; position: relative; }
+
+        /* --- PHẦN KẾT LÃNG MẠN (FINAL CARD) --- */
+        #final-message-container {
+            display: none; /* Ẩn lúc đầu */
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 20; width: 90%; max-width: 600px;
+            
+            /* Hiệu ứng kính mờ sang trọng */
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px; padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            text-align: center;
         }
-        #yes:hover { transform: scale(1.1); background: #ff3377; }
+        #final-message-container h2 {
+            color: #ff0055; font-size: 2.5rem; margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255,0,85,0.5);
+        }
+        #final-message-container p {
+            color: #ffd1dc; font-size: 1.2rem; line-height: 1.8; letter-spacing: 1px;
+        }
+
+        /* --- HIỆU ỨNG SVG HEART BAY --- */
+        .flying-heart {
+            position: fixed; bottom: -50px;
+            filter: drop-shadow(0 0 5px #ff0055);
+            animation: flyUp linear forwards;
+            z-index: 5; pointer-events: none;
+        }
+        @keyframes flyUp {
+            to { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
         
-        #no { 
-            background: #444; position: relative; 
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        /* Hiệu ứng nến/bánh kem nhỏ (CSS vẽ) */
-        .birthday-icon { font-size: 4rem; display: block; margin-bottom: 20px; }
+        /* --- ANIMATIONS KHÁC --- */
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOutDown { to { opacity: 0; transform: translateY(20px); } }
     </style>
 </head>
 <body>
 
     <div id="particles-js"></div>
 
-    <div class="content">
+    <div class="content" id="main-content">
         <div id="start-screen">
             <button class="btn-start" onclick="startExperience()">Nhấn vào đây đi cô nương ❤️</button>
         </div>
@@ -101,22 +115,29 @@
         </div>
     </div>
 
+    <div id="final-message-container">
+        <h2>She Said YES! 🎉</h2>
+        <p>
+            Chào mừng em đến với chương tuyệt vời nhất của chúng ta.<br><br>
+            Sinh nhật tuổi 19 này, món quà lớn nhất của Sơn chính là cái gật đầu của Dương. 
+            Hứa với em, chặng đường phía trước sẽ luôn tràn ngập tiếng cười, sự chiều chuộng và tình yêu.<br><br>
+            <strong>Happy Birthday, My Love! ❤️</strong>
+        </p>
+    </div>
+
     <audio id="bg-music" src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3"></audio>
 
     <script>
-        /* Cấu hình hạt: Màu hồng phấn lãng mạn */
+        /* --- CẤU HÌNH PARTICLES NỀN --- */
         particlesJS("particles-js", {
             "particles": {
-                "number": { "value": 100, "density": { "enable": true, "value_area": 800 } },
+                "number": { "value": 80 },
                 "color": { "value": "#ff8fa3" },
                 "shape": { "type": "circle" },
-                "opacity": { "value": 0.6, "random": true },
-                "size": { "value": 4, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": "#ff4d6d", "opacity": 0.3, "width": 1 },
-                "move": { "enable": true, "speed": 2.5, "direction": "none", "random": true, "out_mode": "out" }
-            },
-            "interactivity": {
-                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } }
+                "opacity": { "value": 0.5, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ff4d6d", "opacity": 0.2, "width": 1 },
+                "move": { "enable": true, "speed": 2 }
             }
         });
 
@@ -124,95 +145,101 @@
         const mainText = document.getElementById('main-text');
         const startScreen = document.getElementById('start-screen');
         const askSection = document.getElementById('ask-section');
+        const mainContentDiv = document.getElementById('main-content');
+        const finalMessageContainer = document.getElementById('final-message-container');
         let checkTime;
 
-        // Hàm cập nhật chữ với hiệu ứng mờ dần
+        // Hàm cập nhật chữ mượt mà
         function updateText(text, icon = "") {
             mainText.style.opacity = '0';
+            mainText.style.transform = 'translateY(20px)';
             setTimeout(() => {
                 mainText.innerHTML = (icon ? `<span class="birthday-icon">${icon}</span>` : "") + text;
                 mainText.style.opacity = '1';
-            }, 1000);
+                mainText.style.transform = 'translateY(0)';
+            }, 500);
         }
 
+        // --- BẮT ĐẦU TRẢI NGHIỆM ---
         function startExperience() {
             startScreen.style.display = 'none';
             music.play();
-            
-            // 0s: Intro
             updateText("Xin chào Dương...");
 
             checkTime = setInterval(() => {
                 const t = Math.floor(music.currentTime);
-
-                // KỊCH BẢN TIMELINE
-                
-                // Giây thứ 8: Chúc mừng sinh nhật
-                if (t === 8) {
-                    updateText("Chúc mừng sinh nhật tuổi 19! 🎂<br>Tuổi mới thật rực rỡ nhé.", "🎉");
-                }
-                
-                // Giây thứ 20: Khen ngợi / Thả thính nhẹ
-                if (t === 20) {
-                    updateText("Cảm ơn vì Dương đã xuất hiện<br>trong thanh xuân của Sơn.");
-                }
-
-                // Giây thứ 32: Dẫn dắt vào vấn đề chính
-                if (t === 32) {
-                    updateText("Sơn có một món quà đặc biệt...<br>nhưng cần Dương trả lời câu này trước.");
-                }
-
-                // Giây thứ 40: CHỐT HẠ (Đoạn này nhạc thường là điệp khúc)
+                // Timeline kịch bản
+                if (t === 8) updateText("Chúc mừng sinh nhật tuổi 19! 🎂<br>Tuổi mới thật rực rỡ nhé.", "🎉");
+                if (t === 20) updateText("Cảm ơn vì Dương đã xuất hiện<br>trong thanh xuân của Sơn.");
+                if (t === 32) updateText("Sơn có một món quà đặc biệt...<br>nhưng cần Dương trả lời câu này trước.");
+                // CHỐT HẠ GIÂY 40
                 if (t >= 40) {
-                    clearInterval(checkTime); // Dừng vòng lặp
+                    clearInterval(checkTime);
                     mainText.style.opacity = '0';
                     setTimeout(() => {
                         mainText.innerHTML = "Làm người yêu Sơn nhé? ❤️";
-                        mainText.style.fontSize = "3rem";
+                        mainText.style.fontSize = "3.5rem";
                         mainText.style.color = "#ff0040";
+                        mainText.style.textShadow = "0 0 30px rgba(255,0,64,1)";
                         mainText.style.opacity = '1';
-                        askSection.style.display = 'block'; // Hiện nút
+                        askSection.style.display = 'block';
                     }, 500);
                 }
             }, 1000);
         }
 
+        // Nút "Đéo" chạy trốn
         function moveButton() {
             const btn = document.getElementById('no');
-            const x = Math.random() * (window.innerWidth - btn.offsetWidth - 20);
-            const y = Math.random() * (window.innerHeight - btn.offsetHeight - 20);
-            btn.style.position = 'fixed';
-            btn.style.left = x + 'px';
-            btn.style.top = y + 'px';
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth - 50);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight - 50);
+            btn.style.position = 'fixed'; btn.style.left = x + 'px'; btn.style.top = y + 'px';
         }
 
+        // --- KHI NHẤN ĐỒNG Ý (Phần quan trọng nhất) ---
         function accepted() {
+            // 1. Ẩn giao diện cũ
             askSection.style.display = 'none';
-            // Khi đồng ý -> Chuyển thành lời hứa
-            updateText("Cảm ơn em đã đồng ý! <br> Hôm nay là sinh nhật em, nhưng Sơn mới là người nhận được quà to nhất. ❤️", "🎁");
+            mainText.style.animation = 'fadeOutDown 1s forwards';
+
+            // 2. Đổi màu nền rực rỡ hơn
+            document.body.style.background = "radial-gradient(circle at center, #7a0020 0%, #000000 100%)";
+            document.body.style.transition = "background 2s ease";
+
+            // 3. Hiện bảng thông điệp cuối sau 1s
+            setTimeout(() => {
+                mainContentDiv.style.display = 'none'; // Ẩn hẳn container cũ
+                finalMessageContainer.style.display = 'block';
+                finalMessageContainer.style.animation = 'fadeInUp 1.5s ease forwards';
+            }, 1000);
             
-            // Bắn tim tung toé
-            setInterval(createHeart, 100);
+            // 4. Bắn tim SVG chất lượng cao liên tục
+            setInterval(createFlyingHeart, 200);
+            // Bắn một đợt pháo hoa tim lớn ngay lập tức
+            for(let i=0; i<20; i++) setTimeout(createFlyingHeart, i*50);
         }
 
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.innerHTML = '❤️';
-            heart.style.position = 'fixed';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.bottom = '0';
-            heart.style.fontSize = Math.random() * 30 + 10 + 'px';
-            heart.style.transition = 'all 4s linear';
-            heart.style.opacity = '0.8';
-            heart.style.zIndex = '999';
-            document.body.appendChild(heart);
+        // Hàm tạo trái tim SVG bay (Đẹp hơn emoji nhiều)
+        function createFlyingHeart() {
+            const heart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            heart.setAttribute("viewBox", "0 0 24 24");
+            heart.setAttribute("class", "flying-heart");
+            heart.innerHTML = '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>';
             
-            setTimeout(() => {
-                heart.style.bottom = '100vh'; // Bay lên trời
-                heart.style.opacity = '0';
-            }, 100);
-
-            setTimeout(() => heart.remove(), 4000);
+            // Random màu sắc (Hồng/Đỏ)
+            const colors = ["#ff0055", "#ff4d6d", "#ff8fa3", "#ffc2d1"];
+            heart.style.fill = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Random vị trí và kích thước
+            heart.style.left = Math.random() * 100 + 'vw';
+            const size = Math.random() * 40 + 20;
+            heart.style.width = size + 'px'; heart.style.height = size + 'px';
+            
+            // Random tốc độ bay
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
         }
     </script>
 </body>
