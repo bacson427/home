@@ -3,189 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Màn Trình Diễn Dành Tặng Cậu</title>
+    <title>Kỷ Niệm Lotte & Starbucks</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #050510; }
-        canvas { display: block; }
-        #message {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: #ff4d6d;
-            font-family: 'Arial', sans-serif;
-            font-size: 2em;
-            opacity: 0;
-            transition: opacity 2s;
-            text-align: center;
-            pointer-events: none; /* Để không che canvas */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #050510; /* Màu trời đêm */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .show-message { opacity: 1 !important; }
+        #drone-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .message {
+            position: absolute;
+            bottom: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Arial', sans-serif;
+            font-size: 1.2rem;
+            text-align: center;
+            width: 100%;
+            pointer-events: none;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
     </style>
 </head>
 <body>
-    <canvas id="droneCanvas"></canvas>
-    <div id="message">
-        <div>Kỷ niệm của chúng ta...</div>
-        <div style="font-size: 0.6em; color: #fff;">(Nhìn lên bầu trời này nhé)</div>
-    </div>
+
+    <canvas id="drone-canvas"></canvas>
+    <div class="message" id="status-text">Đang khởi động drone...</div>
 
     <script>
-        const canvas = document.getElementById('droneCanvas');
+        const canvas = document.getElementById('drone-canvas');
         const ctx = canvas.getContext('2d');
-        const msgDiv = document.getElementById('message');
+        const statusText = document.getElementById('status-text');
 
         let width, height;
         let drones = [];
-        const numDrones = 400; // Số lượng "drone"
-        let targetShape = 'chaos'; // Trạng thái hiện tại
-        let animationSpeed = 0.05; // Tốc độ di chuyển về vị trí
+        const numDrones = 300; // Số lượng drone
+        let currentFormation = 0;
+        const formations = [];
 
-        // Cấu hình "Drone"
+        // --- CẤU HÌNH DRONE ---
         class Drone {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.targetX = this.x;
-                this.targetY = this.y;
-                this.color = `hsl(${Math.random() * 60 + 180}, 100%, 70%)`; // Màu xanh/tím
-                this.size = Math.random() * 2 + 1;
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.targetX = x;
+                this.targetY = y;
+                // Tốc độ di chuyển ngẫu nhiên để tạo cảm giác chân thực
+                this.speed = 0.03 + Math.random() * 0.02; 
+                this.color = '#ffffff';
+                this.size = 2 + Math.random() * 1.5;
             }
 
             update() {
-                // Thuật toán di chuyển mượt mà về đích (Easing)
-                const dx = this.targetX - this.x;
-                const dy = this.targetY - this.y;
-                this.x += dx * animationSpeed;
-                this.y += dy * animationSpeed;
+                // Sử dụng Linear Interpolation (lerp) để di chuyển mượt mà
+                this.x += (this.targetX - this.x) * this.speed;
+                this.y += (this.targetY - this.y) * this.speed;
             }
 
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
-                ctx.fill();
-                // Hiệu ứng phát sáng nhẹ
+                // Hiệu ứng phát sáng (Glow effect)
                 ctx.shadowBlur = 10;
                 ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.shadowBlur = 0; // Reset shadow
             }
         }
 
-        function init() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            drones = [];
-            for (let i = 0; i < numDrones; i++) {
-                drones.push(new Drone());
+        // --- ĐỊNH NGHĨA CÁC HÌNH (FORMATIONS) ---
+
+        // Hình 1: Cốc Starbucks
+        function shapeStarbucksCup(i) {
+            const scale = Math.min(width, height) * 0.25;
+            const centerX = width / 2;
+            const centerY = height / 2 + scale * 0.2;
+            let x, y;
+
+            // Chia drone thành các phần để vẽ cốc
+            if (i < numDrones * 0.6) {
+                // Thân cốc (hình thang)
+                const progress = i / (numDrones * 0.6);
+                const angle = Math.PI * progress;
+                const bottomWidth = 0.6;
+                const topWidth = 1;
+                const heightRatio = 1.2;
+                
+                const currentWidth = bottomWidth + (topWidth - bottomWidth) * (1-progress);
+                // Vẽ viền cốc
+                if (i % 2 === 0) {
+                     x = centerX - scale * currentWidth / 2;
+                } else {
+                     x = centerX + scale * currentWidth / 2;
+                }
+                y = centerY + scale * (progress - 0.5) * heightRatio;
+                
+            } else if (i < numDrones * 0.8) {
+                // Nắp cốc
+                const progress = (i - numDrones * 0.6) / (numDrones * 0.2);
+                x = centerX + scale * 0.5 * Math.cos(progress * Math.PI * 2);
+                y = centerY - scale * 0.6 + scale * 0.1 * Math.sin(progress * Math.PI * 2);
+            } else {
+                // Ống hút / Hơi nóng
+                 const progress = (i - numDrones * 0.8) / (numDrones * 0.2);
+                 x = centerX + scale * 0.1 * Math.sin(progress * Math.PI * 4);
+                 y = centerY - scale * 0.7 - scale * 0.3 * progress;
             }
+
+            return { x, y, color: '#00704A' }; // Màu xanh Starbucks
+        }
+
+        // Hình 2: Tòa tháp Lotte
+        function shapeLotteTower(i) {
+            const scale = Math.min(width, height) * 0.4;
+            const centerX = width / 2;
+            const centerY = height / 2 + scale * 0.4;
             
-            // Bắt đầu kịch bản
-            setTimeout(() => { formShape('starbucks'); }, 3000); // Sau 3s xếp hình cốc
-            setTimeout(() => { formShape('heart'); }, 10000); // Sau 10s xếp hình tim
-            setTimeout(() => { msgDiv.classList.add('show-message'); }, 12000); // Hiện thông báo
+            const progress = i / numDrones;
+            // Tạo hình tháp vuốt nhọn
+            const currentWidth = 0.3 * (1 - Math.pow(progress, 2)); 
+            
+            let x;
+             // Vẽ 2 cạnh bên
+            if (i % 2 === 0) {
+                 x = centerX - scale * currentWidth;
+            } else {
+                 x = centerX + scale * currentWidth;
+            }
+            const y = centerY - scale * progress * 1.8;
+
+            return { x, y, color: '#F4D03F' }; // Màu vàng ánh kim
         }
 
-        // --- ĐỊNH NGHĨA CÁC HÌNH DẠNG (TỌA ĐỘ) ---
-        function getShapeCoordinates(shapeType) {
-            let coords = [];
+        // Hình 3: Trái tim
+        function shapeHeart(i) {
+            const scale = Math.min(width, height) * 0.015;
             const centerX = width / 2;
             const centerY = height / 2;
+            // Công thức toán học hình trái tim
+            const t = (i / numDrones) * Math.PI * 2;
+            const x = centerX + scale * 16 * Math.pow(Math.sin(t), 3);
+            const y = centerY - scale * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
             
-            if (shapeType === 'chaos') {
-                for (let i = 0; i < numDrones; i++) {
-                    coords.push({x: Math.random() * width, y: Math.random() * height});
-                }
-            } 
-            // --- HÌNH TRÁI TIM ---
-            else if (shapeType === 'heart') {
-                 for (let i = 0; i < numDrones; i++) {
-                    let t = (i / numDrones) * Math.PI * 2;
-                    let r = Math.min(width, height) * 0.015; // Bán kính nền
-                    // Công thức toán học hình trái tim
-                    let x = 16 * Math.pow(Math.sin(t), 3);
-                    let y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-                    coords.push({
-                        x: centerX + x * r * 15 + (Math.random()-0.5)*20, // Thêm chút ngẫu nhiên cho tự nhiên
-                        y: centerY + y * r * 15 + (Math.random()-0.5)*20,
-                        color: '#ff4d6d' // Đổi màu sang hồng
-                    });
-                }
-            }
-            // --- GIẢ LẬP HÌNH CỐC STARBUCKS (Đơn giản hóa) ---
-            else if (shapeType === 'starbucks') {
-                const scale = Math.min(width, height) * 0.002;
-                for (let i = 0; i < numDrones; i++) {
-                    let x, y, color;
-                    // Tạo hình thang làm thân cốc (khoảng 70% số drone)
-                    if (i < numDrones * 0.7) {
-                        let p = i / (numDrones * 0.7); // Tiến trình từ 0 -> 1
-                        let cupHeight = 200 * scale;
-                        let topWidth = 150 * scale;
-                        let bottomWidth = 100 * scale;
-                        
-                        y = centerY - cupHeight/2 + p * cupHeight;
-                        // Chiều rộng tại độ cao y hiện tại (nội suy tuyến tính)
-                        let currentWidth = topWidth - (p * (topWidth - bottomWidth));
-                        // Phân bố hạt sang 2 bên cạnh cốc
-                        x = centerX + (Math.random() > 0.5 ? 1 : -1) * (currentWidth/2 - Math.random()*5);
-                        color = '#00704A'; // Màu xanh Starbucks
-                    } 
-                    // Tạo nắp và ống hút (30% còn lại)
-                    else {
-                         x = centerX + (Math.random() - 0.5) * 160 * scale;
-                         y = centerY - 110 * scale + (Math.random() * 20 * scale);
-                         color = '#ffffff'; // Màu trắng nắp
-                         if (i > numDrones * 0.95) { // Ống hút
-                             x = centerX + 30 * scale;
-                             y = centerY - 150 * scale - Math.random() * 50;
-                             color = 'orange';
-                         }
-                    }
-
-                    coords.push({
-                        x: x + (Math.random()-0.5)*10, 
-                        y: y + (Math.random()-0.5)*10,
-                        color: color
-                    });
-                }
-            }
-            return coords;
+            return { x, y, color: '#E91E63' }; // Màu hồng/đỏ
         }
 
-        // Hàm điều phối việc chuyển hình
-        function formShape(shape) {
-            targetShape = shape;
-            const targets = getShapeCoordinates(shape);
-            
-            // Gán mục tiêu mới cho từng drone
+
+        // --- HỆ THỐNG ĐIỀU KHIỂN ---
+
+        function init() {
+            resize();
+            window.addEventListener('resize', resize);
+
+            // Tạo drone ở vị trí ngẫu nhiên ban đầu
             for (let i = 0; i < numDrones; i++) {
-                if (targets[i]) {
-                    drones[i].targetX = targets[i].x;
-                    drones[i].targetY = targets[i].y;
-                    if (targets[i].color) drones[i].color = targets[i].color;
-                }
+                drones.push(new Drone(Math.random() * width, Math.random() * height));
             }
+
+            // Danh sách các hình
+            formations.push({ shape: shapeStarbucksCup, text: "Nhớ hôm mình đi Starbucks..." });
+            formations.push({ shape: shapeLotteTower, text: "...ở Lotte Center" });
+            formations.push({ shape: shapeHeart, text: "Từ đó tớ đã thích cậu rồi!" });
+
+            // Bắt đầu show sau 1 giây
+            setTimeout(() => {
+                nextFormation();
+                // Chuyển hình mỗi 6 giây
+                setInterval(nextFormation, 6000);
+            }, 1000);
+            
+            animate();
+        }
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        function nextFormation() {
+            const format = formations[currentFormation];
+            statusText.textContent = format.text;
+            statusText.style.opacity = 0; // Fade text effect start
+            setTimeout(() => statusText.style.opacity = 1, 500); // Fade text in
+
+            // Cập nhật mục tiêu cho từng drone
+            for (let i = 0; i < numDrones; i++) {
+                const target = format.shape(i);
+                drones[i].targetX = target.x;
+                drones[i].targetY = target.y;
+                drones[i].color = target.color;
+            }
+
+            currentFormation = (currentFormation + 1) % formations.length;
         }
 
         function animate() {
-            ctx.fillStyle = 'rgba(5, 5, 16, 0.2)'; // Tạo hiệu ứng đuôi mờ (motion trail)
+            ctx.clearRect(0, 0, width, height);
+            // Vẽ nền trời đêm mờ ảo
+            ctx.fillStyle = 'rgba(5, 5, 16, 0.3)';
             ctx.fillRect(0, 0, width, height);
 
-            drones.forEach(drone => {
-                drone.update();
-                drone.draw();
-            });
-
+            for (let i = 0; i < numDrones; i++) {
+                drones[i].update();
+                drones[i].draw();
+            }
             requestAnimationFrame(animate);
         }
 
-        window.addEventListener('resize', () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            formShape(targetShape); // Giữ nguyên hình dạng khi resize
-        });
-
         init();
-        animate();
+
     </script>
 </body>
 </html>
