@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HPBD_DUONG_19</title>
+    <title>HPBD_DUONG_19_FINAL</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
         
@@ -18,11 +18,12 @@
         }
 
         .cyber-btn {
-            pointer-events: auto; background: #000; color: #0F0; border: 2px solid #0F0;
+            pointer-events: auto; background: rgba(0,0,0,0.7); color: #0F0; border: 2px solid #0F0;
             padding: 15px 35px; font-size: 20px; cursor: pointer; 
             font-family: 'Black Ops One', cursive; letter-spacing: 2px;
-            box-shadow: 0 0 15px #0F0; transition: 0.3s;
+            box-shadow: 0 0 15px #0F0, inset 0 0 10px #0F0; transition: 0.3s;
             animation: pulse 2s infinite; border-radius: 10px;
+            text-shadow: 0 0 5px #0F0;
         }
         .cyber-btn:hover { background: #0F0; color: #000; box-shadow: 0 0 40px #0F0; }
 
@@ -31,10 +32,10 @@
         #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 4s infinite linear; }
         .face {
             position: absolute; width: 146px; height: 146px;
-            border: 2px solid #0F0; background: rgba(0, 255, 0, 0.05);
+            border: 2px solid #0F0; background: rgba(0, 255, 0, 0.1);
             color: #0F0; font-size: 80px; display: flex;
             justify-content: center; align-items: center;
-            font-family: 'Black Ops One';
+            font-family: 'Black Ops One'; box-shadow: 0 0 10px #0F0;
         }
         .front { transform: translateZ(75px); } .back { transform: rotateY(180deg) translateZ(75px); }
         .right { transform: rotateY(90deg) translateZ(75px); } .left { transform: rotateY(-90deg) translateZ(75px); }
@@ -43,7 +44,7 @@
         /* Message Layer */
         #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(30, 0, 15, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%); 
+            background: radial-gradient(circle, rgba(20, 0, 10, 0.9) 0%, rgba(0, 0, 0, 0.98) 100%); 
             display: none; z-index: 3000; opacity: 0;
             flex-direction: column; justify-content: center; align-items: center;
             padding: 20px; box-sizing: border-box; transition: opacity 2s ease-in-out;
@@ -55,7 +56,7 @@
             line-height: 1.6; font-family: 'Dancing Script', cursive; font-weight: bold;
             white-space: pre-wrap; width: 90%; max-width: 600px; max-height: 60vh; overflow-y: auto;
             text-shadow: 0 0 5px #FF69B4; border-left: 3px solid #FF69B4; padding: 15px; 
-            background: rgba(20, 0, 10, 0.8); border-radius: 10px;
+            background: rgba(30, 0, 15, 0.6); border-radius: 10px; border: 1px solid rgba(255,105,180,0.3);
         }
         #skip-btn { 
             margin-top: 25px; padding: 10px 30px; border: 1px solid #FFD700; 
@@ -63,11 +64,11 @@
             font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 20px;
         }
 
-        /* Terminal Overlay - Hacker Style */
+        /* Terminal Overlay */
         #virus-terminal { 
             position: absolute; top:0; left:0; width:100%; height:100%; color:#0F0; 
             font-family:'Share Tech Mono'; font-size:15px; display:none; z-index:2001; 
-            background:#000; padding:40px 20px; box-sizing:border-box; 
+            background: rgba(0,0,0,0.95); padding:40px 20px; box-sizing:border-box; 
             line-height: 1.4; text-shadow: 0 0 5px #0F0;
             overflow-y: auto; white-space: pre-wrap;
         }
@@ -102,25 +103,25 @@
     <audio id="audio" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
 
 <script>
-    // --- CẬP NHẬT THÔNG TIN CÁ NHÂN TẠI ĐÂY ---
-    const LETTER = `Dương ơi, hôm nay 01/03/2026, cậu tròn 19 tuổi.
+    // --- THÔNG TIN CÁ NHÂN ---
+    const LETTER = `Chúc mừng sinh nhật tuổi 19, cô gái Hà Nam xinh đẹp!
 
-Tớ chúc cậu tuổi mới luôn xinh đẹp rạng ngời, học tập thật giỏi và sớm đạt được mọi ước mơ.
-Cảm ơn cậu đã đến và làm cho thế giới của tớ thêm đặc biệt. Xin lỗi vì những lúc trẻ con đã làm cậu buồn. Mong cậu luôn giữ nụ cười trên môi nhé!
+Chúc cô sinh viên Đại học Phương Đông sang tuổi mới học tập thật tốt, luôn vui vẻ và bớt suy nghĩ linh tinh nhé.
 
-Happy Birthday, my special girl! ❤️
+Dù có bận deadline thì cũng nhớ ăn uống đầy đủ (đặc biệt là đi ăn nem nướng cho đỡ thèm nha).
+
+Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Birthday, my special girl! ❤️
 
 -- Nguyễn Bắc Sơn --`;
 
     const SCRIPT = [
         { t: "KẾT NỐI VỆ TINH\nQUÉT DỮ LIỆU...", c: "#0FF" },
         { t: "TÌM THẤY MỤC TIÊU\nTRƯƠNG THỊ DƯƠNG", c: "#0F0" },
-        { t: "CHÀO CÔ GÁI\nBƯỚC SANG TUỔI MỚI", c: "#FF69B4" },
+        { t: "CHÀO CÔ GÁI\nĐH PHƯƠNG ĐÔNG", c: "#FF69B4" },
         { t: "HAPPY BIRTHDAY\nSINH NHẬT TUỔI 19", c: "#FFD700" },
         { action: "HEART_TREND" } 
     ];
-    
-    // NHẬT KÝ HACKER QUÉT RA THÔNG TIN CỦA DƯƠNG
+
     const TERMINAL_LOGS = [
         "> INITIALIZING_SYSTEM_KERNEL...",
         "> ACCESSING_GLOBAL_DATABASE... [SUCCESS]",
@@ -154,13 +155,16 @@ Happy Birthday, my special girl! ❤️
     const DOT_GAP = isMobile ? 4 : 3; 
     const DOT_SIZE = isMobile ? 1.5 : 1.2; 
     let state = "IDLE"; 
-    let particles = [], fireworks = [], sparkles = [], spotlights = [];
+    
+    // Thêm mảng bgStars để chứa các ngôi sao nền
+    let particles = [], fireworks = [], sparkles = [], spotlights = [], bgStars = [];
     let scriptIdx = 0, countdown = 10;
 
     function resize() {
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
-        // Đèn chiếu (giữ nguyên độ nhỏ, mảnh)
+        
+        // Khởi tạo đèn chiếu
         spotlights = [];
         let spotCount = isMobile ? 4 : 6;
         for(let i=0; i<spotCount; i++) {
@@ -172,6 +176,21 @@ Happy Birthday, my special girl! ❤️
                 width: 0.01, 
                 range: 0.15, 
                 color: `hsla(${Math.random()*40 + 200}, 100%, 80%, 0.05)` 
+            });
+        }
+
+        // Khởi tạo Sao Nền (Background Stars)
+        bgStars = [];
+        // Số lượng sao: 150 (PC) hoặc 80 (Mobile)
+        let starCount = isMobile ? 80 : 150;
+        for(let i=0; i<starCount; i++) {
+            bgStars.push({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                size: Math.random() * 1.5, // Kích thước ngẫu nhiên
+                speed: Math.random() * 0.5 + 0.1, // Tốc độ trôi
+                opacity: Math.random(),
+                blinkSpeed: 0.01 + Math.random() * 0.03
             });
         }
     }
@@ -305,6 +324,44 @@ Happy Birthday, my special girl! ❤️
         ctx.restore();
     }
 
+    // Hàm vẽ nền động (Sao + Sao băng)
+    function drawDynamicBackground() {
+        // 1. Vẽ sao lấp lánh
+        bgStars.forEach(s => {
+            s.y += s.speed; // Sao trôi xuống dưới
+            s.opacity += s.blinkSpeed;
+            
+            // Nếu sao đi quá màn hình hoặc nhấp nháy xong, reset lại
+            if(s.y > h) { s.y = 0; s.x = Math.random() * w; }
+            if(s.opacity > 1 || s.opacity < 0.2) s.blinkSpeed *= -1;
+
+            ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+            ctx.fill();
+        });
+
+        // 2. Vẽ sao băng (Shooting Star) - Xác suất thấp
+        if(Math.random() < 0.02) { 
+            let sx = Math.random() * w;
+            let sy = Math.random() * h/2;
+            let len = 100 + Math.random() * 200;
+            
+            // Tạo hiệu ứng vệt sáng
+            let grad = ctx.createLinearGradient(sx, sy, sx - len, sy + len);
+            grad.addColorStop(0, "rgba(255,255,255,0)");
+            grad.addColorStop(0.5, "rgba(255,255,255,0.8)");
+            grad.addColorStop(1, "rgba(255,255,255,0)");
+            
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(sx - 100, sy + 100); // Bay chéo xuống
+            ctx.stroke();
+        }
+    }
+
     function runHeartTrend() {
         state = "HEART_TREND";
         let heartPts = [];
@@ -350,8 +407,13 @@ Happy Birthday, my special girl! ❤️
     }
 
     function loop() {
-        ctx.fillStyle = "rgba(0,0,0,0.12)";
+        // Làm mờ frame cũ để tạo vệt chuyển động (trail effect)
+        // Dùng màu tối có độ trong suốt thấp
+        ctx.fillStyle = "rgba(0, 5, 15, 0.2)"; 
         ctx.fillRect(0,0,w,h);
+
+        // Vẽ nền động LUÔN LUÔN chạy (dù đang ở state nào)
+        drawDynamicBackground();
 
         if(state !== "MSG") drawSpotlights();
 
@@ -365,7 +427,9 @@ Happy Birthday, my special girl! ❤️
                 ctx.arc(p.x, p.y, DOT_SIZE, 0, Math.PI*2);
                 ctx.fill();
             } else {
-                ctx.fillStyle = "rgba(255,255,255,0.1)";
+                // Hạt chưa dùng đến thì ẩn đi hoặc cho nó trôi nhẹ như bụi
+                // Nhưng để performance tốt thì ta ẩn đi hoặc vẽ rất mờ
+                ctx.fillStyle = "rgba(255,255,255,0.02)";
                 ctx.fillRect(p.x, p.y, 1, 1);
             }
         });
