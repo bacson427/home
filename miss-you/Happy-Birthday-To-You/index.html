@@ -6,7 +6,7 @@
     <title>HPBD_DUONG_19 | GALAXY EDITION</title>
     <style>
         /* --- IMPORT FONTS --- */
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&family=Quicksand:wght@600&display=swap');
         
         /* --- CẤU HÌNH CƠ BẢN --- */
         body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Share Tech Mono', monospace; }
@@ -15,80 +15,77 @@
         /* --- MÀN HÌNH ĐẾM NGƯỢC (LOCK SCREEN) --- */
         #countdown-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 10000; 
+            background: #050505; z-index: 10000; 
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             color: #0F0; font-family: 'Share Tech Mono';
         }
         
         .matrix-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0.1; pointer-events: none; z-index: -1;
+            opacity: 0.15; pointer-events: none; z-index: -1;
             background-image: linear-gradient(0deg, transparent 24%, rgba(0, 255, 0, .3) 25%, rgba(0, 255, 0, .3) 26%, transparent 27%, transparent 74%, rgba(0, 255, 0, .3) 75%, rgba(0, 255, 0, .3) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(0, 255, 0, .3) 25%, rgba(0, 255, 0, .3) 26%, transparent 27%, transparent 74%, rgba(0, 255, 0, .3) 75%, rgba(0, 255, 0, .3) 76%, transparent 77%, transparent);
-            background-size: 50px 50px;
+            background-size: 30px 30px;
         }
 
         #timer {
-            font-size: clamp(40px, 10vw, 80px); font-weight: bold;
+            font-size: clamp(40px, 12vw, 80px); font-weight: bold;
             text-shadow: 0 0 20px #0F0; margin: 20px 0;
-            letter-spacing: 5px;
+            letter-spacing: 2px;
         }
         
-        .lock-title { font-size: 20px; letter-spacing: 3px; color: #fff; text-transform: uppercase; }
-        .lock-status { color: #FF0055; animation: blink 1s infinite; margin-top: 10px; }
+        .lock-title { font-size: 18px; letter-spacing: 4px; color: #fff; text-transform: uppercase; text-align: center;}
+        .lock-status { color: #FF0055; animation: blink 1s infinite; margin-top: 10px; font-size: 14px;}
 
-        /* --- NÚT ADMIN BÁNH RĂNG --- */
+        /* Nút Admin Bánh Răng */
         #admin-btn {
-            position: fixed; bottom: 20px; right: 20px;
-            width: 40px; height: 40px;
+            position: fixed; bottom: 25px; right: 25px;
+            width: 45px; height: 45px;
             cursor: pointer; z-index: 10001;
-            opacity: 0.3; /* Mờ mờ cho bí ẩn */
-            transition: all 0.5s ease;
-            fill: #0F0; /* Màu xanh hacker */
-            filter: drop-shadow(0 0 5px #0F0);
+            opacity: 0.4; transition: all 0.5s ease;
+            fill: #0F0; filter: drop-shadow(0 0 5px #0F0);
         }
-        #admin-btn:hover {
-            opacity: 1;
-            transform: rotate(180deg) scale(1.1); /* Xoay khi di chuột vào */
-        }
+        #admin-btn:hover { opacity: 1; transform: rotate(180deg) scale(1.1); }
         #admin-btn svg { width: 100%; height: 100%; }
 
         /* --- UI LAYER --- */
         #ui-layer {
             position: absolute; width: 100%; height: 100%;
-            display: none; 
-            justify-content: center; align-items: center;
+            display: none; justify-content: center; align-items: center;
             flex-direction: column; z-index: 999; pointer-events: none;
         }
 
+        /* Nút Cyber Bo Tròn */
         .cyber-btn {
-            pointer-events: auto; background: rgba(0,0,0,0.8); color: #0F0; border: 2px solid #0F0;
-            padding: 15px 30px; font-size: 18px; cursor: pointer; 
+            pointer-events: auto; background: rgba(0, 20, 0, 0.6); color: #0F0; border: 1px solid #0F0;
+            padding: 15px 40px; font-size: 16px; cursor: pointer; 
             font-family: 'Black Ops One', cursive; letter-spacing: 2px;
-            box-shadow: 0 0 15px #0F0, inset 0 0 10px #0F0; transition: 0.3s;
-            animation: pulse 2s infinite; border-radius: 5px;
+            box-shadow: 0 0 15px #0F0; transition: 0.3s;
+            animation: pulse 2s infinite; 
+            border-radius: 50px; /* BO TRÒN MẠNH */
             text-shadow: 0 0 5px #0F0; text-transform: uppercase;
+            backdrop-filter: blur(5px);
         }
-        .cyber-btn:hover { background: #0F0; color: #000; box-shadow: 0 0 40px #0F0; }
+        .cyber-btn:hover { background: #0F0; color: #000; box-shadow: 0 0 40px #0F0; transform: scale(1.05); }
 
         /* --- 3D CUBE --- */
-        #cube-container { display: none; perspective: 800px; width: 150px; height: 150px; margin-bottom: 20px;}
+        #cube-container { display: none; perspective: 800px; width: 120px; height: 120px; margin-bottom: 30px;}
         #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 4s infinite linear; }
         .face {
-            position: absolute; width: 146px; height: 146px;
-            border: 2px solid #0F0; background: rgba(0, 255, 0, 0.15);
-            color: #0F0; font-size: 80px; display: flex;
+            position: absolute; width: 116px; height: 116px;
+            border: 2px solid #0F0; background: rgba(0, 255, 0, 0.1);
+            color: #0F0; font-size: 60px; display: flex;
             justify-content: center; align-items: center;
             font-family: 'Black Ops One'; box-shadow: 0 0 15px #0F0;
-            backface-visibility: visible;
+            border-radius: 15px; /* BO TRÒN CUBE */
         }
-        .front { transform: translateZ(75px); } .back { transform: rotateY(180deg) translateZ(75px); }
-        .right { transform: rotateY(90deg) translateZ(75px); } .left { transform: rotateY(-90deg) translateZ(75px); }
-        .top { transform: rotateX(90deg) translateZ(75px); } .bottom { transform: rotateX(-90deg) translateZ(75px); }
+        .front { transform: translateZ(60px); } .back { transform: rotateY(180deg) translateZ(60px); }
+        .right { transform: rotateY(90deg) translateZ(60px); } .left { transform: rotateY(-90deg) translateZ(60px); }
+        .top { transform: rotateX(90deg) translateZ(60px); } .bottom { transform: rotateX(-90deg) translateZ(60px); }
 
-        /* --- MESSAGE LAYER --- */
+        /* --- MESSAGE LAYER (THƯ MỀM MẠI) --- */
         #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(20, 0, 10, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%); 
+            background: radial-gradient(circle, rgba(20, 0, 10, 0.8) 0%, rgba(0, 0, 0, 0.95) 100%); 
             display: none; z-index: 3000; opacity: 0;
             flex-direction: column; justify-content: center; align-items: center;
             padding: 20px; box-sizing: border-box; transition: opacity 1.5s ease-in-out;
@@ -96,34 +93,42 @@
         #msg-layer.visible { opacity: 1; }
 
         #msg-content {
-            color: #FF69B4; font-size: clamp(17px, 5vw, 22px); 
-            line-height: 1.6; font-family: 'Dancing Script', cursive; font-weight: bold;
+            color: #ffb7d5; font-size: clamp(16px, 4.5vw, 20px); 
+            line-height: 1.8; font-family: 'Quicksand', sans-serif; font-weight: 600;
             white-space: pre-wrap; word-wrap: break-word; 
-            width: 90%; max-width: 600px; max-height: 60vh; overflow-y: auto;
-            text-shadow: 0 0 5px #FF69B4; border-left: 3px solid #FF69B4; padding: 20px; 
-            background: rgba(30, 0, 15, 0.7); border-radius: 10px; border: 1px solid rgba(255,105,180,0.3);
-            box-shadow: 0 0 20px rgba(255, 20, 147, 0.2);
+            width: 90%; max-width: 500px; max-height: 60vh; overflow-y: auto;
+            text-shadow: 0 0 2px rgba(0,0,0,0.5); 
+            padding: 30px; 
+            
+            /* Giao diện kính bo tròn */
+            background: rgba(40, 0, 20, 0.4); 
+            border-radius: 30px; 
+            border: 1px solid rgba(255, 105, 180, 0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
         }
         
         #skip-btn { 
-            margin-top: 25px; padding: 12px 35px; border: 1px solid #FFD700; 
-            background: transparent; color: #FFD700; display: none; pointer-events: auto; 
-            font-weight: bold; cursor: pointer; transition: 0.3s; border-radius: 50px;
+            margin-top: 30px; padding: 12px 40px; border: 1px solid #FFD700; 
+            background: rgba(0,0,0,0.3); color: #FFD700; display: none; pointer-events: auto; 
+            font-weight: bold; cursor: pointer; transition: 0.3s; 
+            border-radius: 50px; /* Bo tròn nút tiếp tục */
             font-family: 'Share Tech Mono'; letter-spacing: 1px;
-            animation: pulse 2s infinite;
+            backdrop-filter: blur(5px);
         }
-        #skip-btn:hover { background: #FFD700; color: #000; box-shadow: 0 0 20px #FFD700; }
+        #skip-btn:hover { background: #FFD700; color: #000; box-shadow: 0 0 25px #FFD700; transform: translateY(-3px);}
 
         /* --- TERMINAL --- */
         #virus-terminal { 
-            position: absolute; top:0; left:0; width:100%; height:100%; color:#0F0; 
-            font-family:'Share Tech Mono'; font-size:14px; display:none; z-index:2001; 
-            background: rgba(0,0,0,0.95); padding:40px 20px; box-sizing:border-box; 
-            line-height: 1.4; text-shadow: 0 0 5px #0F0;
+            position: absolute; top: 5%; left: 5%; width: 90%; height: 90%; 
+            color: #0F0; font-family: 'Share Tech Mono'; font-size: 13px; display: none; z-index: 2001; 
+            background: rgba(0, 10, 0, 0.9); padding: 20px; box-sizing: border-box; 
+            line-height: 1.5; text-shadow: 0 0 3px #0F0;
             overflow-y: auto; white-space: pre-wrap;
+            border-radius: 20px; /* Bo tròn terminal */
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.1);
         }
-        #virus-terminal::-webkit-scrollbar { width: 5px; }
-        #virus-terminal::-webkit-scrollbar-thumb { background: #0F0; }
 
         /* --- TRANSITION OVERLAY --- */
         #transition-overlay {
@@ -152,7 +157,7 @@
         <div class="lock-title">PROJECT: DUONG_19</div>
         <div id="timer">00:00:00</div>
         <div class="lock-status">[ SYSTEM LOCKED ]</div>
-        <div class="lock-status" style="font-size: 12px; color: #888">Target Date: 01/03/2026</div>
+        <div class="lock-status" style="font-size: 12px; color: #888; margin-top: 5px;">Target: 01/03/2026</div>
         
         <div id="admin-btn" onclick="adminUnlock()">
             <svg viewBox="0 0 24 24">
@@ -173,7 +178,7 @@
     </div>
 
     <div id="msg-layer">
-        <div style="color: #FFD700; font-size: clamp(28px, 8vw, 40px); margin-bottom: 20px; font-family: 'Dancing Script'; text-align:center; text-shadow: 0 0 10px #FFD700;">💌 Gửi Dương</div>
+        <div style="color: #FFD700; font-size: clamp(24px, 7vw, 36px); margin-bottom: 25px; font-family: 'Dancing Script'; text-align:center; text-shadow: 0 0 10px #FFD700;">💌 Gửi Dương</div>
         <div id="msg-content"></div>
         <button id="skip-btn" onclick="startFinale()">TIẾP TỤC >></button>
     </div>
@@ -186,33 +191,22 @@
     <audio id="audio" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
 
 <script>
-    // --- CẤU HÌNH NGÀY ĐẾM NGƯỢC ---
+    // --- CẤU HÌNH ---
     const TARGET_DATE = new Date("March 1, 2026 00:00:00").getTime();
     const ADMIN_PASS = "01032007";
 
-    // --- LOGIC ĐẾM NGƯỢC & MỞ KHÓA ---
+    // --- LOGIC ĐẾM NGƯỢC ---
     function updateTimer() {
         const now = new Date().getTime();
         const distance = TARGET_DATE - now;
-
-        if (distance < 0) {
-            unlockSystem();
-            return;
-        }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        const d = days < 10 ? "0" + days : days;
-        const h = hours < 10 ? "0" + hours : hours;
-        const m = minutes < 10 ? "0" + minutes : minutes;
-        const s = seconds < 10 ? "0" + seconds : seconds;
-
-        document.getElementById("timer").innerText = `${d}:${h}:${m}:${s}`;
+        if (distance < 0) { unlockSystem(); return; }
+        const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((distance % (1000 * 60)) / 1000);
+        document.getElementById("timer").innerText = 
+            `${d<10?"0"+d:d}:${h<10?"0"+h:h}:${m<10?"0"+m:m}:${s<10?"0"+s:s}`;
     }
-
     let timerInterval = setInterval(updateTimer, 1000);
     updateTimer();
 
@@ -225,12 +219,8 @@
 
     function adminUnlock() {
         let pass = prompt("NHẬP MÃ QUẢN TRỊ:");
-        if (pass === ADMIN_PASS) {
-            alert("QUYỀN TRUY CẬP ĐƯỢC CHẤP NHẬN. CHÀO SƠN!");
-            unlockSystem();
-        } else {
-            alert("MẬT KHẨU SAI! TRUY CẬP BỊ TỪ CHỐI.");
-        }
+        if (pass === ADMIN_PASS) { alert("XÁC NHẬN: ADMIN"); unlockSystem(); } 
+        else { alert("SAI MẬT KHẨU!"); }
     }
 
     // --- NỘI DUNG THƯ ---
@@ -248,33 +238,16 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         { t: "KẾT NỐI VỆ TINH\nQUÉT DỮ LIỆU...", c: "#0FF" },
         { t: "TÌM THẤY MỤC TIÊU\nTRƯƠNG THỊ DƯƠNG", c: "#0F0" },
         { t: "CHÀO CÔ GÁI\nĐH PHƯƠNG ĐÔNG", c: "#FF69B4" },
-        { t: "HAPPY BIRTHDAY\nSINH NHẬT TUỔI 19", c: "#FFD700" },
+        { t: "HAPPY BIRTHDAY\nTUỔI 19 RỰC RỠ", c: "#FFD700" },
         { action: "HEART_TREND" } 
     ];
 
     const TERMINAL_LOGS = [
-        "> INITIALIZING_SYSTEM_KERNEL...",
-        "> ACCESSING_GLOBAL_DATABASE... [SUCCESS]",
-        "> SEARCH_QUERY: 'TRUONG_THI_DUONG'",
-        "> DOB_DETECTED: 01/03/2007",
-        "> ORIGIN_POINT: HA_NAM",
-        "> CURRENT_STATUS: STUDENT @ PHUONG_DONG_UNI",
-        "> ANALYZING_FAVORITES...",
-        "> DETECTED_FOOD: 'NEM_NUONG' (MATCH 100%)",
-        "> [..........................] 0%",
-        "> [|||||||...................] 30%",
-        "> [||||||||||||||||..........] 65%",
-        "> [||||||||||||||||||||||||||] 100%",
-        "> DATA_LOADED: CUTE_LEVEL = INFINITY",
-        "> DECRYPTING_GIFT_FILE: 'LOVE_FOR_DUONG.EXE'",
-        "> ACTIVATING_STARDUST_PROTOCOL...",
-        "> SYNCING_MUSIC_BEATS...",
-        "> SYSTEM_READY.",
-        "> COUNTDOWN_TO_PARTY...",
-        "> 3...",
-        "> 2...",
-        "> 1...",
-        "> EXECUTE_BIRTHDAY_SHOW_NOW!"
+        "> INITIALIZING_KERNEL...", "> ACCESSING_DATABASE... [OK]", "> SEARCH: 'TRUONG_THI_DUONG'", 
+        "> DOB: 01/03/2007", "> LOCATION: HA_NAM", "> STATUS: STUDENT @ PHUONG_DONG", 
+        "> FAVORITE: 'NEM_NUONG' (100%)", "> LOADING_CUTENESS... 100%", 
+        "> DECRYPTING: 'LOVE_GIFT.EXE'", "> SYSTEM_READY.", 
+        "> 3...", "> 2...", "> 1...", "> STARTING_SHOW!"
     ];
 
     const canvas = document.getElementById('c');
@@ -285,73 +258,35 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     const DOT_GAP = isMobile ? 4 : 3; 
     const DOT_SIZE = isMobile ? 1.5 : 1.2; 
     let state = "IDLE"; 
-    
     let particles = [], fireworks = [], sparkles = [], spotlights = [], bgStars = [], shootingStars = [];
     let scriptIdx = 0, countdown = 10;
 
     function resize() {
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
-        
-        spotlights = [];
-        let spotCount = isMobile ? 4 : 6;
-        for(let i=0; i<spotCount; i++) {
-            spotlights.push({
-                x: (w / (spotCount-1)) * i,
-                angle: -Math.PI/2,
-                baseAngle: -Math.PI/2 + (Math.random()-0.5) * 0.4,
-                speed: 0.005 + Math.random() * 0.01,
-                width: 0.01, 
-                range: 0.15, 
-                color: `hsla(${Math.random()*40 + 200}, 100%, 80%, 0.05)` 
-            });
-        }
-
         bgStars = [];
-        let starCount = isMobile ? 80 : 200;
-        for(let i=0; i<starCount; i++) {
-            bgStars.push({
-                x: Math.random() * w,
-                y: Math.random() * h,
-                size: Math.random() * 1.5,
-                opacity: Math.random(),
-                blinkSpeed: 0.005 + Math.random() * 0.02
-            });
-        }
+        for(let i=0; i<(isMobile?80:200); i++) bgStars.push({x: Math.random()*w, y: Math.random()*h, size: Math.random()*1.5, opacity: Math.random(), blinkSpeed: 0.005+Math.random()*0.02});
+        spotlights = [];
+        let sc = isMobile?3:6;
+        for(let i=0; i<sc; i++) spotlights.push({x: (w/(sc-1))*i, angle: -Math.PI/2, baseAngle: -Math.PI/2+(Math.random()-0.5)*0.4, speed: 0.005, width: 0.01, range: 0.15, color: `hsla(${Math.random()*40+200}, 100%, 80%, 0.05)`});
     }
     window.addEventListener('resize', resize);
     resize();
 
-    // --- CLASS SAO BĂNG ---
     class ShootingStar {
         constructor() {
-            this.angle = Math.PI / 4; 
-            this.size = Math.random() * 1 + 1.5;
-            this.speed = Math.random() * 2 + 4; 
-            this.len = Math.random() * 80 + 100; 
-            this.active = true;
-            if (Math.random() < 0.5) {
-                this.x = Math.random() * w; this.y = -this.len;
-            } else {
-                this.x = -this.len; this.y = Math.random() * h * 0.5;
-            }
+            this.active=true; this.angle=Math.PI/4; this.size=Math.random()+1; this.speed=Math.random()*3+3; this.len=Math.random()*80+80;
+            if(Math.random()<0.5){this.x=Math.random()*w;this.y=-this.len;}else{this.x=-this.len;this.y=Math.random()*h*0.5;}
         }
-        update() {
-            this.x += this.speed * Math.cos(this.angle);
-            this.y += this.speed * Math.sin(this.angle);
-            if (this.x > w + this.len || this.y > h + this.len) this.active = false;
-        }
-        draw() {
-            let tailX = this.x - this.len * Math.cos(this.angle);
-            let tailY = this.y - this.len * Math.sin(this.angle);
-            let grad = ctx.createLinearGradient(this.x, this.y, tailX, tailY);
-            grad.addColorStop(0, "white"); grad.addColorStop(1, "transparent");
-            ctx.beginPath(); ctx.strokeStyle = grad; ctx.lineWidth = 2; ctx.moveTo(this.x, this.y); ctx.lineTo(tailX, tailY); ctx.stroke();
-            ctx.beginPath(); ctx.fillStyle = "white"; ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+        update(){this.x+=this.speed*Math.cos(this.angle);this.y+=this.speed*Math.sin(this.angle);if(this.x>w+this.len||this.y>h+this.len)this.active=false;}
+        draw(){
+            let tx=this.x-this.len*Math.cos(this.angle), ty=this.y-this.len*Math.sin(this.angle);
+            let g=ctx.createLinearGradient(this.x,this.y,tx,ty); g.addColorStop(0,"white"); g.addColorStop(1,"transparent");
+            ctx.beginPath(); ctx.strokeStyle=g; ctx.lineWidth=2; ctx.moveTo(this.x,this.y); ctx.lineTo(tx,ty); ctx.stroke();
+            ctx.beginPath(); ctx.fillStyle="white"; ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill();
         }
     }
 
-    // --- BUTTON START ---
     document.getElementById('btn-start').onclick = function() {
         this.style.display = 'none';
         document.getElementById('audio').play().catch(()=>{});
@@ -359,13 +294,8 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         document.getElementById('cube-container').style.display = 'block';
         const faces = document.querySelectorAll('.face');
         let tmr = setInterval(() => {
-            countdown--;
-            faces.forEach(f => f.innerText = countdown);
-            if(countdown <= 0) {
-                clearInterval(tmr);
-                document.getElementById('cube-container').style.display = 'none';
-                runVirus();
-            }
+            countdown--; faces.forEach(f => f.innerText = countdown);
+            if(countdown <= 0) { clearInterval(tmr); document.getElementById('cube-container').style.display = 'none'; runVirus(); }
         }, 1000);
     };
 
@@ -374,24 +304,12 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         const term = document.getElementById('virus-terminal');
         term.style.display = 'block';
         let lineIdx = 0, charIdx = 0, currentText = "";
-        
         function typeLine() {
-            if(lineIdx >= TERMINAL_LOGS.length) {
-                setTimeout(() => {
-                    term.style.display = 'none';
-                    state = "SHOW";
-                    nextScene();
-                }, 1000);
-                return;
-            }
+            if(lineIdx >= TERMINAL_LOGS.length) { setTimeout(() => { term.style.display = 'none'; state = "SHOW"; nextScene(); }, 1000); return; }
             let line = TERMINAL_LOGS[lineIdx];
-            term.innerHTML = currentText + line.substring(0, charIdx) + "<span style='color:#fff; animation:blink 0.5s infinite'>_</span>";
-            if(charIdx < line.length) {
-                charIdx++; setTimeout(typeLine, Math.random() * 20 + 5); 
-            } else {
-                currentText += line + "<br>"; lineIdx++; charIdx = 0; term.scrollTop = term.scrollHeight;
-                setTimeout(typeLine, line.includes('[') ? 100 : 300); 
-            }
+            term.innerHTML = currentText + line.substring(0, charIdx) + "_";
+            if(charIdx < line.length) { charIdx++; setTimeout(typeLine, 20); } 
+            else { currentText += line + "<br>"; lineIdx++; charIdx = 0; term.scrollTop = term.scrollHeight; setTimeout(typeLine, 150); }
         }
         typeLine();
     }
@@ -400,19 +318,23 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         if(scriptIdx >= SCRIPT.length) return;
         let s = SCRIPT[scriptIdx++];
         if(s.action === "HEART_TREND") { runHeartTrend(); return; }
-        formText(s.t, s.c);
-        setTimeout(nextScene, 6000); 
+        formText(s.t, s.c); setTimeout(nextScene, 6000); 
     }
 
+    // --- FIX LỖI MẤT CHỮ TRÊN MOBILE ---
     function formText(txt, color) {
         const lines = txt.split('\n');
         const tmp = document.createElement('canvas');
         const tCtx = tmp.getContext('2d');
-        let fSize = isMobile ? 50 : 80;
+        
+        // TỰ ĐỘNG THU NHỎ FONT NẾU MÀN HÌNH BÉ
+        let fSize = Math.min(w / 6, 80); // Font size tối đa 80, hoặc 1/6 chiều rộng màn hình
+        
         tCtx.font = `bold ${fSize}px Arial`;
         let maxW = 0;
         lines.forEach(l => maxW = Math.max(maxW, tCtx.measureText(l).width));
-        tmp.width = maxW + 40; tmp.height = lines.length * fSize * 1.5;
+        
+        tmp.width = maxW + 50; tmp.height = lines.length * fSize * 1.5;
         tCtx.font = `bold ${fSize}px Arial`; tCtx.fillStyle = 'white'; tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
         lines.forEach((l, i) => tCtx.fillText(l, tmp.width/2, fSize + i * fSize * 1.2));
         
@@ -432,27 +354,19 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
 
     function drawDynamicBackground() {
         bgStars.forEach(s => {
-            s.opacity += s.blinkSpeed;
-            if(s.opacity > 1 || s.opacity < 0.2) s.blinkSpeed *= -1;
-            ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
-            ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
+            s.opacity += s.blinkSpeed; if(s.opacity > 1 || s.opacity < 0.2) s.blinkSpeed *= -1;
+            ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
         });
-        if(Math.random() < 0.02) shootingStars.push(new ShootingStar());
-        for(let i = shootingStars.length - 1; i >= 0; i--) {
-            let s = shootingStars[i]; s.update(); s.draw();
-            if(!s.active) shootingStars.splice(i, 1);
-        }
+        if(Math.random()<0.02) shootingStars.push(new ShootingStar());
+        for(let i=shootingStars.length-1; i>=0; i--) { let s=shootingStars[i]; s.update(); s.draw(); if(!s.active) shootingStars.splice(i,1); }
     }
 
     function runHeartTrend() {
         state = "HEART_TREND";
         let heartPts = [];
-        let r = isMobile ? 12 : 18;
+        let r = Math.min(w, h) / 35; // Tự động chỉnh size tim theo màn hình
         for(let t=0; t<Math.PI*2; t+=0.04) {
-            heartPts.push({
-                x: w/2 + r * 16 * Math.pow(Math.sin(t), 3),
-                y: h/2 - r * (13 * Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t))
-            });
+            heartPts.push({ x: w/2 + r*16*Math.pow(Math.sin(t),3), y: h/2 - r*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t)) });
         }
         particles.forEach((p, i) => {
             if(i < heartPts.length) { p.tx = heartPts[i].x; p.ty = heartPts[i].y; p.c = "#FF1493"; p.active = true; } 
@@ -474,86 +388,50 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
                 document.getElementById('skip-btn').style.display = 'block'; 
                 document.getElementById('msg-content').innerText = LETTER; 
             }
-        }, 40);
+        }, 30);
     }
 
     window.startFinale = function() {
         state = "FINALE";
         document.getElementById('msg-layer').style.display = 'none';
-        
-        let fireworkInterval = setInterval(() => { if(fireworks.length < 8) launchFirework(); }, 500);
+        let fireworkInterval = setInterval(() => { if(fireworks.length < 8) fireworks.push({x: Math.random()*w, y: h, ty: Math.random()*h*0.5, vy: -8-Math.random()*5, c: `hsl(${Math.random()*360},100%,75%)`}); }, 500);
         formText("TUỔI 19\nRỰC RỠ NHÉ!", "#FFD700");
-
-        setTimeout(() => {
-            clearInterval(fireworkInterval);
-            goToConfession();
-        }, 5000); 
+        setTimeout(() => { clearInterval(fireworkInterval); goToConfession(); }, 5000); 
     }
 
     function goToConfession() {
         particles.forEach(p => { p.tx = w/2; p.ty = h/2; });
         const overlay = document.getElementById('transition-overlay');
         overlay.style.display = 'flex';
-        
-        setTimeout(() => {
-            overlay.classList.add('active'); 
-        }, 100);
-
-        setTimeout(() => {
-            window.location.href = "https://nguyenbacson.io.vn/miss-you/i-love-you/";
-        }, 2500);
-    }
-
-    function launchFirework() {
-        fireworks.push({x: Math.random()*w, y: h, ty: Math.random()*h*0.5, vy: -8 - Math.random()*5, c: `hsl(${Math.random()*360},100%,75%)`});
+        setTimeout(() => { overlay.classList.add('active'); }, 100);
+        setTimeout(() => { window.location.href = "https://nguyenbacson.io.vn/miss-you/i-love-you/"; }, 2500);
     }
 
     function loop() {
-        if (document.getElementById("countdown-layer").style.display !== "none") {
-            requestAnimationFrame(loop);
-            return;
-        }
-
-        ctx.fillStyle = "rgba(0, 5, 15, 0.2)"; 
-        ctx.fillRect(0,0,w,h);
+        if(document.getElementById("countdown-layer").style.display !== "none") { requestAnimationFrame(loop); return; }
+        ctx.fillStyle = "rgba(0, 5, 15, 0.2)"; ctx.fillRect(0,0,w,h);
         drawDynamicBackground();
-
         if(state !== "MSG" && state !== "FINALE") {
             ctx.save(); ctx.globalCompositeOperation = 'lighter';
             spotlights.forEach(s => {
-                s.angle = s.baseAngle + Math.sin(Date.now() * 0.0005 * 50) * s.range;
-                let len = h * 1.5; let ex = s.x + Math.cos(s.angle) * len; let ey = h + Math.sin(s.angle) * len;
-                let g = ctx.createLinearGradient(s.x, h, ex, ey); g.addColorStop(0, s.color); g.addColorStop(0.25, "transparent"); 
-                ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(s.x, h); ctx.lineTo(ex - len * s.width, ey); ctx.lineTo(ex + len * s.width, ey); ctx.fill();
+                let g = ctx.createLinearGradient(s.x, h, s.x+Math.cos(s.angle)*h, h+Math.sin(s.angle)*h); g.addColorStop(0, s.color); g.addColorStop(0, "transparent"); 
+                ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(s.x, h); ctx.lineTo(s.x-5, 0); ctx.lineTo(s.x+5, 0); ctx.fill(); 
             });
             ctx.restore();
         }
-
         particles.forEach(p => {
             p.x += (p.tx - p.x) * 0.08; p.y += (p.ty - p.y) * 0.08;
-            if(p.active || state === "HEART_TREND") {
-                ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, DOT_SIZE, 0, Math.PI*2); ctx.fill();
-            }
+            if(p.active || state === "HEART_TREND") { ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, DOT_SIZE, 0, Math.PI*2); ctx.fill(); }
         });
-
         for(let i=fireworks.length-1; i>=0; i--) {
-            let f = fireworks[i]; f.y += f.vy; f.vy += 0.15;
-            ctx.fillStyle = f.c; ctx.fillRect(f.x, f.y, 3, 3);
-            if(f.vy >= 0) {
-                for(let j=0; j<40; j++) sparkles.push({x: f.x, y: f.y, vx: (Math.random()-0.5)*6, vy: (Math.random()-0.5)*6, c: f.c, l: 1});
-                fireworks.splice(i,1);
-            }
+            let f = fireworks[i]; f.y += f.vy; f.vy += 0.15; ctx.fillStyle = f.c; ctx.fillRect(f.x, f.y, 3, 3);
+            if(f.vy >= 0) { for(let j=0; j<40; j++) sparkles.push({x: f.x, y: f.y, vx: (Math.random()-0.5)*6, vy: (Math.random()-0.5)*6, c: f.c, l: 1}); fireworks.splice(i,1); }
         }
-
         for(let i=sparkles.length-1; i>=0; i--) {
-            let s = sparkles[i]; s.x += s.vx; s.y += s.vy; s.l -= 0.02;
-            if(s.l <= 0) sparkles.splice(i,1);
-            else { ctx.fillStyle = s.c; ctx.globalAlpha = s.l; ctx.fillRect(s.x, s.y, 2, 2); ctx.globalAlpha = 1; }
+            let s = sparkles[i]; s.x += s.vx; s.y += s.vy; s.l -= 0.02; if(s.l <= 0) sparkles.splice(i,1); else { ctx.fillStyle = s.c; ctx.globalAlpha = s.l; ctx.fillRect(s.x, s.y, 2, 2); ctx.globalAlpha = 1; }
         }
         requestAnimationFrame(loop);
     }
-    // LƯU Ý: Không gọi loop() ngay tại đây.
-    // loop() sẽ được gọi bên trong hàm unlockSystem() khi đếm ngược xong hoặc mở khóa admin.
 </script>
 </body>
 </html>
