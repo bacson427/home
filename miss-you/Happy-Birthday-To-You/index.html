@@ -3,168 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HPBD_DUONG_19 | RED GALAXY EDITION</title>
+    <title>HPBD_DUONG_19 | RED GALAXY</title>
     <style>
-        /* --- IMPORT FONTS --- */
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&family=Quicksand:wght@600&display=swap');
         
-        /* --- CẤU HÌNH CƠ BẢN --- */
         body { margin: 0; overflow: hidden; background-color: #1a0005; font-family: 'Share Tech Mono', monospace; }
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
 
-        /* --- MÀN HÌNH ĐẾM NGƯỢC --- */
+        /* Lock Screen */
         #countdown-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #1a0005; z-index: 10000; 
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             color: #FF4500; font-family: 'Share Tech Mono';
         }
-        
         .matrix-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0.2; pointer-events: none; z-index: -1;
-            background-image: linear-gradient(0deg, transparent 24%, rgba(255, 50, 0, .3) 25%, rgba(255, 50, 0, .3) 26%, transparent 27%, transparent 74%, rgba(255, 50, 0, .3) 75%, rgba(255, 50, 0, .3) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 50, 0, .3) 25%, rgba(255, 50, 0, .3) 26%, transparent 27%, transparent 74%, rgba(255, 50, 0, .3) 75%, rgba(255, 50, 0, .3) 76%, transparent 77%, transparent);
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.2; pointer-events: none; z-index: -1;
+            background-image: linear-gradient(0deg, transparent 24%, rgba(255, 50, 0, .3) 25%, rgba(255, 50, 0, .3) 26%, transparent 27%, transparent 74%, rgba(255, 50, 0, .3) 75%, rgba(255, 50, 0, .3) 76%, transparent 77%, transparent);
             background-size: 30px 30px;
         }
-
-        #timer {
-            font-size: clamp(40px, 12vw, 80px); font-weight: bold;
-            text-shadow: 0 0 25px #FF4500; margin: 20px 0; color: #FFD700;
-        }
-        
-        .lock-title { font-size: 18px; letter-spacing: 4px; color: #ff6b6b; text-transform: uppercase; text-align: center;}
+        #timer { font-size: clamp(40px, 12vw, 80px); font-weight: bold; text-shadow: 0 0 25px #FF4500; margin: 20px 0; letter-spacing: 2px; color: #FFD700; }
+        .lock-title { font-size: 18px; letter-spacing: 4px; color: #ff6b6b; text-transform: uppercase; text-align: center; padding: 0 10px; }
         .lock-status { color: #FF0000; animation: blink 1s infinite; margin-top: 10px; font-size: 14px; text-shadow: 0 0 10px #FF0000;}
 
-        /* Nút Admin Bánh Răng */
-        #admin-btn {
-            position: fixed; bottom: 25px; right: 25px;
-            width: 45px; height: 45px;
-            cursor: pointer; z-index: 10001;
-            opacity: 0.5; transition: all 0.5s ease;
-            fill: #FF0000; filter: drop-shadow(0 0 8px #FF0000);
-        }
-        #admin-btn:hover { opacity: 1; transform: rotate(180deg) scale(1.1); fill: #FFD700; filter: drop-shadow(0 0 15px #FFD700);}
-        #admin-btn svg { width: 100%; height: 100%; }
+        /* Admin Button */
+        #admin-btn { position: fixed; bottom: 25px; right: 25px; width: 45px; height: 45px; cursor: pointer; z-index: 10001; opacity: 0.5; transition: all 0.5s ease; fill: #FF0000; filter: drop-shadow(0 0 8px #FF0000); }
+        #admin-btn:hover { opacity: 1; transform: rotate(180deg) scale(1.1); fill: #FFD700; }
 
-        /* --- UI LAYER --- */
-        #ui-layer {
-            position: absolute; width: 100%; height: 100%;
-            display: none; justify-content: center; align-items: center;
-            flex-direction: column; z-index: 999; pointer-events: none;
-        }
-
+        /* UI Layer */
+        #ui-layer { position: absolute; width: 100%; height: 100%; display: none; justify-content: center; align-items: center; flex-direction: column; z-index: 999; pointer-events: none; }
         .cyber-btn {
             pointer-events: auto; background: rgba(30, 0, 0, 0.7); color: #FFD700; border: 2px solid #FF4500;
-            padding: 15px 40px; font-size: 16px; cursor: pointer; 
-            font-family: 'Black Ops One', cursive; letter-spacing: 2px;
-            box-shadow: 0 0 20px #FF4500; transition: 0.3s;
-            animation: pulse 2s infinite; 
-            border-radius: 50px;
-            text-shadow: 0 0 10px #FF4500; text-transform: uppercase;
-            backdrop-filter: blur(5px);
+            padding: 15px 40px; font-size: 16px; cursor: pointer; font-family: 'Black Ops One', cursive; letter-spacing: 2px;
+            box-shadow: 0 0 20px #FF4500; transition: 0.3s; animation: pulse 2s infinite; border-radius: 50px;
+            text-shadow: 0 0 10px #FF4500; text-transform: uppercase; backdrop-filter: blur(5px);
         }
         .cyber-btn:hover { background: #FF4500; color: #fff; box-shadow: 0 0 50px #FF4500; transform: scale(1.05); }
 
-        /* --- 3D CUBE --- */
+        /* Cube */
         #cube-container { display: none; perspective: 800px; width: 120px; height: 120px; margin-bottom: 30px;}
         #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 4s infinite linear; }
         .face {
-            position: absolute; width: 116px; height: 116px;
-            border: 2px solid #FF0000; background: rgba(255, 0, 0, 0.2);
-            color: #FFD700; font-size: 60px; display: flex;
-            justify-content: center; align-items: center;
-            font-family: 'Black Ops One'; box-shadow: 0 0 25px #FF0000;
-            border-radius: 15px;
+            position: absolute; width: 116px; height: 116px; border: 2px solid #FF0000; background: rgba(255, 0, 0, 0.2);
+            color: #FFD700; font-size: 60px; display: flex; justify-content: center; align-items: center;
+            font-family: 'Black Ops One'; box-shadow: 0 0 25px #FF0000; border-radius: 15px;
         }
         .front { transform: translateZ(60px); } .back { transform: rotateY(180deg) translateZ(60px); }
         .right { transform: rotateY(90deg) translateZ(60px); } .left { transform: rotateY(-90deg) translateZ(60px); }
         .top { transform: rotateX(90deg) translateZ(60px); } .bottom { transform: rotateX(-90deg) translateZ(60px); }
 
-        /* --- MESSAGE LAYER (Thư) --- */
+        /* Message Layer */
         #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(80, 0, 20, 0.9) 0%, rgba(20, 0, 5, 0.98) 100%);
-            display: none; z-index: 3000; opacity: 0;
-            flex-direction: column; justify-content: center; align-items: center;
+            background: radial-gradient(circle, rgba(80, 0, 20, 0.95) 0%, rgba(20, 0, 5, 0.98) 100%);
+            display: none; z-index: 3000; opacity: 0; flex-direction: column; justify-content: center; align-items: center;
             padding: 20px; box-sizing: border-box; transition: opacity 1.5s ease-in-out;
         }
         #msg-layer.visible { opacity: 1; }
-
-        /* FIX CSS: Container chứa chữ phải linh hoạt */
-        #text-wrapper {
-            width: 100%;
-            display: flex; justify-content: center;
-            padding: 0 15px;
-            margin-bottom: 20px;
-        }
-
         #msg-content {
-            color: #ffc2d1; 
-            /* Tự chỉnh font size theo chiều ngang màn hình */
-            font-size: clamp(16px, 5vw, 22px); 
-            line-height: 1.6; font-family: 'Quicksand', sans-serif; font-weight: 600;
-            white-space: pre-wrap; word-wrap: break-word; 
-            width: 90%; max-width: 500px; max-height: 60vh; overflow-y: auto;
-            text-shadow: 0 0 2px rgba(0,0,0,0.5); 
-            padding: 30px; 
-            background: rgba(100, 0, 30, 0.5); 
-            border-radius: 30px; 
-            border: 2px solid rgba(255, 105, 180, 0.4);
-            box-shadow: 0 15px 50px rgba(50, 0, 10, 0.8), inset 0 0 20px rgba(255, 0, 50, 0.2);
+            color: #ffc2d1; font-size: clamp(16px, 4.5vw, 20px); line-height: 1.8; font-family: 'Quicksand', sans-serif; font-weight: 600;
+            white-space: pre-wrap; word-wrap: break-word; width: 90%; max-width: 500px; max-height: 60vh; overflow-y: auto;
+            text-shadow: 0 0 2px rgba(0,0,0,0.5); padding: 30px; background: rgba(100, 0, 30, 0.5); border-radius: 30px; 
+            border: 2px solid rgba(255, 105, 180, 0.4); box-shadow: 0 15px 50px rgba(50, 0, 10, 0.8), inset 0 0 20px rgba(255, 0, 50, 0.2);
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
         }
-        
         #skip-btn { 
-            margin-top: 20px; padding: 12px 40px; border: 2px solid #FFD700; 
-            background: rgba(50, 0, 0, 0.5); color: #FFD700; display: none; pointer-events: auto; 
-            font-weight: bold; cursor: pointer; transition: 0.3s; 
-            border-radius: 50px;
-            font-family: 'Share Tech Mono'; letter-spacing: 1px;
-            backdrop-filter: blur(5px);
+            margin-top: 30px; padding: 12px 40px; border: 2px solid #FFD700; background: rgba(50, 0, 0, 0.5); 
+            color: #FFD700; display: none; pointer-events: auto; font-weight: bold; cursor: pointer; transition: 0.3s; 
+            border-radius: 50px; font-family: 'Share Tech Mono'; letter-spacing: 1px; backdrop-filter: blur(5px);
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
         #skip-btn:hover { background: #FFD700; color: #500000; box-shadow: 0 0 35px #FFD700; transform: translateY(-3px);}
 
-        /* --- TERMINAL --- */
+        /* Terminal */
         #virus-terminal { 
-            position: absolute; top: 5%; left: 5%; width: 90%; height: 90%; 
-            color: #FF4500; font-family: 'Share Tech Mono'; font-size: 13px; display: none; z-index: 2001; 
-            background: rgba(30, 0, 0, 0.95); padding: 20px; box-sizing: border-box; 
-            line-height: 1.5; text-shadow: 0 0 8px #FF0000;
-            overflow-y: auto; white-space: pre-wrap;
-            border-radius: 20px;
-            border: 2px solid rgba(255, 0, 0, 0.4);
+            position: absolute; top: 5%; left: 5%; width: 90%; height: 90%; color: #FF4500; font-family: 'Share Tech Mono'; font-size: 13px; display: none; z-index: 2001; 
+            background: rgba(30, 0, 0, 0.95); padding: 20px; box-sizing: border-box; line-height: 1.5; text-shadow: 0 0 8px #FF0000;
+            overflow-y: auto; white-space: pre-wrap; border-radius: 20px; border: 2px solid rgba(255, 0, 0, 0.4);
             box-shadow: 0 0 50px rgba(255, 0, 0, 0.2) inset;
         }
-        #virus-terminal::-webkit-scrollbar-thumb { background: #FF4500; }
-
-        /* --- TRANSITION OVERLAY --- */
+        
+        /* Transition */
         #transition-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #FFF; z-index: 9999; display: none; opacity: 0;
-            flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 2s ease-in-out; pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFF; z-index: 9999; display: none; opacity: 0;
+            flex-direction: column; justify-content: center; align-items: center; transition: opacity 2s ease-in-out; pointer-events: none;
         }
         #transition-overlay.active { opacity: 1; pointer-events: auto; }
-
         .heart-loader { font-size: 60px; animation: heartbeat 1s infinite; margin-bottom: 20px;}
         .final-text { color: #FF1493; font-family: 'Dancing Script', cursive; font-size: 26px; font-weight: bold; }
-
-        /* --- FIX LỖI "CHÚN G" (WORD WRAPPING) --- */
-        .word {
-            display: inline-block;
-            white-space: nowrap; /* Bắt buộc các chữ trong 1 từ phải dính liền */
-            margin: 0 4px; /* Khoảng cách giữa các từ */
-        }
-        .letter { display: inline-block; opacity: 0; transform: translateY(10px); }
 
         @keyframes spin { from { transform: rotateX(0) rotateY(0); } to { transform: rotateX(360deg) rotateY(360deg); } }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         @keyframes heartbeat { 0% { transform: scale(1); } 25% { transform: scale(1.3); } 50% { transform: scale(1); } 75% { transform: scale(1.3); } 100% { transform: scale(1); } }
     </style>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 </head>
 <body>
     <canvas id="c"></canvas>
@@ -176,11 +108,8 @@
         <div id="timer">00:00:00</div>
         <div class="lock-status">[ SYSTEM LOCKED - RED ALERT ]</div>
         <div class="lock-status" style="font-size: 12px; color: #ff6b6b; margin-top: 5px; animation: none;">Target: 01/03/2026</div>
-        
         <div id="admin-btn" onclick="adminUnlock()">
-            <svg viewBox="0 0 24 24">
-                <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
         </div>
     </div>
     
@@ -196,10 +125,8 @@
     </div>
 
     <div id="msg-layer">
-        <div style="color: #FFD700; font-size: clamp(28px, 8vw, 40px); margin-bottom: 25px; font-family: 'Dancing Script'; text-align:center; text-shadow: 0 0 10px #FFD700;">💌 Gửi Dương</div>
-        
+        <div style="color: #FFD700; font-size: clamp(24px, 7vw, 36px); margin-bottom: 25px; font-family: 'Dancing Script'; text-align:center; text-shadow: 0 0 10px #FFD700;">💌 Gửi Dương</div>
         <div id="msg-content"></div>
-        
         <button id="skip-btn" onclick="startFinale()">TIẾP TỤC >></button>
     </div>
 
@@ -211,11 +138,9 @@
     <audio id="audio" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
 
 <script>
-    // --- CẤU HÌNH ---
     const TARGET_DATE = new Date("March 1, 2026 00:00:00").getTime();
     const ADMIN_PASS = "01032007";
 
-    // --- LOGIC ĐẾM NGƯỢC ---
     function updateTimer() {
         const now = new Date().getTime();
         const distance = TARGET_DATE - now;
@@ -224,8 +149,7 @@
         const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const s = Math.floor((distance % (1000 * 60)) / 1000);
-        document.getElementById("timer").innerText = 
-            `${d<10?"0"+d:d}:${h<10?"0"+h:h}:${m<10?"0"+m:m}:${s<10?"0"+s:s}`;
+        document.getElementById("timer").innerText = `${d<10?"0"+d:d}:${h<10?"0"+h:h}:${m<10?"0"+m:m}:${s<10?"0"+s:s}`;
     }
     let timerInterval = setInterval(updateTimer, 1000);
     updateTimer();
@@ -240,40 +164,26 @@
     function adminUnlock() {
         let pass = prompt("NHẬP MÃ QUẢN TRỊ (RED ACCESS):");
         if (pass === ADMIN_PASS) { alert("XÁC NHẬN: ADMIN"); unlockSystem(); } 
-        else { alert("MẬT KHẨU SAI! HỆ THỐNG BÁO ĐỘNG!"); }
+        else { alert("MẬT KHẨU SAI!"); }
     }
 
-    // --- NỘI DUNG THƯ & KỊCH BẢN ---
-    const LETTER = `Chúc mừng sinh nhật tuổi 19, cô gái Hà Nam xinh đẹp! 🎂
-
-Chúc cô sinh viên Đại học Phương Đông sang tuổi mới học tập thật tốt, luôn vui vẻ và bớt suy nghĩ linh tinh nhé.
-
-Dù có bận deadline thì cũng nhớ ăn uống đầy đủ (đặc biệt là đi ăn nem nướng cho đỡ thèm nha). 🍢
-
-Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Birthday, my special girl! ❤️
-
--- Nguyễn Bắc Sơn --`;
+    const LETTER = `Chúc mừng sinh nhật tuổi 19, cô gái Hà Nam xinh đẹp! 🎂\n\nChúc cô sinh viên Đại học Phương Đông sang tuổi mới học tập thật tốt, luôn vui vẻ và bớt suy nghĩ linh tinh nhé.\n\nDù có bận deadline thì cũng nhớ ăn uống đầy đủ (đặc biệt là đi ăn nem nướng cho đỡ thèm nha). 🍢\n\nMong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Birthday, my special girl! ❤️\n\n-- Nguyễn Bắc Sơn --`;
 
     const SCRIPT = [
-        { t: "KẾT NỐI VỆ TINH\nQUÉT DỮ LIỆU...", c: "#FF4500" }, 
-        { t: "TÌM THẤY MỤC TIÊU\nTRƯƠNG THỊ DƯƠNG", c: "#FF0000" }, 
-        { t: "CHÀO CÔ GÁI\nĐH PHƯƠNG ĐÔNG", c: "#FF69B4" }, 
-        { t: "HAPPY BIRTHDAY\nTUỔI 19 RỰC RỠ", c: "#FFD700" }, 
+        { t: "KẾT NỐI VỆ TINH\nQUÉT DỮ LIỆU...", c: "#FF4500" },
+        { t: "TÌM THẤY MỤC TIÊU\nTRƯƠNG THỊ DƯƠNG", c: "#FF0000" },
+        { t: "CHÀO CÔ GÁI\nĐH PHƯƠNG ĐÔNG", c: "#FF69B4" },
+        { t: "HAPPY BIRTHDAY\nTUỔI 19 RỰC RỠ", c: "#FFD700" },
         { action: "HEART_TREND" } 
     ];
 
-    const TERMINAL_LOGS = [
-        "> INITIALIZING_RED_KERNEL...", "> ACCESSING_DATABASE... [OK]", "> SEARCH: 'TRUONG_THI_DUONG'", 
-        "> DOB: 01/03/2007", "> LOCATION: HA_NAM", "> STATUS: STUDENT @ PHUONG_DONG", 
-        "> FAVORITE: 'NEM_NUONG' (100%)", "> LOADING_CUTENESS... 100%", 
-        "> DECRYPTING: 'RED_LOVE_GIFT.EXE'", "> SYSTEM_READY.", 
-        "> 3...", "> 2...", "> 1...", "> STARTING_RED_SHOW!"
-    ];
+    const TERMINAL_LOGS = ["> INIT_RED_KERNEL...", "> DB_ACCESS... [OK]", "> SEARCH: 'DUONG'", "> DOB: 01/03/2007", "> STATUS: CUTE", "> DECRYPT: 'GIFT.EXE'", "> READY...", "> 3... 2... 1...", "> START!"];
 
     const canvas = document.getElementById('c');
     const ctx = canvas.getContext('2d');
     const isMobile = window.innerWidth < 768;
     let w, h;
+
     const DOT_GAP = isMobile ? 4 : 3; 
     const DOT_SIZE = isMobile ? 1.5 : 1.2; 
     let state = "IDLE"; 
@@ -307,28 +217,18 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     }
 
     document.getElementById('btn-start').onclick = function() {
-        this.style.display = 'none';
-        document.getElementById('audio').play().catch(()=>{});
-        state = "COUNTDOWN";
-        document.getElementById('cube-container').style.display = 'block';
-        const faces = document.querySelectorAll('.face');
-        let tmr = setInterval(() => {
-            countdown--; faces.forEach(f => f.innerText = countdown);
-            if(countdown <= 0) { clearInterval(tmr); document.getElementById('cube-container').style.display = 'none'; runVirus(); }
-        }, 1000);
+        this.style.display = 'none'; document.getElementById('audio').play().catch(()=>{}); state = "COUNTDOWN";
+        document.getElementById('cube-container').style.display = 'block'; const faces = document.querySelectorAll('.face');
+        let tmr = setInterval(() => { countdown--; faces.forEach(f => f.innerText = countdown); if(countdown <= 0) { clearInterval(tmr); document.getElementById('cube-container').style.display = 'none'; runVirus(); } }, 1000);
     };
 
     function runVirus() {
-        state = "VIRUS";
-        const term = document.getElementById('virus-terminal');
-        term.style.display = 'block';
+        state = "VIRUS"; const term = document.getElementById('virus-terminal'); term.style.display = 'block';
         let lineIdx = 0, charIdx = 0, currentText = "";
         function typeLine() {
             if(lineIdx >= TERMINAL_LOGS.length) { setTimeout(() => { term.style.display = 'none'; state = "SHOW"; nextScene(); }, 1000); return; }
-            let line = TERMINAL_LOGS[lineIdx];
-            term.innerHTML = currentText + line.substring(0, charIdx) + "<span style='color:#FF0000; animation:blink 0.5s infinite'>_</span>";
-            if(charIdx < line.length) { charIdx++; setTimeout(typeLine, 20); } 
-            else { currentText += line + "<br>"; lineIdx++; charIdx = 0; term.scrollTop = term.scrollHeight; setTimeout(typeLine, 150); }
+            let line = TERMINAL_LOGS[lineIdx]; term.innerHTML = currentText + line.substring(0, charIdx) + "<span style='color:#FF0000;'>_</span>";
+            if(charIdx < line.length) { charIdx++; setTimeout(typeLine, 20); } else { currentText += line + "<br>"; lineIdx++; charIdx = 0; term.scrollTop = term.scrollHeight; setTimeout(typeLine, 150); }
         }
         typeLine();
     }
@@ -340,14 +240,16 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         formText(s.t, s.c); setTimeout(nextScene, 6000); 
     }
 
-    // --- FIX LỖI "CHỮ BỊ CẮT" (ẢNH 2) ---
+    // --- FIX LỖI TRAN CHU (AUTO SCALE FONT) ---
     function formText(txt, color) {
         const lines = txt.split('\n');
         const tmp = document.createElement('canvas');
         const tCtx = tmp.getContext('2d');
         
-        // FIX: Tự động tính cỡ chữ để không bao giờ vượt quá màn hình
-        let fSize = Math.min(w / 7, 70); 
+        // Tự động tính cỡ chữ: Lấy chiều rộng màn hình chia cho số ký tự dài nhất
+        let maxChars = 0;
+        lines.forEach(l => maxChars = Math.max(maxChars, l.length));
+        let fSize = Math.min(w / (maxChars * 0.7), 80); // Tự động co chữ lại nếu dài quá
 
         tCtx.font = `bold ${fSize}px Arial`;
         let maxW = 0; lines.forEach(l => maxW = Math.max(maxW, tCtx.measureText(l).width));
@@ -364,83 +266,38 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         }
         while(particles.length < pts.length) particles.push({x: Math.random()*w, y: Math.random()*h, tx: Math.random()*w, ty: Math.random()*h, c: color, active: true});
         particles.forEach((p, i) => {
-            if(i < pts.length) { p.tx = pts[i].x; p.ty = pts[i].y; p.c = color; p.active = true; } 
-            else { p.active = false; p.tx = Math.random()*w; p.ty = Math.random()*h; }
+            if(i < pts.length) { p.tx = pts[i].x; p.ty = pts[i].y; p.c = color; p.active = true; } else { p.active = false; p.tx = Math.random()*w; p.ty = Math.random()*h; }
         });
     }
 
     function drawDynamicBackground() {
-        bgStars.forEach(s => {
-            s.opacity += s.blinkSpeed; if(s.opacity > 1 || s.opacity < 0.2) s.blinkSpeed *= -1;
-            ctx.fillStyle = `rgba(255, 200, 200, ${s.opacity})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
-        });
+        bgStars.forEach(s => { s.opacity += s.blinkSpeed; if(s.opacity > 1 || s.opacity < 0.2) s.blinkSpeed *= -1; ctx.fillStyle = `rgba(255, 200, 200, ${s.opacity})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill(); });
         if(Math.random()<0.02) shootingStars.push(new ShootingStar());
         for(let i=shootingStars.length-1; i>=0; i--) { let s=shootingStars[i]; s.update(); s.draw(); if(!s.active) shootingStars.splice(i,1); }
     }
 
     function runHeartTrend() {
-        state = "HEART_TREND";
-        let heartPts = [];
-        let r = Math.min(w, h) / 35;
-        for(let t=0; t<Math.PI*2; t+=0.04) {
-            heartPts.push({ x: w/2 + r*16*Math.pow(Math.sin(t),3), y: h/2 - r*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t)) });
-        }
-        particles.forEach((p, i) => {
-            if(i < heartPts.length) { p.tx = heartPts[i].x; p.ty = heartPts[i].y; p.c = "#FF1493"; p.active = true; } 
-            else { p.active = false; }
-        });
+        state = "HEART_TREND"; let heartPts = []; let r = Math.min(w, h) / 35;
+        for(let t=0; t<Math.PI*2; t+=0.04) { heartPts.push({ x: w/2 + r*16*Math.pow(Math.sin(t),3), y: h/2 - r*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t)) }); }
+        particles.forEach((p, i) => { if(i < heartPts.length) { p.tx = heartPts[i].x; p.ty = heartPts[i].y; p.c = "#FF1493"; p.active = true; } else { p.active = false; } });
         setTimeout(runMessage, 8000);
     }
 
-    // --- FIX LỖI "CHÚN G" (ẢNH 1) BẰNG CÁCH GOM TỪ ---
     function runMessage() {
-        state = "MSG";
-        const layer = document.getElementById('msg-layer');
-        layer.style.display = 'flex';
+        state = "MSG"; const layer = document.getElementById('msg-layer'); layer.style.display = 'flex';
         setTimeout(() => layer.classList.add('visible'), 50);
-
-        // Chia văn bản thành các TỪ (Word) để không bị cắt đôi
-        const words = LETTER.split(" ");
-        const contentDiv = document.getElementById('msg-content');
-        contentDiv.innerHTML = ""; // Xóa nội dung cũ
-        
-        // Thêm từng từ vào div (ẩn đi)
-        words.forEach(word => {
-            let span = document.createElement("span");
-            span.className = "word"; // Class này có white-space: nowrap
-            span.innerHTML = word.replace(/\n/g, "<br>") + " "; // Giữ nguyên xuống dòng và thêm dấu cách
-            span.style.opacity = 0; // Ẩn ban đầu
-            contentDiv.appendChild(span);
-        });
-
-        // Hiệu ứng hiện từng từ
-        const allSpans = contentDiv.querySelectorAll("span");
-        let i = 0;
-        let t = setInterval(() => {
-            if(i < allSpans.length) {
-                allSpans[i].style.opacity = 1; // Hiện từ từ
-                // Tự động cuộn xuống dưới cùng nếu dài quá
-                contentDiv.scrollTop = contentDiv.scrollHeight;
-                i++;
-            } else {
-                clearInterval(t); 
-                document.getElementById('skip-btn').style.display = 'block'; 
-            }
-        }, 100); // Tốc độ hiện chữ (100ms mỗi từ)
+        let i = 0; let t = setInterval(() => { document.getElementById('msg-content').innerText = LETTER.substring(0, i) + "_"; if(++i > LETTER.length) { clearInterval(t); document.getElementById('skip-btn').style.display = 'block'; document.getElementById('msg-content').innerText = LETTER; } }, 30);
     }
 
     window.startFinale = function() {
-        state = "FINALE";
-        document.getElementById('msg-layer').style.display = 'none';
+        state = "FINALE"; document.getElementById('msg-layer').style.display = 'none';
         let fireworkInterval = setInterval(() => { if(fireworks.length < 8) fireworks.push({x: Math.random()*w, y: h, ty: Math.random()*h*0.5, vy: -8-Math.random()*5, c: `hsl(${Math.random()*60},100%,60%)`}); }, 500);
         formText("TUỔI 19\nRỰC RỠ NHÉ!", "#FFD700");
         setTimeout(() => { clearInterval(fireworkInterval); goToConfession(); }, 5000); 
     }
 
     function goToConfession() {
-        particles.forEach(p => { p.tx = w/2; p.ty = h/2; });
-        const overlay = document.getElementById('transition-overlay');
-        overlay.style.display = 'flex';
+        particles.forEach(p => { p.tx = w/2; p.ty = h/2; }); const overlay = document.getElementById('transition-overlay'); overlay.style.display = 'flex';
         setTimeout(() => { overlay.classList.add('active'); }, 100);
         setTimeout(() => { window.location.href = "https://nguyenbacson.io.vn/miss-you/i-love-you/"; }, 2500);
     }
@@ -451,10 +308,7 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         drawDynamicBackground();
         if(state !== "MSG" && state !== "FINALE") {
             ctx.save(); ctx.globalCompositeOperation = 'lighter';
-            spotlights.forEach(s => {
-                let g = ctx.createLinearGradient(s.x, h, s.x+Math.cos(s.angle)*h, h+Math.sin(s.angle)*h); g.addColorStop(0, s.color); g.addColorStop(0, "transparent"); 
-                ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(s.x, h); ctx.lineTo(s.x-5, 0); ctx.lineTo(s.x+5, 0); ctx.fill(); 
-            });
+            spotlights.forEach(s => { let g = ctx.createLinearGradient(s.x, h, s.x+Math.cos(s.angle)*h, h+Math.sin(s.angle)*h); g.addColorStop(0, s.color); g.addColorStop(0, "transparent"); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(s.x, h); ctx.lineTo(s.x-5, 0); ctx.lineTo(s.x+5, 0); ctx.fill(); });
             ctx.restore();
         }
         particles.forEach(p => {
