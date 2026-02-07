@@ -15,7 +15,7 @@
         /* --- MÀN HÌNH ĐẾM NGƯỢC (LOCK SCREEN) --- */
         #countdown-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 10000; /* Cao nhất để che hết */
+            background: #000; z-index: 10000; 
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             color: #0F0; font-family: 'Share Tech Mono';
         }
@@ -36,17 +36,26 @@
         .lock-title { font-size: 20px; letter-spacing: 3px; color: #fff; text-transform: uppercase; }
         .lock-status { color: #FF0055; animation: blink 1s infinite; margin-top: 10px; }
 
-        /* Nút Admin bí mật (Góc dưới cùng bên phải) */
+        /* --- NÚT ADMIN BÁNH RĂNG --- */
         #admin-btn {
-            position: fixed; bottom: 10px; right: 10px;
-            width: 30px; height: 30px; opacity: 0; /* Tàng hình */
+            position: fixed; bottom: 20px; right: 20px;
+            width: 40px; height: 40px;
             cursor: pointer; z-index: 10001;
+            opacity: 0.3; /* Mờ mờ cho bí ẩn */
+            transition: all 0.5s ease;
+            fill: #0F0; /* Màu xanh hacker */
+            filter: drop-shadow(0 0 5px #0F0);
         }
+        #admin-btn:hover {
+            opacity: 1;
+            transform: rotate(180deg) scale(1.1); /* Xoay khi di chuột vào */
+        }
+        #admin-btn svg { width: 100%; height: 100%; }
 
-        /* --- UI LAYER (Nút bấm & Cube) --- */
+        /* --- UI LAYER --- */
         #ui-layer {
             position: absolute; width: 100%; height: 100%;
-            display: none; /* Ẩn mặc định, chờ mở khóa */
+            display: none; 
             justify-content: center; align-items: center;
             flex-direction: column; z-index: 999; pointer-events: none;
         }
@@ -61,7 +70,7 @@
         }
         .cyber-btn:hover { background: #0F0; color: #000; box-shadow: 0 0 40px #0F0; }
 
-        /* --- 3D CUBE COUNTDOWN --- */
+        /* --- 3D CUBE --- */
         #cube-container { display: none; perspective: 800px; width: 150px; height: 150px; margin-bottom: 20px;}
         #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 4s infinite linear; }
         .face {
@@ -76,7 +85,7 @@
         .right { transform: rotateY(90deg) translateZ(75px); } .left { transform: rotateY(-90deg) translateZ(75px); }
         .top { transform: rotateX(90deg) translateZ(75px); } .bottom { transform: rotateX(-90deg) translateZ(75px); }
 
-        /* --- MESSAGE LAYER (Thư chúc mừng) --- */
+        /* --- MESSAGE LAYER --- */
         #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, rgba(20, 0, 10, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%); 
@@ -89,7 +98,7 @@
         #msg-content {
             color: #FF69B4; font-size: clamp(17px, 5vw, 22px); 
             line-height: 1.6; font-family: 'Dancing Script', cursive; font-weight: bold;
-            white-space: pre-wrap; word-wrap: break-word; /* Fix lỗi xuống dòng mobile */
+            white-space: pre-wrap; word-wrap: break-word; 
             width: 90%; max-width: 600px; max-height: 60vh; overflow-y: auto;
             text-shadow: 0 0 5px #FF69B4; border-left: 3px solid #FF69B4; padding: 20px; 
             background: rgba(30, 0, 15, 0.7); border-radius: 10px; border: 1px solid rgba(255,105,180,0.3);
@@ -105,7 +114,7 @@
         }
         #skip-btn:hover { background: #FFD700; color: #000; box-shadow: 0 0 20px #FFD700; }
 
-        /* --- HACKER TERMINAL --- */
+        /* --- TERMINAL --- */
         #virus-terminal { 
             position: absolute; top:0; left:0; width:100%; height:100%; color:#0F0; 
             font-family:'Share Tech Mono'; font-size:14px; display:none; z-index:2001; 
@@ -116,7 +125,7 @@
         #virus-terminal::-webkit-scrollbar { width: 5px; }
         #virus-terminal::-webkit-scrollbar-thumb { background: #0F0; }
 
-        /* --- TRANSITION OVERLAY (Màn hình chuyển trang) --- */
+        /* --- TRANSITION OVERLAY --- */
         #transition-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #FFF; z-index: 9999; display: none; opacity: 0;
@@ -145,7 +154,11 @@
         <div class="lock-status">[ SYSTEM LOCKED ]</div>
         <div class="lock-status" style="font-size: 12px; color: #888">Target Date: 01/03/2026</div>
         
-        <div id="admin-btn" onclick="adminUnlock()"></div>
+        <div id="admin-btn" onclick="adminUnlock()">
+            <svg viewBox="0 0 24 24">
+                <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+            </svg>
+        </div>
     </div>
     
     <div id="ui-layer">
@@ -174,7 +187,6 @@
 
 <script>
     // --- CẤU HÌNH NGÀY ĐẾM NGƯỢC ---
-    // Đặt là ngày sinh nhật Dương (Năm nay hoặc năm sau tùy bạn)
     const TARGET_DATE = new Date("March 1, 2026 00:00:00").getTime();
     const ADMIN_PASS = "01032007";
 
@@ -184,7 +196,6 @@
         const distance = TARGET_DATE - now;
 
         if (distance < 0) {
-            // Đã đến giờ G -> Tự động mở khóa
             unlockSystem();
             return;
         }
@@ -194,7 +205,6 @@
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        // Định dạng số đẹp (01, 02...)
         const d = days < 10 ? "0" + days : days;
         const h = hours < 10 ? "0" + hours : hours;
         const m = minutes < 10 ? "0" + minutes : minutes;
@@ -203,15 +213,13 @@
         document.getElementById("timer").innerText = `${d}:${h}:${m}:${s}`;
     }
 
-    // Chạy đếm ngược mỗi giây
     let timerInterval = setInterval(updateTimer, 1000);
-    updateTimer(); // Chạy ngay lập tức để không bị delay 1s đầu
+    updateTimer();
 
     function unlockSystem() {
         clearInterval(timerInterval);
         document.getElementById("countdown-layer").style.display = "none";
-        document.getElementById("ui-layer").style.display = "flex"; // Hiện nút Start
-        // Bắt đầu chạy hiệu ứng nền
+        document.getElementById("ui-layer").style.display = "flex"; 
         loop(); 
     }
 
@@ -464,12 +472,11 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
             if(++i > LETTER.length) { 
                 clearInterval(t); 
                 document.getElementById('skip-btn').style.display = 'block'; 
-                document.getElementById('msg-content').innerText = LETTER; // Xóa dấu _ cuối cùng
+                document.getElementById('msg-content').innerText = LETTER; 
             }
         }, 40);
     }
 
-    // --- FINALE & TRANSITION LOGIC ---
     window.startFinale = function() {
         state = "FINALE";
         document.getElementById('msg-layer').style.display = 'none';
@@ -477,7 +484,6 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         let fireworkInterval = setInterval(() => { if(fireworks.length < 8) launchFirework(); }, 500);
         formText("TUỔI 19\nRỰC RỠ NHÉ!", "#FFD700");
 
-        // Sau 5 giây bắn pháo hoa thì chuyển trang
         setTimeout(() => {
             clearInterval(fireworkInterval);
             goToConfession();
@@ -485,18 +491,14 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     }
 
     function goToConfession() {
-        // Hút các hạt về tâm
         particles.forEach(p => { p.tx = w/2; p.ty = h/2; });
-
-        // Hiện overlay chuyển cảnh
         const overlay = document.getElementById('transition-overlay');
         overlay.style.display = 'flex';
         
         setTimeout(() => {
-            overlay.classList.add('active'); // Fade-in màu trắng
+            overlay.classList.add('active'); 
         }, 100);
 
-        // Chuyển link sau 2.5 giây
         setTimeout(() => {
             window.location.href = "https://nguyenbacson.io.vn/miss-you/i-love-you/";
         }, 2500);
@@ -507,7 +509,6 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     }
 
     function loop() {
-        // Nếu đang ở màn hình đếm ngược thì không vẽ gì để tiết kiệm pin
         if (document.getElementById("countdown-layer").style.display !== "none") {
             requestAnimationFrame(loop);
             return;
@@ -551,7 +552,8 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         }
         requestAnimationFrame(loop);
     }
-    // Không gọi loop() ở đây nữa mà gọi sau khi unlockSystem
+    // LƯU Ý: Không gọi loop() ngay tại đây.
+    // loop() sẽ được gọi bên trong hàm unlockSystem() khi đếm ngược xong hoặc mở khóa admin.
 </script>
 </body>
 </html>
