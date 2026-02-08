@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đếm ngược sự kiện</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; margin-bottom: 20px; }
+        #countdown {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .time-box {
+            background: #007bff;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 80px;
+        }
+        .time-box span {
+            display: block;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .label { font-size: 0.8rem; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Sự kiện sẽ bắt đầu sau:</h1>
+    <div id="countdown">
+        <div class="time-box">
+            <span id="days">00</span>
+            <div class="label">Ngày</div>
+        </div>
+        <div class="time-box">
+            <span id="hours">00</span>
+            <div class="label">Giờ</div>
+        </div>
+        <div class="time-box">
+            <span id="minutes">00</span>
+            <div class="label">Phút</div>
+        </div>
+        <div class="time-box">
+            <span id="seconds">00</span>
+            <div class="label">Giây</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Thiết lập thời gian đích: 11:00:00 ngày 27/02/2026
+    const targetDate = new Date("Feb 27, 2026 11:00:00").getTime();
+
+    const updateCountdown = setInterval(function() {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        // Tính toán thời gian
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Hiển thị kết quả
+        document.getElementById("days").innerText = days.toString().padStart(2, '0');
+        document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+        document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+        document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+
+        // Nếu đếm ngược kết thúc
+        if (distance < 0) {
+            clearInterval(updateCountdown);
+            document.querySelector(".container").innerHTML = "<h1>Sự kiện đã bắt đầu!</h1>";
+        }
+    }, 1000);
+</script>
+
+</body>
+</html>
