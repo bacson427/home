@@ -3,49 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đếm ngược sự kiện</title>
+    <title>Đếm ngược ngày gặp gỡ</title>
     <style>
+        :root {
+            --primary-color: #ff758f;
+            --bg-color: #fff0f3;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f2f5;
+            background: var(--bg-color);
+            overflow: hidden; /* Để hiệu ứng tim không làm tràn trang */
         }
+
         .container {
             text-align: center;
             background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(255, 117, 143, 0.2);
+            z-index: 10;
+            max-width: 90%;
         }
-        h1 { color: #333; margin-bottom: 20px; }
+
+        h1 { color: #d90429; margin-bottom: 30px; font-size: 1.8rem; }
+
         #countdown {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: center;
+            flex-wrap: wrap;
         }
+
         .time-box {
-            background: #007bff;
+            background: var(--primary-color);
             color: white;
             padding: 15px;
-            border-radius: 8px;
-            min-width: 80px;
+            border-radius: 12px;
+            min-width: 70px;
+            transition: transform 0.3s;
         }
+
+        .time-box:hover { transform: scale(1.05); }
+
         .time-box span {
             display: block;
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: bold;
         }
-        .label { font-size: 0.8rem; text-transform: uppercase; }
+
+        .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        .quote {
+            margin-top: 25px;
+            color: #880808;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        /* Hiệu ứng tim bay */
+        .heart {
+            position: absolute;
+            color: var(--primary-color);
+            font-size: 20px;
+            user-select: none;
+            animation: move 4s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes move {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Sự kiện sẽ bắt đầu sau:</h1>
+    <h1>Hẹn gặp cô ấy sau... ❤️</h1>
     <div id="countdown">
         <div class="time-box">
             <span id="days">00</span>
@@ -64,34 +104,41 @@
             <div class="label">Giây</div>
         </div>
     </div>
+    <div class="quote">"Ngày 27/02/2026 - 11:00 AM"</div>
 </div>
 
 <script>
-    // Thiết lập thời gian đích: 11:00:00 ngày 27/02/2026
+    // 1. Logic Đếm ngược
     const targetDate = new Date("Feb 27, 2026 11:00:00").getTime();
 
-    const updateCountdown = setInterval(function() {
+    function update() {
         const now = new Date().getTime();
-        const distance = targetDate - now;
+        const diff = targetDate - now;
 
-        // Tính toán thời gian
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        // Hiển thị kết quả
-        document.getElementById("days").innerText = days.toString().padStart(2, '0');
-        document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
-        document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
-        document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
-
-        // Nếu đếm ngược kết thúc
-        if (distance < 0) {
-            clearInterval(updateCountdown);
-            document.querySelector(".container").innerHTML = "<h1>Sự kiện đã bắt đầu!</h1>";
+        if (diff <= 0) {
+            document.querySelector(".container").innerHTML = "<h1>Đã đến lúc rồi! ❤️</h1><p class='quote'>Chúc Sơn có một cuộc gặp gỡ thật hạnh phúc.</p>";
+            return;
         }
-    }, 1000);
+
+        document.getElementById("days").innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+        document.getElementById("hours").innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+        document.getElementById("minutes").innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+        document.getElementById("seconds").innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+    }
+    setInterval(update, 1000);
+    update();
+
+    // 2. Hiệu ứng trái tim bay (Background)
+    function createHeart() {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.innerHTML = '❤️';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.animationDuration = Math.random() * 2 + 3 + 's';
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 4000);
+    }
+    setInterval(createHeart, 400);
 </script>
 
 </body>
