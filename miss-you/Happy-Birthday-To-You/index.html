@@ -3,143 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gửi Dương 19 Tuổi ❤️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-    
+    <title>HPBD DƯƠNG 19 ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
     <style>
-        body { 
-            margin: 0; overflow: hidden; 
-            /* Nền Gradient Hồng - Tím lãng mạn */
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            background-image: linear-gradient(to top, #fad0c4 0%, #ffd1ff 100%);
-            font-family: 'Quicksand', sans-serif;
-        }
+        /* --- CẤU HÌNH CHUNG --- */
+        body { margin: 0; overflow: hidden; background-color: #050002; font-family: 'Montserrat', sans-serif; }
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
 
-        /* --- UI CHUNG --- */
-        .container {
+        /* Container chính để căn giữa mọi thứ */
+        #main-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 10; pointer-events: none; /* Để bấm xuyên qua canvas */
+            z-index: 10; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center;
+            pointer-events: none; /* Để bấm xuyên qua canvas */
         }
 
-        /* --- MÀN HÌNH CHỜ (ĐẾM NGƯỢC) --- */
+        /* --- 1. MÀN HÌNH KHÓA --- */
         #lock-screen {
-            pointer-events: auto; background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            width: 90%; max-width: 400px; padding: 30px; border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            text-align: center; transition: opacity 1s;
+            pointer-events: auto; text-align: center;
+            background: rgba(20, 0, 5, 0.8); padding: 30px; border-radius: 20px;
+            border: 1px solid #ff0055;
+            box-shadow: 0 0 50px rgba(255, 0, 85, 0.4);
+            transition: opacity 0.8s;
         }
-        
-        h1 { font-family: 'Dancing Script', cursive; font-size: 3rem; color: #ff6b81; margin: 0; text-shadow: 2px 2px 0px #fff; }
-        .sub-text { color: #7a7a7a; font-size: 1rem; margin-top: 10px; font-weight: 600;}
-        
-        #timer {
-            font-size: 2.5rem; color: #fff; font-weight: bold; margin: 20px 0;
-            text-shadow: 0 2px 10px rgba(255, 105, 180, 0.6);
-            background: rgba(255, 105, 180, 0.6); padding: 10px; border-radius: 15px;
+        .lock-title { color: #fff; font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 15px; }
+        #timer { 
+            font-size: 3rem; color: #ff0055; font-weight: 900; 
+            text-shadow: 0 0 20px rgba(255, 0, 85, 0.8);
+            margin-bottom: 20px;
         }
+        .admin-btn {
+            width: 40px; height: 40px; margin: 0 auto; cursor: pointer;
+            fill: #555; transition: 0.3s;
+        }
+        .admin-btn:hover { fill: #ff0055; transform: scale(1.1); }
 
-        /* Nút tròn hồng */
-        .btn-pink {
-            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
-            border: none; padding: 12px 30px; border-radius: 50px;
-            color: white; font-weight: bold; font-size: 1.1rem; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 154, 158, 0.4);
-            transition: transform 0.3s; pointer-events: auto;
-        }
-        .btn-pink:hover { transform: scale(1.05); }
-
-        /* Nút Admin ẩn (Trái tim nhỏ góc phải) */
-        #admin-lock {
-            position: absolute; bottom: 15px; right: 15px; font-size: 20px; 
-            color: rgba(255, 255, 255, 0.5); cursor: pointer; pointer-events: auto;
-        }
-
-        /* --- TÂM THƯ --- */
-        #letter-layer {
-            display: none; opacity: 0; transition: opacity 1.5s;
-            width: 90%; max-width: 500px;
-            background: rgba(255, 255, 255, 0.85);
-            padding: 30px; border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            pointer-events: auto; position: relative;
-            border: 2px solid #fff;
-        }
-        
-        #letter-content {
-            font-size: 1.1rem; line-height: 1.8; color: #555;
-            white-space: pre-wrap; font-weight: 600;
-            max-height: 50vh; overflow-y: auto;
-        }
-        
-        /* --- SHOW DIỄN CHỮ (PARTICLE TEXT) --- */
-        #text-overlay {
-            position: absolute; width: 100%; top: 30%; text-align: center;
+        /* --- 2. SHOW DIỄN CHỮ (TEXT SHOW) --- */
+        #show-text {
+            position: absolute; width: 100%; text-align: center;
             font-family: 'Dancing Script', cursive; 
-            font-size: 2.5rem; color: #fff; 
-            text-shadow: 0 0 20px #ff0055;
-            pointer-events: none; opacity: 0; transition: opacity 1s;
+            font-size: clamp(2.5rem, 8vw, 5rem); /* Tự chỉnh cỡ chữ */
+            color: #fff; 
+            text-shadow: 0 0 20px #ff0055, 0 0 40px #ff0055;
+            opacity: 0; transform: scale(0.5);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #show-text.active { opacity: 1; transform: scale(1); }
+
+        /* --- 3. TÂM THƯ (Hiện ra sau show) --- */
+        #letter-box {
+            display: none; pointer-events: auto;
+            width: 90%; max-width: 500px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px; border-radius: 15px;
+            box-shadow: 0 0 60px rgba(255, 0, 85, 0.6);
+            text-align: center; opacity: 0; transform: translateY(20px);
+            transition: all 1s;
+        }
+        #letter-box.visible { opacity: 1; transform: translateY(0); }
+
+        .letter-content {
+            font-family: 'Dancing Script', cursive; font-size: 1.3rem; 
+            color: #880022; line-height: 1.6; margin-bottom: 20px;
+            white-space: pre-wrap; font-weight: bold;
         }
 
-        /* --- TIM BAY --- */
-        .heart {
-            position: absolute; background-color: #ff6b81; display: inline-block;
-            height: 30px; margin: 0 10px; top: 0; transform: rotate(-45deg); width: 30px;
-            opacity: 0.6; animation: fall 5s linear infinite; pointer-events: none;
+        /* Nút bấm chuyển trang */
+        .heart-btn {
+            background: #ff0055; color: white; border: none;
+            padding: 12px 35px; border-radius: 50px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 0, 85, 0.4);
+            animation: pulse-btn 2s infinite;
         }
-        .heart:before, .heart:after {
-            content: ""; background-color: #ff6b81; border-radius: 50%;
-            height: 30px; position: absolute; width: 30px;
-        }
-        .heart:before { top: -15px; left: 0; }
-        .heart:after { left: 15px; top: 0; }
+        @keyframes pulse-btn { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        @keyframes fall {
-            0% { transform: translate(0, -10vh) rotate(-45deg) scale(0.5); opacity: 0; }
-            50% { opacity: 0.8; }
-            100% { transform: translate(0, 110vh) rotate(-45deg) scale(1); opacity: 0; }
-        }
-        
-        /* Hiệu ứng load trang */
-        #transition-white {
+        /* Màn hình trắng chuyển cảnh */
+        #flash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; z-index: 9999; pointer-events: none;
-            opacity: 0; transition: opacity 2s;
-            display: flex; justify-content: center; align-items: center;
-            font-family: 'Dancing Script'; font-size: 2rem; color: #ff6b81;
+            background: #fff; z-index: 9999; opacity: 0; pointer-events: none;
+            transition: opacity 1.5s; display: flex; justify-content: center; align-items: center;
+            color: #ff0055; font-family: 'Dancing Script'; font-size: 2rem;
         }
     </style>
 </head>
 <body>
-    <canvas id="firefly-canvas"></canvas>
-    
-    <div id="hearts-container"></div>
+    <canvas id="bg-canvas"></canvas>
 
-    <div class="container">
+    <div id="main-container">
+        
         <div id="lock-screen">
-            <h1>Chào Dương 19 ❤️</h1>
-            <p class="sub-text">Một điều bất ngờ đang chờ cậu...</p>
+            <div class="lock-title">PROJECT DUONG_19</div>
             <div id="timer">00:00:00</div>
-            <div id="unlock-msg" style="display:none; color: #ff6b81; font-weight:bold; margin-bottom:15px;">Đã mở khóa!</div>
-            <button class="btn-pink" id="btn-start" style="display:none;" onclick="startShow()">Mở Quà Ngay 🎁</button>
-            <div id="admin-lock" onclick="adminUnlock()">🔒</div>
-        </div>
-
-        <div id="text-overlay"></div>
-
-        <div id="letter-layer">
-            <h2 style="font-family:'Dancing Script'; color:#ff6b81; text-align:center; font-size:2.5rem; margin-top:0;">Gửi cô gái tháng 3</h2>
-            <div id="letter-content"></div>
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="btn-pink" onclick="finish()">Yêu thương ❤️</button>
+            <div class="admin-btn" onclick="adminUnlock()">
+                <svg viewBox="0 0 24 24"><path d="M12 17a2 2 0 100-4 2 2 0 000 4zm6-9a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V10a2 2 0 012-2h1V6a5 5 0 0110 0v2h1zM8 6a4 4 0 018 0v2H8V6z"/></svg>
             </div>
+            <div style="margin-top:10px; font-size: 10px; color: #888;">PASS: 01032007</div>
         </div>
+
+        <div id="show-text"></div>
+
+        <div id="letter-box">
+            <div class="letter-content" id="typewriter"></div>
+            <button class="heart-btn" onclick="nextPage()">Tiếp Tục ❤️</button>
+        </div>
+
     </div>
 
-    <div id="transition-white">Hạnh phúc nhé... ❤️</div>
+    <div id="flash-screen">Yêu Dương Rất Nhiều...</div>
 
     <audio id="bg-music" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
 
@@ -147,32 +118,32 @@
     // --- CẤU HÌNH ---
     const TARGET_DATE = new Date("March 1, 2026 00:00:00").getTime();
     const PASS = "01032007";
-    const FULL_LETTER = `Chúc mừng sinh nhật tuổi 19, cô gái Hà Nam xinh đẹp! 🌸
-
-Chúc cô sinh viên Đại học Phương Đông sang tuổi mới học tập thật tốt, luôn vui vẻ và bớt suy nghĩ linh tinh nhé.
-
-Dù có bận deadline thì cũng nhớ ăn uống đầy đủ (đặc biệt là đi ăn nem nướng cho đỡ thèm nha). 🍢
-
-Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Birthday, my special girl! ❤️
-
--- Nguyễn Bắc Sơn --`;
-
-    // Kịch bản chữ hiện lên (Thời gian + Nội dung)
-    const SCENES = [
-        { t: 1000, txt: "🎉 Chúc Mừng 🎉" },
-        { t: 5000, txt: "Sinh Nhật Tuổi 19" },
-        { t: 9000, txt: "Trương Thị Dương" },
-        { t: 13000, txt: "Cô Gái Hà Nam ❤️" },
-        { t: 17000, txt: "Xinh Đẹp & Giỏi Giang" },
-        { t: 21000, txt: "Luôn Hạnh Phúc Nhé!" },
-        { t: 26000, action: "SHOW_LETTER" }
+    
+    // NỘI DUNG SHOW (MỖI DÒNG LÀ 1 CẢNH)
+    const SHOW_SCRIPT = [
+        "Chào Cậu...",
+        "Cô Gái Tháng 3",
+        "Chúc Mừng\nSinh Nhật 19 🎂",
+        "Tuổi Mới\nRực Rỡ Nhé! 🌹",
+        "Luôn Xinh Đẹp",
+        "Và Ở Bên Tớ ❤️",
+        "Sơn Yêu Dương!"
     ];
 
-    // --- 1. HIỆU ỨNG ĐOM ĐÓM (CANVAS) ---
-    const canvas = document.getElementById('firefly-canvas');
+    // NỘI DUNG THƯ (Viết liền mạch, tình cảm)
+    const LETTER_TEXT = `Chúc mừng sinh nhật tuổi 19, cô gái Hà Nam của tớ! 🌸
+
+Sang tuổi mới, chúc cô sinh viên Phương Đông học thật giỏi, bớt suy nghĩ linh tinh đi nhé.
+
+Dù deadline có dí thì cũng phải nhớ ăn uống đầy đủ (nhất là nem nướng đấy).
+
+Tuổi 19 này, hãy để tớ đồng hành cùng cậu nhé! Happy Birthday! ❤️`;
+
+    // --- XỬ LÝ CANVAS (NỀN VŨ TRỤ + PHÁO HOA) ---
+    const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let w, h;
-    let fireflies = [];
+    let particles = [], fireworks = [];
 
     function resize() {
         w = canvas.width = window.innerWidth;
@@ -181,46 +152,64 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     window.addEventListener('resize', resize);
     resize();
 
-    class Firefly {
-        constructor() {
-            this.x = Math.random() * w;
-            this.y = Math.random() * h;
-            this.s = Math.random() * 2; // Kích thước nhỏ
-            this.ang = Math.random() * 2 * Math.PI;
-            this.v = (Math.random() * 0.5) + 0.2; // Tốc độ chậm
-        }
-        move() {
-            this.x += Math.cos(this.ang) * this.v;
-            this.y += Math.sin(this.ang) * this.v;
-            this.ang += Math.random() * 20 * Math.PI / 180 - 10 * Math.PI / 180;
-            if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) {
-                this.x = Math.random() * w; this.y = Math.random() * h;
-            }
-        }
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.s, 0, Math.PI * 2, false);
-            ctx.fillStyle = "#fff";
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = "white"; // Phát sáng trắng/vàng
-            ctx.fill();
+    function createFirework() {
+        fireworks.push({
+            x: Math.random() * w, y: h,
+            tx: Math.random() * w, ty: h * 0.2 + Math.random() * h * 0.4, // Nổ ở phần trên
+            color: `hsl(${Math.random()*60 + 330}, 100%, 60%)`, // Tông Đỏ/Hồng/Vàng
+            radius: 2
+        });
+    }
+
+    function createParticles(x, y, color) {
+        for(let i=0; i<30; i++) {
+            particles.push({
+                x: x, y: y,
+                vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 0.5) * 6,
+                life: 1, color: color
+            });
         }
     }
 
-    for (let i = 0; i < 60; i++) fireflies.push(new Firefly());
-
     function loop() {
-        ctx.clearRect(0, 0, w, h);
-        fireflies.forEach(f => { f.move(); f.draw(); });
+        // Tạo vệt mờ đỏ thẫm cực đẹp
+        ctx.fillStyle = "rgba(10, 0, 5, 0.2)"; 
+        ctx.fillRect(0, 0, w, h);
+
+        // Vẽ pháo hoa bay lên
+        for(let i=0; i<fireworks.length; i++) {
+            let f = fireworks[i];
+            f.y += (f.ty - f.y) * 0.05; // Ease out
+            f.x += (f.tx - f.x) * 0.05;
+            ctx.fillStyle = f.color;
+            ctx.beginPath(); ctx.arc(f.x, f.y, f.radius, 0, Math.PI*2); ctx.fill();
+
+            if(Math.abs(f.y - f.ty) < 5) { // Đã tới đỉnh
+                createParticles(f.x, f.y, f.color);
+                fireworks.splice(i, 1); i--;
+            }
+        }
+
+        // Vẽ hạt nổ
+        for(let i=0; i<particles.length; i++) {
+            let p = particles[i];
+            p.x += p.vx; p.y += p.vy; p.vy += 0.05; // Trọng lực nhẹ
+            p.life -= 0.02;
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = p.color;
+            ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+            if(p.life <= 0) { particles.splice(i, 1); i--; }
+        }
+        ctx.globalAlpha = 1;
         requestAnimationFrame(loop);
     }
     loop();
 
-    // --- 2. XỬ LÝ ĐẾM NGƯỢC ---
+    // --- LOGIC CHÍNH ---
     function updateTimer() {
         const now = new Date().getTime();
         const dis = TARGET_DATE - now;
-        if(dis < 0) { allowOpen(); return; }
+        if(dis < 0) { unlockSystem(); return; }
         const d = Math.floor(dis / (86400000));
         const ho = Math.floor((dis % 86400000) / 3600000);
         const mi = Math.floor((dis % 3600000) / 60000);
@@ -231,115 +220,81 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     let tmr = setInterval(updateTimer, 1000);
     updateTimer();
 
-    function allowOpen() {
-        clearInterval(tmr);
-        document.getElementById("timer").style.display = "none";
-        document.getElementById("unlock-msg").style.display = "block";
-        document.getElementById("btn-start").style.display = "inline-block";
-    }
-
     function adminUnlock() {
-        if(prompt("Nhập mật khẩu:") == PASS) allowOpen(); else alert("Sai mật khẩu rồi!");
+        if(prompt("Pass Admin:") == PASS) unlockSystem(); else alert("Sai mật khẩu!");
     }
 
-    // --- 3. BẮT ĐẦU SHOW DIỄN ---
-    function startShow() {
+    function unlockSystem() {
+        clearInterval(tmr);
         document.getElementById("bg-music").play().catch(()=>{});
         
-        // Ẩn màn hình khóa từ từ
+        // Ẩn khóa -> Bắt đầu show
         const lock = document.getElementById("lock-screen");
         lock.style.opacity = 0;
-        setTimeout(() => lock.style.display = "none", 1000);
+        setTimeout(() => {
+            lock.style.display = 'none';
+            runShow(); // Bắt đầu chạy chữ
+        }, 800);
+    }
 
-        // Bắt đầu chạy kịch bản chữ
-        SCENES.forEach(scene => {
+    // CHẠY SHOW CHỮ + PHÁO HOA
+    function runShow() {
+        let index = 0;
+        const textEl = document.getElementById("show-text");
+
+        function nextSlide() {
+            if (index >= SHOW_SCRIPT.length) {
+                // Hết show -> Hiện thư
+                textEl.style.opacity = 0;
+                showLetter();
+                return;
+            }
+
+            // Hiện chữ
+            textEl.innerHTML = SHOW_SCRIPT[index].replace(/\n/g, "<br>");
+            textEl.classList.add("active");
+            
+            // Bắn pháo hoa ăn mừng
+            for(let k=0; k<5; k++) setTimeout(createFirework, k*200);
+
+            // Đợi 3s rồi ẩn
             setTimeout(() => {
-                if(scene.action === "SHOW_LETTER") {
-                    showLetter();
-                } else {
-                    showText(scene.txt);
-                }
-            }, scene.t);
-        });
-
-        // Tạo mưa tim
-        createHeartRain();
+                textEl.classList.remove("active");
+                setTimeout(nextSlide, 800); // Đợi ẩn xong mới hiện cái tiếp theo
+            }, 3000);
+            
+            index++;
+        }
+        nextSlide();
     }
 
-    // Hiển thị chữ to giữa màn hình (Thay cho Drone)
-    function showText(txt) {
-        const overlay = document.getElementById("text-overlay");
-        overlay.style.opacity = 0; // Ẩn chữ cũ
-        setTimeout(() => {
-            overlay.innerHTML = txt.replace(/\n/g, "<br>"); // Hỗ trợ xuống dòng
-            overlay.style.transform = "scale(0.8)";
-            overlay.style.opacity = 1; // Hiện chữ mới
-            // Hiệu ứng zoom nhẹ
-            overlay.animate([
-                { transform: 'scale(0.8)', opacity: 0 },
-                { transform: 'scale(1.1)', opacity: 1 },
-                { transform: 'scale(1)', opacity: 1 }
-            ], { duration: 1500, fill: 'forwards', easing: 'ease-out' });
-        }, 500);
-    }
-
-    // --- 4. TÂM THƯ ---
+    // HIỆN THƯ (TYPEWRITER)
     function showLetter() {
-        document.getElementById("text-overlay").style.display = "none"; // Tắt chữ
-        const layer = document.getElementById("letter-layer");
-        layer.style.display = "block";
+        const box = document.getElementById("letter-box");
+        box.style.display = "block";
         
-        // Hiện khung thư từ từ
+        // Bắn pháo hoa liên tục làm nền cho thư
+        setInterval(() => { if(Math.random() < 0.3) createFirework(); }, 500);
+
         setTimeout(() => {
-            layer.style.opacity = 1;
-            typeWriter();
+            box.classList.add("visible");
+            // Gõ chữ
+            const content = document.getElementById("typewriter");
+            let i = 0;
+            let typeTmr = setInterval(() => {
+                content.innerText = LETTER_TEXT.substring(0, i);
+                if(i >= LETTER_TEXT.length) clearInterval(typeTmr);
+                i++;
+            }, 50);
         }, 100);
     }
 
-    function typeWriter() {
-        const container = document.getElementById("letter-content");
-        let i = 0;
-        let speed = 50; // Tốc độ gõ
-        function type() {
-            if (i < FULL_LETTER.length) {
-                container.innerHTML += FULL_LETTER.charAt(i) === '\n' ? '<br>' : FULL_LETTER.charAt(i);
-                i++;
-                container.scrollTop = container.scrollHeight;
-                setTimeout(type, speed);
-            }
-        }
-        type();
-    }
-
-    // --- 5. HIỆU ỨNG MƯA TIM ---
-    function createHeartRain() {
-        const container = document.getElementById('hearts-container');
-        setInterval(() => {
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            heart.style.left = Math.random() * 100 + "vw";
-            heart.style.animationDuration = Math.random() * 2 + 3 + "s";
-            
-            // Random màu hồng/đỏ
-            const colors = ['#ff6b81', '#ff4757', '#ff7f50', '#ffb6b9'];
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            heart.style.backgroundColor = color;
-            
-            // Cần CSS động để đổi màu pseudo-elements, dùng filter cho nhanh
-            heart.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
-
-            container.appendChild(heart);
-            setTimeout(() => heart.remove(), 5000);
-        }, 300);
-    }
-
-    // --- 6. KẾT THÚC ---
-    function finish() {
-        const trans = document.getElementById("transition-white");
-        trans.style.opacity = 1;
+    function nextPage() {
+        const flash = document.getElementById("flash-screen");
+        flash.style.opacity = 1;
         setTimeout(() => {
             window.location.href = "https://nguyenbacson.io.vn/miss-you/i-love-you/";
-        }, 2000);
+        }, 1500);
     }
 </script>
 </body>
