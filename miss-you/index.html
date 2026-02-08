@@ -13,7 +13,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
 
         body {
-            /* Nền hồng phấn dịu nhẹ làm nền tảng */
             background: radial-gradient(circle at center, #ffe3e8 0%, #ffc2d1 100%);
             height: 100vh; overflow: hidden;
             display: flex; justify-content: center; align-items: center;
@@ -21,36 +20,67 @@
             position: relative;
         }
 
-        /* Lớp nhiễu hạt (Grain) */
+        /* Lớp nhiễu hạt */
         .grain-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: -1;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
         }
 
-        /* --- BACKGROUND BLOBS (HỒNG NHẠT & HỒNG ĐẬM DI CHUYỂN) --- */
-        .bg-blobs { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
+        /* --- BACKGROUND BLOBS --- */
+        .bg-blobs { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; pointer-events: none; }
         .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; will-change: transform; }
-        
-        /* Hồng nhạt (Light Pink) */
         .b1 { top: -20%; left: -20%; width: 60vw; height: 60vw; background: #ffb6c1; animation: float 25s infinite alternate ease-in-out; }
-        /* Hồng đậm (Dark/Hot Pink) */
         .b2 { bottom: -20%; right: -20%; width: 70vw; height: 70vw; background: #ff1493; animation: float 30s infinite alternate-reverse ease-in-out; opacity: 0.4; }
-        /* Đỏ Ruby pha hồng (Ruby Pink) */
         .b3 { top: 30%; left: 40%; width: 45vw; height: 45vw; background: #e0115f; opacity: 0.3; animation: float 35s infinite alternate ease-in-out; }
 
         @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(30px, 50px) scale(1.1); } }
 
+        /* --- BÓNG BAY 3D (NEW - TỐI ƯU) --- */
+        .balloons-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2; /* Nằm trên blobs, dưới canvas pháo hoa */
+            pointer-events: none; overflow: hidden;
+        }
+        .balloon {
+            position: absolute;
+            bottom: -100px; /* Bắt đầu từ dưới màn hình */
+            width: 50px; height: 65px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; /* Hình dáng quả trứng */
+            /* Gradient tạo hiệu ứng 3D tròn trịa */
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), var(--color-light) 40%, var(--color-dark) 80%);
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1);
+            animation: floatUpBalloon var(--duration) linear infinite var(--delay);
+            will-change: transform, opacity;
+            opacity: 0.7;
+        }
+        /* Dây bóng */
+        .balloon::after {
+            content: ''; position: absolute; bottom: -25px; left: 50%;
+            width: 1px; height: 25px; background: rgba(255,255,255,0.4);
+        }
+        /* Nút thắt bóng */
+        .balloon::before {
+            content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+            width: 8px; height: 6px; border-radius: 50%; background: var(--color-dark);
+        }
+        @keyframes floatUpBalloon {
+            0% { transform: translateY(0) translateX(0) rotate(0deg) scale(var(--scale)); opacity: 0; }
+            10% { opacity: var(--opacity); }
+            50% { transform: translateY(calc(-50vh - var(--drift))) translateX(var(--drift)) rotate(var(--rot)) scale(var(--scale)); }
+            90% { opacity: var(--opacity); }
+            100% { transform: translateY(calc(-110vh - var(--drift))) translateX(calc(var(--drift) * -1)) rotate(calc(var(--rot) * -1)) scale(var(--scale)); opacity: 0; }
+        }
+
+
         /* --- CANVAS PHÁO HOA --- */
         #fwCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none; }
 
-        /* --- HỘP CHÍNH (KHUNG KÍNH VIỀN ĐỎ DI CHUYỂN) --- */
+        /* --- HỘP CHÍNH --- */
         .glass-box {
             position: relative; z-index: 10;
-            /* Nền kính mờ hơn một chút để làm nổi bật nội dung */
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            /* Loại bỏ viền tĩnh cũ */
             border: none; 
             padding: 35px 25px; border-radius: 35px;
             width: 90%; max-width: 480px; text-align: center;
@@ -58,29 +88,17 @@
             animation: breathe 6s ease-in-out infinite;
         }
 
-        /* TẠO VIỀN ĐỎ DI CHUYỂN (Sử dụng pseudo-element ::after) */
         .glass-box::after {
-            content: '';
-            position: absolute;
-            top: -3px; left: -3px; right: -3px; bottom: -3px; /* Lớn hơn hộp chính một chút */
-            border-radius: 38px; /* Bo tròn khớp với hộp chính */
-            z-index: -1; /* Nằm phía sau hộp kính */
-            /* Gradient màu đỏ chuyển động */
+            content: ''; position: absolute; top: -3px; left: -3px; right: -3px; bottom: -3px;
+            border-radius: 38px; z-index: -1;
             background: linear-gradient(60deg, #ff0000, #ff4d4d, #990000, #ff0000, #ff4d4d);
-            background-size: 300% 300%; /* Kích thước nền lớn để tạo hiệu ứng di chuyển */
-            animation: moveRedBorder 4s linear infinite; /* Animation di chuyển */
-            filter: blur(8px); /* Làm mờ để tạo hiệu ứng phát sáng (glow) */
-            opacity: 0.8;
+            background-size: 300% 300%; animation: moveRedBorder 4s linear infinite;
+            filter: blur(8px); opacity: 0.8;
         }
 
-        @keyframes moveRedBorder {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        @keyframes moveRedBorder { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
         @keyframes breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-        /* Icon Tim Đập */
         .heart-beat-box { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; }
         .hb-icon { font-size: 50px; filter: drop-shadow(0 0 10px rgba(255, 0, 50, 0.5)); animation: beat 1.2s infinite; }
         @keyframes beat { 0%, 100% { transform: scale(1); } 15%, 45% { transform: scale(1.25); } 30%, 60% { transform: scale(1); } }
@@ -91,33 +109,26 @@
             text-shadow: 0 4px 10px rgba(220, 20, 60, 0.4);
         }
 
-        /* --- ĐỒNG HỒ --- */
         #clock { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; }
         .time-item {
-            position: relative;
-            background: rgba(100, 0, 20, 0.3); /* Nền tối đỏ nhẹ cho ô thời gian */
-            border: 1px solid rgba(255, 200, 200, 0.2);
-            padding: 12px; border-radius: 18px; min-width: 72px;
+            position: relative; background: rgba(100, 0, 20, 0.3);
+            border: 1px solid rgba(255, 200, 200, 0.2); padding: 12px; border-radius: 18px; min-width: 72px;
             box-shadow: inset 0 0 10px rgba(255, 0, 50, 0.1);
         }
         .time-item span { display: block; font-size: 2rem; font-weight: 700; color: #fff; text-shadow: 0 0 10px rgba(255, 50, 100, 0.6); }
         .time-item p { font-size: 0.8rem; text-transform: uppercase; margin-top: 5px; opacity: 0.9; letter-spacing: 1px; color: #ffcdd2; }
 
-        /* Tim bay nhỏ từ ô số */
         .mini-heart {
             position: absolute; left: 50%; bottom: 50%; transform: translate(-50%, 50%);
             font-size: 22px; pointer-events: none; opacity: 0;
-            animation: flyMini 1.5s ease-out forwards;
-            filter: drop-shadow(0 0 5px red);
+            animation: flyMini 1.5s ease-out forwards; filter: drop-shadow(0 0 5px red);
         }
         @keyframes flyMini {
             0% { opacity: 1; transform: translate(-50%, 0) scale(0.5); }
             100% { opacity: 0; transform: translate(calc(-50% + var(--tx)), -120px) scale(1.5) rotate(var(--rot)); }
         }
 
-        /* Audio & Buttons */
         .date-start { display: inline-block; padding: 8px 25px; background: rgba(255, 0, 50, 0.15); border-radius: 25px; font-size: 1rem; margin-bottom: 20px; border: 1px solid rgba(255, 100, 100, 0.3); font-weight: bold; letter-spacing: 1px;}
-        
         audio { width: 100%; height: 35px; border-radius: 20px; opacity: 0.9; margin-top: 5px; outline: none; filter: hue-rotate(-20deg); }
 
         .btn-newyear {
@@ -149,6 +160,8 @@
         <div class="blob b2"></div>
         <div class="blob b3"></div>
     </div>
+    
+    <div class="balloons-container" id="balloonBox"></div>
 
     <canvas id="fwCanvas"></canvas>
 
@@ -180,7 +193,46 @@
     </div>
 
     <script>
-        // --- 1. HỆ THỐNG PHÁO HOA (ROCKET + EXPLOSION) ---
+        // --- TẠO BÓNG BAY JS (TỐI ƯU: CHỈ TẠO 7 QUẢ) ---
+        function createBalloons() {
+            const container = document.getElementById('balloonBox');
+            const colors = [
+                {light: '#ffb6c1', dark: '#ff69b4'}, // Hồng
+                {light: '#ffcccb', dark: '#ff4d4d'}, // Đỏ nhạt
+                {light: '#e6e6fa', dark: '#9370db'}, // Tím nhạt
+                {light: '#ffd700', dark: '#ff8c00'}  // Vàng cam
+            ];
+            // Chỉ tạo 7 quả để tối ưu hiệu năng
+            for (let i = 0; i < 7; i++) {
+                const b = document.createElement('div');
+                b.className = 'balloon';
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const sizeScale = 0.6 + Math.random() * 0.6; // Kích thước ngẫu nhiên
+                
+                // Gán các biến CSS tùy chỉnh để animation sử dụng
+                b.style.left = Math.random() * 90 + 5 + 'vw';
+                b.style.setProperty('--color-light', color.light);
+                b.style.setProperty('--color-dark', color.dark);
+                b.style.setProperty('--duration', 15 + Math.random() * 15 + 's'); // Tốc độ bay chậm
+                b.style.setProperty('--delay', '-' + Math.random() * 30 + 's'); // Delay âm để bắt đầu ở các vị trí khác nhau ngay lập tức
+                b.style.setProperty('--drift', (Math.random() - 0.5) * 50 + 'px'); // Độ trôi ngang
+                b.style.setProperty('--rot', (Math.random() - 0.5) * 20 + 'deg'); // Độ xoay
+                b.style.setProperty('--scale', sizeScale);
+                b.style.setProperty('--opacity', 0.5 + Math.random() * 0.4);
+                
+                // Làm mờ bóng ở xa để tạo chiều sâu
+                if(sizeScale < 0.8) {
+                     b.style.filter = `blur(${ (1-sizeScale) * 5 }px)`;
+                     b.style.zIndex = -1;
+                }
+
+                container.appendChild(b);
+            }
+        }
+        createBalloons();
+
+
+        // --- HỆ THỐNG PHÁO HOA ---
         const cvs = document.getElementById('fwCanvas');
         const ctx = cvs.getContext('2d');
         let rockets = [];
@@ -189,13 +241,12 @@
         function resize() { cvs.width = window.innerWidth; cvs.height = window.innerHeight; }
         window.addEventListener('resize', resize); resize();
 
-        // Class Pháo bay lên (Rocket)
         class Rocket {
             constructor(x, targetY) {
                 this.x = x; this.y = cvs.height;
                 this.targetY = targetY;
                 this.speed = 8;
-                this.color = `hsl(${Math.random()*30 + 330}, 100%, 70%)`; // Màu thiên về hồng/đỏ
+                this.color = `hsl(${Math.random()*30 + 330}, 100%, 70%)`;
             }
             update() {
                 this.y -= this.speed;
@@ -204,7 +255,6 @@
             }
         }
 
-        // Class Hạt nổ (Particle)
         class Particle {
             constructor(x, y, color) {
                 this.x = x; this.y = y; this.color = color;
@@ -224,7 +274,6 @@
         }
 
         function explodeHeart(x, y) {
-            // Màu pháo hoa thiên về đỏ/hồng/vàng
             const colors = ['#ff0055', '#ff4d4d', '#ffcccb', '#ffd700', '#ff1493'];
             for(let i=0; i<60; i++) {
                 let t = (Math.PI * 2 * i) / 60;
@@ -255,7 +304,7 @@
             rockets.push(new Rocket(cvs.width * 0.75, cvs.height * 0.25));
         }
 
-        // --- 2. ĐỒNG HỒ ---
+        // --- ĐỒNG HỒ ---
         const start = new Date(2025, 11, 24, 10, 50, 0).getTime();
         let lastSec = -1, prevM = -1, prevH = -1, prevD = -1;
 
@@ -289,7 +338,7 @@
         }
         setInterval(updateTime, 1000); updateTime();
 
-        // --- 3. SỰ KIỆN ---
+        // --- SỰ KIỆN ---
         document.addEventListener('click', () => { const aud = document.getElementById('player'); if(aud.paused) aud.play(); }, {once:true});
         document.addEventListener('dblclick', (e) => createClickEffect(e.pageX, e.pageY));
         let lastTap = 0;
