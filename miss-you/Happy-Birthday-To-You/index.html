@@ -216,6 +216,7 @@
     let w, h;
     let drones = [], fireworks = [], particles = []; 
     let state = "LOCK"; 
+    let formingText = false; // Biến kiểm soát xem có đang xếp chữ không
     const DOT_GAP = 3; 
 
     function resize() {
@@ -265,14 +266,8 @@
         gift.style.animation = "shake 0.5s";
         setTimeout(() => {
             gift.style.transform = "scale(5)"; gift.style.opacity = "0"; layer.style.opacity = "0";
-            // Bắn pháo hoa liên tục khi mở quà
-            let cnt = 0;
-            let introFw = setInterval(() => {
-                launchFirework("normal");
-                if(cnt%3 === 0) launchFirework("heart");
-                cnt++;
-                if(cnt > 20) clearInterval(introFw);
-            }, 100);
+            // Bắn pháo hoa nhẹ
+            for(let i=0; i<5; i++) setTimeout(() => launchFirework("normal"), i*200);
             
             setTimeout(() => { layer.style.display = "none"; runVirus(); }, 800);
         }, 500);
@@ -292,22 +287,22 @@
         type();
     }
 
-    // 3. SHOW DIỄN (CẬP NHẬT: PHÁO HOA NHIỀU HƠN + HÌNH TRÁI TIM)
+    // 3. SHOW DIỄN (CẬP NHẬT: PHÁO HOA CHẬM + NỔ TUNG CHỮ)
     window.startDroneShow = function() {
         state = "DRONE";
+        formingText = true; // Bắt đầu xếp chữ
         document.getElementById("msg-layer").style.display = "none";
         
-        // Loop bắn pháo hoa dày đặc hơn
+        // Loop bắn pháo hoa chậm rãi
         setInterval(() => {
             if(state === "DRONE" || state === "MSG") {
-                // Tăng tỉ lệ bắn
-                if(Math.random() < 0.6) {
-                    // Random giữa pháo thường và pháo tim
-                    let type = Math.random() < 0.35 ? "heart" : "normal"; 
+                // Tần suất thưa hơn (1200ms)
+                if(Math.random() < 0.8) {
+                    let type = Math.random() < 0.4 ? "heart" : "normal"; 
                     launchFirework(type);
                 }
             }
-        }, 350); // Tốc độ nhanh hơn (350ms check 1 lần)
+        }, 1200); // 1.2 giây mới check bắn 1 lần -> Rất chậm rãi
 
         DRONE_SEQUENCE.forEach(s => {
             setTimeout(() => {
@@ -319,7 +314,20 @@
     }
 
     function showMessage() {
-        state = "MSG"; // Chuyển state để pháo hoa vẫn bắn
+        state = "MSG"; 
+        formingText = false; // Ngừng xếp chữ
+        
+        // HIỆU ỨNG NỔ TUNG (Scatter)
+        drones.forEach(d => {
+            // Gán đích đến là vị trí ngẫu nhiên (nổ tung)
+            d.tx = Math.random() * w;
+            d.ty = Math.random() * h;
+            // Đẩy nhẹ drone hiện tại để tạo đà
+            d.x += (Math.random() - 0.5) * 50;
+            d.y += (Math.random() - 0.5) * 50;
+            d.active = false;
+        });
+
         const layer = document.getElementById("msg-layer");
         layer.style.display = "flex";
         setTimeout(() => layer.classList.add("visible"), 50);
@@ -340,6 +348,7 @@
     }
 
     function formText(text, color, font) {
+        if(!formingText) return;
         const tmp = document.createElement('canvas'); const tCtx = tmp.getContext('2d');
         let fSize = Math.min(w / (text.length * 0.7), 100); if(w < 500) fSize = Math.min(w / (text.length * 0.6), 60);
         tCtx.font = `bold ${fSize}px "${font}"`; let measure = tCtx.measureText(text);
@@ -349,6 +358,7 @@
     }
 
     function formShape(type, color) {
+        if(!formingText) return;
         let points = [], cx = w/2, cy = h/2, size = Math.min(w, h) * 0.35;
         if(type === "HEART") {
             for(let i=0; i<800; i++) { 
@@ -377,17 +387,18 @@
         });
     }
 
-    // --- CẬP NHẬT LOGIC PHÁO HOA ---
+    // --- CẬP NHẬT LOGIC PHÁO HOA CHẬM ---
     function launchFirework(type = "normal") {
         let fwColor = type === "heart" ? "#ff0040" : `hsl(${Math.random() * 360}, 100%, 60%)`;
         fireworks.push({
             x: Math.random() * w, 
             y: h,
-            vx: (Math.random() - 0.5) * 4, 
-            vy: -(Math.random() * 5 + 10),
+            // Giảm tốc độ bắn lên (vy) để nó bay thấp và chậm hơn
+            vx: (Math.random() - 0.5) * 3, 
+            vy: -(Math.random() * 3 + 8), // Bay chậm, ko quá cao
             color: fwColor,
             exploded: false,
-            type: type // Lưu loại pháo
+            type: type 
         });
     }
 
@@ -398,40 +409,24 @@
         for (let i = fireworks.length - 1; i >= 0; i--) {
             let f = fireworks[i];
             if (!f.exploded) {
-                f.x += f.vx; f.y += f.vy; f.vy += 0.2;
+                f.x += f.vx; f.y += f.vy; 
+                f.vy += 0.1; // Trọng lực nhẹ (0.1 thay vì 0.2) để bay chậm
                 ctx.fillStyle = f.color; ctx.beginPath(); ctx.arc(f.x, f.y, 3, 0, Math.PI * 2); ctx.fill();
                 
                 if (f.vy >= 0) { // Nổ
                     f.exploded = true;
-                    
-                    // Logic nổ theo loại
+                    // Logic nổ
                     if(f.type === "heart") {
-                        // Nổ hình trái tim
                         for (let k = 0; k < 40; k++) {
                             let angle = (Math.PI * 2 * k) / 40;
-                            // Công thức tim
-                            let vScale = 0.5 + Math.random()*0.2; // Độ lớn vụ nổ
+                            let vScale = 0.5 + Math.random()*0.2; 
                             let vx = 16 * Math.pow(Math.sin(angle), 3); 
                             let vy = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle));
-                            
-                            particles.push({ 
-                                x: f.x, y: f.y, 
-                                vx: vx * vScale * 0.15, 
-                                vy: vy * vScale * 0.15, 
-                                life: 1.5, 
-                                color: f.color 
-                            });
+                            particles.push({ x: f.x, y: f.y, vx: vx * vScale * 0.1, vy: vy * vScale * 0.1, life: 2, color: f.color });
                         }
                     } else {
-                        // Nổ thường (tròn)
                         for (let j = 0; j < 30; j++) { 
-                            particles.push({ 
-                                x: f.x, y: f.y, 
-                                vx: (Math.random() - 0.5) * 8, 
-                                vy: (Math.random() - 0.5) * 8, 
-                                life: 1, 
-                                color: f.color 
-                            }); 
+                            particles.push({ x: f.x, y: f.y, vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 0.5) * 6, life: 2, color: f.color }); 
                         }
                     }
                     fireworks.splice(i, 1);
@@ -439,17 +434,17 @@
             }
         }
         
-        // Vẽ hạt sau khi nổ
+        // Vẽ hạt sau khi nổ (Rơi chậm)
         for (let i = particles.length - 1; i >= 0; i--) {
             let p = particles[i]; 
             p.x += p.vx; p.y += p.vy; 
-            p.life -= 0.025; // Tan chậm hơn xíu
-            p.vy += 0.05; // Gravity nhẹ
+            p.life -= 0.01; // Tan biến rất chậm (giữ màu lâu)
+            p.vy += 0.03; // Trọng lực cực nhẹ khi rơi
             
             if (p.life <= 0) {
                 particles.splice(i, 1); 
             } else { 
-                ctx.globalAlpha = p.life; 
+                ctx.globalAlpha = Math.min(p.life, 1); 
                 ctx.fillStyle = p.color; 
                 ctx.beginPath(); 
                 ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); 
@@ -458,14 +453,17 @@
             }
         }
 
-        // Vẽ Drone Text
+        // Vẽ Drone (Xử lý hiệu ứng nổ tung)
         if(state === "DRONE" || state === "MSG") {
             drones.forEach(d => {
-                d.x += (d.tx - d.x) * 0.08; d.y += (d.ty - d.y) * 0.08;
-                if(d.active || Math.abs(d.y - d.ty) > 1) { 
-                    ctx.fillStyle = d.color; 
-                    ctx.beginPath(); ctx.arc(d.x, d.y, 1.5, 0, Math.PI*2); ctx.fill(); 
-                }
+                // Nếu state là MSG (đọc thư), các điểm sẽ di chuyển tự do (nổ tung)
+                // Nếu formingText = false, target (tx, ty) đã được set random ở hàm showMessage
+                d.x += (d.tx - d.x) * 0.05; // Di chuyển chậm về đích random
+                d.y += (d.ty - d.y) * 0.05;
+                
+                // Vẽ
+                ctx.fillStyle = d.color; 
+                ctx.beginPath(); ctx.arc(d.x, d.y, 1.5, 0, Math.PI*2); ctx.fill(); 
             });
         }
         requestAnimationFrame(loop);
