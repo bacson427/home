@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gửi Dương ❤️ | Colorful Party</title>
+    <title>HPBD DƯƠNG 19 ❤️</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
     
     <style>
@@ -12,6 +12,7 @@
             --secondary: #ff8fa3;
             --bg: #fff0f3;
             --text-main: #800f2f;
+            --glass: rgba(255, 255, 255, 0.7);
         }
 
         body { 
@@ -24,16 +25,48 @@
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none; }
         #hearts-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; }
 
-        /* --- 1. HỘP QUÀ MỞ ĐẦU --- */
-        #intro-layer {
+        /* --- 1. MÀN HÌNH ĐẾM NGƯỢC (ĐÃ THÊM LẠI) --- */
+        #countdown-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10000; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center;
-            background: rgba(255, 240, 243, 0.95);
-            transition: opacity 1s, transform 1s;
+            z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: var(--bg); transition: opacity 1s;
         }
 
-        .gift-container { position: relative; cursor: pointer; animation: bounce 2s infinite; }
+        .container-box {
+            text-align: center; background: rgba(255, 255, 255, 0.6);
+            padding: 2rem; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.2);
+            border: 2px solid #fff; max-width: 90%;
+            backdrop-filter: blur(10px);
+        }
+
+        h1.title { color: var(--text-main); margin-bottom: 20px; font-size: 1.5rem; font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: 1px;}
+
+        #countdown { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .time-box {
+            background: var(--primary); color: white;
+            padding: 10px; border-radius: 12px; min-width: 60px;
+            box-shadow: 0 5px 15px rgba(255, 117, 143, 0.4);
+        }
+        .time-box span { display: block; font-size: 1.8rem; font-weight: bold; font-family: 'Montserrat', sans-serif; }
+        .label { font-size: 0.7rem; text-transform: uppercase; margin-top: 5px; }
+
+        #admin-btn {
+            margin-top: 20px; cursor: pointer; color: var(--secondary);
+            font-size: 30px; opacity: 0.5; transition: 0.3s;
+        }
+        #admin-btn:hover { transform: scale(1.2) rotate(15deg); opacity: 1; color: var(--primary); }
+
+        /* --- 2. HỘP QUÀ BÍ MẬT --- */
+        #gift-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9000; display: none; flex-direction: column; 
+            justify-content: center; align-items: center;
+            background: rgba(255, 240, 243, 0.9);
+            transition: opacity 1s;
+        }
+
+        .gift-container { position: relative; cursor: pointer; animation: bounce 2s infinite; margin-bottom: 20px; }
         .gift-box { width: 120px; height: 120px; background: #ff4d6d; border-radius: 10px; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.4); position: relative; z-index: 10; }
         .gift-lid { width: 140px; height: 30px; background: #d90429; position: absolute; top: -15px; left: -10px; border-radius: 5px; z-index: 11; }
         .ribbon-vertical { width: 20px; height: 100%; background: #fff; position: absolute; left: 50px; top: 0; }
@@ -41,18 +74,18 @@
         .bow { width: 60px; height: 30px; border: 5px solid #fff; border-radius: 50%; position: absolute; top: -40px; left: 30px; transform: rotate(-10deg); }
         .bow::before { content: ''; position: absolute; width: 60px; height: 30px; border: 5px solid #fff; border-radius: 50%; top: 0; left: -15px; transform: rotate(20deg); }
 
-        .tap-hint { margin-top: 50px; font-family: 'Montserrat', sans-serif; color: #d90429; font-weight: bold; font-size: 1.2rem; animation: pulse 1s infinite; }
+        .tap-hint { font-family: 'Montserrat', sans-serif; color: #d90429; font-weight: bold; font-size: 1.2rem; animation: pulse 1s infinite; }
 
-        /* --- 2. TERMINAL --- */
+        /* --- 3. TERMINAL --- */
         #virus-terminal { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(255, 255, 255, 0.92); color: var(--text-main); 
+            background: rgba(255, 255, 255, 0.95); color: var(--text-main); 
             padding: 20px; box-sizing: border-box; font-size: 14px; 
             overflow: hidden; display: none; z-index: 2001;
             font-family: 'Courier New', monospace; font-weight: bold; line-height: 1.6;
         }
 
-        /* --- 3. TÂM THƯ --- */
+        /* --- 4. TÂM THƯ --- */
         #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: none; z-index: 3000;
@@ -63,7 +96,7 @@
         
         #msg-box {
             width: 85%; max-width: 550px; max-height: 60vh; overflow-y: auto;
-            background: rgba(255, 255, 255, 0.85); border: 2px solid #fff;
+            background: rgba(255, 255, 255, 0.9); border: 2px solid #fff;
             padding: 30px; border-radius: 25px; 
             box-shadow: 0 20px 50px rgba(255, 0, 80, 0.2);
             color: var(--text-main); font-family: 'Quicksand'; font-size: clamp(16px, 4vw, 19px); 
@@ -79,7 +112,7 @@
             box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
         }
 
-        /* --- 4. TRANSITION --- */
+        /* --- 5. TRANSITION --- */
         #white-flash {
             position: fixed; top:0; left:0; width:100%; height:100%; background: #fff0f3;
             z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 2s;
@@ -102,7 +135,21 @@
     <div id="hearts-bg"></div>
     <canvas id="c"></canvas>
 
-    <div id="intro-layer" onclick="openGift()">
+    <div id="countdown-layer">
+        <div class="container-box">
+            <h1 class="title">SẮP ĐẾN SINH NHẬT DƯƠNG RỒI! 🎂</h1>
+            <div id="countdown">
+                <div class="time-box"><span id="d">00</span><div class="label">Ngày</div></div>
+                <div class="time-box"><span id="h">00</span><div class="label">Giờ</div></div>
+                <div class="time-box"><span id="m">00</span><div class="label">Phút</div></div>
+                <div class="time-box"><span id="s">00</span><div class="label">Giây</div></div>
+            </div>
+            <div style="margin-top: 20px; font-size: 14px; color: #888;">01/03/2026</div>
+            <div id="admin-btn" onclick="adminUnlock()">🔒</div>
+        </div>
+    </div>
+
+    <div id="gift-layer" onclick="openGift()">
         <div class="gift-container" id="gift-box-anim">
             <div class="bow"></div>
             <div class="gift-lid"></div>
@@ -111,7 +158,8 @@
                 <div class="ribbon-horizontal"></div>
             </div>
         </div>
-        <div class="tap-hint">Chạm để mở quà cho Dương 🎁</div>
+        <div class="tap-hint">Một món quà dành riêng cho cậu 🎁</div>
+        <div style="font-size: 12px; color: #ff8fa3; margin-top: 5px;">(Chạm vào hộp quà để mở)</div>
     </div>
 
     <div id="virus-terminal"></div>
@@ -119,7 +167,7 @@
     <div id="msg-layer">
         <div style="color: #ff4d6d; font-size: 35px; font-family: 'Dancing Script'; margin-bottom: 15px; font-weight: bold;">💌 Thư Gửi Dương</div>
         <div id="msg-box"></div>
-        <button id="next-btn" onclick="doTransition()">ĐIỀU BẤT NGỜ CUỐI >></button>
+        <button id="next-btn" onclick="doTransition()">XEM ĐIỀU BẤT NGỜ >></button>
     </div>
 
     <div id="white-flash">
@@ -130,6 +178,9 @@
     <audio id="audio" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
 
 <script>
+    const TARGET_DATE = new Date("March 1, 2026 00:00:00").getTime();
+    const PASS = "01032007";
+    
     const LETTER = `Chúc mừng sinh nhật tuổi 19, cô gái Hà Nam xinh đẹp! 🌸\n\nChúc cô sinh viên Đại học Phương Đông sang tuổi mới học tập thật tốt, luôn vui vẻ và bớt suy nghĩ linh tinh nhé.\n\nDù có bận deadline thì cũng nhớ ăn uống đầy đủ (đặc biệt là đi ăn nem nướng cho đỡ thèm nha). 🍢\n\nMong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Birthday, my special girl! ❤️\n\n-- Nguyễn Bắc Sơn --`;
 
     const TERMINAL_LOGS = [
@@ -140,12 +191,12 @@
 
     const DRONE_SEQUENCE = [
         { t: 1000, txt: "CHÚC MỪNG", color: "#d90429", font: 'Montserrat' },
-        { t: 7000, txt: "SINH NHẬT", color: "#ff758f", font: 'Montserrat' },
-        { t: 13000, txt: "DƯƠNG 19", color: "#800f2f", font: 'Montserrat' },
-        { t: 20000, shp: "HEART", color: "#d90429" },
-        { t: 28000, txt: "XINH ĐẸP", color: "#ff4d6d", font: 'Dancing Script' },
-        { t: 36000, txt: "HẠNH PHÚC", color: "#c9184a", font: 'Dancing Script' },
-        { t: 45000, action: "SHOW_LETTER" }
+        { t: 8000, txt: "SINH NHẬT", color: "#ff758f", font: 'Montserrat' },
+        { t: 15000, txt: "DƯƠNG 19", color: "#800f2f", font: 'Montserrat' },
+        { t: 23000, shp: "HEART", color: "#d90429" },
+        { t: 33000, txt: "XINH ĐẸP", color: "#ff4d6d", font: 'Dancing Script' },
+        { t: 41000, txt: "HẠNH PHÚC", color: "#c9184a", font: 'Dancing Script' },
+        { t: 50000, action: "SHOW_LETTER" }
     ];
 
     function createHeartBg() {
@@ -164,7 +215,7 @@
     const ctx = canvas.getContext('2d');
     let w, h;
     let drones = [], fireworks = [], particles = []; 
-    let state = "INTRO"; 
+    let state = "LOCK"; 
     const DOT_GAP = 3; 
 
     function resize() {
@@ -178,15 +229,44 @@
         return { x: x || Math.random()*w, y: y || h+100, tx: Math.random()*w, ty: Math.random()*h, color: '#ff758f', size: 2, active: false };
     }
 
+    // 1. ĐẾM NGƯỢC
+    function updateTimer() {
+        const now = new Date().getTime();
+        const dis = TARGET_DATE - now;
+        if(dis < 0) { unlock(); return; }
+        const d = Math.floor(dis / (1000 * 60 * 60 * 24));
+        const ho = Math.floor((dis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mi = Math.floor((dis % (1000 * 60 * 60)) / (1000 * 60));
+        const se = Math.floor((dis % (1000 * 60)) / 1000);
+        document.getElementById("d").innerText = d.toString().padStart(2, '0');
+        document.getElementById("h").innerText = ho.toString().padStart(2, '0');
+        document.getElementById("m").innerText = mi.toString().padStart(2, '0');
+        document.getElementById("s").innerText = se.toString().padStart(2, '0');
+    }
+    let tmr = setInterval(updateTimer, 1000);
+    updateTimer();
+
+    function unlock() {
+        clearInterval(tmr);
+        document.getElementById("countdown-layer").style.display = "none";
+        // Hiện hộp quà thay vì vào thẳng show
+        document.getElementById("gift-layer").style.display = "flex";
+        state = "GIFT";
+    }
+
+    window.adminUnlock = function() {
+        if(prompt("MẬT KHẨU (01032007):") == PASS) unlock(); else alert("Sai mật khẩu rồi!");
+    }
+
+    // 2. MỞ QUÀ
     function openGift() {
-        const audio = document.getElementById("audio");
-        audio.play().catch(()=>{});
+        document.getElementById("audio").play().catch(()=>{});
         const gift = document.getElementById("gift-box-anim");
-        const layer = document.getElementById("intro-layer");
+        const layer = document.getElementById("gift-layer");
         gift.style.animation = "shake 0.5s";
         setTimeout(() => {
             gift.style.transform = "scale(5)"; gift.style.opacity = "0"; layer.style.opacity = "0";
-            // Bắn pháo hoa mở màn nhiều hơn, đủ màu
+            // Bắn pháo hoa cầu vồng
             for(let i=0; i<15; i++) setTimeout(launchFirework, i*80);
             setTimeout(() => { layer.style.display = "none"; runVirus(); }, 800);
         }, 500);
@@ -206,11 +286,12 @@
         type();
     }
 
+    // 3. SHOW DIỄN
     window.startDroneShow = function() {
         state = "DRONE";
         document.getElementById("msg-layer").style.display = "none";
         
-        // Bắn pháo hoa dày hơn (800ms một quả), xác suất cao hơn (50%)
+        // Pháo hoa full màu
         setInterval(() => {
             if(state === "DRONE" && Math.random() < 0.5) launchFirework();
         }, 800);
@@ -283,13 +364,12 @@
         });
     }
 
-    // --- PHÁO HOA ĐỦ MÀU ---
+    // PHÁO HOA FULL MÀU (RAINBOW)
     function launchFirework() {
         fireworks.push({
             x: Math.random() * w, y: h,
             vx: (Math.random() - 0.5) * 4, vy: -(Math.random() * 5 + 10),
-            // Random màu từ 0 đến 360 độ (Full Spectrum)
-            color: `hsl(${Math.random() * 360}, 100%, 60%)`,
+            color: `hsl(${Math.random() * 360}, 100%, 60%)`, // Random 360 độ màu
             exploded: false
         });
     }
@@ -303,7 +383,7 @@
                 ctx.fillStyle = f.color; ctx.beginPath(); ctx.arc(f.x, f.y, 3, 0, Math.PI * 2); ctx.fill();
                 if (f.vy >= 0) {
                     f.exploded = true;
-                    for (let j = 0; j < 20; j++) particles.push({ x: f.x, y: f.y, vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 0.5) * 6, life: 1, color: f.color });
+                    for (let j = 0; j < 25; j++) particles.push({ x: f.x, y: f.y, vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 0.5) * 6, life: 1, color: f.color });
                     fireworks.splice(i, 1);
                 }
             }
