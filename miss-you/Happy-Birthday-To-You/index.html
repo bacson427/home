@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HPBD DƯƠNG 19 | RED GALAXY</title>
+    <title>HPBD DƯƠNG 19 | RED UNIVERSE</title>
     <style>
+        /* Import Font đẹp */
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&family=Dancing+Script:wght@700&family=Quicksand:wght@600&display=swap');
         
         body { margin: 0; overflow: hidden; background-color: #020001; font-family: 'Share Tech Mono', monospace; }
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
 
-        /* --- 1. MÀN HÌNH KHÓA --- */
+        /* --- 1. MÀN HÌNH KHÓA (RED THEME) --- */
         #countdown-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 10000; 
@@ -40,7 +41,7 @@
             text-transform: uppercase; letter-spacing: 2px;
         }
 
-        /* --- 3. TERMINAL HACKER --- */
+        /* --- 3. TERMINAL --- */
         #virus-terminal { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.95); color: #FF0000; 
@@ -49,31 +50,31 @@
             text-shadow: 0 0 5px #F00; line-height: 1.5; white-space: pre-wrap;
         }
 
-        /* --- 4. TÂM THƯ (Sẽ hiện sau Show) --- */
+        /* --- 4. HỘP THƯ (MESSAGE) --- */
         #msg-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); /* Nền tối nhẹ để vẫn thấy tim bay phía sau */
+            background: rgba(0,0,0,0.7); /* Nền tối nhẹ để thấy background */
             display: none; z-index: 3000;
             flex-direction: column; justify-content: center; align-items: center;
-            opacity: 0; transition: opacity 2s;
+            opacity: 0; transition: opacity 1.5s;
         }
         #msg-layer.visible { opacity: 1; }
         
         #msg-box {
-            width: 85%; max-width: 600px; max-height: 60vh; overflow-y: auto;
-            background: rgba(40, 0, 10, 0.85); border: 2px solid #FF1493;
+            width: 90%; max-width: 600px; max-height: 60vh; overflow-y: auto;
+            background: rgba(30, 5, 10, 0.9); border: 2px solid #FF1493;
             padding: 25px; border-radius: 20px; 
-            box-shadow: 0 0 50px rgba(255, 0, 80, 0.5);
+            box-shadow: 0 0 50px rgba(255, 0, 80, 0.6);
             color: #ffc2d1; font-family: 'Quicksand'; font-size: clamp(16px, 4vw, 20px); 
-            line-height: 1.6; white-space: pre-wrap; font-weight: 600;
+            line-height: 1.7; white-space: pre-wrap; font-weight: 600;
             backdrop-filter: blur(10px);
         }
         
         #next-btn {
             margin-top: 25px; padding: 12px 35px; border: 2px solid #FFD700;
-            background: rgba(0,0,0,0.5); color: #FFD700; border-radius: 30px;
+            background: rgba(0,0,0,0.8); color: #FFD700; border-radius: 30px;
             font-family: 'Black Ops One'; font-size: 16px; cursor: pointer; display: none;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); animation: pulse 2s infinite;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); animation: pulse 2s infinite;
         }
 
         /* --- 5. TRANSITION --- */
@@ -110,7 +111,7 @@
     <div id="virus-terminal"></div>
 
     <div id="msg-layer">
-        <div style="color: #FFD700; font-size: 30px; font-family: 'Dancing Script'; margin-bottom: 15px; text-shadow: 0 0 10px #FFD700;">💌 Thư Gửi Dương</div>
+        <div style="color: #FFD700; font-size: 30px; font-family: 'Dancing Script'; margin-bottom: 15px; text-shadow: 0 0 10px #FFD700;">💌 Gửi Cô Gái 19 Tuổi</div>
         <div id="msg-box"></div>
         <button id="next-btn" onclick="doTransition()">XEM ĐIỀU BẤT NGỜ >></button>
     </div>
@@ -127,7 +128,6 @@
     const TARGET_DATE = new Date("March 1, 2026 00:00:00").getTime();
     const PASS = "01032007";
     
-    // NỘI DUNG TÂM THƯ
     const LETTER = `Chúc mừng sinh nhật tuổi 19, cô gái Hà Nam xinh đẹp! 🎂
 
 Chúc cô sinh viên Đại học Phương Đông sang tuổi mới học tập thật tốt, luôn vui vẻ và bớt suy nghĩ linh tinh nhé.
@@ -141,18 +141,19 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     const TERMINAL_LOGS = [
         "> CONNECTING_TO_RED_SERVER...", "> TARGET_FOUND: 'TRUONG_THI_DUONG'", 
         "> LOCATION: HA_NAM", "> STATUS: CUTE_LEVEL_MAX", 
-        "> DECRYPTING_GIFT...", "> 3...", "> 2...", "> 1...", "> START_DRONE_SHOW!"
+        "> DECRYPTING_GIFT...", "> 3...", "> 2...", "> 1...", "> START_LIGHT_SHOW!"
     ];
 
-    // NỘI DUNG SHOW DIỄN (Chạy TRƯỚC tâm thư)
+    // --- KỊCH BẢN SHOW DIỄN (CÂU CHÚC) ---
     const DRONE_SEQUENCE = [
-        { t: 1000, txt: "🎉CHÚC MỪNG🎉", color: "hsla(350, 100%, 60%, 1)", font: 'Black Ops One' },
-        { t: 6000, txt: "SINH NHẬT", color: "hsla(45, 100%, 60%, 1)", font: 'Black Ops One' },
-        { t: 11000, txt: "DƯƠNG 19", color: "hsla(320, 100%, 60%, 1)", font: 'Black Ops One' },
-        { t: 16000, shp: "HEART", color: "hsla(350, 100%, 60%, 1)" },
-        { t: 21000, txt: "XINH ĐẸP", color: "hsla(45, 100%, 60%, 1)", font: 'Dancing Script' },
-        { t: 26000, txt: "HẠNH PHÚC", color: "hsla(320, 100%, 60%, 1)", font: 'Dancing Script' },
-        { t: 32000, action: "SHOW_LETTER" } // Kết thúc show -> Hiện thư
+        // t: Thời điểm xuất hiện (ms)
+        { t: 1000, txt: "CHÚC MỪNG\nSINH NHẬT", color: "hsla(350, 100%, 60%, 1)", font: 'Black Ops One' },
+        { t: 9000, txt: "TUỔI 19\nRỰC RỠ", color: "hsla(45, 100%, 60%, 1)", font: 'Black Ops One' },
+        { t: 17000, txt: "CÔ GÁI\nHÀ NAM", color: "hsla(180, 100%, 60%, 1)", font: 'Black Ops One' },
+        { t: 25000, shp: "HEART", color: "hsla(350, 100%, 60%, 1)" },
+        { t: 33000, txt: "LUÔN XINH ĐẸP\nVÀ HẠNH PHÚC", color: "hsla(320, 100%, 70%, 1)", font: 'Dancing Script' },
+        { t: 41000, txt: "TRƯƠNG THỊ\nDƯƠNG", color: "hsla(50, 100%, 60%, 1)", font: 'Black Ops One' },
+        { t: 50000, action: "SHOW_LETTER" } // Hết show -> Hiện thư
     ];
 
     // --- CANVAS SETUP ---
@@ -161,7 +162,7 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     let w, h;
     let stars = [], drones = []; 
     let state = "LOCK"; 
-    const DOT_GAP = 4;
+    const DOT_GAP = 3; // Mật độ hạt (càng nhỏ càng mịn)
 
     function resize() {
         w = canvas.width = window.innerWidth;
@@ -184,7 +185,7 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         };
     }
 
-    // --- COUNTDOWN ---
+    // --- LOGIC COUNTDOWN ---
     function updateTimer() {
         const now = new Date().getTime();
         const dis = TARGET_DATE - now;
@@ -210,14 +211,14 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         if(prompt("PASS ADMIN:") == PASS) unlock(); else alert("SAI MẬT KHẨU!");
     }
 
-    // --- FLOW ---
+    // --- MAIN FLOW ---
     window.startShow = function() {
         document.getElementById("start-btn-container").style.display = "none";
         document.getElementById("audio").play().catch(()=>{});
         runVirus();
     }
 
-    // BƯỚC 1: TERMINAL
+    // 1. TERMINAL
     function runVirus() {
         state = "VIRUS";
         const term = document.getElementById("virus-terminal");
@@ -226,23 +227,22 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         
         function type() {
             if(line >= TERMINAL_LOGS.length) {
-                // Hết lệnh hack -> Chuyển sang DRONE SHOW ngay
                 setTimeout(() => { term.style.display = "none"; startDroneShow(); }, 800);
                 return;
             }
             const str = TERMINAL_LOGS[line];
             term.innerHTML = txt + str.substring(0, char) + "_";
             term.scrollTop = term.scrollHeight;
-            if(char < str.length) { char++; setTimeout(type, 20); }
-            else { txt += str + "<br>"; line++; char=0; setTimeout(type, 100); }
+            if(char < str.length) { char++; setTimeout(type, 30); }
+            else { txt += str + "<br>"; line++; char=0; setTimeout(type, 150); }
         }
         type();
     }
 
-    // BƯỚC 2: DRONE SHOW
+    // 2. DRONE SHOW (Trình diễn ánh sáng)
     window.startDroneShow = function() {
         state = "DRONE";
-        // Bắt đầu chạy kịch bản
+        // Chạy sequence
         DRONE_SEQUENCE.forEach(s => {
             setTimeout(() => {
                 if(s.action === "SHOW_LETTER") { showMessage(); return; }
@@ -252,10 +252,10 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         });
     }
 
-    // BƯỚC 3: HIỆN TÂM THƯ
+    // 3. HIỆN TÂM THƯ
     function showMessage() {
         state = "MSG";
-        // Giữ hình trái tim cuối cùng của Drone làm nền, không xóa canvas
+        // Giữ hình ảnh cuối cùng của Drone làm nền
         const layer = document.getElementById("msg-layer");
         layer.style.display = "flex";
         setTimeout(() => layer.classList.add("visible"), 50);
@@ -268,17 +268,15 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
             if(i >= LETTER.length) {
                 clearInterval(t);
                 box.innerText = LETTER;
-                document.getElementById("next-btn").style.display = "block"; // Hiện nút chuyển trang
+                document.getElementById("next-btn").style.display = "block";
             }
             i++;
-        }, 30);
+        }, 50); // Tốc độ gõ chữ vừa phải
     }
 
-    // BƯỚC 4: CHUYỂN TRANG
+    // 4. CHUYỂN TRANG
     window.doTransition = function() {
-        // Hút các hạt Drone về tâm tạo hiệu ứng Warp
         drones.forEach(d => { d.tx = w/2; d.ty = h/2; });
-        
         const white = document.getElementById("white-flash");
         white.style.opacity = 1;
         setTimeout(() => {
@@ -286,20 +284,44 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         }, 3000);
     }
 
-    // --- LOGIC XẾP HÌNH ---
+    // --- FORMATION LOGIC (HỖ TRỢ XUỐNG DÒNG) ---
     function formText(text, color, font) {
         const tmp = document.createElement('canvas');
         const tCtx = tmp.getContext('2d');
-        let fSize = Math.min(w / (text.length * 0.7), 100); 
-        if(w < 500) fSize = Math.min(w / (text.length * 0.6), 60);
+        
+        // Chia dòng nếu có ký tự '\n'
+        const lines = text.split('\n');
+        
+        // Tính font size động
+        // Tìm dòng dài nhất
+        let maxChars = 0;
+        lines.forEach(l => maxChars = Math.max(maxChars, l.length));
+        
+        // Hệ số scale: Mobile chữ to hơn chút để dễ đọc
+        let fSize = Math.min(w / (maxChars * 0.7), 100); 
+        if(w < 500) fSize = Math.min(w / (maxChars * 0.65), 60);
 
         tCtx.font = `900 ${fSize}px "${font}"`;
-        let measure = tCtx.measureText(text);
-        tmp.width = measure.width + 20; tmp.height = fSize * 1.5;
         
-        tCtx.font = `900 ${fSize}px "${font}"`; tCtx.fillStyle = 'white';
-        tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
-        tCtx.fillText(text, tmp.width/2, tmp.height/2);
+        // Tính toán kích thước canvas tạm
+        let maxW = 0;
+        lines.forEach(l => maxW = Math.max(maxW, tCtx.measureText(l).width));
+        
+        tmp.width = maxW + 50; 
+        tmp.height = lines.length * fSize * 1.2 + 50;
+        
+        // Vẽ chữ lên canvas tạm
+        tCtx.font = `900 ${fSize}px "${font}"`;
+        tCtx.fillStyle = 'white';
+        tCtx.textAlign = 'center'; 
+        tCtx.textBaseline = 'middle';
+        
+        lines.forEach((line, index) => {
+            // Căn giữa theo chiều dọc
+            let y = (tmp.height / 2) - ((lines.length - 1) * fSize * 1.2 / 2) + (index * fSize * 1.2);
+            tCtx.fillText(line, tmp.width/2, y);
+        });
+        
         processPixels(tmp, color);
     }
 
@@ -321,9 +343,12 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         let points = [];
         let startX = (w - canvas.width)/2;
         let startY = (h - canvas.height)/2;
+
         for(let y=0; y<canvas.height; y+=DOT_GAP) {
             for(let x=0; x<canvas.width; x+=DOT_GAP) {
-                if(data[(y*canvas.width + x)*4 + 3] > 128) points.push({x: startX + x, y: startY + y});
+                if(data[(y*canvas.width + x)*4 + 3] > 128) {
+                    points.push({x: startX + x, y: startY + y});
+                }
             }
         }
         updateDrones(points, color);
@@ -332,15 +357,22 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
     function updateDrones(points, color) {
         if(drones.length > points.length) drones.splice(points.length).forEach(d => d.active = false);
         while(drones.length < points.length) drones.push(createDrone());
+
         drones.forEach((d, i) => {
-            if(i < points.length) { d.tx = points[i].x; d.ty = points[i].y; d.color = color; d.active = true; } 
-            else { d.tx = Math.random()*w; d.ty = h + 100; d.active = false; }
+            if(i < points.length) {
+                d.tx = points[i].x; d.ty = points[i].y;
+                d.color = color; d.active = true;
+            } else {
+                // Hạt thừa bay về phía dưới màn hình
+                d.tx = Math.random()*w; d.ty = h + 100; d.active = false;
+            }
         });
     }
 
     // --- ANIMATION LOOP ---
     function loop() {
-        ctx.fillStyle = "rgba(10, 0, 5, 0.25)"; ctx.fillRect(0,0,w,h);
+        ctx.fillStyle = "rgba(10, 0, 5, 0.3)"; // Trail effect
+        ctx.fillRect(0,0,w,h);
 
         stars.forEach(s => {
             s.a += s.blink; if(s.a > 1 || s.a < 0.2) s.blink *= -1;
@@ -351,7 +383,9 @@ Mong rằng mọi điều tốt đẹp nhất sẽ đến với cậu. Happy Bir
         if(state === "DRONE" || state === "MSG") {
             ctx.globalCompositeOperation = 'lighter';
             drones.forEach(d => {
-                d.x += (d.tx - d.x) * 0.08; d.y += (d.ty - d.y) * 0.08;
+                d.x += (d.tx - d.x) * 0.08; // Ease-out movement
+                d.y += (d.ty - d.y) * 0.08;
+                
                 if(d.active || Math.abs(d.y - d.ty) > 1) {
                     ctx.fillStyle = d.color;
                     ctx.beginPath(); ctx.arc(d.x, d.y, 1.5, 0, Math.PI*2); ctx.fill();
