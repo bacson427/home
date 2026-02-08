@@ -19,14 +19,13 @@
         }
         .matrix-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.2; pointer-events: none; z-index: -1;
-            background-image: linear-gradient(0deg, transparent 24%, rgba(255, 50, 0, .3) 25%, rgba(255, 50, 0, .3) 26%, transparent 27%, transparent 74%, rgba(255, 50, 0, .3) 75%, rgba(255, 50, 0, .3) 76%, transparent 77%, transparent);
+            background-image: linear-gradient(0deg, transparent 24%, rgba(255, 50, 0, .3) 25%, rgba(255, 50, 0, .3) 26%, transparent 27%, transparent 74%, rgba(255, 50, 0, .3) 75%, rgba(255, 50, 0, .3) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 50, 0, .3) 25%, rgba(255, 50, 0, .3) 26%, transparent 27%, transparent 74%, rgba(255, 50, 0, .3) 75%, rgba(255, 50, 0, .3) 76%, transparent 77%, transparent);
             background-size: 30px 30px;
         }
         #timer { font-size: clamp(40px, 12vw, 80px); font-weight: bold; text-shadow: 0 0 25px #FF4500; margin: 20px 0; letter-spacing: 2px; color: #FFD700; }
         .lock-title { font-size: 18px; letter-spacing: 4px; color: #ff6b6b; text-transform: uppercase; text-align: center; padding: 0 10px; }
         .lock-status { color: #FF0000; animation: blink 1s infinite; margin-top: 10px; font-size: 14px; text-shadow: 0 0 10px #FF0000;}
 
-        /* Admin Button */
         #admin-btn { position: fixed; bottom: 25px; right: 25px; width: 45px; height: 45px; cursor: pointer; z-index: 10001; opacity: 0.5; transition: all 0.5s ease; fill: #FF0000; filter: drop-shadow(0 0 8px #FF0000); }
         #admin-btn:hover { opacity: 1; transform: rotate(180deg) scale(1.1); fill: #FFD700; }
 
@@ -40,7 +39,6 @@
         }
         .cyber-btn:hover { background: #FF4500; color: #fff; box-shadow: 0 0 50px #FF4500; transform: scale(1.05); }
 
-        /* Cube */
         #cube-container { display: none; perspective: 800px; width: 120px; height: 120px; margin-bottom: 30px;}
         #cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: spin 4s infinite linear; }
         .face {
@@ -83,7 +81,6 @@
             box-shadow: 0 0 50px rgba(255, 0, 0, 0.2) inset;
         }
         
-        /* Transition */
         #transition-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFF; z-index: 9999; display: none; opacity: 0;
             flex-direction: column; justify-content: center; align-items: center; transition: opacity 2s ease-in-out; pointer-events: none;
@@ -240,16 +237,17 @@
         formText(s.t, s.c); setTimeout(nextScene, 6000); 
     }
 
-    // --- FIX LỖI TRAN CHU (AUTO SCALE FONT) ---
+    // --- FIX LỖI MẤT CHỮ: TỰ ĐỘNG CHỈNH FONT THEO MÀN HÌNH ---
     function formText(txt, color) {
         const lines = txt.split('\n');
         const tmp = document.createElement('canvas');
         const tCtx = tmp.getContext('2d');
         
-        // Tự động tính cỡ chữ: Lấy chiều rộng màn hình chia cho số ký tự dài nhất
-        let maxChars = 0;
-        lines.forEach(l => maxChars = Math.max(maxChars, l.length));
-        let fSize = Math.min(w / (maxChars * 0.7), 80); // Tự động co chữ lại nếu dài quá
+        // Đoạn code này tự động tính toán cỡ chữ:
+        // Lấy chiều rộng màn hình (w) chia cho 8 (ước lượng số ký tự) để ra cỡ chữ phù hợp
+        let fSize = Math.min(w / 8, 80); 
+        // Nếu màn hình quá nhỏ (dưới 400px), giảm font nữa
+        if (w < 400) fSize = Math.min(w / 7, 50);
 
         tCtx.font = `bold ${fSize}px Arial`;
         let maxW = 0; lines.forEach(l => maxW = Math.max(maxW, tCtx.measureText(l).width));
