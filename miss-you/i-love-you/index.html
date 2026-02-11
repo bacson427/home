@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gửi Dương 01/03 ❤️</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     
     <style>
@@ -17,7 +17,7 @@
             overflow: hidden;
             background: linear-gradient(180deg, #ff9a9e 0%, #ffc3a0 100%);
             font-family: 'Quicksand', sans-serif;
-            background-color: #000; /* Đổi nền tối khi hiện tim 3D cho đẹp */
+            background-color: #000; 
             transition: background 2s ease;
         }
 
@@ -73,63 +73,86 @@
         #yes { background: #ff0055; color: white; box-shadow: 0 8px 20px rgba(255, 0, 85, 0.4); z-index: 100; }
         #no { background: rgba(255,255,255,0.6); color: #555; font-size: 1rem; position: relative; }
 
-        /* --- KỊCH BẢN TÂM THƯ --- */
+        /* --- KỊCH BẢN TÂM THƯ (ĐÃ LÀM ĐẸP) --- */
         #letter-sequence {
             display: none; position: absolute; top: 0; left: 0;
             width: 100%; height: 100%; z-index: 50;
             justify-content: center; align-items: center;
             flex-direction: column;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(8px);
             opacity: 0; transition: opacity 1s;
         }
 
         #loading-text {
             font-family: 'Dancing Script', cursive;
-            font-size: 3rem; color: #ff758c;
-            text-shadow: 0 0 20px #ff0055;
+            font-size: 3.5rem; color: #ffb3c6;
+            text-shadow: 0 0 25px #ff0055, 0 0 10px #ff0055;
             animation: pulseFade 1.5s infinite;
             display: none;
         }
 
-        .envelope-container { display: none; position: relative; width: 300px; height: 200px; margin-top: 50px;}
+        .envelope-container { 
+            display: none; position: relative; width: 320px; height: 210px; margin-top: 60px;
+            animation: floatEnvelope 3s ease-in-out infinite alternate;
+        }
+        
         .envelope {
             position: absolute; width: 100%; height: 100%;
-            background: #ff4d6d; border-radius: 0 0 10px 10px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            background: #e63946; border-radius: 0 0 15px 15px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             z-index: 3;
         }
         .envelope:before {
             content: ''; position: absolute; top: 0; left: 0;
-            border-left: 150px solid transparent; border-right: 150px solid transparent;
-            border-bottom: 100px solid #ff758c; border-top: 100px solid transparent;
+            border-left: 160px solid transparent; border-right: 160px solid transparent;
+            border-bottom: 110px solid #ff4d6d; border-top: 100px solid transparent;
             z-index: 3;
         }
+        
         .flap {
             position: absolute; top: 0; left: 0;
-            border-left: 150px solid transparent; border-right: 150px solid transparent;
-            border-top: 105px solid #ff1a40; border-bottom: 105px solid transparent;
-            transform-origin: top; transition: transform 1.5s ease-in-out;
-            z-index: 4;
+            border-left: 160px solid transparent; border-right: 160px solid transparent;
+            border-top: 115px solid #d90429; border-bottom: 115px solid transparent;
+            transform-origin: top; transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 4; drop-shadow: 0 5px 10px rgba(0,0,0,0.2);
         }
         .flap.open { transform: rotateX(180deg); z-index: 1; }
+
+        /* Con dấu sáp (Wax Seal) */
+        .wax-seal {
+            position: absolute; top: 110px; left: 50%; transform: translate(-50%, -50%);
+            width: 45px; height: 45px; background: #800000;
+            border-radius: 50%; z-index: 5;
+            box-shadow: inset 0 0 10px #4d0000, 0 5px 10px rgba(0,0,0,0.4);
+            display: flex; justify-content: center; align-items: center;
+            color: #ff9999; font-size: 20px; transition: opacity 0.5s ease;
+        }
+        .wax-seal:before { content: '❤'; }
+        .flap.open + .wax-seal { opacity: 0; pointer-events: none; }
         
+        /* Giấy thư kẻ ngang */
         .paper {
-            position: absolute; top: 10px; left: 5%; width: 90%; height: 250px;
-            background: #fff; border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-            transition: transform 2s ease-in-out;
-            z-index: 2; padding: 20px;
+            position: absolute; top: 10px; left: 5%; width: 90%; height: 280px;
+            background-color: #fff9ec; /* Màu giấy kem */
+            background-image: repeating-linear-gradient(transparent, transparent 28px, #e0d8c8 28px, #e0d8c8 29px);
+            border-radius: 5px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.15);
+            transition: transform 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 2; padding: 35px 20px 20px 20px;
             text-align: left; overflow: hidden;
             transform: translateY(0);
         }
-        .paper.out { transform: translateY(-180px); }
+        .paper.out { transform: translateY(-210px); }
         
         #typed-letter {
-            font-size: 1.1rem; color: #333; font-weight: 600;
-            line-height: 1.5;
+            font-size: 1.15rem; color: #2b2d42; font-weight: 700;
+            line-height: 29px; /* Khớp với dòng kẻ ngang */
+            font-family: 'Quicksand', sans-serif;
+            text-shadow: 0.5px 0.5px 0px rgba(0,0,0,0.1);
+            display: inline;
         }
-        .cursor { display: inline-block; width: 3px; background: #333; animation: blink 0.7s infinite; }
+        .cursor { display: inline-block; width: 2px; height: 1.15rem; background: #2b2d42; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 5px;}
 
         /* --- CẢNH TRÁI TIM BỤI --- */
         #canvas-container {
@@ -153,9 +176,10 @@
 
         @keyframes floatUp { to { transform: translateY(-110vh) rotate(360deg); } }
         @keyframes pulse { 50% { transform: scale(1.05); } }
-        @keyframes pulseFade { 0%, 100% { opacity: 0.3; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
+        @keyframes pulseFade { 0%, 100% { opacity: 0.5; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         @keyframes floatUpText { 0% { transform: translateY(0px) scale(1); } 100% { transform: translateY(-20px) scale(1.1); } }
+        @keyframes floatEnvelope { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
     </style>
 </head>
 <body>
@@ -184,8 +208,9 @@
         <div id="loading-text">I LOVE YOU...</div>
         <div class="envelope-container" id="envelope-container">
             <div class="flap" id="flap"></div>
+            <div class="wax-seal" id="wax-seal"></div>
             <div class="paper" id="paper">
-                <div id="typed-letter"></div><span class="cursor" id="cursor">|</span>
+                <div id="typed-letter"></div><span class="cursor" id="cursor"></span>
             </div>
             <div class="envelope"></div>
         </div>
@@ -286,13 +311,11 @@
 
         /* --- XỬ LÝ KHI ĐỒNG Ý --- */
         function accepted() {
-            // Ẩn nội dung cũ
             askSection.style.display = 'none'; 
             mainText.style.display = 'none';
             document.getElementById('bg-pattern').style.opacity = 0;
             container.style.opacity = 0;
 
-            // Hiển thị khung Tâm Thư
             const letterSeq = document.getElementById('letter-sequence');
             letterSeq.style.display = 'flex';
             setTimeout(() => letterSeq.style.opacity = 1, 100);
@@ -312,19 +335,18 @@
             const flap = document.getElementById('flap');
             const paper = document.getElementById('paper');
             const typeDest = document.getElementById('typed-letter');
-            const cursor = document.getElementById('cursor');
             
             envContainer.style.display = 'block';
 
             // Phase 2: Mở nắp phong bì
             setTimeout(() => {
                 flap.classList.add('open');
-            }, 500);
+            }, 800);
 
             // Phase 3: Kéo thư lên
             setTimeout(() => {
                 paper.classList.add('out');
-            }, 1500);
+            }, 2000);
 
             // Phase 4: Bắt đầu gõ tâm thư
             setTimeout(() => {
@@ -334,14 +356,14 @@
                     if (i < text.length) {
                         typeDest.innerHTML += text.charAt(i);
                         i++;
-                        setTimeout(typeWriter, 80); // Tốc độ gõ chữ
+                        setTimeout(typeWriter, 80);
                     } else {
                         // Phase 5: Gõ xong, đợi 4s rồi chuyển sang cảnh Trái Tim Bụi 3D
-                        setTimeout(showParticleHeart, 4000);
+                        setTimeout(showParticleHeart, 4500);
                     }
                 }
                 typeWriter();
-            }, 3500);
+            }, 4000);
         }
 
         function showParticleHeart() {
@@ -370,7 +392,6 @@
             window.addEventListener("resize", resize);
             resize();
 
-            // Phương trình tọa độ trái tim
             function getHeartPos(t, scale) {
                 let x = 16 * Math.pow(Math.sin(t), 3);
                 let y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
@@ -380,9 +401,8 @@
             class Particle {
                 constructor() {
                     this.t = Math.random() * Math.PI * 2;
-                    // Độ phân tán (bụi)
                     this.spread = Math.random() * 20 - 10;
-                    this.scale = Math.random() * 8 + 8; // Kích thước khung tim
+                    this.scale = Math.random() * 8 + 8;
                     this.pos = getHeartPos(this.t, this.scale);
                     
                     this.x = w / 2 + this.pos.x + this.spread;
@@ -397,12 +417,10 @@
                     this.angle = Math.random() * Math.PI * 2;
                 }
                 update(beatScale) {
-                    // Tạo hiệu ứng lơ lửng cho hạt bụi
                     this.angle += this.speed;
                     let floatX = Math.cos(this.angle) * 3;
                     let floatY = Math.sin(this.angle) * 3;
 
-                    // Nhịp đập
                     let dx = (this.baseX - w/2) * beatScale;
                     let dy = (this.baseY - h/2) * beatScale;
 
@@ -417,18 +435,16 @@
                 }
             }
 
-            // Tạo 1500 hạt bụi
             for (let i = 0; i < 1500; i++) {
                 particles.push(new Particle());
             }
 
             let time = 0;
             function animate() {
-                ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; // Tạo vệt sáng
+                ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; 
                 ctx.fillRect(0, 0, w, h);
                 time += 0.05;
 
-                // Hàm nhịp tim (Mô phỏng đập 2 nhịp)
                 let beat = Math.abs(Math.sin(time)) * 0.15; 
                 let beatScale = 1 + beat;
 
