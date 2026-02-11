@@ -15,7 +15,7 @@
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden;
-            /* Nền Gradient Hồng Lãng Mạn */
+            /* GIỮ NGUYÊN BẢN: Nền Gradient Hồng Lãng Mạn */
             background: linear-gradient(180deg, #ff9a9e 0%, #ffc3a0 100%);
             font-family: 'Quicksand', sans-serif;
         }
@@ -34,7 +34,7 @@
             padding: 10px; text-align: center;
         }
 
-        /* --- PHẦN CHỮ (ĐÃ SỬA LỖI XUỐNG DÒNG) --- */
+        /* --- PHẦN CHỮ --- */
         #text-wrapper { 
             min-height: 200px; 
             display: flex; align-items: center; justify-content: center;
@@ -44,20 +44,17 @@
         
         #main-text {
             font-family: 'Dancing Script', cursive; 
-            /* Tự động chỉnh cỡ chữ theo màn hình: Nhỏ nhất 22px, Lớn nhất 48px */
             font-size: clamp(22px, 6vw, 48px); 
             line-height: 1.4;
             color: #ffffff; 
-            /* Đổ bóng chữ để nổi bật trên nền hồng */
             text-shadow: 2px 2px 0px #ff5e88, 0 0 15px rgba(255, 0, 80, 0.5);
             width: 100%;
         }
 
-        /* Class quan trọng để sửa lỗi ngắt từ */
         .word {
             display: inline-block;
-            white-space: nowrap; /* Không cho phép ngắt dòng giữa từ */
-            margin: 0 4px; /* Khoảng cách giữa các từ */
+            white-space: nowrap; 
+            margin: 0 4px; 
         }
         
         .letter { 
@@ -99,10 +96,14 @@
         /* --- CÁC BẢNG THÔNG BÁO --- */
         #final-message, #already-accepted {
             display: none; width: 90%; max-width: 400px;
-            background: rgba(255, 255, 255, 0.95); 
+            /* Đổi thành kính mờ để nhìn xuyên thấu hiệu ứng 3D đằng sau */
+            background: rgba(255, 255, 255, 0.75); 
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             border-radius: 20px; padding: 30px;
             box-shadow: 0 20px 50px rgba(255, 60, 100, 0.3);
-            border: 2px solid #fff;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            z-index: 20; /* Nằm trên hiệu ứng 3D */
         }
         
         h2 { 
@@ -118,11 +119,52 @@
         }
         @keyframes floatUp { to { transform: translateY(-110vh) rotate(360deg); } }
         @keyframes pulse { 50% { transform: scale(1.05); } }
+
+        /* --- MỚI: HIỆU ỨNG 3D I LOVE YOU (GIỐNG CAROUSEL VIDEO) --- */
+        #scene-3d {
+            display: none;
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 10px; height: 10px;
+            transform: translate(-50%, -50%);
+            perspective: 1000px;
+            z-index: 5; /* Nằm dưới bảng thông báo nhưng trên nền hồng */
+            pointer-events: none;
+        }
+
+        #carousel-3d {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            transform-style: preserve-3d;
+            animation: spin3D 12s linear infinite; /* Xoay vòng tròn liên tục */
+        }
+
+        .text-3d {
+            position: absolute;
+            top: -20px; left: -10px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            /* Tạo độ phát sáng rực rỡ */
+            text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055, 0 0 30px #ff0055;
+            backface-visibility: visible;
+        }
+
+        @keyframes spin3D {
+            0% { transform: rotateX(-10deg) rotateY(0deg); }
+            100% { transform: rotateX(-10deg) rotateY(360deg); }
+        }
     </style>
 </head>
 <body>
     <div class="bg-pattern"></div>
     <div id="hearts-container"></div>
+
+    <div id="scene-3d">
+        <div id="carousel-3d"></div>
+    </div>
 
     <div class="content" id="main-content">
         
@@ -164,8 +206,8 @@
     <audio id="bg-music" src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3"></audio>
 
     <script>
-        /* --- 1. LOGIC KIỂM TRA ĐÃ ĐỒNG Ý CHƯA --- */
-        const isAccepted = localStorage.getItem('isDuongAccepted_v1'); // Đổi key để reset test
+        /* --- LOGIC KIỂM TRA ĐÃ ĐỒNG Ý CHƯA --- */
+        const isAccepted = localStorage.getItem('isDuongAccepted_v1'); 
         const startScreen = document.getElementById('start-screen');
         const alreadyAccepted = document.getElementById('already-accepted');
         const mainText = document.getElementById('main-text');
@@ -175,14 +217,14 @@
         let checkTime;
 
         if (isAccepted === 'true') {
-            // Nếu đã đồng ý trước đó -> Hiện bảng chốt luôn
             startScreen.style.display = 'none';
             mainText.style.display = 'none';
             alreadyAccepted.style.display = 'block';
-            createHeartRain(); // Vẫn mưa tim cho đẹp
+            createHeartRain(); 
+            show3DEffect(); // MỚI: Bật 3D nếu đã đồng ý từ trước
         }
 
-        /* --- 2. TẠO MƯA TIM NỀN --- */
+        /* --- TẠO MƯA TIM NỀN --- */
         const container = document.getElementById('hearts-container');
         for (let i = 0; i < 20; i++) {
             let heart = document.createElement('div'); heart.className = 'bg-heart'; heart.innerHTML = '❤';
@@ -191,7 +233,39 @@
             container.appendChild(heart);
         }
 
-        /* --- 3. KỊCH BẢN THỜI GIAN (TIMELINE) --- */
+        /* --- MỚI: HÀM TẠO VÒNG XOAY CHỮ 3D --- */
+        function show3DEffect() {
+            const scene = document.getElementById('scene-3d');
+            const carousel = document.getElementById('carousel-3d');
+            scene.style.display = 'block';
+            carousel.innerHTML = '';
+            
+            // Mảng các ký tự xếp thành vòng tròn (Xen kẽ tim và chữ)
+            const textArr = ['I', '❤', 'L', 'O', 'V', 'E', '❤', 'Y', 'O', 'U', '❤', '❤'];
+            // Tính toán bán kính xoay phù hợp với điện thoại hoặc máy tính
+            const radius = window.innerWidth < 500 ? 120 : 180; 
+            
+            textArr.forEach((char, i) => {
+                let el = document.createElement('div');
+                el.className = 'text-3d';
+                el.innerText = char;
+                let angle = i * (360 / textArr.length);
+                // Đẩy chữ ra xa tâm bằng translateZ tạo thành hình trụ
+                el.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+                carousel.appendChild(el);
+            });
+
+            // Hiệu ứng Fade in cho cụm 3D
+            anime({
+                targets: '#scene-3d',
+                opacity: [0, 1],
+                scale: [0.5, 1],
+                duration: 2000,
+                easing: 'easeOutElastic(1, .8)'
+            });
+        }
+
+        /* --- KỊCH BẢN THỜI GIAN --- */
         const timeline = [
             { time: 1, text: "Xin chào Dương...", clearAt: 4 },
             { time: 5, text: "Hôm nay là một ngày đặc biệt.", clearAt: 9 },
@@ -202,21 +276,16 @@
             { time: 35, text: "Nên là...", clearAt: 38 }
         ];
 
-        /* --- 4. HÀM TÁCH CHỮ (ĐÃ SỬA LỖI XUỐNG DÒNG) --- */
+        /* --- HÀM TÁCH CHỮ --- */
         function splitAndAnimate(text) {
-            // Tách thành từng từ (Word) thay vì từng chữ cái
             const words = text.split(' ');
-            
-            // Bọc từng từ trong thẻ span class='word'
-            // Trong mỗi từ lại bọc từng chữ cái class='letter'
             const html = words.map(word => {
                 const letters = word.split('').map(char => `<span class='letter'>${char}</span>`).join('');
                 return `<span class='word'>${letters}</span>`;
-            }).join(' '); // Nối lại bằng khoảng trắng
+            }).join(' '); 
             
             mainText.innerHTML = html;
             
-            // Hiệu ứng hiện từng chữ
             anime({
                 targets: '.letter', opacity: [0, 1], translateY: [20, 0], rotateZ: [-5, 0],
                 easing: "easeOutExpo", duration: 1000, delay: anime.stagger(40)
@@ -245,7 +314,6 @@
                 if (t >= 40) {
                     clearInterval(checkTime); mainText.innerHTML = "";
                     
-                    // Chữ chốt to hơn, màu đỏ
                     mainText.style.fontSize = "clamp(30px, 8vw, 55px)"; 
                     mainText.style.color = "#ff0055"; 
                     mainText.style.textShadow = "2px 2px 0px #fff";
@@ -259,9 +327,8 @@
             }, 1000);
         }
 
-        /* --- 5. NÚT TỪ CHỐI "LẦY LỘI" --- */
+        /* --- NÚT TỪ CHỐI "LẦY LỘI" --- */
         function moveButton(btn) {
-            // Lấy kích thước an toàn
             const w = window.innerWidth - 150;
             const h = window.innerHeight - 150;
             
@@ -275,20 +342,23 @@
             const phrases = ["Mơ đi cưng 😎", "Đừng hòng thoát", "Bấm nút trên kia kìa", "Lêu lêu 😝", "Tay chậm thế?", "Chọn lại đê"];
             btn.innerText = phrases[Math.floor(Math.random() * phrases.length)];
             
-            // Đổi màu loạn lên
             btn.style.background = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.9)`;
             btn.style.color = "#fff";
         }
 
+        /* --- HÀNH ĐỘNG KHI ĐỒNG Ý --- */
         function accepted() {
-            // Lưu trạng thái
             localStorage.setItem('isDuongAccepted_v1', 'true');
             
             askSection.style.display = 'none'; 
             mainText.style.display = 'none';
             finalMessage.style.display = 'block';
             
+            // Hiện bảng chốt đơn
             anime({ targets: '#final-message', opacity: [0, 1], scale: [0.8, 1], duration: 1000, easing: 'easeOutElastic(1, .6)' });
+            
+            // Bật hiệu ứng 3D siêu ảo diệu ở background
+            show3DEffect();
             
             // Mưa tim nhiều hơn
             for (let i = 0; i < 50; i++) {
@@ -302,7 +372,6 @@
         }
 
         function createHeartRain() {
-            // Hàm tạo mưa tim bổ trợ
              for (let i = 0; i < 30; i++) {
                 setTimeout(() => {
                     let heart = document.createElement('div'); heart.className = 'bg-heart'; heart.innerHTML = '❤️';
