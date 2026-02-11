@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gửi Dương 01/03 ❤️</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     
     <style>
@@ -34,83 +34,38 @@
             padding: 10px; text-align: center;
         }
 
-        /* --- PHẦN CHỮ --- */
+        /* --- PHẦN CHỮ ĐANG CHẠY --- */
         #text-wrapper { 
             min-height: 200px; 
             display: flex; align-items: center; justify-content: center;
-            width: 100%;
-            padding: 0 15px;
+            width: 100%; padding: 0 15px;
         }
         
         #main-text {
             font-family: 'Dancing Script', cursive; 
             font-size: clamp(22px, 6vw, 48px); 
-            line-height: 1.4;
-            color: #ffffff; 
+            line-height: 1.4; color: #ffffff; 
             text-shadow: 2px 2px 0px #ff5e88, 0 0 15px rgba(255, 0, 80, 0.5);
             width: 100%;
         }
 
-        .word {
-            display: inline-block;
-            white-space: nowrap; 
-            margin: 0 4px; 
-        }
-        
-        .letter { 
-            display: inline-block; 
-            opacity: 0; 
-            transform: translateY(10px); 
-        }
+        .word { display: inline-block; white-space: nowrap; margin: 0 4px; }
+        .letter { display: inline-block; opacity: 0; transform: translateY(10px); }
 
         /* --- CÁC NÚT BẤM --- */
         .glass-btn {
-            background: rgba(255, 255, 255, 0.85);
-            color: #ff5e88;
-            padding: 15px 40px; border-radius: 50px;
-            font-size: 1.2rem; font-weight: bold;
-            box-shadow: 0 5px 15px rgba(255, 100, 150, 0.4);
-            border: none; cursor: pointer;
+            background: rgba(255, 255, 255, 0.85); color: #ff5e88;
+            padding: 15px 40px; border-radius: 50px; font-size: 1.2rem; font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 100, 150, 0.4); border: none; cursor: pointer;
             animation: pulse 2s infinite;
         }
 
         #ask-section { display: none; width: 100%; margin-top: 20px; }
         .btn-group { display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%; }
         
-        .btn { 
-            width: 80%; padding: 18px; border-radius: 50px; border: none; 
-            font-weight: bold; font-size: 1.2rem; transition: 0.1s; cursor: pointer;
-        }
-        
-        #yes { 
-            background: #ff0055; color: white;
-            box-shadow: 0 8px 20px rgba(255, 0, 85, 0.4);
-            z-index: 100;
-        }
-        
-        #no { 
-            background: rgba(255,255,255,0.6); color: #555; 
-            font-size: 1rem; position: relative;
-        }
-
-        /* --- CÁC BẢNG THÔNG BÁO --- */
-        #final-message, #already-accepted {
-            display: none; width: 90%; max-width: 400px;
-            background: rgba(255, 255, 255, 0.75); 
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            border-radius: 20px; padding: 30px;
-            box-shadow: 0 20px 50px rgba(255, 60, 100, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            z-index: 20; 
-            opacity: 0; /* Để anime.js xử lý fadeIn mượt hơn */
-        }
-        
-        h2 { 
-            font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin: 0 0 15px 0; 
-            color: #ff0055;
-        }
-        p { color: #444; font-size: 1.1rem; line-height: 1.6; font-weight: 600;}
+        .btn { width: 80%; padding: 18px; border-radius: 50px; border: none; font-weight: bold; font-size: 1.2rem; transition: 0.1s; cursor: pointer; }
+        #yes { background: #ff0055; color: white; box-shadow: 0 8px 20px rgba(255, 0, 85, 0.4); z-index: 100; }
+        #no { background: rgba(255,255,255,0.6); color: #555; font-size: 1rem; position: relative; }
 
         /* Hiệu ứng nền trái tim bay */
         .bg-heart {
@@ -120,41 +75,86 @@
         @keyframes floatUp { to { transform: translateY(-110vh) rotate(360deg); } }
         @keyframes pulse { 50% { transform: scale(1.05); } }
 
-        /* --- HIỆU ỨNG 3D I LOVE YOU --- */
+        /* =========================================
+           1. HIỆU ỨNG TRÁI TIM BỤI 3D & CHỮ QUAY
+           ========================================= */
         #scene-3d {
-            display: none;
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 10px; height: 10px;
-            transform: translate(-50%, -50%);
-            perspective: 1000px;
-            z-index: 5; 
-            pointer-events: none;
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 15; perspective: 1000px;
+            /* Flex center */
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; /* Cho anime.js fade in */
+        }
+        
+        /* Canvas vẽ hạt bụi trái tim */
+        #dust-canvas {
+            position: absolute; width: 300px; height: 300px;
+            /* Mẹo tạo 3D: xoay canvas liên tục */
+            animation: spinDust 8s linear infinite;
+            filter: drop-shadow(0 0 15px rgba(255, 20, 147, 0.8));
         }
 
-        #carousel-3d {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+        @keyframes spinDust { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
+
+        /* Vòng chữ quay xung quanh */
+        .orbit-ring {
+            position: absolute; width: 10px; height: 10px;
             transform-style: preserve-3d;
-            animation: spin3D 12s linear infinite; 
+        }
+        #ring-1 { animation: spinRing1 12s linear infinite; }
+        #ring-2 { animation: spinRing2 15s linear infinite; }
+
+        .orbit-text {
+            position: absolute; top: -15px; left: -10px;
+            font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1.2rem;
+            color: #fff; text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055;
+            backface-visibility: visible; white-space: nowrap;
         }
 
-        .text-3d {
-            position: absolute;
-            top: -20px; left: -10px;
-            font-family: 'Dancing Script', cursive;
-            font-size: 3rem;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055, 0 0 30px #ff0055;
-            backface-visibility: visible;
-        }
+        @keyframes spinRing1 { 0% { transform: rotateX(-20deg) rotateY(0deg); } 100% { transform: rotateX(-20deg) rotateY(-360deg); } }
+        @keyframes spinRing2 { 0% { transform: rotateX(20deg) rotateY(0deg); } 100% { transform: rotateX(20deg) rotateY(360deg); } }
 
-        @keyframes spin3D {
-            0% { transform: rotateX(-10deg) rotateY(0deg); }
-            100% { transform: rotateX(-10deg) rotateY(360deg); }
+        /* =========================================
+           2. MÀN HÌNH LOADING "I LOVE YOU"
+           ========================================= */
+        #loading-scene {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 20; background: rgba(255, 154, 158, 0.85); backdrop-filter: blur(5px);
+            justify-content: center; align-items: center; opacity: 0; flex-direction: column;
         }
+        .loading-text {
+            font-family: 'Dancing Script', cursive; font-size: 3rem; color: #fff;
+            text-shadow: 0 0 15px #ff0055; animation: beatLoading 1s infinite;
+        }
+        .dots::after { content: ''; animation: typeDots 1.5s infinite; }
+        @keyframes typeDots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } 100% { content: ''; } }
+        @keyframes beatLoading { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        /* =========================================
+           3. TÂM THƯ (THIỆP MỞ RA)
+           ========================================= */
+        #letter-scene {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 30; justify-content: center; align-items: center; opacity: 0;
+            padding: 20px;
+        }
+        .card {
+            background: #fff; width: 100%; max-width: 400px; border-radius: 15px;
+            padding: 30px; box-shadow: 0 20px 50px rgba(255, 0, 80, 0.3);
+            border: 2px solid #ffdde1; position: relative;
+            transform: translateY(50px); /* Để animate trồi lên */
+        }
+        .card::before {
+            content: '💌'; position: absolute; top: -25px; left: 50%;
+            transform: translateX(-50%); font-size: 40px;
+        }
+        #letter-content {
+            font-family: 'Quicksand', sans-serif; font-size: 1.15rem; color: #b71540;
+            line-height: 1.7; font-weight: 700; white-space: pre-wrap;
+        }
+        .cursor { display: inline-block; width: 3px; height: 1.15rem; background: #b71540; animation: blink 0.8s infinite; vertical-align: middle; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
     </style>
 </head>
 <body>
@@ -162,71 +162,52 @@
     <div id="hearts-container"></div>
 
     <div id="scene-3d">
-        <div id="carousel-3d"></div>
+        <canvas id="dust-canvas" width="300" height="300"></canvas>
+        <div id="ring-1" class="orbit-ring"></div>
+        <div id="ring-2" class="orbit-ring"></div>
+    </div>
+
+    <div id="loading-scene">
+        <div class="loading-text">I LOVE YOU<span class="dots"></span></div>
+    </div>
+
+    <div id="letter-scene">
+        <div class="card" id="letter-card">
+            <div id="letter-content"></div><span class="cursor" id="cursor"></span>
+        </div>
     </div>
 
     <div class="content" id="main-content">
-        
         <div id="start-screen">
             <button class="glass-btn" onclick="startExperience()">Mở quà sinh nhật 🎁</button>
             <p style="margin-top:15px; font-size: 0.9rem; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">(Bật âm lượng lên nhé)</p>
         </div>
-
-        <div id="text-wrapper">
-            <h1 id="main-text"></h1>
-        </div>
-
+        <div id="text-wrapper"><h1 id="main-text"></h1></div>
         <div id="ask-section">
             <div class="btn-group">
                 <button class="btn" id="yes" onclick="accepted()">Đồng ý ❤️</button>
                 <button class="btn" id="no" onclick="moveButton(this)" ontouchstart="moveButton(this)">Suy nghĩ thêm</button>
             </div>
         </div>
-
-        <div id="final-message">
-            <h2>Chốt đơn! 🎉</h2>
-            <p>
-                Cảm ơn cậu đã đồng ý.<br>
-                Tuổi 19 rực rỡ nhé, người yêu của tớ.<br>
-                Tớ đã chụp màn hình làm bằng chứng rồi! ❤️
-            </p>
-        </div>
-
-        <div id="already-accepted">
-            <h2>Người yêu của Sơn ❤️</h2>
-            <p>
-                Dương đã đồng ý làm người yêu Sơn rồi.<br>
-                Hợp đồng tình yêu này có hiệu lực vĩnh viễn!<br><br>
-                <strong>Yêu em!</strong>
-            </p>
-        </div>
     </div>
 
     <audio id="bg-music" src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3"></audio>
 
     <script>
-        /* --- LOGIC KIỂM TRA ĐÃ ĐỒNG Ý CHƯA --- */
-        const isAccepted = localStorage.getItem('isDuongAccepted_v2'); // Update key để test lại từ đầu
+        /* --- LOGIC RESET --- */
+        const isAccepted = localStorage.getItem('isDuongAccepted_v3'); 
         const startScreen = document.getElementById('start-screen');
-        const alreadyAccepted = document.getElementById('already-accepted');
         const mainText = document.getElementById('main-text');
         const askSection = document.getElementById('ask-section');
-        const finalMessage = document.getElementById('final-message');
         const music = document.getElementById('bg-music');
         let checkTime;
 
         if (isAccepted === 'true') {
+            // Nếu đã đồng ý từ trước, chạy luôn chuỗi hiệu ứng cuối
             startScreen.style.display = 'none';
-            mainText.style.display = 'none';
-            
+            document.getElementById('main-content').style.display = 'none';
             createHeartRain(); 
-            show3DEffect(); // Bật 3D lập tức
-            
-            // DELAY: Đợi 3 giây ngắm 3D xoay vòng rồi mới hiện bảng thông báo
-            setTimeout(() => {
-                alreadyAccepted.style.display = 'block';
-                anime({ targets: '#already-accepted', opacity: [0, 1], scale: [0.8, 1], duration: 1000, easing: 'easeOutElastic(1, .6)' });
-            }, 3000);
+            playFinalSequence();
         }
 
         /* --- TẠO MƯA TIM NỀN --- */
@@ -236,34 +217,6 @@
             heart.style.left = Math.random() * 100 + 'vw'; heart.style.top = Math.random() * 100 + 'vh';
             heart.style.fontSize = Math.random() * 15 + 10 + 'px'; heart.style.animationDuration = Math.random() * 5 + 5 + 's';
             container.appendChild(heart);
-        }
-
-        /* --- HÀM TẠO VÒNG XOAY CHỮ 3D --- */
-        function show3DEffect() {
-            const scene = document.getElementById('scene-3d');
-            const carousel = document.getElementById('carousel-3d');
-            scene.style.display = 'block';
-            carousel.innerHTML = '';
-            
-            const textArr = ['I', '❤', 'L', 'O', 'V', 'E', '❤', 'Y', 'O', 'U', '❤', '❤'];
-            const radius = window.innerWidth < 500 ? 120 : 180; 
-            
-            textArr.forEach((char, i) => {
-                let el = document.createElement('div');
-                el.className = 'text-3d';
-                el.innerText = char;
-                let angle = i * (360 / textArr.length);
-                el.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
-                carousel.appendChild(el);
-            });
-
-            anime({
-                targets: '#scene-3d',
-                opacity: [0, 1],
-                scale: [0.5, 1],
-                duration: 2000,
-                easing: 'easeOutElastic(1, .8)'
-            });
         }
 
         /* --- KỊCH BẢN THỜI GIAN --- */
@@ -283,9 +236,7 @@
                 const letters = word.split('').map(char => `<span class='letter'>${char}</span>`).join('');
                 return `<span class='word'>${letters}</span>`;
             }).join(' '); 
-            
             mainText.innerHTML = html;
-            
             anime({
                 targets: '.letter', opacity: [0, 1], translateY: [20, 0], rotateZ: [-5, 0],
                 easing: "easeOutExpo", duration: 1000, delay: anime.stagger(40)
@@ -301,7 +252,6 @@
 
         function startExperience() {
             if (isAccepted === 'true') return;
-
             anime({ targets: '#start-screen', opacity: 0, scale: 0.9, duration: 500, easing: 'easeInOutQuad', complete: () => startScreen.style.display = 'none' });
             music.play();
             
@@ -312,7 +262,6 @@
                 
                 if (t >= 40) {
                     clearInterval(checkTime); mainText.innerHTML = "";
-                    
                     mainText.style.fontSize = "clamp(30px, 8vw, 55px)"; 
                     mainText.style.color = "#ff0055"; 
                     mainText.style.textShadow = "2px 2px 0px #fff";
@@ -327,59 +276,161 @@
         }
 
         function moveButton(btn) {
-            const w = window.innerWidth - 150;
-            const h = window.innerHeight - 150;
-            
-            const newX = Math.random() * w + 20;
-            const newY = Math.random() * h + 20;
-            
-            btn.style.position = 'fixed';
-            btn.style.left = newX + 'px';
-            btn.style.top = newY + 'px';
-
+            const w = window.innerWidth - 150; const h = window.innerHeight - 150;
+            btn.style.position = 'fixed'; btn.style.left = Math.random() * w + 20 + 'px'; btn.style.top = Math.random() * h + 20 + 'px';
             const phrases = ["Mơ đi cưng 😎", "Đừng hòng thoát", "Bấm nút trên kia kìa", "Lêu lêu 😝", "Tay chậm thế?", "Chọn lại đê"];
             btn.innerText = phrases[Math.floor(Math.random() * phrases.length)];
-            
-            btn.style.background = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.9)`;
-            btn.style.color = "#fff";
+            btn.style.background = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.9)`; btn.style.color = "#fff";
         }
 
-        /* --- HÀNH ĐỘNG KHI ĐỒNG Ý --- */
+        /* =========================================
+           CHUỖI HIỆU ỨNG SAU KHI ĐỒNG Ý
+           ========================================= */
         function accepted() {
-            localStorage.setItem('isDuongAccepted_v2', 'true');
-            
-            // Tắt nút hỏi ngay lập tức
-            askSection.style.display = 'none'; 
-            mainText.style.display = 'none';
-            
-            // 1. CHUẨN BỊ MƯA TIM TRƯỚC
-            for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    let heart = document.createElement('div'); heart.className = 'bg-heart'; heart.innerHTML = '❤️';
-                    heart.style.left = Math.random() * 100 + 'vw'; heart.style.fontSize = Math.random() * 30 + 10 + 'px';
-                    heart.style.animationDuration = Math.random() * 2 + 3 + 's'; heart.style.zIndex = 100;
-                    document.body.appendChild(heart);
-                }, i * 50);
-            }
-            
-            // 2. BẬT HIỆU ỨNG 3D VÀ ĐỂ TRÌNH DIỄN
-            show3DEffect();
-            
-            // 3. ĐỢI 5 GIÂY XEM 3D RỒI MỚI CHỐT BẢNG THÔNG BÁO
+            localStorage.setItem('isDuongAccepted_v3', 'true');
+            // Ẩn màn hình hỏi
+            anime({
+                targets: '#main-content', opacity: 0, duration: 500,
+                complete: () => { document.getElementById('main-content').style.display = 'none'; }
+            });
+            createHeartRain();
+            playFinalSequence();
+        }
+
+        function playFinalSequence() {
+            // 1. CHẠY SCENE 3D HẠT BỤI & CHỮ QUAY
+            initDustHeart();
+            initOrbitText();
+            document.getElementById('scene-3d').style.display = 'flex';
+            anime({ targets: '#scene-3d', opacity: 1, duration: 1000 });
+
+            // 2. SAU 6 GIÂY -> CHUYỂN SANG LOADING
             setTimeout(() => {
-                finalMessage.style.display = 'block';
-                anime({ targets: '#final-message', opacity: [0, 1], scale: [0.8, 1], duration: 1000, easing: 'easeOutElastic(1, .6)' });
-            }, 5000); // 5000 milliseconds = 5 giây trình diễn 3D
+                anime({
+                    targets: '#scene-3d', opacity: 0, duration: 800,
+                    complete: () => {
+                        document.getElementById('scene-3d').style.display = 'none';
+                        document.getElementById('loading-scene').style.display = 'flex';
+                        anime({ targets: '#loading-scene', opacity: 1, duration: 800 });
+                    }
+                });
+            }, 6000);
+
+            // 3. SAU 9 GIÂY (3s Loading) -> MỞ TÂM THƯ
+            setTimeout(() => {
+                anime({
+                    targets: '#loading-scene', opacity: 0, duration: 800,
+                    complete: () => {
+                        document.getElementById('loading-scene').style.display = 'none';
+                        document.getElementById('letter-scene').style.display = 'flex';
+                        anime({ targets: '#letter-scene', opacity: 1, duration: 1000 });
+                        anime({ targets: '.card', translateY: [50, 0], opacity: [0, 1], duration: 1000, easing: 'easeOutQuart' });
+                        
+                        // Chạy hiệu ứng gõ chữ Tâm Thư
+                        setTimeout(typeLetter, 1200);
+                    }
+                });
+            }, 9000);
+        }
+
+        /* --- HÀM VẼ TRÁI TIM BỤI BẰNG CANVAS (SIÊU NHẸ) --- */
+        function initDustHeart() {
+            const canvas = document.getElementById('dust-canvas');
+            const ctx = canvas.getContext('2d');
+            const cx = 150, cy = 130; // Tâm canvas
+            let dusts = [];
+
+            // Tính toán 200 hạt bụi tạo thành hình trái tim
+            for(let i=0; i<200; i++) {
+                let t = Math.PI * 2 * Math.random();
+                let hx = 16 * Math.pow(Math.sin(t), 3);
+                let hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                
+                // Độ tản mác của bụi
+                let scatter = Math.random() * 4; 
+                dusts.push({
+                    x: cx + hx * 6 + (Math.random()-0.5)*scatter,
+                    y: cy + hy * 6 + (Math.random()-0.5)*scatter,
+                    size: Math.random() * 2 + 0.5,
+                    alpha: Math.random(),
+                    speed: 0.02 + Math.random() * 0.03
+                });
+            }
+
+            function drawDust() {
+                ctx.clearRect(0, 0, 300, 300);
+                dusts.forEach(d => {
+                    d.alpha += d.speed;
+                    if(d.alpha > 1 || d.alpha < 0) d.speed *= -1; // Làm hạt bụi lấp lánh
+                    
+                    ctx.globalAlpha = Math.abs(d.alpha);
+                    ctx.fillStyle = '#ff4d6d';
+                    ctx.beginPath();
+                    ctx.arc(d.x, d.y, d.size, 0, Math.PI*2);
+                    ctx.fill();
+                });
+                requestAnimationFrame(drawDust);
+            }
+            drawDust();
+        }
+
+        /* --- HÀM TẠO VÒNG CHỮ QUAY XUNG QUANH --- */
+        function initOrbitText() {
+            const ring1 = document.getElementById('ring-1');
+            const ring2 = document.getElementById('ring-2');
+            ring1.innerHTML = ''; ring2.innerHTML = '';
+
+            const text1 = "T Ớ ❤ C Ả M ❤ Ơ N ❤ N H A ❤ D Ư Ơ N G ❤ ".split(' ');
+            const text2 = "I ❤ L O V E ❤ Y O U ❤ I ❤ L O V E ❤ Y O U ❤ ".split(' ');
+
+            function createRing(arr, container, radius) {
+                arr.forEach((char, i) => {
+                    if(char === "") return;
+                    let el = document.createElement('div');
+                    el.className = 'orbit-text';
+                    el.innerText = char;
+                    let angle = i * (360 / arr.length);
+                    // Dùng translateZ để đẩy chữ ra viền tạo thành vòng tròn
+                    el.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+                    container.appendChild(el);
+                });
+            }
+
+            // Bán kính vòng quay phù hợp mobile
+            const r1 = window.innerWidth < 500 ? 120 : 160;
+            const r2 = window.innerWidth < 500 ? 160 : 200;
+            
+            createRing(text1, ring1, r1);
+            createRing(text2, ring2, r2);
+        }
+
+        /* --- HÀM GÕ CHỮ TÂM THƯ --- */
+        function typeLetter() {
+            const content = document.getElementById('letter-content');
+            const fullText = "Cảm ơn cậu đã đồng ý làm người yêu của tớ.\n\nTớ biết sự thiếu tinh tế, cái tính hơn thua vẫn còn. Nhưng tớ sẽ quyết tâm thay đổi vì người con gái tớ yêu.\n\nI LOVE YOU. ❤️";
+            let index = 0;
+
+            function typeNext() {
+                if (index < fullText.length) {
+                    content.innerHTML += fullText.charAt(index) === '\n' ? '<br>' : fullText.charAt(index);
+                    index++;
+                    // Tốc độ gõ: Random một chút cho giống người thật gõ
+                    setTimeout(typeNext, 40 + Math.random() * 30);
+                } else {
+                    document.getElementById('cursor').style.display = 'none';
+                }
+            }
+            typeNext();
         }
 
         function createHeartRain() {
-             for (let i = 0; i < 30; i++) {
+             for (let i = 0; i < 40; i++) {
                 setTimeout(() => {
                     let heart = document.createElement('div'); heart.className = 'bg-heart'; heart.innerHTML = '❤️';
                     heart.style.left = Math.random() * 100 + 'vw'; heart.style.fontSize = Math.random() * 20 + 10 + 'px';
-                    heart.style.animationDuration = Math.random() * 3 + 3 + 's';
+                    heart.style.animationDuration = Math.random() * 3 + 3 + 's'; heart.style.zIndex = 100;
                     document.body.appendChild(heart);
-                }, i * 100);
+                }, i * 80);
             }
         }
     </script>
