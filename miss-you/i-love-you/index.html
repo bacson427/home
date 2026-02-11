@@ -96,14 +96,14 @@
         /* --- CÁC BẢNG THÔNG BÁO --- */
         #final-message, #already-accepted {
             display: none; width: 90%; max-width: 400px;
-            /* Đổi thành kính mờ để nhìn xuyên thấu hiệu ứng 3D đằng sau */
             background: rgba(255, 255, 255, 0.75); 
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
             border-radius: 20px; padding: 30px;
             box-shadow: 0 20px 50px rgba(255, 60, 100, 0.3);
             border: 2px solid rgba(255, 255, 255, 0.8);
-            z-index: 20; /* Nằm trên hiệu ứng 3D */
+            z-index: 20; 
+            opacity: 0; /* Để anime.js xử lý fadeIn mượt hơn */
         }
         
         h2 { 
@@ -120,7 +120,7 @@
         @keyframes floatUp { to { transform: translateY(-110vh) rotate(360deg); } }
         @keyframes pulse { 50% { transform: scale(1.05); } }
 
-        /* --- MỚI: HIỆU ỨNG 3D I LOVE YOU (GIỐNG CAROUSEL VIDEO) --- */
+        /* --- HIỆU ỨNG 3D I LOVE YOU --- */
         #scene-3d {
             display: none;
             position: absolute;
@@ -128,7 +128,7 @@
             width: 10px; height: 10px;
             transform: translate(-50%, -50%);
             perspective: 1000px;
-            z-index: 5; /* Nằm dưới bảng thông báo nhưng trên nền hồng */
+            z-index: 5; 
             pointer-events: none;
         }
 
@@ -137,7 +137,7 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             transform-style: preserve-3d;
-            animation: spin3D 12s linear infinite; /* Xoay vòng tròn liên tục */
+            animation: spin3D 12s linear infinite; 
         }
 
         .text-3d {
@@ -147,7 +147,6 @@
             font-size: 3rem;
             font-weight: bold;
             color: #fff;
-            /* Tạo độ phát sáng rực rỡ */
             text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055, 0 0 30px #ff0055;
             backface-visibility: visible;
         }
@@ -207,7 +206,7 @@
 
     <script>
         /* --- LOGIC KIỂM TRA ĐÃ ĐỒNG Ý CHƯA --- */
-        const isAccepted = localStorage.getItem('isDuongAccepted_v1'); 
+        const isAccepted = localStorage.getItem('isDuongAccepted_v2'); // Update key để test lại từ đầu
         const startScreen = document.getElementById('start-screen');
         const alreadyAccepted = document.getElementById('already-accepted');
         const mainText = document.getElementById('main-text');
@@ -219,9 +218,15 @@
         if (isAccepted === 'true') {
             startScreen.style.display = 'none';
             mainText.style.display = 'none';
-            alreadyAccepted.style.display = 'block';
+            
             createHeartRain(); 
-            show3DEffect(); // MỚI: Bật 3D nếu đã đồng ý từ trước
+            show3DEffect(); // Bật 3D lập tức
+            
+            // DELAY: Đợi 3 giây ngắm 3D xoay vòng rồi mới hiện bảng thông báo
+            setTimeout(() => {
+                alreadyAccepted.style.display = 'block';
+                anime({ targets: '#already-accepted', opacity: [0, 1], scale: [0.8, 1], duration: 1000, easing: 'easeOutElastic(1, .6)' });
+            }, 3000);
         }
 
         /* --- TẠO MƯA TIM NỀN --- */
@@ -233,16 +238,14 @@
             container.appendChild(heart);
         }
 
-        /* --- MỚI: HÀM TẠO VÒNG XOAY CHỮ 3D --- */
+        /* --- HÀM TẠO VÒNG XOAY CHỮ 3D --- */
         function show3DEffect() {
             const scene = document.getElementById('scene-3d');
             const carousel = document.getElementById('carousel-3d');
             scene.style.display = 'block';
             carousel.innerHTML = '';
             
-            // Mảng các ký tự xếp thành vòng tròn (Xen kẽ tim và chữ)
             const textArr = ['I', '❤', 'L', 'O', 'V', 'E', '❤', 'Y', 'O', 'U', '❤', '❤'];
-            // Tính toán bán kính xoay phù hợp với điện thoại hoặc máy tính
             const radius = window.innerWidth < 500 ? 120 : 180; 
             
             textArr.forEach((char, i) => {
@@ -250,12 +253,10 @@
                 el.className = 'text-3d';
                 el.innerText = char;
                 let angle = i * (360 / textArr.length);
-                // Đẩy chữ ra xa tâm bằng translateZ tạo thành hình trụ
                 el.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
                 carousel.appendChild(el);
             });
 
-            // Hiệu ứng Fade in cho cụm 3D
             anime({
                 targets: '#scene-3d',
                 opacity: [0, 1],
@@ -276,7 +277,6 @@
             { time: 35, text: "Nên là...", clearAt: 38 }
         ];
 
-        /* --- HÀM TÁCH CHỮ --- */
         function splitAndAnimate(text) {
             const words = text.split(' ');
             const html = words.map(word => {
@@ -310,7 +310,6 @@
                 const scene = timeline.find(item => item.time === t); if (scene) splitAndAnimate(scene.text);
                 const clearScene = timeline.find(item => item.clearAt === t); if (clearScene) clearText();
                 
-                // GIÂY 40: CHỐT HẠ
                 if (t >= 40) {
                     clearInterval(checkTime); mainText.innerHTML = "";
                     
@@ -327,7 +326,6 @@
             }, 1000);
         }
 
-        /* --- NÚT TỪ CHỐI "LẦY LỘI" --- */
         function moveButton(btn) {
             const w = window.innerWidth - 150;
             const h = window.innerHeight - 150;
@@ -348,19 +346,13 @@
 
         /* --- HÀNH ĐỘNG KHI ĐỒNG Ý --- */
         function accepted() {
-            localStorage.setItem('isDuongAccepted_v1', 'true');
+            localStorage.setItem('isDuongAccepted_v2', 'true');
             
+            // Tắt nút hỏi ngay lập tức
             askSection.style.display = 'none'; 
             mainText.style.display = 'none';
-            finalMessage.style.display = 'block';
             
-            // Hiện bảng chốt đơn
-            anime({ targets: '#final-message', opacity: [0, 1], scale: [0.8, 1], duration: 1000, easing: 'easeOutElastic(1, .6)' });
-            
-            // Bật hiệu ứng 3D siêu ảo diệu ở background
-            show3DEffect();
-            
-            // Mưa tim nhiều hơn
+            // 1. CHUẨN BỊ MƯA TIM TRƯỚC
             for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
                     let heart = document.createElement('div'); heart.className = 'bg-heart'; heart.innerHTML = '❤️';
@@ -369,6 +361,15 @@
                     document.body.appendChild(heart);
                 }, i * 50);
             }
+            
+            // 2. BẬT HIỆU ỨNG 3D VÀ ĐỂ TRÌNH DIỄN
+            show3DEffect();
+            
+            // 3. ĐỢI 5 GIÂY XEM 3D RỒI MỚI CHỐT BẢNG THÔNG BÁO
+            setTimeout(() => {
+                finalMessage.style.display = 'block';
+                anime({ targets: '#final-message', opacity: [0, 1], scale: [0.8, 1], duration: 1000, easing: 'easeOutElastic(1, .6)' });
+            }, 5000); // 5000 milliseconds = 5 giây trình diễn 3D
         }
 
         function createHeartRain() {
