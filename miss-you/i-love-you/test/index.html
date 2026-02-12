@@ -3,82 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Album Kỷ Niệm Lung Linh</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500&display=swap" rel="stylesheet">
+    <title>Album Kỷ Niệm - Nguyễn Bắc Sơn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-pink: #ffb7c5;
-            --deep-pink: #ff8fa3;
+            --primary-color: #ff9eb5;
             --book-width: 320px;
             --book-height: 480px;
+            --anim-speed: 0.8s;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: linear-gradient(135deg, #fff0f3 0%, #ffe3e8 100%);
+            background-color: #ffe6ea;
+            background-image: radial-gradient(circle, #fff0f3 0%, #ffc2d1 100%);
             height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
+            font-family: sans-serif;
             overflow: hidden;
-            font-family: 'Quicksand', sans-serif;
+            perspective: 1500px;
         }
 
-        /* --- Canvas cho hiệu ứng mưa tim --- */
-        #heart-canvas {
-            position: absolute;
+        /* --- MÀN HÌNH CHỜ (INTRO) --- */
+        #intro-screen {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Để không chặn click vào sách */
-            z-index: 0;
+            background: rgba(255, 230, 234, 0.95);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease;
         }
 
-        /* --- Sân khấu 3D --- */
-        .stage {
-            perspective: 2000px;
-            position: relative;
-            z-index: 10;
+        .heart-btn {
+            font-size: 80px;
+            cursor: pointer;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 80, 0.5));
+            animation: beat 1.2s infinite;
+            background: none;
+            border: none;
+            outline: none;
+            transition: transform 0.3s;
         }
 
-        /* --- Cuốn sách biết bay --- */
+        .heart-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .click-text {
+            margin-top: 20px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 24px;
+            color: #d6336c;
+            animation: fadeIn 2s infinite;
+        }
+
+        @keyframes beat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.3); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
+        }
+
+        /* --- SÂN KHẤU SÁCH --- */
         .book-container {
             position: relative;
             width: var(--book-width);
             height: var(--book-height);
             transform-style: preserve-3d;
-            animation: floatBook 4s ease-in-out infinite; /* Hiệu ứng bay */
+            opacity: 0;
+            transform: scale(0.8) translateY(50px);
+            transition: all 1s ease;
         }
 
-        @keyframes floatBook {
-            0%, 100% { transform: translateY(0) rotateX(5deg); }
-            50% { transform: translateY(-20px) rotateX(10deg); }
+        /* Hiệu ứng khi sách hiện ra */
+        .book-container.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
         }
 
-        /* --- Bóng đổ dưới sách (co giãn theo sách) --- */
-        .shadow {
-            position: absolute;
-            bottom: -50px;
-            left: 10%;
-            width: 80%;
-            height: 20px;
-            background: rgba(0, 0, 0, 0.15);
-            border-radius: 50%;
-            filter: blur(10px);
-            animation: shadowScale 4s ease-in-out infinite;
-            z-index: 5;
-        }
-
-        @keyframes shadowScale {
-            0%, 100% { transform: scale(1); opacity: 0.2; }
-            50% { transform: scale(0.8); opacity: 0.1; }
-        }
-
-        /* --- Các trang sách --- */
-        .page {
+        .sheet {
             position: absolute;
             top: 0;
             left: 0;
@@ -86,130 +99,122 @@
             height: 100%;
             transform-origin: left center;
             transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); /* Hiệu ứng nảy (Elastic) */
+            transition: transform var(--anim-speed) cubic-bezier(0.645, 0.045, 0.355, 1);
             cursor: pointer;
-            border-radius: 5px 15px 15px 5px;
         }
 
+        /* --- THIẾT KẾ BÌA SÁCH (COVER) --- */
+        .sheet.cover .front {
+            background: #a63e4b; /* Màu đỏ đô sang trọng */
+            border: 2px solid #8a2be2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5); /* Bóng đổ tạo độ sâu */
+            border-radius: 5px 15px 15px 5px;
+        }
+        
+        .sheet.cover .front::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 2px solid #ffd700; /* Viền vàng kim loại */
+            border-radius: 5px;
+        }
+
+        .book-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-align: center;
+            color: #ffd700; /* Màu vàng kim */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+            z-index: 10;
+        }
+
+        .book-subtitle {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            color: #ffcccc;
+            z-index: 10;
+        }
+
+        /* --- THIẾT KẾ TRANG NỘI DUNG (CONTENT) --- */
         .front, .back {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            overflow: hidden;
             border-radius: 5px 15px 15px 5px;
-            background: #fff;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.05); /* Bóng mờ bên trong */
-        }
-
-        /* Mặt trước: Ảnh */
-        .front {
-            z-index: 2;
-            padding: 10px;
-            background: #fff;
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-
-        .img-wrapper {
-            width: 100%;
-            height: 85%;
             overflow: hidden;
-            border-radius: 5px;
+            background: #fff;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        .img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s;
-        }
-
-        /* Hover vào ảnh sẽ zoom nhẹ */
-        .page:hover .img-wrapper img {
-            transform: scale(1.1);
-        }
-
-        .caption {
-            height: 15%;
+        .front {
+            z-index: 2;
+            padding: 15px; /* Viền trắng kiểu Polaroid */
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #ff6b81;
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.5rem;
         }
 
-        /* Mặt sau: Họa tiết */
+        .front img {
+            width: 100%;
+            height: 90%;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
         .back {
             transform: rotateY(180deg);
             z-index: 1;
-            background-color: var(--primary-pink);
-            background-image: 
-                radial-gradient(circle, #fff 10%, transparent 11%),
-                radial-gradient(circle at 40% 40%, #fff 5%, transparent 6%);
-            background-size: 30px 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-left: 5px solid rgba(0,0,0,0.05); /* Giả gáy sách */
+            background-color: #f8f8f8;
+            background-image: radial-gradient(#ffb7c5 20%, transparent 20%);
+            background-size: 20px 20px;
         }
 
-        .back::after {
-            content: "❤️";
-            font-size: 4rem;
-            opacity: 0.5;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
+        /* --- CLASS TRẠNG THÁI --- */
         .flipped {
             transform: rotateY(-180deg);
         }
 
-        /* Music Player nhỏ xinh */
-        .music-player {
+        /* Nút tắt nhạc nhỏ góc màn hình */
+        .music-control {
             position: fixed;
             bottom: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 10px 20px;
-            border-radius: 30px;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            right: 20px;
+            background: rgba(255,255,255,0.7);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
             z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            color: #ff6b81;
+            display: none; /* Hiện sau khi vào sách */
         }
         
-        .play-icon {
-            animation: spin 3s linear infinite;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
     </style>
 </head>
 <body>
 
-    <canvas id="heart-canvas"></canvas>
+    <audio id="bg-music" loop>
+        <source src="https://nguyenbacson.io.vn/pictures.mp3" type="audio/mpeg">
+    </audio>
 
-    <div class="stage">
-        <div class="book-container" id="album">
-            </div>
-        <div class="shadow"></div>
+    <div id="intro-screen">
+        <button class="heart-btn" onclick="startExperience()">❤️</button>
+        <div class="click-text">Nhấn vào trái tim để mở sách</div>
     </div>
 
-    <div class="music-player">
-        <span class="play-icon">💿</span>
-        <span>Nguyễn Bắc Sơn's Memories</span>
-    </div>
+    <div class="book-container" id="book">
+        </div>
+
+    <div class="music-control" onclick="toggleMusic()">🎵</div>
 
     <script>
         // --- CẤU HÌNH ---
@@ -231,116 +236,103 @@
             "https://nguyenbacson.io.vn/miss-you/15.jpeg"
         ];
 
-        const captions = [
-            "Hello World", "Kỷ niệm đầu", "Ngày nắng đẹp", "Nụ cười ấy", "Mộng mơ", 
-            "Lang thang", "Góc phố quen", "Yêu thương", "Bầu trời xanh", "Khoảnh khắc",
-            "Nhớ nhung", "Bình yên", "Ngày mưa", "Ánh mắt", "Mãi bên nhau"
-        ];
+        const bookContainer = document.getElementById('book');
+        const introScreen = document.getElementById('intro-screen');
+        const audio = document.getElementById('bg-music');
+        const musicBtn = document.querySelector('.music-control');
+        let pagesElement = [];
 
-        // --- XỬ LÝ SÁCH ---
-        const album = document.getElementById('album');
-        const totalSheets = images.length;
+        // --- HÀM KHỞI TẠO ---
+        function startExperience() {
+            // 1. Phát nhạc
+            audio.play().catch(error => console.log("Trình duyệt chặn autoplay, cần tương tác người dùng"));
+            
+            // 2. Ẩn màn hình chờ
+            introScreen.style.opacity = '0';
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+                musicBtn.style.display = 'block';
+            }, 1000);
 
-        images.forEach((src, i) => {
-            const page = document.createElement('div');
-            page.classList.add('page');
-            page.style.zIndex = totalSheets - i;
-            
-            // Tạo độ nghiêng nhẹ ngẫu nhiên cho mỗi trang để trông tự nhiên như tập giấy cũ
-            const randomTilt = Math.random() * 2 - 1; // Từ -1 đến 1 độ
-            
-            page.innerHTML = `
-                <div class="front" style="transform: rotate(${randomTilt}deg)">
-                    <div class="img-wrapper">
-                        <img src="${src}" alt="Memory ${i+1}">
-                    </div>
-                    <div class="caption">${captions[i] || 'Lovely Day'}</div>
+            // 3. Hiện sách
+            createBook();
+            bookContainer.classList.add('visible');
+        }
+
+        function createBook() {
+            let totalSheets = images.length + 1; // +1 cho trang bìa riêng
+            let zIndex = totalSheets;
+
+            // --- A. TẠO BÌA SÁCH (Hard Cover) ---
+            const coverSheet = document.createElement('div');
+            coverSheet.classList.add('sheet', 'cover');
+            coverSheet.style.zIndex = zIndex--;
+            coverSheet.innerHTML = `
+                <div class="front">
+                    <div class="book-title">Miss You</div>
+                    <div class="book-subtitle">Nguyễn Bắc Sơn</div>
+                    <div style="margin-top:20px; font-size:30px">❤️</div>
                 </div>
                 <div class="back"></div>
             `;
+            // Sự kiện lật bìa
+            setupFlipEvent(coverSheet, totalSheets, 0);
+            bookContainer.appendChild(coverSheet);
+            pagesElement.push(coverSheet);
 
-            page.addEventListener('click', function() {
-                if(this.classList.contains('flipped')) {
+
+            // --- B. TẠO NỘI DUNG (Inner Pages - Ảnh) ---
+            images.forEach((imgSrc, i) => {
+                const page = document.createElement('div');
+                page.classList.add('sheet');
+                page.style.zIndex = zIndex--;
+
+                page.innerHTML = `
+                    <div class="front">
+                        <img src="${imgSrc}" loading="lazy" alt="Memory">
+                    </div>
+                    <div class="back"></div>
+                `;
+
+                // i + 1 vì trang 0 là bìa
+                setupFlipEvent(page, totalSheets, i + 1); 
+                
+                bookContainer.appendChild(page);
+                pagesElement.push(page);
+            });
+        }
+
+        // --- HÀM XỬ LÝ LẬT TRANG (Z-INDEX LOGIC) ---
+        function setupFlipEvent(element, total, index) {
+            element.onclick = function() {
+                if (this.classList.contains('flipped')) {
+                    // ĐÓNG LẠI (Lật về phải)
                     this.classList.remove('flipped');
-                    setTimeout(() => { this.style.zIndex = totalSheets - i; }, 400);
+                    
+                    // Delay z-index để animation chạy xong
+                    setTimeout(() => {
+                        this.style.zIndex = total - index;
+                    }, 400); // 1/2 thời gian animation
                 } else {
+                    // MỞ RA (Lật về trái)
                     this.classList.add('flipped');
-                    this.style.zIndex = i + 1;
+                    
+                    // Khi nằm bên trái, nó phải đè lên các trang trước nó
+                    this.style.zIndex = index + 1;
                 }
-            });
-
-            album.appendChild(page);
-        });
-
-
-        // --- HIỆU ỨNG MƯA TIM (CANVAS) ---
-        const canvas = document.getElementById('heart-canvas');
-        const ctx = canvas.getContext('2d');
-        
-        let width, height;
-        let hearts = [];
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Heart {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height - height;
-                this.size = Math.random() * 15 + 5;
-                this.speed = Math.random() * 2 + 1;
-                this.opacity = Math.random() * 0.5 + 0.3;
-                this.color = `rgba(255, 183, 197, ${this.opacity})`;
-                this.rotation = Math.random() * 360;
-                this.rotationSpeed = (Math.random() - 0.5) * 2;
-            }
-
-            update() {
-                this.y += this.speed;
-                this.rotation += this.rotationSpeed;
-                if (this.y > height) {
-                    this.y = -50;
-                    this.x = Math.random() * width;
-                }
-            }
-
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation * Math.PI / 180);
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                // Vẽ hình trái tim bằng Bezier curves
-                ctx.moveTo(0, 0);
-                ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size, this.size / 3, 0, this.size);
-                ctx.bezierCurveTo(this.size, this.size / 3, this.size / 2, -this.size / 2, 0, 0);
-                ctx.fill();
-                ctx.restore();
-            }
+            };
         }
 
-        function initHearts() {
-            for (let i = 0; i < 50; i++) { // Số lượng tim
-                hearts.push(new Heart());
+        // Tắt/Bật nhạc
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                musicBtn.innerText = "🎵";
+            } else {
+                audio.pause();
+                musicBtn.innerText = "🔇";
             }
         }
-
-        function animateHearts() {
-            ctx.clearRect(0, 0, width, height);
-            hearts.forEach(heart => {
-                heart.update();
-                heart.draw();
-            });
-            requestAnimationFrame(animateHearts);
-        }
-
-        initHearts();
-        animateHearts();
-
     </script>
 </body>
 </html>
