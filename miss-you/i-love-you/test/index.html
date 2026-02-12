@@ -3,147 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Album 15 Tờ Kỷ Niệm</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <title>Album Kỷ Niệm Lung Linh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #ffc2d1; /* Hồng nền */
-            --card-width: 300px;
-            --card-height: 450px;
+            --primary-pink: #ffb7c5;
+            --deep-pink: #ff8fa3;
+            --book-width: 320px;
+            --book-height: 480px;
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background-color: var(--bg-color);
-            /* Tạo nền sọc chéo nhẹ nhàng */
-            background-image: repeating-linear-gradient(45deg, #ffc2d1 25%, #ffe3e8 25%, #ffe3e8 50%, #ffc2d1 50%, #ffc2d1 75%, #ffe3e8 75%, #ffe3e8 100%);
-            background-size: 40px 40px;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffe3e8 100%);
             height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            font-family: sans-serif;
-            perspective: 1500px; /* Quan trọng để tạo độ sâu 3D */
+            font-family: 'Quicksand', sans-serif;
         }
 
-        .album-container {
-            position: relative;
-            width: var(--card-width);
-            height: var(--card-height);
-            transform-style: preserve-3d;
-        }
-
-        /* Thiết kế chung cho mỗi tờ giấy */
-        .sheet {
+        /* --- Canvas cho hiệu ứng mưa tim --- */
+        #heart-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            transform-origin: left center; /* Điểm xoay là gáy sách bên trái */
-            transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            pointer-events: none; /* Để không chặn click vào sách */
+            z-index: 0;
         }
 
-        /* Mặt trước và mặt sau của tờ giấy */
+        /* --- Sân khấu 3D --- */
+        .stage {
+            perspective: 2000px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- Cuốn sách biết bay --- */
+        .book-container {
+            position: relative;
+            width: var(--book-width);
+            height: var(--book-height);
+            transform-style: preserve-3d;
+            animation: floatBook 4s ease-in-out infinite; /* Hiệu ứng bay */
+        }
+
+        @keyframes floatBook {
+            0%, 100% { transform: translateY(0) rotateX(5deg); }
+            50% { transform: translateY(-20px) rotateX(10deg); }
+        }
+
+        /* --- Bóng đổ dưới sách (co giãn theo sách) --- */
+        .shadow {
+            position: absolute;
+            bottom: -50px;
+            left: 10%;
+            width: 80%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 50%;
+            filter: blur(10px);
+            animation: shadowScale 4s ease-in-out infinite;
+            z-index: 5;
+        }
+
+        @keyframes shadowScale {
+            0%, 100% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(0.8); opacity: 0.1; }
+        }
+
+        /* --- Các trang sách --- */
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: left center;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); /* Hiệu ứng nảy (Elastic) */
+            cursor: pointer;
+            border-radius: 5px 15px 15px 5px;
+        }
+
         .front, .back {
             position: absolute;
             width: 100%;
             height: 100%;
-            backface-visibility: hidden; /* Ẩn mặt sau khi đang nhìn mặt trước */
-            border-radius: 5px;
+            backface-visibility: hidden;
             overflow: hidden;
-            border: 4px solid #fff; /* Viền trắng ảnh */
+            border-radius: 5px 15px 15px 5px;
             background: #fff;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05); /* Bóng mờ bên trong */
         }
 
-        /* --- MẶT TRƯỚC: CHỨA ẢNH --- */
+        /* Mặt trước: Ảnh */
         .front {
             z-index: 2;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.1);
         }
 
-        .front img {
+        .img-wrapper {
+            width: 100%;
+            height: 85%;
+            overflow: hidden;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .img-wrapper img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.5s;
         }
 
-        /* --- MẶT SAU: TRANG TRÍ --- */
+        /* Hover vào ảnh sẽ zoom nhẹ */
+        .page:hover .img-wrapper img {
+            transform: scale(1.1);
+        }
+
+        .caption {
+            height: 15%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff6b81;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+        }
+
+        /* Mặt sau: Họa tiết */
         .back {
+            transform: rotateY(180deg);
             z-index: 1;
-            transform: rotateY(180deg); /* Xoay sẵn 180 độ */
-            background-color: #fffdfo;
-            /* Họa tiết trái tim nhỏ ở mặt sau */
-            background-image: radial-gradient(#ff9eb5 15%, transparent 16%), radial-gradient(#ff9eb5 15%, transparent 16%);
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
+            background-color: var(--primary-pink);
+            background-image: 
+                radial-gradient(circle, #fff 10%, transparent 11%),
+                radial-gradient(circle at 40% 40%, #fff 5%, transparent 6%);
+            background-size: 30px 30px;
             display: flex;
             justify-content: center;
             align-items: center;
+            border-left: 5px solid rgba(0,0,0,0.05); /* Giả gáy sách */
         }
 
         .back::after {
-            content: "Miss You";
-            font-family: 'Dancing Script', cursive;
-            font-size: 2em;
-            color: #d4889e;
-            background: rgba(255,255,255,0.8);
-            padding: 10px 20px;
-            border-radius: 50px;
-            transform: rotateY(180deg); /* Chữ phải xoay ngược lại để khi lật trang đọc được xuôi */
+            content: "❤️";
+            font-size: 4rem;
+            opacity: 0.5;
+            animation: pulse 2s infinite;
         }
-        
-        /* Hiệu ứng bóng đổ khi trang lật lên */
-        .sheet.flipped {
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .flipped {
             transform: rotateY(-180deg);
         }
 
-        /* Đánh số trang nhỏ */
-        .page-number {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.5);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-        }
-
-        /* --- BÌA (Ảnh 1) --- */
-        .sheet:first-child .front {
-            border: 6px solid #ff9eb5; /* Viền bìa dày hơn và màu hồng */
-        }
-        .sheet:first-child .front::before {
-            content: "My Album";
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+        /* Music Player nhỏ xinh */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
             background: rgba(255, 255, 255, 0.8);
-            padding: 5px 20px;
-            border-radius: 20px;
-            font-family: 'Dancing Script', cursive;
-            font-weight: bold;
-            font-size: 1.5em;
-            color: #ff5e83;
-            z-index: 10;
+            padding: 10px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #ff6b81;
         }
+        
+        .play-icon {
+            animation: spin 3s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
     </style>
 </head>
 <body>
 
-    <div class="album-container" id="album">
-        </div>
+    <canvas id="heart-canvas"></canvas>
+
+    <div class="stage">
+        <div class="book-container" id="album">
+            </div>
+        <div class="shadow"></div>
+    </div>
+
+    <div class="music-player">
+        <span class="play-icon">💿</span>
+        <span>Nguyễn Bắc Sơn's Memories</span>
+    </div>
 
     <script>
+        // --- CẤU HÌNH ---
         const images = [
             "https://nguyenbacson.io.vn/miss-you/1.jpeg",
             "https://nguyenbacson.io.vn/miss-you/2.jpeg",
@@ -162,53 +231,116 @@
             "https://nguyenbacson.io.vn/miss-you/15.jpeg"
         ];
 
+        const captions = [
+            "Hello World", "Kỷ niệm đầu", "Ngày nắng đẹp", "Nụ cười ấy", "Mộng mơ", 
+            "Lang thang", "Góc phố quen", "Yêu thương", "Bầu trời xanh", "Khoảnh khắc",
+            "Nhớ nhung", "Bình yên", "Ngày mưa", "Ánh mắt", "Mãi bên nhau"
+        ];
+
+        // --- XỬ LÝ SÁCH ---
         const album = document.getElementById('album');
         const totalSheets = images.length;
 
-        // Tạo từng tờ giấy
-        images.forEach((imgSrc, index) => {
-            const sheet = document.createElement('div');
-            sheet.classList.add('sheet');
+        images.forEach((src, i) => {
+            const page = document.createElement('div');
+            page.classList.add('page');
+            page.style.zIndex = totalSheets - i;
             
-            // QUAN TRỌNG: Sắp xếp Z-index
-            // Tờ đầu tiên (index 0) phải nằm trên cùng (z-index cao nhất)
-            // Tờ cuối cùng nằm dưới đáy
-            sheet.style.zIndex = totalSheets - index;
-
-            // HTML nội dung tờ giấy
-            sheet.innerHTML = `
-                <div class="front">
-                    <img src="${imgSrc}" alt="Ảnh ${index + 1}">
-                    <span class="page-number">${index + 1}/${totalSheets}</span>
-                </div>
-                <div class="back">
+            // Tạo độ nghiêng nhẹ ngẫu nhiên cho mỗi trang để trông tự nhiên như tập giấy cũ
+            const randomTilt = Math.random() * 2 - 1; // Từ -1 đến 1 độ
+            
+            page.innerHTML = `
+                <div class="front" style="transform: rotate(${randomTilt}deg)">
+                    <div class="img-wrapper">
+                        <img src="${src}" alt="Memory ${i+1}">
                     </div>
+                    <div class="caption">${captions[i] || 'Lovely Day'}</div>
+                </div>
+                <div class="back"></div>
             `;
 
-            // Xử lý sự kiện click
-            sheet.addEventListener('click', function() {
-                if (this.classList.contains('flipped')) {
-                    // Đang lật rồi -> Đóng lại (về bên phải)
+            page.addEventListener('click', function() {
+                if(this.classList.contains('flipped')) {
                     this.classList.remove('flipped');
-                    
-                    // Khi đóng lại, nó phải đè lên các trang bên phải
-                    // Trả lại z-index gốc
-                    setTimeout(() => {
-                        this.style.zIndex = totalSheets - index;
-                    }, 500); // Đợi nửa chừng hiệu ứng rồi mới đổi z-index để mượt hơn
-                    
+                    setTimeout(() => { this.style.zIndex = totalSheets - i; }, 400);
                 } else {
-                    // Chưa lật -> Lật sang trái (Mở ra)
                     this.classList.add('flipped');
-                    
-                    // Khi lật sang trái, nó phải nằm TRÊN các trang đã lật trước đó
-                    // Ví dụ: Trang 2 lật sang phải nằm đè lên trang 1 đã lật
-                    this.style.zIndex = index + 1; // Logic Z-index đảo ngược cho chồng bên trái
+                    this.style.zIndex = i + 1;
                 }
             });
 
-            album.appendChild(sheet);
+            album.appendChild(page);
         });
+
+
+        // --- HIỆU ỨNG MƯA TIM (CANVAS) ---
+        const canvas = document.getElementById('heart-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let hearts = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Heart {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height - height;
+                this.size = Math.random() * 15 + 5;
+                this.speed = Math.random() * 2 + 1;
+                this.opacity = Math.random() * 0.5 + 0.3;
+                this.color = `rgba(255, 183, 197, ${this.opacity})`;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() - 0.5) * 2;
+            }
+
+            update() {
+                this.y += this.speed;
+                this.rotation += this.rotationSpeed;
+                if (this.y > height) {
+                    this.y = -50;
+                    this.x = Math.random() * width;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                // Vẽ hình trái tim bằng Bezier curves
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size, this.size / 3, 0, this.size);
+                ctx.bezierCurveTo(this.size, this.size / 3, this.size / 2, -this.size / 2, 0, 0);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function initHearts() {
+            for (let i = 0; i < 50; i++) { // Số lượng tim
+                hearts.push(new Heart());
+            }
+        }
+
+        function animateHearts() {
+            ctx.clearRect(0, 0, width, height);
+            hearts.forEach(heart => {
+                heart.update();
+                heart.draw();
+            });
+            requestAnimationFrame(animateHearts);
+        }
+
+        initHearts();
+        animateHearts();
+
     </script>
 </body>
 </html>
