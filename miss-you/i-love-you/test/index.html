@@ -2,330 +2,250 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Premium Photobook - Nguyễn Bắc Sơn</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Dancing+Script:wght@700&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, touch-action=none">
+    <title>Gửi Dương 01/03 ❤️</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
     <style>
         /* ================= CẤU HÌNH GỐC ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         :root {
             --book-width: 340px;
             --book-height: 480px;
-            --page-speed: 1s;
-            --cover-color: #8a1c31; /* Đỏ đô cực sang */
+            --page-speed: 0.8s;
+            --cover-color: #8a1c31; 
             --bg-color: #ffd1dc;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
+        body, html {
             background-color: var(--bg-color);
             background: radial-gradient(circle at 50% 50%, #fff0f3 0%, #ffc2d1 60%, #ff9eb5 100%);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Montserrat', sans-serif;
+            height: 100%; width: 100%;
             overflow: hidden;
+            font-family: 'Quicksand', sans-serif;
             perspective: 2000px; 
+            transition: background 2s ease;
         }
 
-        /* ================= MÀN HÌNH CHỜ (INTRO) ================= */
+        /* Họa tiết nền chung */
+        .bg-pattern {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px);
+            background-size: 20px 20px; z-index: 0; pointer-events: none;
+            transition: opacity 2s ease;
+        }
+
+        /* ================= PHẦN 1: MÀN HÌNH CHỜ & SÁCH ẢNH ================= */
         #intro {
-            position: fixed;
-            inset: 0;
-            background: rgba(255, 240, 243, 0.98);
-            backdrop-filter: blur(10px);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            position: fixed; inset: 0;
+            background: rgba(255, 240, 243, 0.98); backdrop-filter: blur(10px);
+            z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
             transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .heart-wrapper {
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        
+        .heart-wrapper { cursor: pointer; transition: transform 0.3s; }
         .heart-wrapper:hover { transform: scale(1.1); }
-
-        .heart-btn {
-            font-size: 80px;
-            filter: drop-shadow(0 15px 25px rgba(255, 50, 100, 0.4));
-            animation: heartbeat 1.5s infinite;
-        }
-
+        .heart-btn { font-size: 80px; filter: drop-shadow(0 15px 25px rgba(255, 50, 100, 0.4)); animation: heartbeat 1.5s infinite; }
         .intro-text {
-            margin-top: 30px;
-            font-family: 'Dancing Script', cursive;
-            font-size: 28px;
-            color: #d6336c;
-            letter-spacing: 2px;
-            opacity: 0.8;
-            animation: float 3s ease-in-out infinite;
+            margin-top: 30px; font-family: 'Dancing Script', cursive; font-size: 28px;
+            color: #d6336c; letter-spacing: 2px; opacity: 0.8; animation: float 3s ease-in-out infinite;
         }
 
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            10%, 30% { transform: scale(1.15); }
-            20% { transform: scale(1.05); }
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        /* ================= TRÌNH PHÁT NHẠC (VINYL) ================= */
+        /* Đĩa than nghe nhạc */
         #player {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            display: none;
-            align-items: center;
-            gap: 15px;
-            z-index: 1000;
-            background: rgba(255,255,255,0.6);
-            padding: 8px 20px 8px 8px;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            backdrop-filter: blur(5px);
-            cursor: pointer;
+            position: fixed; top: 30px; right: 30px; display: none; align-items: center; gap: 15px;
+            z-index: 1000; background: rgba(255,255,255,0.6); padding: 8px 20px 8px 8px;
+            border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); backdrop-filter: blur(5px);
+            cursor: pointer; transition: opacity 1s;
         }
-
         .vinyl {
-            width: 40px;
-            height: 40px;
-            background: #111;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 2px solid #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-            animation: spin 4s linear infinite;
-            animation-play-state: paused; 
+            width: 40px; height: 40px; background: #111; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; border: 2px solid #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2); animation: spin 4s linear infinite; animation-play-state: paused; 
         }
-        .vinyl::after {
-            content: '';
-            width: 12px;
-            height: 12px;
-            background: #ff9eb5;
-            border-radius: 50%;
-            border: 1px solid #333;
-        }
+        .vinyl::after { content: ''; width: 12px; height: 12px; background: #ff9eb5; border-radius: 50%; border: 1px solid #333; }
         .vinyl.playing { animation-play-state: running; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .track-name { font-size: 13px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 1px; }
 
-        .track-name {
-            font-size: 13px;
-            font-weight: 600;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* ================= SÂN KHẤU TỐI ƯU CÂN BẰNG ================= */
+        /* Sân khấu sách */
         .stage {
-            position: relative;
-            width: var(--book-width);
-            height: var(--book-height);
-            /* Khi đóng: Nằm chính giữa trục X */
-            transform: translateX(0);
-            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
-            opacity: 0;
-            pointer-events: none; 
+            position: relative; width: var(--book-width); height: var(--book-height);
+            transform: translateX(0); transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 1s;
+            opacity: 0; pointer-events: none; z-index: 10; margin: auto;
+            position: absolute; top: 50%; left: 50%; margin-top: calc(var(--book-height) / -2); margin-left: calc(var(--book-width) / -2);
         }
-
-        /* Khi mở sách: Dịch trục X sang phải 50% để gáy sách vào tâm */
-        .stage.opened {
-            transform: translateX(50%);
-        }
-
-        .stage.visible {
-            opacity: 1;
-            pointer-events: all;
-        }
-
+        .stage.opened { transform: translateX(50%); }
+        .stage.visible { opacity: 1; pointer-events: all; }
         .stage::after {
-            content: '';
-            position: absolute;
-            bottom: -40px;
-            left: 0;
-            width: 200%;
-            height: 30px;
+            content: ''; position: absolute; bottom: -40px; left: 0; width: 200%; height: 30px;
             background: radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, transparent 70%);
-            transform: translateX(-25%);
-            z-index: -1;
-            transition: opacity 1s, transform 1s;
+            transform: translateX(-25%); z-index: -1; transition: opacity 1s, transform 1s;
         }
 
-        .book {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-        }
-
-        /* ================= CÁC TRANG GIẤY ================= */
+        .book { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; }
         .page {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transform-origin: left center;
-            transform-style: preserve-3d;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            transform-origin: left center; transform-style: preserve-3d;
             transition: transform var(--page-speed) cubic-bezier(0.645, 0.045, 0.355, 1);
-            cursor: pointer;
-            will-change: transform;
+            cursor: pointer; will-change: transform;
         }
-
         .front, .back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0; left: 0;
-            backface-visibility: hidden;
-            border-radius: 2px 8px 8px 2px;
-            overflow: hidden;
-            background-color: #faf9f6; 
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+            backface-visibility: hidden; border-radius: 2px 8px 8px 2px;
+            overflow: hidden; background-color: #faf9f6; 
         }
-
         .front::before {
             content: ''; position: absolute; top: 0; left: 0; width: 40px; height: 100%;
-            background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.02) 40%, transparent 100%);
-            z-index: 10; pointer-events: none;
+            background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.02) 40%, transparent 100%); z-index: 10; pointer-events: none;
         }
         .back::before {
             content: ''; position: absolute; top: 0; right: 0; width: 40px; height: 100%;
-            background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.02) 40%, transparent 100%);
-            z-index: 10; pointer-events: none;
+            background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.02) 40%, transparent 100%); z-index: 10; pointer-events: none;
         }
 
-        /* ================= BÌA SÁCH (COVER) ================= */
+        /* Bìa sách */
         .page.cover .front {
-            background: var(--cover-color);
-            background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3h1v1H1V3zm2-2h1v1H3V1z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-            border: 1px solid rgba(0,0,0,0.2);
-            box-shadow: inset 4px 0 10px rgba(0,0,0,0.3), inset -1px 0 2px rgba(255,255,255,0.3);
-            border-radius: 4px 12px 12px 4px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            background: var(--cover-color); background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3h1v1H1V3zm2-2h1v1H3V1z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            border: 1px solid rgba(0,0,0,0.2); box-shadow: inset 4px 0 10px rgba(0,0,0,0.3), inset -1px 0 2px rgba(255,255,255,0.3);
+            border-radius: 4px 12px 12px 4px; display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-
         .cover-frame {
-            position: absolute;
-            top: 25px; left: 25px; right: 25px; bottom: 25px;
-            border: 2px solid #d4af37; 
-            outline: 1px solid #d4af37;
-            outline-offset: -6px;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            text-align: center;
+            position: absolute; top: 25px; left: 25px; right: 25px; bottom: 25px;
+            border: 2px solid #d4af37; outline: 1px solid #d4af37; outline-offset: -6px; border-radius: 4px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center;
         }
+        .cover-title { font-family: 'Cinzel', serif; font-size: 2.2rem; color: #fcebc0; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); margin-bottom: 10px; letter-spacing: 2px; }
+        .cover-subtitle { font-family: 'Dancing Script', cursive; font-size: 1.8rem; color: #ff9eb5; }
+        .cover-year { position: absolute; bottom: 20px; font-size: 12px; color: #d4af37; letter-spacing: 3px; }
+        .page.cover .back { background: #2a0810; border-radius: 12px 4px 4px 12px; }
 
-        .cover-title {
-            font-family: 'Cinzel', serif;
-            font-size: 2.2rem;
-            color: #fcebc0;
-            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
-
-        .cover-subtitle {
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.8rem;
-            color: #ff9eb5;
-        }
-        
-        .cover-year {
-            position: absolute;
-            bottom: 20px;
-            font-size: 12px;
-            color: #d4af37;
-            letter-spacing: 3px;
-        }
-
-        .page.cover .back {
-            background: #2a0810; 
-            border-radius: 12px 4px 4px 12px;
-        }
-
-        /* ================= RUỘT SÁCH (ẢNH) ================= */
+        /* Ruột sách */
         .back { transform: rotateY(180deg); }
         .page.flipped { transform: rotateY(-180deg); }
+        .front.content, .back.content { padding: 20px; display: flex; flex-direction: column; box-shadow: inset 0 0 20px rgba(0,0,0,0.02); }
+        .photo-frame { width: 100%; height: 90%; background: #fff; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 2px; }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; border-radius: 2px; }
+        .page-num { height: 10%; display: flex; justify-content: center; align-items: flex-end; font-size: 12px; color: #aaa; font-family: 'Montserrat', sans-serif; }
+        .back.content { background-color: #fdfaf6; background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0zM9 5h2v2H9V5zm0 4h2v6H9V9z' fill='%23ff9eb5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E"); }
 
-        .front.content, .back.content {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+
+        /* ================= PHẦN 2: TỎ TÌNH (CONFESSION) ================= */
+        #confession-stage {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 20; display: none; flex-direction: column;
+            justify-content: center; align-items: center; padding: 10px; text-align: center;
         }
 
-        .photo-frame {
-            width: 100%;
-            height: 90%;
-            background: #fff;
-            padding: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border-radius: 2px;
+        #text-wrapper { min-height: 200px; display: flex; align-items: center; justify-content: center; width: 100%; padding: 0 15px; }
+        #main-text {
+            font-family: 'Dancing Script', cursive; font-size: clamp(24px, 7vw, 48px); 
+            line-height: 1.4; color: #ffffff; text-shadow: 2px 2px 0px #ff5e88, 0 0 15px rgba(255, 0, 80, 0.5); width: 100%;
         }
+        .word { display: inline-block; white-space: nowrap; margin: 0 4px; }
+        .letter { display: inline-block; opacity: 0; transform: translateY(10px); }
 
-        .photo-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            pointer-events: none;
-            border-radius: 2px;
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.9); color: #ff0055;
+            padding: 12px 30px; border-radius: 50px; font-size: 1.1rem; font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 100, 150, 0.4); border: none; cursor: pointer; animation: pulse 2s infinite;
         }
+        
+        #ask-section { display: none; width: 100%; margin-top: 20px; }
+        .btn-group { display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%; }
+        .btn { width: 80%; max-width: 300px; padding: 16px; border-radius: 50px; border: none; font-weight: bold; font-size: 1.2rem; transition: 0.1s; cursor: pointer; }
+        #yes { background: #ff0055; color: white; box-shadow: 0 8px 20px rgba(255, 0, 85, 0.4); z-index: 100; }
+        #no { background: rgba(255,255,255,0.8); color: #555; font-size: 1rem; position: relative; touch-action: none; } /* Tránh lỗi cuộn khi bấm hụt trên đt */
 
-        .page-num {
-            height: 10%;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            font-size: 12px;
-            color: #aaa;
-            font-family: 'Montserrat', sans-serif;
+        /* ================= KỊCH BẢN TÂM THƯ ================= */
+        #letter-sequence {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50;
+            justify-content: center; align-items: center; flex-direction: column;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); opacity: 0; transition: opacity 1s;
         }
+        #loading-text { font-family: 'Dancing Script', cursive; font-size: 3rem; color: #ffb3c6; text-shadow: 0 0 25px #ff0055; animation: pulseFade 1.5s infinite; display: none; text-align: center; }
 
-        .back.content {
-            background-color: #fdfaf6;
-            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0zM9 5h2v2H9V5zm0 4h2v6H9V9z' fill='%23ff9eb5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        .envelope-container { 
+            display: none; position: relative; width: 300px; height: 190px; margin-top: 100px; 
+            animation: floatEnvelope 3s ease-in-out infinite alternate;
         }
+        .envelope { position: absolute; width: 100%; height: 100%; background: #e63946; border-radius: 0 0 10px 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); z-index: 3; }
+        .envelope:before {
+            content: ''; position: absolute; top: 0; left: 0;
+            border-left: 150px solid transparent; border-right: 150px solid transparent;
+            border-bottom: 100px solid #ff4d6d; border-top: 95px solid transparent; z-index: 3;
+        }
+        .flap {
+            position: absolute; top: 0; left: 0;
+            border-left: 150px solid transparent; border-right: 150px solid transparent;
+            border-top: 100px solid #d90429; border-bottom: 100px solid transparent;
+            transform-origin: top; transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 4; drop-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+        .flap.open { transform: rotateX(180deg); z-index: 1; }
 
-        /* ================= RESPONSIVE ĐIỆN THOẠI ================= */
+        .wax-seal {
+            position: absolute; top: 95px; left: 50%; transform: translate(-50%, -50%);
+            width: 40px; height: 40px; background: #800000; border-radius: 50%; z-index: 5;
+            box-shadow: inset 0 0 10px #4d0000, 0 5px 10px rgba(0,0,0,0.4);
+            display: flex; justify-content: center; align-items: center; color: #ff9999; font-size: 18px; transition: opacity 0.5s ease;
+        }
+        .wax-seal:before { content: '❤'; }
+        .flap.open + .wax-seal { opacity: 0; pointer-events: none; }
+        
+        .paper {
+            position: absolute; top: 10px; left: 5%; width: 90%; height: 320px; 
+            background-color: #fff9ec; background-image: repeating-linear-gradient(transparent, transparent 26px, #e0d8c8 26px, #e0d8c8 27px);
+            border-radius: 5px; box-shadow: 0 -5px 15px rgba(0,0,0,0.15); transition: transform 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 2; padding: 28px 15px 15px 15px; text-align: left; overflow: hidden; transform: translateY(0);
+        }
+        .paper.out { transform: translateY(-220px); } 
+        
+        #typed-letter { font-size: 0.95rem; color: #2b2d42; font-weight: 700; line-height: 26px; text-shadow: 0.5px 0.5px 0px rgba(0,0,0,0.05); display: inline; }
+        .cursor { display: inline-block; width: 2px; height: 1rem; background: #2b2d42; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 4px;}
+
+        /* ================= CẢNH TRÁI TIM 3D & CHỮ RƠI ================= */
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; display: none; opacity: 0; transition: opacity 2s; background: #000; cursor: grab; }
+        #canvas-container:active { cursor: grabbing; }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        .floating-texts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 61; display: none; }
+        .float-text { position: absolute; font-family: 'Dancing Script', cursive; color: #fff; text-shadow: 0 0 10px #ff0055; font-size: 1.5rem; animation: floatUpText 4s ease-in-out infinite alternate; }
+        .falling-text { position: absolute; top: -50px; color: rgba(255, 255, 255, 0.9); font-family: 'Dancing Script', cursive; text-shadow: 0 0 4px #ff0055; pointer-events: none; z-index: 62; will-change: transform, opacity; animation: fall linear forwards; }
+
+        @keyframes fall { to { transform: translate3d(0, 110vh, 0) rotate(25deg); opacity: 0; } }
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 10%, 30% { transform: scale(1.15); } 20% { transform: scale(1.05); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes pulse { 50% { transform: scale(1.05); } }
+        @keyframes pulseFade { 0%, 100% { opacity: 0.5; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes floatUpText { 0% { transform: translateY(0px) scale(1); } 100% { transform: translateY(-15px) scale(1.05); } }
+        @keyframes floatEnvelope { 0% { transform: translateY(0px); } 100% { transform: translateY(-10px); } }
+
+        /* TỐI ƯU HÓA RESPONSIVE RIÊNG CHO ĐIỆN THOẠI */
         @media (max-width: 768px) {
-            :root {
-                --book-width: 260px; /* Thu gọn chiều ngang */
-                --book-height: 400px; /* Thu gọn chiều cao */
-            }
-            .stage.opened {
-                /* Dịch 50% để gáy sách vào tâm, đồng thời thu nhỏ tổng thể 65% để không bị lẹm viền trên mobile */
-                transform: translateX(50%) scale(0.65); 
-            }
-            
+            :root { --book-width: 280px; --book-height: 420px; }
+            .stage.opened { transform: translateX(35px); } /* Dịch nhẹ trên mobile để sách không bị che mất nửa bên trái */
             #player { top: 15px; right: 15px; padding: 5px 15px 5px 5px; }
-            .vinyl { width: 35px; height: 35px; }
-            .track-name { font-size: 11px; }
+            .vinyl { width: 30px; height: 30px; }
+            .track-name { font-size: 10px; }
             .cover-title { font-size: 1.8rem; }
+            .envelope-container { width: 280px; height: 180px; margin-top: 120px; }
+            .envelope:before { border-left: 140px solid transparent; border-right: 140px solid transparent; border-bottom: 90px solid #ff4d6d; border-top: 90px solid transparent; }
+            .flap { border-left: 140px solid transparent; border-right: 140px solid transparent; border-top: 95px solid #d90429; border-bottom: 95px solid transparent; }
+            .wax-seal { top: 90px; width: 35px; height: 35px; font-size: 16px; }
+            .paper.out { transform: translateY(-200px); }
         }
     </style>
 </head>
 <body>
 
-    <audio id="bgMusic" loop preload="auto">
-        <source src="https://nguyenbacson.io.vn/pictures.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="bookAudio" loop preload="auto"><source src="https://nguyenbacson.io.vn/pictures.mp3" type="audio/mpeg"></audio>
+    <audio id="confessAudio" preload="auto"><source src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3" type="audio/mpeg"></audio>
+
+    <div class="bg-pattern" id="bg-pattern"></div>
 
     <div id="intro">
         <div class="heart-wrapper" onclick="startProExperience()">
@@ -336,15 +256,46 @@
 
     <div id="player" onclick="togglePlay()">
         <div class="vinyl" id="vinylIcon"></div>
-        <div class="track-name">Pictures - Âm Thanh</div>
+        <div class="track-name">Pictures</div>
     </div>
 
     <div class="stage" id="stage">
-        <div class="book" id="book">
+        <div class="book" id="book"></div>
+    </div>
+
+    <div id="confession-stage">
+        <div id="text-wrapper"><h1 id="main-text"></h1></div>
+        <div id="ask-section">
+            <div class="btn-group">
+                <button class="btn" id="yes" onclick="accepted()">Đồng ý ❤️</button>
+                <button class="btn" id="no" onclick="moveButton(this)" ontouchstart="moveButton(this)">Suy nghĩ thêm</button>
             </div>
+        </div>
+    </div>
+
+    <div id="letter-sequence">
+        <div id="loading-text">I LOVE YOU...</div>
+        <div class="envelope-container" id="envelope-container">
+            <div class="flap" id="flap"></div>
+            <div class="wax-seal" id="wax-seal"></div>
+            <div class="paper" id="paper">
+                <div id="typed-letter"></div><span class="cursor" id="cursor"></span>
+            </div>
+            <div class="envelope"></div>
+        </div>
+    </div>
+
+    <div id="canvas-container">
+        <canvas id="heartCanvas"></canvas>
+        <div class="floating-texts" id="floating-texts">
+            <div class="float-text" style="top: 15%; left: 5%; animation-delay: 0s;">CẢM ƠN DƯƠNG</div>
+            <div class="float-text" style="top: 75%; left: 10%; animation-delay: 1s;">I LOVE YOU</div>
+            <div class="float-text" style="top: 20%; right: 5%; animation-delay: 0.5s;">Mãi Yêu ❤️</div>
+        </div>
     </div>
 
     <script>
+        // ================= PHẦN 1: LOGIC SÁCH ẢNH =================
         const images = [
             "https://nguyenbacson.io.vn/miss-you/1.jpeg", "https://nguyenbacson.io.vn/miss-you/2.jpeg",
             "https://nguyenbacson.io.vn/miss-you/3.jpeg", "https://nguyenbacson.io.vn/miss-you/4.jpeg",
@@ -358,12 +309,14 @@
 
         const book = document.getElementById('book');
         const stage = document.getElementById('stage');
-        const bgMusic = document.getElementById('bgMusic');
+        const bookAudio = document.getElementById('bookAudio');
+        const confessAudio = document.getElementById('confessAudio');
         const vinylIcon = document.getElementById('vinylIcon');
         const playerUI = document.getElementById('player');
         
         let pages = [];
-        const totalSheets = images.length + 1;
+        // Tổng số trang = Bìa + Số lượng ảnh + Trang cuối chuyển cảnh
+        const totalSheets = images.length + 2; 
 
         function buildBook() {
             // Render Bìa
@@ -383,7 +336,7 @@
             book.appendChild(cover);
             pages.push({ el: cover, index: 0 });
 
-            // Render Ruột
+            // Render Ruột (Ảnh)
             images.forEach((src, i) => {
                 const sheetIdx = i + 1;
                 const sheet = document.createElement('div');
@@ -400,12 +353,30 @@
                 pages.push({ el: sheet, index: sheetIdx });
             });
 
+            // Render Trang Cuối (Nút chuyển cảnh)
+            const finalSheetIdx = images.length + 1;
+            const finalSheet = document.createElement('div');
+            finalSheet.className = 'page';
+            finalSheet.style.zIndex = 1;
+            finalSheet.innerHTML = `
+                <div class="front content" style="justify-content: center; align-items: center; background: #fff0f3;">
+                    <h2 style="font-family: 'Dancing Script', cursive; color: #d6336c; font-size: 2rem; margin-bottom: 25px; text-align:center;">Những khoảnh khắc<br>đẹp nhất...</h2>
+                    <button class="glass-btn" onclick="transitionToConfession(event)">Và bây giờ... ❤️</button>
+                </div>
+                <div class="back content"></div>
+            `;
+            book.appendChild(finalSheet);
+            pages.push({ el: finalSheet, index: finalSheetIdx });
+
+            // Gắn sự kiện lật sách
             pages.forEach((p, idx) => {
-                p.el.addEventListener('click', () => flipTo(idx));
+                p.el.addEventListener('click', (e) => {
+                    // Tránh việc lật sách khi đang bấm nút "Và bây giờ"
+                    if(e.target.tagName !== 'BUTTON') flipTo(idx);
+                });
             });
         }
 
-        // THUẬT TOÁN ĐẾM VÀ ĐIỀU CHỈNH TRỤC X
         function flipTo(clickedIndex) {
             const pageObj = pages[clickedIndex];
             const el = pageObj.el;
@@ -413,32 +384,34 @@
 
             if (!isFlipped) {
                 el.classList.add('flipped');
-                setTimeout(() => { el.style.zIndex = clickedIndex + 1; }, 500);
+                setTimeout(() => { el.style.zIndex = clickedIndex + 1; }, 400);
             } else {
                 el.classList.remove('flipped');
-                setTimeout(() => { el.style.zIndex = totalSheets - clickedIndex; }, 500);
+                setTimeout(() => { el.style.zIndex = totalSheets - clickedIndex; }, 400);
             }
 
-            // Quét lại toàn bộ sách xem có trang nào đang mở không
+            // Xử lý dịch chuyển sách trên Mobile & PC
             setTimeout(() => {
                 let flippedCount = document.querySelectorAll('.page.flipped').length;
                 if (flippedCount > 0) {
-                    stage.classList.add('opened'); // Sách đang mở -> Dịch sang phải
+                    stage.classList.add('opened');
                 } else {
-                    stage.classList.remove('opened'); // Đóng hoàn toàn -> Về trung tâm
+                    stage.classList.remove('opened');
                 }
             }, 50);
         }
 
-        // VUỐT THÔNG MINH
+        // Vuốt cảm ứng sách
         let touchStartX = 0, touchStartY = 0;
-        
         document.addEventListener('touchstart', e => {
             touchStartX = e.changedTouches[0].screenX;
             touchStartY = e.changedTouches[0].screenY;
         }, {passive: true});
 
         document.addEventListener('touchend', e => {
+            // Nếu không hiển thị sách thì tắt vuốt
+            if(!stage.classList.contains('visible')) return;
+
             const touchEndX = e.changedTouches[0].screenX;
             const touchEndY = e.changedTouches[0].screenY;
             const deltaX = touchEndX - touchStartX;
@@ -447,49 +420,300 @@
             if (Math.abs(deltaY) > Math.abs(deltaX)) return;
 
             if (Math.abs(deltaX) > 40) {
-                if (deltaX < 0) {
+                if (deltaX < 0) { // Vuốt sang trái (lật tới)
                     for (let i = 0; i < pages.length; i++) {
-                        if (!pages[i].el.classList.contains('flipped')) {
-                            flipTo(i); break;
-                        }
+                        if (!pages[i].el.classList.contains('flipped')) { flipTo(i); break; }
                     }
-                } else {
+                } else { // Vuốt sang phải (lật lùi)
                     for (let i = pages.length - 1; i >= 0; i--) {
-                        if (pages[i].el.classList.contains('flipped')) {
-                            flipTo(i); break;
-                        }
+                        if (pages[i].el.classList.contains('flipped')) { flipTo(i); break; }
                     }
                 }
             }
         }, {passive: true});
 
         function startProExperience() {
-            bgMusic.play().then(() => {
-                vinylIcon.classList.add('playing');
-            }).catch(e => console.log("Cần tương tác người dùng kỹ hơn để phát nhạc"));
-
+            bookAudio.play();
+            vinylIcon.classList.add('playing');
             document.getElementById('intro').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('intro').style.display = 'none';
                 stage.classList.add('visible');
                 playerUI.style.display = 'flex';
-                
-                setTimeout(() => { flipTo(0); }, 500);
+                setTimeout(() => { flipTo(0); }, 500); // Tự động lật bìa
             }, 1200);
         }
 
         function togglePlay() {
-            if (bgMusic.paused) {
-                bgMusic.play();
+            // Kiểm tra xem bài nào đang phát
+            let activeAudio = (document.getElementById('confession-stage').style.display === 'flex') ? confessAudio : bookAudio;
+            if (activeAudio.paused) {
+                activeAudio.play();
                 vinylIcon.classList.add('playing');
             } else {
-                bgMusic.pause();
+                activeAudio.pause();
                 vinylIcon.classList.remove('playing');
             }
         }
 
         buildBook();
 
+        // ================= PHẦN 2: LOGIC CHUYỂN CẢNH TỎ TÌNH =================
+        let checkTime;
+        const mainText = document.getElementById('main-text');
+        const askSection = document.getElementById('ask-section');
+
+        const timelineText = [
+            { time: 1, text: "Xin chào Dương...", clearAt: 4 },
+            { time: 5, text: "Hôm nay là một ngày đặc biệt.", clearAt: 9 },
+            { time: 10, text: "Chúc mừng sinh nhật cậu! 🎂", clearAt: 15 },
+            { time: 16, text: "Tớ đã suy nghĩ rất nhiều...", clearAt: 20 },
+            { time: 21, text: "Về những lúc chúng mình ở bên nhau.", clearAt: 27 },
+            { time: 28, text: "Có cậu, mọi thứ trở nên ý nghĩa hơn.", clearAt: 34 },
+            { time: 35, text: "Nên là...", clearAt: 38 }
+        ];
+
+        function transitionToConfession(e) {
+            e.stopPropagation(); // Ngăn sự kiện click lan xuống trang giấy
+
+            // 1. Mờ dần sách ảnh
+            stage.style.opacity = 0;
+            playerUI.style.opacity = 0; // Ẩn tạm đĩa than
+            
+            // Tắt nhạc cũ, mở nhạc tỏ tình
+            let fadeAudio = setInterval(() => {
+                if (bookAudio.volume > 0.1) bookAudio.volume -= 0.1;
+                else {
+                    clearInterval(fadeAudio);
+                    bookAudio.pause();
+                    bookAudio.volume = 1; // Reset
+                }
+            }, 100);
+
+            // 2. Chuyển sang khung cảnh mới
+            setTimeout(() => {
+                stage.style.display = 'none';
+                document.getElementById('confession-stage').style.display = 'flex';
+                
+                // Mở lại đĩa than & phát nhạc tỏ tình
+                playerUI.querySelector('.track-name').innerText = "Miss You";
+                playerUI.style.opacity = 1;
+                confessAudio.play();
+                vinylIcon.classList.add('playing');
+
+                startConfessionTimeline();
+            }, 1500);
+        }
+
+        function splitAndAnimate(text) {
+            const words = text.split(' ');
+            const html = words.map(word => {
+                const letters = word.split('').map(char => `<span class='letter'>${char}</span>`).join('');
+                return `<span class='word'>${letters}</span>`;
+            }).join(' '); 
+            mainText.innerHTML = html;
+            anime({
+                targets: '.letter', opacity: [0, 1], translateY: [20, 0], rotateZ: [-5, 0],
+                easing: "easeOutExpo", duration: 1000, delay: anime.stagger(40)
+            });
+        }
+
+        function clearText() {
+            anime({
+                targets: '#main-text', opacity: 0, translateY: -10, duration: 500, easing: "easeInQuad",
+                complete: () => { mainText.innerHTML = ""; mainText.style.opacity = 1; mainText.style.transform = 'none'; }
+            });
+        }
+
+        function startConfessionTimeline() {
+            checkTime = setInterval(() => {
+                const t = Math.floor(confessAudio.currentTime);
+                const scene = timelineText.find(item => item.time === t); if (scene) splitAndAnimate(scene.text);
+                const clearScene = timelineText.find(item => item.clearAt === t); if (clearScene) clearText();
+                
+                if (t >= 40) {
+                    clearInterval(checkTime); mainText.innerHTML = "";
+                    mainText.style.fontSize = "clamp(30px, 8vw, 55px)"; 
+                    mainText.style.color = "#ff0055"; mainText.style.textShadow = "2px 2px 0px #fff";
+                    splitAndAnimate("Làm người yêu tớ nhé? ❤️");
+                    setTimeout(() => {
+                        askSection.style.display = 'block';
+                        anime({ targets: '#ask-section', opacity: [0, 1], translateY: [30, 0], duration: 1000 });
+                    }, 2500);
+                }
+            }, 1000);
+        }
+
+        // Tối ưu nút TỪ CHỐI trên điện thoại (Không chạy ra ngoài màn hình)
+        function moveButton(btn) {
+            // Lấy kích thước thật của màn hình đt (trừ hao lề an toàn)
+            const w = window.innerWidth - 120; 
+            const h = window.innerHeight - 80;
+            const newX = Math.max(20, Math.random() * w); 
+            const newY = Math.max(20, Math.random() * h);
+            
+            btn.style.position = 'fixed'; 
+            btn.style.left = newX + 'px'; 
+            btn.style.top = newY + 'px';
+            
+            const phrases = ["Mơ đi cưng 😎", "Đừng hòng thoát", "Bấm nút kia kìa", "Lêu lêu 😝", "Tay chậm thế?", "Thử lại đê"];
+            btn.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+            btn.style.background = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.9)`; btn.style.color = "#fff";
+        }
+
+        // ================= PHẦN 3: ĐỒNG Ý -> TÂM THƯ & TRÁI TIM =================
+        function accepted() {
+            askSection.style.display = 'none'; mainText.style.display = 'none';
+            document.getElementById('bg-pattern').style.opacity = 0; 
+            playerUI.style.opacity = 0; // Tắt UI nhạc đi cho tập trung
+
+            const letterSeq = document.getElementById('letter-sequence');
+            letterSeq.style.display = 'flex'; setTimeout(() => letterSeq.style.opacity = 1, 100);
+
+            const loading = document.getElementById('loading-text'); loading.style.display = 'block';
+            setTimeout(() => { loading.style.display = 'none'; showLetter(); }, 3000);
+        }
+
+        function showLetter() {
+            const envContainer = document.getElementById('envelope-container');
+            const flap = document.getElementById('flap');
+            const paper = document.getElementById('paper');
+            const typeDest = document.getElementById('typed-letter');
+            envContainer.style.display = 'block';
+
+            setTimeout(() => { flap.classList.add('open'); }, 800);
+            setTimeout(() => { paper.classList.add('out'); }, 2000);
+            setTimeout(() => {
+                const text = "Cảm ơn cậu đã đồng ý làm người yêu của tớ. Tớ biết sự thiếu tinh tế, cái tính hơn thua vẫn còn. Nhưng tớ sẽ quyết tâm thay đổi vì người con gái tớ yêu. I LOVE YOU.";
+                let i = 0;
+                function typeWriter() {
+                    if (i < text.length) {
+                        typeDest.innerHTML += text.charAt(i); i++;
+                        setTimeout(typeWriter, 50); 
+                    } else {
+                        setTimeout(showParticleHeart, 4500);
+                    }
+                }
+                typeWriter();
+            }, 4000);
+        }
+
+        function showParticleHeart() {
+            document.getElementById('letter-sequence').style.opacity = 0;
+            setTimeout(() => {
+                document.getElementById('letter-sequence').style.display = 'none';
+                const canvasContainer = document.getElementById('canvas-container');
+                canvasContainer.style.display = 'block';
+                setTimeout(() => { canvasContainer.style.opacity = 1; }, 100);
+                document.getElementById('floating-texts').style.display = 'block';
+                
+                initCanvasHeart();   
+                startFallingText();  
+            }, 1000);
+        }
+
+        // Hiệu ứng chữ rơi chuẩn cho Mobile (Giảm lag)
+        function startFallingText() {
+            const textArr = ["I LOVE YOU", "Dương ❤️", "Bắc Sơn ❤️", "Mãi Yêu Cậu", "Nhớ Cậu"];
+            const canvasContainer = document.getElementById('canvas-container'); 
+            
+            setInterval(() => {
+                const el = document.createElement('div');
+                el.className = 'falling-text';
+                el.innerText = textArr[Math.floor(Math.random() * textArr.length)];
+                el.style.left = Math.random() * 85 + 'vw';
+                el.style.fontSize = (Math.random() * 12 + 10) + 'px'; // Cỡ nhỏ hơn cho mobile
+                el.style.animationDuration = (Math.random() * 4 + 4) + 's'; 
+                canvasContainer.appendChild(el);
+                setTimeout(() => { el.remove(); }, 8000);
+            }, 1000);
+        }
+
+        // Canvas 3D Particle Heart siêu tối ưu
+        function initCanvasHeart() {
+            const canvas = document.getElementById("heartCanvas");
+            const ctx = canvas.getContext("2d", { alpha: false }); 
+            const container = document.getElementById("canvas-container");
+            let w, h; let particles = [];
+            
+            let currentRx = 0, currentRy = 0;
+            let isDragging = false; let previousX = 0, previousY = 0;
+
+            container.addEventListener('touchstart', (e) => { isDragging = true; previousX = e.touches[0].clientX; previousY = e.touches[0].clientY; }, {passive: true});
+            container.addEventListener('touchmove', (e) => {
+                if(isDragging) {
+                    currentRy += (e.touches[0].clientX - previousX) * 0.01;
+                    currentRx -= (e.touches[0].clientY - previousY) * 0.01;
+                    previousX = e.touches[0].clientX; previousY = e.touches[0].clientY;
+                }
+            }, {passive: true});
+            container.addEventListener('touchend', () => { isDragging = false; });
+
+            // PC Mouse fallback
+            container.addEventListener('mousedown', (e) => { isDragging = true; previousX = e.clientX; previousY = e.clientY; });
+            container.addEventListener('mousemove', (e) => {
+                if(isDragging) { currentRy += (e.clientX - previousX) * 0.01; currentRx -= (e.clientY - previousY) * 0.01; previousX = e.clientX; previousY = e.clientY; }
+            });
+            container.addEventListener('mouseup', () => { isDragging = false; });
+
+            function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+            window.addEventListener("resize", resize); resize();
+
+            function getHeartPos(t, scale) {
+                let x = 16 * Math.pow(Math.sin(t), 3);
+                let y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                return { x: x * scale, y: y * scale };
+            }
+
+            class Particle {
+                constructor() {
+                    this.t = Math.random() * Math.PI * 2;
+                    // Thu nhỏ trái tim một chút để vừa màn dọc điện thoại
+                    this.scale = Math.random() * 5 + 8; 
+                    let pos2D = getHeartPos(this.t, this.scale);
+                    this.baseX = pos2D.x; this.baseY = pos2D.y; this.baseZ = (Math.random() - 0.5) * 60; 
+                    this.rayLength = Math.random() * 20 + 5; 
+                    this.color = `hsla(${Math.random() * 30 + 330}, 100%, 70%, ${Math.random() * 0.6 + 0.4})`;
+                }
+                
+                draw(ctx, w, h, cosRx, sinRx, cosRy, sinRy, beatScale) {
+                    let x = this.baseX * beatScale; let y = this.baseY * beatScale; let z = this.baseZ * beatScale;
+                    let mag = Math.sqrt(x*x + y*y + z*z) || 1;
+                    let ex = x + (x/mag) * this.rayLength; let ey = y + (y/mag) * this.rayLength; let ez = z + (z/mag) * this.rayLength;
+
+                    const project = (px, py, pz) => {
+                        let y1 = py * cosRx - pz * sinRx; let z1 = py * sinRx + pz * cosRx;
+                        let x2 = px * cosRy + z1 * sinRy; let z2 = -px * sinRy + z1 * cosRy;
+                        let scale = 800 / (800 + z2);
+                        return { x: w / 2 + x2 * scale, y: h / 2 + y1 * scale, scale: scale };
+                    };
+
+                    let p1 = project(x, y, z); let p2 = project(ex, ey, ez);
+
+                    if (p1.scale > 0 && p2.scale > 0) {
+                        ctx.strokeStyle = this.color; ctx.lineWidth = 1.8 * p1.scale;
+                        ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                    }
+                }
+            }
+
+            for (let i = 0; i < 700; i++) { particles.push(new Particle()); } // Giảm số lượng để đỡ giật trên đt
+
+            let time = 0;
+            function animate() {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.3)"; ctx.fillRect(0, 0, w, h);
+                time += 0.05;
+
+                if (!isDragging) { currentRy += 0.005; }
+                let cosRx = Math.cos(currentRx); let sinRx = Math.sin(currentRx);
+                let cosRy = Math.cos(currentRy); let sinRy = Math.sin(currentRy);
+                let beat = Math.abs(Math.sin(time)) * 0.1; let beatScale = 1 + beat;
+
+                particles.forEach(p => { p.draw(ctx, w, h, cosRx, sinRx, cosRy, sinRy, beatScale); });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
     </script>
 </body>
 </html>
