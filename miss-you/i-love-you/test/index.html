@@ -145,7 +145,7 @@
         #yes { background: #ff0055; color: white; box-shadow: 0 8px 20px rgba(255, 0, 85, 0.4); z-index: 100; }
         #no { background: rgba(255,255,255,0.8); color: #555; font-size: 1rem; position: relative; touch-action: none; }
 
-        /* ================= KỊCH BẢN TÂM THƯ ================= */
+        /* ================= KỊCH BẢN TÂM THƯ (ĐÃ NÂNG CẤP CHÂN THỰC) ================= */
         #letter-sequence {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50;
             justify-content: center; align-items: center; flex-direction: column;
@@ -171,68 +171,78 @@
         }
         .flap.open { transform: rotateX(180deg); z-index: 1; }
 
+        /* Con dấu sáp khóa tim 3D Premium */
         .wax-seal {
             position: absolute; top: 95px; left: 50%; transform: translate(-50%, -50%);
-            width: 40px; height: 40px; background: #800000; border-radius: 50%; z-index: 5;
-            box-shadow: inset 0 0 10px #4d0000, 0 5px 10px rgba(0,0,0,0.4);
-            display: flex; justify-content: center; align-items: center; color: #ff9999; font-size: 18px; transition: opacity 0.5s ease;
+            width: 50px; height: 50px; background: radial-gradient(circle at 30% 30%, #d90429, #800000);
+            border-radius: 50%; z-index: 5;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3), 0 0 0 2px rgba(255, 215, 0, 0.3); /* Viền vàng nhẹ */
+            display: flex; justify-content: center; align-items: center; color: #ffcccb; font-size: 24px; 
+            transition: opacity 0.5s ease; border: 2px solid rgba(139, 0, 0, 0.8);
         }
-        .wax-seal:before { content: '❤'; }
+        .wax-seal:before { content: '❤'; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
         .flap.open + .wax-seal { opacity: 0; pointer-events: none; }
         
+        /* Giấy viết thư chân thực */
         .paper {
-            position: absolute; top: 10px; left: 5%; width: 90%; height: 320px; 
-            background-color: #fff9ec; background-image: repeating-linear-gradient(transparent, transparent 26px, #e0d8c8 26px, #e0d8c8 27px);
-            border-radius: 5px; box-shadow: 0 -5px 15px rgba(0,0,0,0.15); transition: transform 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
-            z-index: 2; padding: 28px 15px 15px 15px; text-align: left; overflow: hidden; transform: translateY(0);
+            position: absolute; top: 10px; left: 5%; width: 90%; height: 340px; /* Kéo dài giấy */
+            background-color: #f8f1e5; /* Màu giấy cũ */
+            background-image: repeating-linear-gradient(transparent, transparent 27px, rgba(0,0,0,0.05) 27px, rgba(0,0,0,0.05) 28px); /* Dòng kẻ mờ */
+            border-radius: 5px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: transform 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 2; padding: 30px 20px 20px 20px; text-align: left; overflow: hidden; transform: translateY(0);
         }
-        .paper.out { transform: translateY(-220px); } 
+        .paper.out { transform: translateY(-250px); } 
         
-        #typed-letter { font-size: 0.95rem; color: #2b2d42; font-weight: 700; line-height: 26px; text-shadow: 0.5px 0.5px 0px rgba(0,0,0,0.05); display: inline; }
-        .cursor { display: inline-block; width: 2px; height: 1rem; background: #2b2d42; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 4px;}
+        /* Font chữ viết tay cho thư */
+        #typed-letter { 
+            font-size: 1.1rem; color: #4a2c2a; font-weight: 500; line-height: 28px; 
+            font-family: 'Dancing Script', cursive; /* Dùng font viết tay */
+            display: inline; 
+        }
+        .cursor { display: inline-block; width: 2px; height: 1rem; background: #4a2c2a; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 5px;}
 
-        /* ================= VŨ TRỤ 3D TÌNH YÊU ================= */
+        /* ================= VŨ TRỤ 3D TÌNH YÊU (ĐÃ TỐI ƯU & LÃNG MẠN HÓA) ================= */
         #galaxy-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; 
-            display: none; opacity: 0; transition: opacity 2s; background: #000;
-            perspective: 1000px; overflow: hidden; /* Giảm perspective để ảnh trông gần hơn */
+            display: none; opacity: 0; transition: opacity 2s; background: radial-gradient(ellipse at center, #1a001a 0%, #000000 100%); /* Nền tối lãng mạn */
+            perspective: 1000px; overflow: hidden;
         }
         
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* Container chứa ảnh xoay 3D */
         #photo-orbit {
             position: absolute; top: 50%; left: 50%; width: 0; height: 0;
             transform-style: preserve-3d; z-index: 2;
         }
 
-        /* Ảnh 3D - Đã chỉnh nhỏ lại một chút để không che mất tim */
+        /* Ảnh 3D ôm sát tim */
         .galaxy-photo {
-            position: absolute; width: 42px; height: 58px;
-            margin-top: -29px; margin-left: -21px;
-            background: #fff; padding: 2px; border-radius: 3px;
-            box-shadow: 0 0 10px rgba(255, 100, 200, 0.8);
+            position: absolute; width: 40px; height: 55px; /* Kích thước tối ưu mobile */
+            margin-top: -27.5px; margin-left: -20px;
+            background: rgba(255,255,255,0.9); padding: 2px; border-radius: 3px;
+            box-shadow: 0 0 15px rgba(255, 50, 100, 0.5); /* Phát sáng hồng nhẹ */
             cursor: pointer; transition: box-shadow 0.3s, transform 0.2s;
             backface-visibility: visible; will-change: transform;
         }
         .galaxy-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; pointer-events: none;}
-        .galaxy-photo:hover { box-shadow: 0 0 20px rgba(255, 255, 255, 1); }
+        .galaxy-photo:hover { box-shadow: 0 0 25px rgba(255, 100, 150, 1); z-index: 10; }
 
         #drag-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: grab; }
         #drag-layer:active { cursor: grabbing; }
 
         .floating-texts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
-        .float-text { position: absolute; font-family: 'Dancing Script', cursive; color: rgba(255,255,255,0.9); text-shadow: 0 0 15px #ff0055; font-size: 1.4rem; animation: floatUpText 4s ease-in-out infinite alternate; }
+        .float-text { position: absolute; font-family: 'Dancing Script', cursive; color: rgba(255,230,240,0.9); text-shadow: 0 0 20px #ff0055; font-size: 1.3rem; animation: floatUpText 5s ease-in-out infinite alternate; }
 
         /* Modal Phóng To Ảnh */
         #photo-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
-            z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);
+            z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        #photo-modal img { max-width: 90%; max-height: 80%; border: 4px solid #fff; border-radius: 5px; box-shadow: 0 0 30px rgba(255,100,150,0.5); transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #photo-modal img { max-width: 90%; max-height: 85%; border: 3px solid #fff; border-radius: 8px; box-shadow: 0 0 40px rgba(255,50,100,0.6); transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
         #photo-modal.active { opacity: 1; }
         #photo-modal.active img { transform: scale(1); }
-        .close-btn { position: absolute; top: 20px; right: 20px; color: white; font-size: 35px; cursor: pointer; font-family: sans-serif; font-weight: bold; }
+        .close-btn { position: absolute; top: 25px; right: 25px; color: rgba(255,255,255,0.8); font-size: 40px; cursor: pointer; font-family: sans-serif; font-weight: 300; transition: color 0.3s; }
+        .close-btn:hover { color: #fff; }
 
         @keyframes heartbeat { 0%, 100% { transform: scale(1); } 10%, 30% { transform: scale(1.15); } 20% { transform: scale(1.05); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -240,7 +250,7 @@
         @keyframes pulse { 50% { transform: scale(1.05); } }
         @keyframes pulseFade { 0%, 100% { opacity: 0.5; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        @keyframes floatUpText { 0% { transform: translateY(0px) scale(1); } 100% { transform: translateY(-15px) scale(1.05); } }
+        @keyframes floatUpText { 0% { transform: translateY(0px) scale(1); opacity: 0.8; } 100% { transform: translateY(-20px) scale(1.05); opacity: 1; } }
         @keyframes floatEnvelope { 0% { transform: translateY(0px); } 100% { transform: translateY(-10px); } }
 
         @media (max-width: 768px) {
@@ -253,8 +263,10 @@
             .envelope-container { width: 280px; height: 180px; margin-top: 120px; }
             .envelope:before { border-left: 140px solid transparent; border-right: 140px solid transparent; border-bottom: 90px solid #ff4d6d; border-top: 90px solid transparent; }
             .flap { border-left: 140px solid transparent; border-right: 140px solid transparent; border-top: 95px solid #d90429; border-bottom: 95px solid transparent; }
-            .wax-seal { top: 90px; width: 35px; height: 35px; font-size: 16px; }
-            .paper.out { transform: translateY(-200px); }
+            .wax-seal { top: 90px; width: 45px; height: 45px; font-size: 20px; }
+            .paper { height: 320px; padding-top: 25px; }
+            .paper.out { transform: translateY(-230px); }
+            #typed-letter { font-size: 1rem; line-height: 26px; }
         }
     </style>
 </head>
@@ -309,10 +321,10 @@
         <div id="photo-orbit"></div>
 
         <div class="floating-texts">
-            <div class="float-text" style="top: 10%; left: 5%; animation-delay: 0s;">CẢM ƠN CẬU NHA DƯƠNG</div>
-            <div class="float-text" style="bottom: 10%; left: 10%; animation-delay: 1s;">I LOVE YOU</div>
-            <div class="float-text" style="top: 15%; right: 5%; animation-delay: 0.5s;">Mãi Yêu Cậu ❤️</div>
-            <div class="float-text" style="bottom: 15%; right: 10%; animation-delay: 1.5s;">My Everything</div>
+            <div class="float-text" style="top: 12%; left: 6%;">Cảm ơn Dương...</div>
+            <div class="float-text" style="bottom: 12%; left: 8%;">...đã đến bên tớ</div>
+            <div class="float-text" style="top: 18%; right: 6%;">Yêu Cậu ❤️</div>
+            <div class="float-text" style="bottom: 18%; right: 8%;">My Universe</div>
         </div>
     </div>
 
@@ -483,7 +495,7 @@
             }, 4000);
         }
 
-        // ================= PHẦN 3: VŨ TRỤ 3D TÌNH YÊU (ĐÃ NÂNG CẤP) =================
+        // ================= PHẦN 3: VŨ TRỤ 3D TÌNH YÊU (ĐÃ TỐI ƯU HOÀN HẢO) =================
         function initGalaxyEffect() {
             document.getElementById('letter-sequence').style.opacity = 0;
             setTimeout(() => {
@@ -501,19 +513,19 @@
         let currentRx = 15; let currentRy = 0;
         
         function build3DPhotoOrbit() {
-            // Thu hẹp bán kính để ảnh bay gần tim hơn
+            // Bán kính nhỏ để ảnh ôm sát tim
             const isMobile = window.innerWidth <= 768;
-            const orbitRadius = isMobile ? 90 : 160; 
+            const orbitRadius = isMobile ? 85 : 150; 
 
             images.forEach((src, i) => {
                 const angle = (i / images.length) * 360;
-                // Tạo độ lệch Z ngẫu nhiên để ảnh không nằm trên 1 mặt phẳng, tạo cảm giác bay lượn 3D
-                const zOffset = (Math.random() - 0.5) * (isMobile ? 50 : 80);
+                // Tạo độ lệch Z nhẹ nhàng hơn
+                const zOffset = Math.sin(i) * (isMobile ? 30 : 50);
                 
                 const photoWrapper = document.createElement('div');
                 photoWrapper.className = 'galaxy-photo';
-                // Sử dụng translateZ để đẩy ảnh ra xa tâm và thêm độ lệch Z
-                photoWrapper.style.transform = `rotateY(${angle}deg) translateZ(${orbitRadius + zOffset}px)`;
+                // Dùng translate3d để kích hoạt GPU acceleration
+                photoWrapper.style.transform = `rotateY(${angle}deg) translate3d(0, 0, ${orbitRadius + zOffset}px)`;
                 
                 const img = document.createElement('img');
                 img.src = src;
@@ -526,17 +538,18 @@
 
         function initCanvasGalaxy() {
             const canvas = document.getElementById("galaxyCanvas");
-            const ctx = canvas.getContext("2d", { alpha: false });
+            const ctx = canvas.getContext("2d", { alpha: false }); // Tối ưu hiệu suất
             const dragLayer = document.getElementById("drag-layer");
             let w, h; let particles = []; let meteors = [];
             
             let isDragging = false; let previousX = 0, previousY = 0;
 
+            // Xử lý cảm ứng mượt mà
             dragLayer.addEventListener('touchstart', (e) => { isDragging = true; previousX = e.touches[0].clientX; previousY = e.touches[0].clientY; }, {passive: true});
             dragLayer.addEventListener('touchmove', (e) => {
                 if(isDragging) {
-                    currentRy += (e.touches[0].clientX - previousX) * 0.4; 
-                    currentRx -= (e.touches[0].clientY - previousY) * 0.4; 
+                    currentRy += (e.touches[0].clientX - previousX) * 0.3; 
+                    currentRx -= (e.touches[0].clientY - previousY) * 0.3; 
                     currentRx = Math.max(-45, Math.min(45, currentRx));
                     previousX = e.touches[0].clientX; previousY = e.touches[0].clientY;
                 }
@@ -546,7 +559,7 @@
             dragLayer.addEventListener('mousedown', (e) => { isDragging = true; previousX = e.clientX; previousY = e.clientY; });
             dragLayer.addEventListener('mousemove', (e) => {
                 if(isDragging) { 
-                    currentRy += (e.clientX - previousX) * 0.4; currentRx -= (e.clientY - previousY) * 0.4; 
+                    currentRy += (e.clientX - previousX) * 0.3; currentRx -= (e.clientY - previousY) * 0.3; 
                     currentRx = Math.max(-45, Math.min(45, currentRx));
                     previousX = e.clientX; previousY = e.clientY; 
                 }
@@ -557,9 +570,6 @@
             window.addEventListener("resize", resize); resize();
 
             const isMobile = window.innerWidth <= 768;
-            // Bán kính cho bụi vành đai bên ngoài (xa hơn ảnh một chút)
-            const ringRadiusMin = isMobile ? 110 : 180;
-            const ringRadiusMax = isMobile ? 200 : 350;
 
             class Dust {
                 constructor(isCore) {
@@ -567,43 +577,30 @@
                     if(isCore) {
                         // --- TẠO HÌNH TRÁI TIM 3D CHO LÕI ---
                         let t = Math.random() * Math.PI * 2;
-                        // Công thức hình trái tim 2D
                         let hx = 16 * Math.pow(Math.sin(t), 3);
                         let hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
+                        let hz = (Math.random() - 0.5) * (isMobile ? 40 : 60); // Độ dày khối tim
                         
-                        // Tạo độ dày Z ngẫu nhiên
-                        let hz = (Math.random() - 0.5) * (isMobile ? 30 : 50);
-                        
-                        // Scale kích thước trái tim
-                        let heartScale = isMobile ? 2.5 : 4;
-                        // Điều chỉnh X, Y dựa trên độ dày Z để tạo hình khối phồng hơn
-                        let depthScale = 1 - Math.abs(hz) / (isMobile ? 60 : 100);
-
-                        this.baseX = hx * heartScale * depthScale;
-                        this.baseY = hy * heartScale * depthScale;
+                        let heartScale = isMobile ? 2.2 : 3.5;
+                        this.baseX = hx * heartScale;
+                        this.baseY = hy * heartScale;
                         this.baseZ = hz;
                         
-                        // Màu sắc: Hồng đỏ rực rỡ cho lõi tim
-                        let red = 200 + Math.random() * 55;
-                        let green = Math.random() * 50;
-                        let blue = 50 + Math.random() * 100;
-                        this.color = `rgba(${red}, ${green}, ${blue}, ${Math.random() * 0.8 + 0.2})`;
-                        this.size = Math.random() * 2 + 0.8;
+                        // Màu hồng đỏ lãng mạn
+                        this.color = `rgba(${220 + Math.random()*35}, ${Math.random()*50}, ${80 + Math.random()*100}, ${Math.random() * 0.7 + 0.3})`;
+                        this.size = Math.random() * 1.8 + 0.5;
                     } else {
-                        // Bụi Vành đai hình dẹt bên ngoài
-                        let angle = Math.random() * Math.PI * 2;
-                        let r = ringRadiusMin + Math.random() * (ringRadiusMax - ringRadiusMin);
-                        this.baseX = Math.cos(angle) * r;
-                        this.baseZ = Math.sin(angle) * r;
-                        this.baseY = (Math.random() - 0.5) * (isMobile ? 40 : 80);
-                        this.color = `rgba(${150+Math.random()*50}, ${50+Math.random()*50}, 255, ${Math.random() * 0.4 + 0.1})`;
-                        this.size = Math.random() * 1.2 + 0.3;
+                        // Bụi nền không gian xa
+                        this.baseX = (Math.random() - 0.5) * w * 2;
+                        this.baseY = (Math.random() - 0.5) * h * 2;
+                        this.baseZ = (Math.random() - 0.5) * w * 2;
+                        this.color = `rgba(${150+Math.random()*50}, ${100+Math.random()*50}, 255, ${Math.random() * 0.3 + 0.1})`;
+                        this.size = Math.random() * 1 + 0.2;
                     }
                 }
                 
                 draw(ctx, w, h, rxRad, ryRad, beatScale) {
                     let x = this.baseX; let y = this.baseY; let z = this.baseZ;
-                    // Nếu là lõi tim thì áp dụng hiệu ứng đập thình thịch
                     if(this.isCore) { x *= beatScale; y *= beatScale; z *= beatScale; }
 
                     let y1 = y * Math.cos(rxRad) - z * Math.sin(rxRad);
@@ -622,85 +619,59 @@
                 }
             }
 
-            // --- LỚP SAO BĂNG (METEOR) ---
+            // --- SAO BĂNG TỰ NHIÊN TỪ GÓC ---
             class Meteor {
-                constructor() {
-                    this.reset();
-                }
+                constructor() { this.reset(); }
                 reset() {
-                    this.x = Math.random() * w + w * 0.5; // Bắt đầu từ bên phải ngoài màn hình
-                    this.y = Math.random() * h * 0.5; // Ở nửa trên
-                    this.speed = Math.random() * 15 + 10;
-                    this.len = Math.random() * 80 + 40;
-                    this.size = Math.random() * 2 + 1;
-                    // Góc bay chéo xuống
-                    this.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.2; 
-                    this.opacity = 0;
-                    this.state = 'appearing'; // appearing -> moving -> fading
+                    // Xuất phát từ góc trên bên phải hoặc trái ngoài màn hình
+                    this.x = Math.random() < 0.5 ? -100 : w + 100; 
+                    this.y = Math.random() * h * 0.3 - 100;
+                    this.speed = Math.random() * 10 + 8;
+                    this.len = Math.random() * 60 + 30;
+                    this.size = Math.random() * 1.5 + 0.5;
+                    // Góc bay chéo xuống tự nhiên
+                    this.angle = Math.atan2(h/2 - this.y, w/2 - this.x) + (Math.random()-0.5)*0.5;
+                    this.opacity = 0; this.state = 'appearing';
+                    this.delay = Math.random() * 100; // Delay ngẫu nhiên để không xuất hiện cùng lúc
                 }
                 draw(ctx) {
-                    if (this.state === 'appearing') {
-                        this.opacity += 0.05;
-                        if (this.opacity >= 1) this.state = 'moving';
-                    } else if (this.state === 'moving') {
-                        this.x -= Math.cos(this.angle) * this.speed;
-                        this.y += Math.sin(this.angle) * this.speed;
-                        if (this.x < -this.len || this.y > h + this.len) this.state = 'fading';
-                    } else if (this.state === 'fading') {
-                        this.opacity -= 0.05;
-                        if (this.opacity <= 0) this.reset();
-                    }
+                    if(this.delay > 0) { this.delay--; return; }
+                    if (this.state === 'appearing') { this.opacity += 0.02; if (this.opacity >= 1) this.state = 'moving'; }
+                    else if (this.state === 'moving') {
+                        this.x += Math.cos(this.angle) * this.speed; this.y += Math.sin(this.angle) * this.speed;
+                        if (this.x < -this.len*2 || this.x > w + this.len*2 || this.y > h + this.len*2) this.state = 'fading';
+                    } else if (this.state === 'fading') { this.opacity -= 0.04; if (this.opacity <= 0) this.reset(); }
 
                     if(this.opacity > 0) {
-                        const tailX = this.x + Math.cos(this.angle) * this.len;
+                        const tailX = this.x - Math.cos(this.angle) * this.len;
                         const tailY = this.y - Math.sin(this.angle) * this.len;
-                        
-                        // Vẽ đuôi sao băng (gradient mờ dần)
                         let gradient = ctx.createLinearGradient(this.x, this.y, tailX, tailY);
                         gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity})`);
                         gradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
-
-                        ctx.beginPath();
-                        ctx.strokeStyle = gradient;
-                        ctx.lineWidth = this.size;
-                        ctx.lineCap = 'round';
-                        ctx.moveTo(this.x, this.y);
-                        ctx.lineTo(tailX, tailY);
-                        ctx.stroke();
-                        
-                        // Vẽ đầu sao băng sáng hơn
-                        ctx.beginPath();
-                        ctx.fillStyle = `rgba(255, 255, 200, ${this.opacity})`;
-                        ctx.arc(this.x, this.y, this.size * 1.5, 0, Math.PI*2);
-                        ctx.fill();
+                        ctx.beginPath(); ctx.strokeStyle = gradient; ctx.lineWidth = this.size; ctx.lineCap = 'round';
+                        ctx.moveTo(this.x, this.y); ctx.lineTo(tailX, tailY); ctx.stroke();
                     }
                 }
             }
 
-            // Tăng số lượng hạt cho lõi tim dày hơn
-            for (let i = 0; i < 800; i++) particles.push(new Dust(true)); // Lõi tim
-            for (let i = 0; i < 600; i++) particles.push(new Dust(false)); // Vành đai bụi
-            // Tạo 3 sao băng thay phiên nhau bay
-            for (let i = 0; i < 3; i++) meteors.push(new Meteor());
+            // Giảm số lượng hạt để tối ưu cho điện thoại
+            for (let i = 0; i < 600; i++) particles.push(new Dust(true)); // Lõi tim
+            for (let i = 0; i < 300; i++) particles.push(new Dust(false)); // Bụi nền
+            for (let i = 0; i < 4; i++) meteors.push(new Meteor()); // 4 sao băng
 
             let time = 0;
             function animate() {
-                ctx.fillStyle = "rgba(0, 0, 0, 0.4)"; ctx.fillRect(0, 0, w, h);
+                // Xóa nền mờ để tạo vệt sáng (trail effect) nhưng không quá nặng
+                ctx.fillStyle = "rgba(20, 0, 20, 0.25)"; ctx.fillRect(0, 0, w, h);
                 time += 0.05;
 
                 if (!isDragging) { currentRy += 0.2; }
                 orbitDiv.style.transform = `rotateX(${-currentRx}deg) rotateY(${currentRy}deg)`;
 
-                let rxRad = currentRx * Math.PI / 180;
-                let ryRad = currentRy * Math.PI / 180;
-                
-                // Tạo nhịp tim đập
-                let beat = Math.abs(Math.sin(time)) * 0.08; 
-                let beatScale = 1 + beat;
+                let rxRad = currentRx * Math.PI / 180; let ryRad = currentRy * Math.PI / 180;
+                let beat = Math.abs(Math.sin(time)) * 0.06; let beatScale = 1 + beat;
 
                 particles.forEach(p => p.draw(ctx, w, h, rxRad, ryRad, beatScale));
-                
-                // Vẽ sao băng (không bị ảnh hưởng bởi xoay 3D)
                 meteors.forEach(m => m.draw(ctx));
                 
                 requestAnimationFrame(animate);
