@@ -19,7 +19,6 @@
 
         body {
             background-color: var(--bg-color);
-            /* Nền gradient hoàng hôn lãng mạn */
             background: radial-gradient(circle at 50% 50%, #fff0f3 0%, #ffc2d1 60%, #ff9eb5 100%);
             height: 100vh;
             display: flex;
@@ -27,7 +26,7 @@
             align-items: center;
             font-family: 'Montserrat', sans-serif;
             overflow: hidden;
-            perspective: 2000px; /* Perspective lớn để góc nhìn 3D ít bị méo */
+            perspective: 2000px; 
         }
 
         /* ================= MÀN HÌNH CHỜ (INTRO) ================= */
@@ -106,7 +105,7 @@
             border: 2px solid #fff;
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
             animation: spin 4s linear infinite;
-            animation-play-state: paused; /* Mặc định dừng */
+            animation-play-state: paused; 
         }
         .vinyl::after {
             content: '';
@@ -117,7 +116,6 @@
             border: 1px solid #333;
         }
         .vinyl.playing { animation-play-state: running; }
-        
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         .track-name {
@@ -128,21 +126,21 @@
             letter-spacing: 1px;
         }
 
-        /* ================= SÂN KHẤU & SÁCH 3D ================= */
+        /* ================= SÂN KHẤU TỐI ƯU CÂN BẰNG ================= */
         .stage {
             position: relative;
             width: var(--book-width);
             height: var(--book-height);
-            /* Dịch chuyển sách để nằm giữa khi đóng */
-            transform: translateX(-50%);
+            /* Khi đóng: Nằm chính giữa trục X */
+            transform: translateX(0);
             transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
             opacity: 0;
-            pointer-events: none; /* Khóa tương tác khi chưa mở intro */
+            pointer-events: none; 
         }
 
-        /* Khi mở sách (trang > 0), sách trượt về chính giữa (0) */
+        /* Khi mở sách: Dịch trục X sang phải 50% để gáy sách vào tâm */
         .stage.opened {
-            transform: translateX(0);
+            transform: translateX(50%);
         }
 
         .stage.visible {
@@ -150,7 +148,6 @@
             pointer-events: all;
         }
 
-        /* Bóng đổ khổng lồ dưới sàn */
         .stage::after {
             content: '';
             position: absolute;
@@ -171,7 +168,7 @@
             transform-style: preserve-3d;
         }
 
-        /* CÁC TRANG GIẤY */
+        /* ================= CÁC TRANG GIẤY ================= */
         .page {
             position: absolute;
             top: 0;
@@ -181,10 +178,9 @@
             transform-origin: left center;
             transform-style: preserve-3d;
             transition: transform var(--page-speed) cubic-bezier(0.645, 0.045, 0.355, 1);
-            cursor: grab;
+            cursor: pointer;
             will-change: transform;
         }
-        .page:active { cursor: grabbing; }
 
         .front, .back {
             position: absolute;
@@ -194,10 +190,9 @@
             backface-visibility: hidden;
             border-radius: 2px 8px 8px 2px;
             overflow: hidden;
-            background-color: #faf9f6; /* Màu giấy off-white cao cấp */
+            background-color: #faf9f6; 
         }
 
-        /* Hiệu ứng cong và bóng đổ ở GÁY SÁCH (Độ chân thực 100%) */
         .front::before {
             content: ''; position: absolute; top: 0; left: 0; width: 40px; height: 100%;
             background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.02) 40%, transparent 100%);
@@ -212,7 +207,6 @@
         /* ================= BÌA SÁCH (COVER) ================= */
         .page.cover .front {
             background: var(--cover-color);
-            /* Texture da/vải cho bìa */
             background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3h1v1H1V3zm2-2h1v1H3V1z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
             border: 1px solid rgba(0,0,0,0.2);
             box-shadow: inset 4px 0 10px rgba(0,0,0,0.3), inset -1px 0 2px rgba(255,255,255,0.3);
@@ -223,11 +217,10 @@
             align-items: center;
         }
 
-        /* Khung viền vàng kim loại */
         .cover-frame {
             position: absolute;
             top: 25px; left: 25px; right: 25px; bottom: 25px;
-            border: 2px solid #d4af37; /* Gold */
+            border: 2px solid #d4af37; 
             outline: 1px solid #d4af37;
             outline-offset: -6px;
             border-radius: 4px;
@@ -262,9 +255,8 @@
             letter-spacing: 3px;
         }
 
-        /* Mặt trong của bìa */
         .page.cover .back {
-            background: #2a0810; /* Lót trong màu tối */
+            background: #2a0810; 
             border-radius: 12px 4px 4px 12px;
         }
 
@@ -306,7 +298,6 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        /* Mặt sau của mỗi trang ảnh (họa tiết nhẹ) */
         .back.content {
             background-color: #fdfaf6;
             background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0zM9 5h2v2H9V5zm0 4h2v6H9V9z' fill='%23ff9eb5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
@@ -315,13 +306,14 @@
         /* ================= RESPONSIVE ĐIỆN THOẠI ================= */
         @media (max-width: 768px) {
             :root {
-                --book-width: 280px;
-                --book-height: 420px;
+                --book-width: 260px; /* Thu gọn chiều ngang */
+                --book-height: 400px; /* Thu gọn chiều cao */
             }
-            .stage { transform: translateX(0); } /* Bỏ shift trên mobile vì màn hình hẹp */
-            .stage.opened { transform: translateX(50%); /* Đẩy 1 nửa sang phải để thấy trang bên trái */ }
+            .stage.opened {
+                /* Dịch 50% để gáy sách vào tâm, đồng thời thu nhỏ tổng thể 65% để không bị lẹm viền trên mobile */
+                transform: translateX(50%) scale(0.65); 
+            }
             
-            /* Tinh chỉnh UI cho mobile */
             #player { top: 15px; right: 15px; padding: 5px 15px 5px 5px; }
             .vinyl { width: 35px; height: 35px; }
             .track-name { font-size: 11px; }
@@ -353,7 +345,6 @@
     </div>
 
     <script>
-        // 1. DATA CỦA BẠN
         const images = [
             "https://nguyenbacson.io.vn/miss-you/1.jpeg", "https://nguyenbacson.io.vn/miss-you/2.jpeg",
             "https://nguyenbacson.io.vn/miss-you/3.jpeg", "https://nguyenbacson.io.vn/miss-you/4.jpeg",
@@ -365,7 +356,6 @@
             "https://nguyenbacson.io.vn/miss-you/15.jpeg"
         ];
 
-        // 2. DOM ELEMENTS
         const book = document.getElementById('book');
         const stage = document.getElementById('stage');
         const bgMusic = document.getElementById('bgMusic');
@@ -373,12 +363,10 @@
         const playerUI = document.getElementById('player');
         
         let pages = [];
-        let currentPage = 0; // 0 = bìa đang đóng
         const totalSheets = images.length + 1;
 
-        // 3. HÀM RENDER SÁCH (CHUYÊN NGHIỆP)
         function buildBook() {
-            // Render Bìa (Cover) - Index 0
+            // Render Bìa
             const cover = document.createElement('div');
             cover.className = 'page cover';
             cover.style.zIndex = totalSheets;
@@ -395,7 +383,7 @@
             book.appendChild(cover);
             pages.push({ el: cover, index: 0 });
 
-            // Render Các Trang Ruột (1 -> 15)
+            // Render Ruột
             images.forEach((src, i) => {
                 const sheetIdx = i + 1;
                 const sheet = document.createElement('div');
@@ -406,56 +394,44 @@
                         <div class="photo-frame"><img src="${src}" loading="lazy"></div>
                         <div class="page-num">- ${sheetIdx} -</div>
                     </div>
-                    <div class="back content">
-                        </div>
+                    <div class="back content"></div>
                 `;
                 book.appendChild(sheet);
                 pages.push({ el: sheet, index: sheetIdx });
             });
 
-            // Gắn Event Listeners
             pages.forEach((p, idx) => {
                 p.el.addEventListener('click', () => flipTo(idx));
             });
         }
 
-        // 4. THUẬT TOÁN LẬT TRANG (Smart Z-Index & Camera Shift)
+        // THUẬT TOÁN ĐẾM VÀ ĐIỀU CHỈNH TRỤC X
         function flipTo(clickedIndex) {
             const pageObj = pages[clickedIndex];
             const el = pageObj.el;
             const isFlipped = el.classList.contains('flipped');
 
             if (!isFlipped) {
-                // LẬT SANG TRÁI (MỞ)
                 el.classList.add('flipped');
-                currentPage++;
-                
-                // Đổi Z-index ở giữa chu kỳ animation (500ms) để giấy đan vào nhau hoàn hảo
-                setTimeout(() => {
-                    el.style.zIndex = clickedIndex + 1;
-                }, 500);
-
+                setTimeout(() => { el.style.zIndex = clickedIndex + 1; }, 500);
             } else {
-                // LẬT SANG PHẢI (ĐÓNG)
                 el.classList.remove('flipped');
-                currentPage--;
-                
-                setTimeout(() => {
-                    el.style.zIndex = totalSheets - clickedIndex;
-                }, 500);
+                setTimeout(() => { el.style.zIndex = totalSheets - clickedIndex; }, 500);
             }
 
-            // Xử lý Camera Shift: Nếu trang bìa được mở, đẩy sách ra giữa
-            if (currentPage > 0) {
-                stage.classList.add('opened');
-            } else {
-                stage.classList.remove('opened');
-            }
+            // Quét lại toàn bộ sách xem có trang nào đang mở không
+            setTimeout(() => {
+                let flippedCount = document.querySelectorAll('.page.flipped').length;
+                if (flippedCount > 0) {
+                    stage.classList.add('opened'); // Sách đang mở -> Dịch sang phải
+                } else {
+                    stage.classList.remove('opened'); // Đóng hoàn toàn -> Về trung tâm
+                }
+            }, 50);
         }
 
-        // 5. VUỐT THÔNG MINH (ADVANCED SWIPE)
-        let touchStartX = 0;
-        let touchStartY = 0;
+        // VUỐT THÔNG MINH
+        let touchStartX = 0, touchStartY = 0;
         
         document.addEventListener('touchstart', e => {
             touchStartX = e.changedTouches[0].screenX;
@@ -465,57 +441,43 @@
         document.addEventListener('touchend', e => {
             const touchEndX = e.changedTouches[0].screenX;
             const touchEndY = e.changedTouches[0].screenY;
-            
             const deltaX = touchEndX - touchStartX;
             const deltaY = touchEndY - touchStartY;
 
-            // Bỏ qua nếu vuốt dọc nhiều hơn vuốt ngang (chống nhiễu)
             if (Math.abs(deltaY) > Math.abs(deltaX)) return;
 
-            // Vuốt đủ dài (> 40px)
             if (Math.abs(deltaX) > 40) {
                 if (deltaX < 0) {
-                    // Vuốt Trái <- (Mở trang tiếp theo chưa lật)
                     for (let i = 0; i < pages.length; i++) {
                         if (!pages[i].el.classList.contains('flipped')) {
-                            flipTo(i);
-                            break;
+                            flipTo(i); break;
                         }
                     }
                 } else {
-                    // Vuốt Phải -> (Đóng trang lật gần nhất)
                     for (let i = pages.length - 1; i >= 0; i--) {
                         if (pages[i].el.classList.contains('flipped')) {
-                            flipTo(i);
-                            break;
+                            flipTo(i); break;
                         }
                     }
                 }
             }
         }, {passive: true});
 
-        // 6. KHỞI CHẠY (BẮT ĐẦU TRẢI NGHIỆM)
         function startProExperience() {
-            // Play Audio
             bgMusic.play().then(() => {
                 vinylIcon.classList.add('playing');
             }).catch(e => console.log("Cần tương tác người dùng kỹ hơn để phát nhạc"));
 
-            // Ẩn Intro, Hiện Sân Khấu
             document.getElementById('intro').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('intro').style.display = 'none';
                 stage.classList.add('visible');
                 playerUI.style.display = 'flex';
                 
-                // Mở sẵn trang bìa sau 0.5s để show hiệu ứng 
-                setTimeout(() => {
-                    flipTo(0);
-                }, 500);
+                setTimeout(() => { flipTo(0); }, 500);
             }, 1200);
         }
 
-        // Điều khiển nhạc tay
         function togglePlay() {
             if (bgMusic.paused) {
                 bgMusic.play();
@@ -526,7 +488,6 @@
             }
         }
 
-        // Khởi tạo DOM Sách
         buildBook();
 
     </script>
