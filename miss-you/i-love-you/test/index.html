@@ -13,37 +13,27 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         :root {
-            --book-width: 340px;
-            --book-height: 480px;
-            --page-speed: 0.8s;
-            --cover-color: #8a1c31; 
-            --bg-color: #ffd1dc;
+            --book-width: 340px; --book-height: 480px; --page-speed: 0.8s;
+            --cover-color: #8a1c31; --bg-color: #ffd1dc;
         }
 
         body, html {
             background-color: var(--bg-color);
             background: radial-gradient(circle at 50% 50%, #fff0f3 0%, #ffc2d1 60%, #ff9eb5 100%);
-            height: 100%; width: 100%;
-            overflow: hidden;
-            font-family: 'Quicksand', sans-serif;
-            perspective: 2000px; 
-            transition: background 2s ease;
+            height: 100%; width: 100%; overflow: hidden; font-family: 'Quicksand', sans-serif;
+            perspective: 2000px; transition: background 2s ease;
         }
 
-        /* Họa tiết nền chung */
         .bg-pattern {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px);
-            background-size: 20px 20px; z-index: 0; pointer-events: none;
-            transition: opacity 2s ease;
+            background-size: 20px 20px; z-index: 0; pointer-events: none; transition: opacity 2s ease;
         }
 
         /* ================= PHẦN 1: MÀN HÌNH CHỜ & SÁCH ẢNH ================= */
         #intro {
-            position: fixed; inset: 0;
-            background: rgba(255, 240, 243, 0.98); backdrop-filter: blur(10px);
-            z-index: 9999; display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
+            position: fixed; inset: 0; background: rgba(255, 240, 243, 0.98); backdrop-filter: blur(10px);
+            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .heart-wrapper { cursor: pointer; transition: transform 0.3s; }
@@ -54,7 +44,6 @@
             color: #d6336c; letter-spacing: 2px; opacity: 0.8; animation: float 3s ease-in-out infinite;
         }
 
-        /* Đĩa than nghe nhạc */
         #player {
             position: fixed; top: 30px; right: 30px; display: none; align-items: center; gap: 15px;
             z-index: 1000; background: rgba(255,255,255,0.6); padding: 8px 20px 8px 8px;
@@ -70,7 +59,6 @@
         .vinyl.playing { animation-play-state: running; }
         .track-name { font-size: 13px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Sân khấu sách */
         .stage {
             position: relative; width: var(--book-width); height: var(--book-height);
             transform: translateX(0); transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 1s;
@@ -106,7 +94,6 @@
             background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.02) 40%, transparent 100%); z-index: 10; pointer-events: none;
         }
 
-        /* Bìa sách */
         .page.cover .front {
             background: var(--cover-color); background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3h1v1H1V3zm2-2h1v1H3V1z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
             border: 1px solid rgba(0,0,0,0.2); box-shadow: inset 4px 0 10px rgba(0,0,0,0.3), inset -1px 0 2px rgba(255,255,255,0.3);
@@ -122,7 +109,6 @@
         .cover-year { position: absolute; bottom: 20px; font-size: 12px; color: #d4af37; letter-spacing: 3px; }
         .page.cover .back { background: #2a0810; border-radius: 12px 4px 4px 12px; }
 
-        /* Ruột sách */
         .back { transform: rotateY(180deg); }
         .page.flipped { transform: rotateY(-180deg); }
         .front.content, .back.content { padding: 20px; display: flex; flex-direction: column; box-shadow: inset 0 0 20px rgba(0,0,0,0.02); }
@@ -157,7 +143,7 @@
         .btn-group { display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%; }
         .btn { width: 80%; max-width: 300px; padding: 16px; border-radius: 50px; border: none; font-weight: bold; font-size: 1.2rem; transition: 0.1s; cursor: pointer; }
         #yes { background: #ff0055; color: white; box-shadow: 0 8px 20px rgba(255, 0, 85, 0.4); z-index: 100; }
-        #no { background: rgba(255,255,255,0.8); color: #555; font-size: 1rem; position: relative; touch-action: none; } /* Tránh lỗi cuộn khi bấm hụt trên đt */
+        #no { background: rgba(255,255,255,0.8); color: #555; font-size: 1rem; position: relative; touch-action: none; }
 
         /* ================= KỊCH BẢN TÂM THƯ ================= */
         #letter-sequence {
@@ -205,16 +191,52 @@
         #typed-letter { font-size: 0.95rem; color: #2b2d42; font-weight: 700; line-height: 26px; text-shadow: 0.5px 0.5px 0px rgba(0,0,0,0.05); display: inline; }
         .cursor { display: inline-block; width: 2px; height: 1rem; background: #2b2d42; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 4px;}
 
-        /* ================= CẢNH TRÁI TIM 3D & CHỮ RƠI ================= */
-        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; display: none; opacity: 0; transition: opacity 2s; background: #000; cursor: grab; }
-        #canvas-container:active { cursor: grabbing; }
-        canvas { display: block; width: 100%; height: 100%; }
+        /* ================= VŨ TRỤ 3D (GALAXY/SATURN EFFECT) ================= */
+        #galaxy-wrapper {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; 
+            display: none; opacity: 0; transition: opacity 2s; background: #000;
+            perspective: 1200px; overflow: hidden;
+        }
+        
+        /* Canvas bụi vũ trụ */
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        .floating-texts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 61; display: none; }
-        .float-text { position: absolute; font-family: 'Dancing Script', cursive; color: #fff; text-shadow: 0 0 10px #ff0055; font-size: 1.5rem; animation: floatUpText 4s ease-in-out infinite alternate; }
-        .falling-text { position: absolute; top: -50px; color: rgba(255, 255, 255, 0.9); font-family: 'Dancing Script', cursive; text-shadow: 0 0 4px #ff0055; pointer-events: none; z-index: 62; will-change: transform, opacity; animation: fall linear forwards; }
+        /* Container chứa 15 bức ảnh xoay 3D */
+        #photo-orbit {
+            position: absolute; top: 50%; left: 50%; width: 0; height: 0;
+            transform-style: preserve-3d; z-index: 2;
+        }
 
-        @keyframes fall { to { transform: translate3d(0, 110vh, 0) rotate(25deg); opacity: 0; } }
+        /* Từng thẻ ảnh 3D */
+        .galaxy-photo {
+            position: absolute; width: 60px; height: 80px; /* Kích thước ảnh vừa vặn trên đt */
+            margin-top: -40px; margin-left: -30px;
+            background: #fff; padding: 3px; border-radius: 4px;
+            box-shadow: 0 0 15px rgba(255, 100, 200, 0.6);
+            cursor: pointer; transition: box-shadow 0.3s, transform 0.2s;
+            backface-visibility: visible;
+        }
+        .galaxy-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; pointer-events: none;}
+        .galaxy-photo:hover { box-shadow: 0 0 25px rgba(255, 255, 255, 1); }
+
+        /* Vùng bắt sự kiện vuốt xoay 3D */
+        #drag-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: grab; }
+        #drag-layer:active { cursor: grabbing; }
+
+        /* Chữ trang trí */
+        .floating-texts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
+        .float-text { position: absolute; font-family: 'Dancing Script', cursive; color: rgba(255,255,255,0.8); text-shadow: 0 0 15px #ff0055; font-size: 1.5rem; animation: floatUpText 4s ease-in-out infinite alternate; }
+
+        /* Overlay khi bấm phóng to ảnh */
+        #photo-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+            z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s;
+        }
+        #photo-modal img { max-width: 90%; max-height: 80%; border: 5px solid #fff; border-radius: 5px; box-shadow: 0 0 30px rgba(255,100,150,0.5); transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #photo-modal.active { opacity: 1; }
+        #photo-modal.active img { transform: scale(1); }
+        .close-btn { position: absolute; top: 20px; right: 20px; color: white; font-size: 35px; cursor: pointer; font-family: sans-serif; font-weight: bold; }
+
         @keyframes heartbeat { 0%, 100% { transform: scale(1); } 10%, 30% { transform: scale(1.15); } 20% { transform: scale(1.05); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -227,7 +249,7 @@
         /* TỐI ƯU HÓA RESPONSIVE RIÊNG CHO ĐIỆN THOẠI */
         @media (max-width: 768px) {
             :root { --book-width: 280px; --book-height: 420px; }
-            .stage.opened { transform: translateX(35px); } /* Dịch nhẹ trên mobile để sách không bị che mất nửa bên trái */
+            .stage.opened { transform: translateX(35px); }
             #player { top: 15px; right: 15px; padding: 5px 15px 5px 5px; }
             .vinyl { width: 30px; height: 30px; }
             .track-name { font-size: 10px; }
@@ -237,6 +259,7 @@
             .flap { border-left: 140px solid transparent; border-right: 140px solid transparent; border-top: 95px solid #d90429; border-bottom: 95px solid transparent; }
             .wax-seal { top: 90px; width: 35px; height: 35px; font-size: 16px; }
             .paper.out { transform: translateY(-200px); }
+            .galaxy-photo { width: 45px; height: 60px; margin-top:-30px; margin-left:-22.5px; } /* Ảnh nhỏ hơn trên mobile để vòng tròn đẹp */
         }
     </style>
 </head>
@@ -285,17 +308,27 @@
         </div>
     </div>
 
-    <div id="canvas-container">
-        <canvas id="heartCanvas"></canvas>
-        <div class="floating-texts" id="floating-texts">
-            <div class="float-text" style="top: 15%; left: 5%; animation-delay: 0s;">CẢM ƠN DƯƠNG</div>
-            <div class="float-text" style="top: 75%; left: 10%; animation-delay: 1s;">I LOVE YOU</div>
-            <div class="float-text" style="top: 20%; right: 5%; animation-delay: 0.5s;">Mãi Yêu ❤️</div>
+    <div id="galaxy-wrapper">
+        <canvas id="galaxyCanvas"></canvas>
+        <div id="drag-layer"></div>
+        
+        <div id="photo-orbit"></div>
+
+        <div class="floating-texts">
+            <div class="float-text" style="top: 10%; left: 5%; animation-delay: 0s;">CẢM ƠN CẬU NHA DƯƠNG</div>
+            <div class="float-text" style="bottom: 10%; left: 10%; animation-delay: 1s;">I LOVE YOU</div>
+            <div class="float-text" style="top: 15%; right: 5%; animation-delay: 0.5s;">Mãi Yêu Cậu ❤️</div>
+            <div class="float-text" style="bottom: 15%; right: 10%; animation-delay: 1.5s;">My Everything</div>
         </div>
     </div>
 
+    <div id="photo-modal" onclick="closeModal()">
+        <div class="close-btn">&times;</div>
+        <img id="modal-img" src="" alt="Zoomed">
+    </div>
+
     <script>
-        // ================= PHẦN 1: LOGIC SÁCH ẢNH =================
+        // Mảng 15 ảnh dùng chung cho cả Sách và Vũ trụ 3D
         const images = [
             "https://nguyenbacson.io.vn/miss-you/1.jpeg", "https://nguyenbacson.io.vn/miss-you/2.jpeg",
             "https://nguyenbacson.io.vn/miss-you/3.jpeg", "https://nguyenbacson.io.vn/miss-you/4.jpeg",
@@ -307,6 +340,7 @@
             "https://nguyenbacson.io.vn/miss-you/15.jpeg"
         ];
 
+        // ================= PHẦN 1 & 2: SÁCH ẢNH VÀ TÂM THƯ (GIỮ NGUYÊN) =================
         const book = document.getElementById('book');
         const stage = document.getElementById('stage');
         const bookAudio = document.getElementById('bookAudio');
@@ -315,215 +349,97 @@
         const playerUI = document.getElementById('player');
         
         let pages = [];
-        // Tổng số trang = Bìa + Số lượng ảnh + Trang cuối chuyển cảnh
         const totalSheets = images.length + 2; 
 
         function buildBook() {
-            // Render Bìa
             const cover = document.createElement('div');
-            cover.className = 'page cover';
-            cover.style.zIndex = totalSheets;
+            cover.className = 'page cover'; cover.style.zIndex = totalSheets;
             cover.innerHTML = `
-                <div class="front">
-                    <div class="cover-frame">
-                        <div class="cover-title">MISS YOU</div>
-                        <div class="cover-subtitle">Nguyễn Bắc Sơn</div>
-                        <div class="cover-year">EST. 2007</div>
-                    </div>
-                </div>
-                <div class="back"></div>
-            `;
-            book.appendChild(cover);
-            pages.push({ el: cover, index: 0 });
+                <div class="front"><div class="cover-frame"><div class="cover-title">MISS YOU</div><div class="cover-subtitle">Nguyễn Bắc Sơn</div><div class="cover-year">EST. 2007</div></div></div>
+                <div class="back"></div>`;
+            book.appendChild(cover); pages.push({ el: cover, index: 0 });
 
-            // Render Ruột (Ảnh)
             images.forEach((src, i) => {
                 const sheetIdx = i + 1;
                 const sheet = document.createElement('div');
-                sheet.className = 'page';
-                sheet.style.zIndex = totalSheets - sheetIdx;
-                sheet.innerHTML = `
-                    <div class="front content">
-                        <div class="photo-frame"><img src="${src}" loading="lazy"></div>
-                        <div class="page-num">- ${sheetIdx} -</div>
-                    </div>
-                    <div class="back content"></div>
-                `;
-                book.appendChild(sheet);
-                pages.push({ el: sheet, index: sheetIdx });
+                sheet.className = 'page'; sheet.style.zIndex = totalSheets - sheetIdx;
+                sheet.innerHTML = `<div class="front content"><div class="photo-frame"><img src="${src}" loading="lazy"></div><div class="page-num">- ${sheetIdx} -</div></div><div class="back content"></div>`;
+                book.appendChild(sheet); pages.push({ el: sheet, index: sheetIdx });
             });
 
-            // Render Trang Cuối (Nút chuyển cảnh)
             const finalSheetIdx = images.length + 1;
             const finalSheet = document.createElement('div');
-            finalSheet.className = 'page';
-            finalSheet.style.zIndex = 1;
-            finalSheet.innerHTML = `
-                <div class="front content" style="justify-content: center; align-items: center; background: #fff0f3;">
-                    <h2 style="font-family: 'Dancing Script', cursive; color: #d6336c; font-size: 2rem; margin-bottom: 25px; text-align:center;">Những khoảnh khắc<br>đẹp nhất...</h2>
-                    <button class="glass-btn" onclick="transitionToConfession(event)">Và bây giờ... ❤️</button>
-                </div>
-                <div class="back content"></div>
-            `;
-            book.appendChild(finalSheet);
-            pages.push({ el: finalSheet, index: finalSheetIdx });
+            finalSheet.className = 'page'; finalSheet.style.zIndex = 1;
+            finalSheet.innerHTML = `<div class="front content" style="justify-content: center; align-items: center; background: #fff0f3;"><h2 style="font-family: 'Dancing Script', cursive; color: #d6336c; font-size: 2rem; margin-bottom: 25px; text-align:center;">Những khoảnh khắc<br>đẹp nhất...</h2><button class="glass-btn" onclick="transitionToConfession(event)">Và bây giờ... ❤️</button></div><div class="back content"></div>`;
+            book.appendChild(finalSheet); pages.push({ el: finalSheet, index: finalSheetIdx });
 
-            // Gắn sự kiện lật sách
-            pages.forEach((p, idx) => {
-                p.el.addEventListener('click', (e) => {
-                    // Tránh việc lật sách khi đang bấm nút "Và bây giờ"
-                    if(e.target.tagName !== 'BUTTON') flipTo(idx);
-                });
-            });
+            pages.forEach((p, idx) => { p.el.addEventListener('click', (e) => { if(e.target.tagName !== 'BUTTON') flipTo(idx); }); });
         }
 
         function flipTo(clickedIndex) {
-            const pageObj = pages[clickedIndex];
-            const el = pageObj.el;
-            const isFlipped = el.classList.contains('flipped');
-
-            if (!isFlipped) {
-                el.classList.add('flipped');
-                setTimeout(() => { el.style.zIndex = clickedIndex + 1; }, 400);
+            const pageObj = pages[clickedIndex]; const el = pageObj.el;
+            if (!el.classList.contains('flipped')) {
+                el.classList.add('flipped'); setTimeout(() => { el.style.zIndex = clickedIndex + 1; }, 400);
             } else {
-                el.classList.remove('flipped');
-                setTimeout(() => { el.style.zIndex = totalSheets - clickedIndex; }, 400);
+                el.classList.remove('flipped'); setTimeout(() => { el.style.zIndex = totalSheets - clickedIndex; }, 400);
             }
-
-            // Xử lý dịch chuyển sách trên Mobile & PC
-            setTimeout(() => {
-                let flippedCount = document.querySelectorAll('.page.flipped').length;
-                if (flippedCount > 0) {
-                    stage.classList.add('opened');
-                } else {
-                    stage.classList.remove('opened');
-                }
-            }, 50);
+            setTimeout(() => { document.querySelectorAll('.page.flipped').length > 0 ? stage.classList.add('opened') : stage.classList.remove('opened'); }, 50);
         }
 
-        // Vuốt cảm ứng sách
         let touchStartX = 0, touchStartY = 0;
-        document.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
-        }, {passive: true});
-
+        document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, {passive: true});
         document.addEventListener('touchend', e => {
-            // Nếu không hiển thị sách thì tắt vuốt
             if(!stage.classList.contains('visible')) return;
-
-            const touchEndX = e.changedTouches[0].screenX;
-            const touchEndY = e.changedTouches[0].screenY;
-            const deltaX = touchEndX - touchStartX;
-            const deltaY = touchEndY - touchStartY;
-
+            const deltaX = e.changedTouches[0].screenX - touchStartX;
+            const deltaY = e.changedTouches[0].screenY - touchStartY;
             if (Math.abs(deltaY) > Math.abs(deltaX)) return;
-
             if (Math.abs(deltaX) > 40) {
-                if (deltaX < 0) { // Vuốt sang trái (lật tới)
-                    for (let i = 0; i < pages.length; i++) {
-                        if (!pages[i].el.classList.contains('flipped')) { flipTo(i); break; }
-                    }
-                } else { // Vuốt sang phải (lật lùi)
-                    for (let i = pages.length - 1; i >= 0; i--) {
-                        if (pages[i].el.classList.contains('flipped')) { flipTo(i); break; }
-                    }
-                }
+                if (deltaX < 0) { for (let i = 0; i < pages.length; i++) { if (!pages[i].el.classList.contains('flipped')) { flipTo(i); break; } } } 
+                else { for (let i = pages.length - 1; i >= 0; i--) { if (pages[i].el.classList.contains('flipped')) { flipTo(i); break; } } }
             }
         }, {passive: true});
 
         function startProExperience() {
-            bookAudio.play();
-            vinylIcon.classList.add('playing');
+            bookAudio.play(); vinylIcon.classList.add('playing');
             document.getElementById('intro').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('intro').style.display = 'none';
-                stage.classList.add('visible');
-                playerUI.style.display = 'flex';
-                setTimeout(() => { flipTo(0); }, 500); // Tự động lật bìa
-            }, 1200);
+            setTimeout(() => { document.getElementById('intro').style.display = 'none'; stage.classList.add('visible'); playerUI.style.display = 'flex'; setTimeout(() => { flipTo(0); }, 500); }, 1200);
         }
 
         function togglePlay() {
-            // Kiểm tra xem bài nào đang phát
-            let activeAudio = (document.getElementById('confession-stage').style.display === 'flex') ? confessAudio : bookAudio;
-            if (activeAudio.paused) {
-                activeAudio.play();
-                vinylIcon.classList.add('playing');
-            } else {
-                activeAudio.pause();
-                vinylIcon.classList.remove('playing');
-            }
+            let activeAudio = (document.getElementById('confession-stage').style.display === 'flex' || document.getElementById('galaxy-wrapper').style.display === 'block') ? confessAudio : bookAudio;
+            if (activeAudio.paused) { activeAudio.play(); vinylIcon.classList.add('playing'); } 
+            else { activeAudio.pause(); vinylIcon.classList.remove('playing'); }
         }
 
         buildBook();
 
-        // ================= PHẦN 2: LOGIC CHUYỂN CẢNH TỎ TÌNH =================
         let checkTime;
         const mainText = document.getElementById('main-text');
         const askSection = document.getElementById('ask-section');
-
         const timelineText = [
-            { time: 1, text: "Xin chào Dương...", clearAt: 4 },
-            { time: 5, text: "Hôm nay là một ngày đặc biệt.", clearAt: 9 },
-            { time: 10, text: "Chúc mừng sinh nhật cậu! 🎂", clearAt: 15 },
-            { time: 16, text: "Tớ đã suy nghĩ rất nhiều...", clearAt: 20 },
-            { time: 21, text: "Về những lúc chúng mình ở bên nhau.", clearAt: 27 },
-            { time: 28, text: "Có cậu, mọi thứ trở nên ý nghĩa hơn.", clearAt: 34 },
-            { time: 35, text: "Nên là...", clearAt: 38 }
+            { time: 1, text: "Xin chào Dương...", clearAt: 4 }, { time: 5, text: "Hôm nay là một ngày đặc biệt.", clearAt: 9 }, { time: 10, text: "Chúc mừng sinh nhật cậu! 🎂", clearAt: 15 },
+            { time: 16, text: "Tớ đã suy nghĩ rất nhiều...", clearAt: 20 }, { time: 21, text: "Về những lúc chúng mình ở bên nhau.", clearAt: 27 },
+            { time: 28, text: "Có cậu, mọi thứ trở nên ý nghĩa hơn.", clearAt: 34 }, { time: 35, text: "Nên là...", clearAt: 38 }
         ];
 
         function transitionToConfession(e) {
-            e.stopPropagation(); // Ngăn sự kiện click lan xuống trang giấy
-
-            // 1. Mờ dần sách ảnh
-            stage.style.opacity = 0;
-            playerUI.style.opacity = 0; // Ẩn tạm đĩa than
-            
-            // Tắt nhạc cũ, mở nhạc tỏ tình
+            e.stopPropagation(); stage.style.opacity = 0; playerUI.style.opacity = 0; 
             let fadeAudio = setInterval(() => {
                 if (bookAudio.volume > 0.1) bookAudio.volume -= 0.1;
-                else {
-                    clearInterval(fadeAudio);
-                    bookAudio.pause();
-                    bookAudio.volume = 1; // Reset
-                }
+                else { clearInterval(fadeAudio); bookAudio.pause(); bookAudio.volume = 1; }
             }, 100);
-
-            // 2. Chuyển sang khung cảnh mới
             setTimeout(() => {
-                stage.style.display = 'none';
-                document.getElementById('confession-stage').style.display = 'flex';
-                
-                // Mở lại đĩa than & phát nhạc tỏ tình
-                playerUI.querySelector('.track-name').innerText = "Miss You";
-                playerUI.style.opacity = 1;
-                confessAudio.play();
-                vinylIcon.classList.add('playing');
-
-                startConfessionTimeline();
+                stage.style.display = 'none'; document.getElementById('confession-stage').style.display = 'flex';
+                playerUI.querySelector('.track-name').innerText = "Miss You"; playerUI.style.opacity = 1;
+                confessAudio.play(); vinylIcon.classList.add('playing'); startConfessionTimeline();
             }, 1500);
         }
 
         function splitAndAnimate(text) {
-            const words = text.split(' ');
-            const html = words.map(word => {
-                const letters = word.split('').map(char => `<span class='letter'>${char}</span>`).join('');
-                return `<span class='word'>${letters}</span>`;
-            }).join(' '); 
-            mainText.innerHTML = html;
-            anime({
-                targets: '.letter', opacity: [0, 1], translateY: [20, 0], rotateZ: [-5, 0],
-                easing: "easeOutExpo", duration: 1000, delay: anime.stagger(40)
-            });
+            mainText.innerHTML = text.split(' ').map(word => `<span class='word'>${word.split('').map(char => `<span class='letter'>${char}</span>`).join('')}</span>`).join(' '); 
+            anime({ targets: '.letter', opacity: [0, 1], translateY: [20, 0], rotateZ: [-5, 0], easing: "easeOutExpo", duration: 1000, delay: anime.stagger(40) });
         }
-
-        function clearText() {
-            anime({
-                targets: '#main-text', opacity: 0, translateY: -10, duration: 500, easing: "easeInQuad",
-                complete: () => { mainText.innerHTML = ""; mainText.style.opacity = 1; mainText.style.transform = 'none'; }
-            });
-        }
+        function clearText() { anime({ targets: '#main-text', opacity: 0, translateY: -10, duration: 500, easing: "easeInQuad", complete: () => { mainText.innerHTML = ""; mainText.style.opacity = 1; mainText.style.transform = 'none'; } }); }
 
         function startConfessionTimeline() {
             checkTime = setInterval(() => {
@@ -533,186 +449,218 @@
                 
                 if (t >= 40) {
                     clearInterval(checkTime); mainText.innerHTML = "";
-                    mainText.style.fontSize = "clamp(30px, 8vw, 55px)"; 
-                    mainText.style.color = "#ff0055"; mainText.style.textShadow = "2px 2px 0px #fff";
+                    mainText.style.fontSize = "clamp(30px, 8vw, 55px)"; mainText.style.color = "#ff0055"; mainText.style.textShadow = "2px 2px 0px #fff";
                     splitAndAnimate("Làm người yêu tớ nhé? ❤️");
-                    setTimeout(() => {
-                        askSection.style.display = 'block';
-                        anime({ targets: '#ask-section', opacity: [0, 1], translateY: [30, 0], duration: 1000 });
-                    }, 2500);
+                    setTimeout(() => { askSection.style.display = 'block'; anime({ targets: '#ask-section', opacity: [0, 1], translateY: [30, 0], duration: 1000 }); }, 2500);
                 }
             }, 1000);
         }
 
-        // Tối ưu nút TỪ CHỐI trên điện thoại (Không chạy ra ngoài màn hình)
         function moveButton(btn) {
-            // Lấy kích thước thật của màn hình đt (trừ hao lề an toàn)
-            const w = window.innerWidth - 120; 
-            const h = window.innerHeight - 80;
-            const newX = Math.max(20, Math.random() * w); 
-            const newY = Math.max(20, Math.random() * h);
-            
-            btn.style.position = 'fixed'; 
-            btn.style.left = newX + 'px'; 
-            btn.style.top = newY + 'px';
-            
-            const phrases = ["Mơ đi cưng 😎", "Đừng hòng thoát", "Bấm nút kia kìa", "Lêu lêu 😝", "Tay chậm thế?", "Thử lại đê"];
+            const w = window.innerWidth - 120; const h = window.innerHeight - 80;
+            btn.style.position = 'fixed'; btn.style.left = Math.max(20, Math.random() * w) + 'px'; btn.style.top = Math.max(20, Math.random() * h) + 'px';
+            const phrases = ["Mơ đi cưng 😎", "Đừng hòng thoát", "Bấm nút kia kìa", "Lêu lêu 😝", "Tay chậm thế?"];
             btn.innerText = phrases[Math.floor(Math.random() * phrases.length)];
             btn.style.background = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.9)`; btn.style.color = "#fff";
         }
 
-        // ================= PHẦN 3: ĐỒNG Ý -> TÂM THƯ & TRÁI TIM =================
         function accepted() {
             askSection.style.display = 'none'; mainText.style.display = 'none';
-            document.getElementById('bg-pattern').style.opacity = 0; 
-            playerUI.style.opacity = 0; // Tắt UI nhạc đi cho tập trung
-
+            document.getElementById('bg-pattern').style.opacity = 0; playerUI.style.opacity = 0; 
             const letterSeq = document.getElementById('letter-sequence');
             letterSeq.style.display = 'flex'; setTimeout(() => letterSeq.style.opacity = 1, 100);
-
             const loading = document.getElementById('loading-text'); loading.style.display = 'block';
             setTimeout(() => { loading.style.display = 'none'; showLetter(); }, 3000);
         }
 
         function showLetter() {
             const envContainer = document.getElementById('envelope-container');
-            const flap = document.getElementById('flap');
-            const paper = document.getElementById('paper');
-            const typeDest = document.getElementById('typed-letter');
+            const flap = document.getElementById('flap'); const paper = document.getElementById('paper'); const typeDest = document.getElementById('typed-letter');
             envContainer.style.display = 'block';
-
             setTimeout(() => { flap.classList.add('open'); }, 800);
             setTimeout(() => { paper.classList.add('out'); }, 2000);
             setTimeout(() => {
                 const text = "Cảm ơn cậu đã đồng ý làm người yêu của tớ. Tớ biết sự thiếu tinh tế, cái tính hơn thua vẫn còn. Nhưng tớ sẽ quyết tâm thay đổi vì người con gái tớ yêu. I LOVE YOU.";
                 let i = 0;
                 function typeWriter() {
-                    if (i < text.length) {
-                        typeDest.innerHTML += text.charAt(i); i++;
-                        setTimeout(typeWriter, 50); 
-                    } else {
-                        setTimeout(showParticleHeart, 4500);
-                    }
+                    if (i < text.length) { typeDest.innerHTML += text.charAt(i); i++; setTimeout(typeWriter, 50); } 
+                    else { setTimeout(initGalaxyEffect, 4500); } // Đổi sang gọi Vũ trụ
                 }
                 typeWriter();
             }, 4000);
         }
 
-        function showParticleHeart() {
+        // ================= PHẦN 3: HIỆU ỨNG VŨ TRỤ 3D (GALAXY) =================
+        function initGalaxyEffect() {
             document.getElementById('letter-sequence').style.opacity = 0;
             setTimeout(() => {
                 document.getElementById('letter-sequence').style.display = 'none';
-                const canvasContainer = document.getElementById('canvas-container');
-                canvasContainer.style.display = 'block';
-                setTimeout(() => { canvasContainer.style.opacity = 1; }, 100);
-                document.getElementById('floating-texts').style.display = 'block';
+                const wrapper = document.getElementById('galaxy-wrapper');
+                wrapper.style.display = 'block';
+                setTimeout(() => { wrapper.style.opacity = 1; playerUI.style.opacity = 1; }, 100);
                 
-                initCanvasHeart();   
-                startFallingText();  
+                build3DPhotoOrbit();
+                initCanvasGalaxy();
             }, 1000);
         }
 
-        // Hiệu ứng chữ rơi chuẩn cho Mobile (Giảm lag)
-        function startFallingText() {
-            const textArr = ["I LOVE YOU", "Dương ❤️", "Bắc Sơn ❤️", "Mãi Yêu Cậu", "Nhớ Cậu"];
-            const canvasContainer = document.getElementById('canvas-container'); 
-            
-            setInterval(() => {
-                const el = document.createElement('div');
-                el.className = 'falling-text';
-                el.innerText = textArr[Math.floor(Math.random() * textArr.length)];
-                el.style.left = Math.random() * 85 + 'vw';
-                el.style.fontSize = (Math.random() * 12 + 10) + 'px'; // Cỡ nhỏ hơn cho mobile
-                el.style.animationDuration = (Math.random() * 4 + 4) + 's'; 
-                canvasContainer.appendChild(el);
-                setTimeout(() => { el.remove(); }, 8000);
-            }, 1000);
+        // Xây dựng vòng xoay ảnh DOM 3D
+        const orbitDiv = document.getElementById('photo-orbit');
+        let currentRx = 15; // Góc ngả ban đầu
+        let currentRy = 0;
+        
+        function build3DPhotoOrbit() {
+            // Xác định bán kính vòng dựa trên màn hình
+            const isMobile = window.innerWidth <= 768;
+            const orbitRadius = isMobile ? 130 : 250; 
+
+            images.forEach((src, i) => {
+                const angle = (i / images.length) * 360;
+                // Tạo độ cao ngẫu nhiên cho ảnh để ra dáng vành đai
+                const yOffset = (Math.random() - 0.5) * (isMobile ? 40 : 80); 
+                
+                const photoWrapper = document.createElement('div');
+                photoWrapper.className = 'galaxy-photo';
+                // Áp dụng thuật toán đặt vật thể lên đường tròn 3D
+                photoWrapper.style.transform = `rotateY(${angle}deg) translate3d(0, ${yOffset}px, ${orbitRadius}px)`;
+                
+                const img = document.createElement('img');
+                img.src = src;
+                
+                // Sự kiện Click để phóng to
+                photoWrapper.onclick = function() { openModal(src); };
+
+                photoWrapper.appendChild(img);
+                orbitDiv.appendChild(photoWrapper);
+            });
         }
 
-        // Canvas 3D Particle Heart siêu tối ưu
-        function initCanvasHeart() {
-            const canvas = document.getElementById("heartCanvas");
-            const ctx = canvas.getContext("2d", { alpha: false }); 
-            const container = document.getElementById("canvas-container");
+        // Canvas vẽ Hạt bụi sáng (Phần lõi và vành đai)
+        function initCanvasGalaxy() {
+            const canvas = document.getElementById("galaxyCanvas");
+            const ctx = canvas.getContext("2d", { alpha: false });
+            const dragLayer = document.getElementById("drag-layer");
             let w, h; let particles = [];
             
-            let currentRx = 0, currentRy = 0;
             let isDragging = false; let previousX = 0, previousY = 0;
 
-            container.addEventListener('touchstart', (e) => { isDragging = true; previousX = e.touches[0].clientX; previousY = e.touches[0].clientY; }, {passive: true});
-            container.addEventListener('touchmove', (e) => {
+            // Xử lý vuốt màn hình để xoay đồng thời Canvas và Bức ảnh
+            dragLayer.addEventListener('touchstart', (e) => { isDragging = true; previousX = e.touches[0].clientX; previousY = e.touches[0].clientY; }, {passive: true});
+            dragLayer.addEventListener('touchmove', (e) => {
                 if(isDragging) {
-                    currentRy += (e.touches[0].clientX - previousX) * 0.01;
-                    currentRx -= (e.touches[0].clientY - previousY) * 0.01;
+                    currentRy += (e.touches[0].clientX - previousX) * 0.4; // Độ nhạy xoay ngang
+                    currentRx -= (e.touches[0].clientY - previousY) * 0.4; // Độ nhạy xoay dọc
+                    // Giới hạn góc lật dọc để không bị lật ngược
+                    currentRx = Math.max(-45, Math.min(45, currentRx));
                     previousX = e.touches[0].clientX; previousY = e.touches[0].clientY;
                 }
             }, {passive: true});
-            container.addEventListener('touchend', () => { isDragging = false; });
+            dragLayer.addEventListener('touchend', () => { isDragging = false; });
 
-            // PC Mouse fallback
-            container.addEventListener('mousedown', (e) => { isDragging = true; previousX = e.clientX; previousY = e.clientY; });
-            container.addEventListener('mousemove', (e) => {
-                if(isDragging) { currentRy += (e.clientX - previousX) * 0.01; currentRx -= (e.clientY - previousY) * 0.01; previousX = e.clientX; previousY = e.clientY; }
+            // PC Support
+            dragLayer.addEventListener('mousedown', (e) => { isDragging = true; previousX = e.clientX; previousY = e.clientY; });
+            dragLayer.addEventListener('mousemove', (e) => {
+                if(isDragging) { 
+                    currentRy += (e.clientX - previousX) * 0.4; 
+                    currentRx -= (e.clientY - previousY) * 0.4; 
+                    currentRx = Math.max(-45, Math.min(45, currentRx));
+                    previousX = e.clientX; previousY = e.clientY; 
+                }
             });
-            container.addEventListener('mouseup', () => { isDragging = false; });
+            dragLayer.addEventListener('mouseup', () => { isDragging = false; });
+            dragLayer.addEventListener('mouseleave', () => { isDragging = false; });
 
             function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
             window.addEventListener("resize", resize); resize();
 
-            function getHeartPos(t, scale) {
-                let x = 16 * Math.pow(Math.sin(t), 3);
-                let y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-                return { x: x * scale, y: y * scale };
-            }
+            const isMobile = window.innerWidth <= 768;
+            const coreRadius = isMobile ? 50 : 80;
+            const ringRadius = isMobile ? 150 : 280;
 
-            class Particle {
-                constructor() {
-                    this.t = Math.random() * Math.PI * 2;
-                    // Thu nhỏ trái tim một chút để vừa màn dọc điện thoại
-                    this.scale = Math.random() * 5 + 8; 
-                    let pos2D = getHeartPos(this.t, this.scale);
-                    this.baseX = pos2D.x; this.baseY = pos2D.y; this.baseZ = (Math.random() - 0.5) * 60; 
-                    this.rayLength = Math.random() * 20 + 5; 
-                    this.color = `hsla(${Math.random() * 30 + 330}, 100%, 70%, ${Math.random() * 0.6 + 0.4})`;
+            class Dust {
+                constructor(isCore) {
+                    this.isCore = isCore;
+                    if(isCore) {
+                        // Bụi Lõi hình cầu
+                        let u = Math.random(); let v = Math.random();
+                        let theta = 2 * Math.PI * u; let phi = Math.acos(2 * v - 1);
+                        let r = Math.cbrt(Math.random()) * coreRadius;
+                        this.baseX = r * Math.sin(phi) * Math.cos(theta);
+                        this.baseY = r * Math.sin(phi) * Math.sin(theta);
+                        this.baseZ = r * Math.cos(phi);
+                        this.color = `rgba(255, ${150 + Math.random()*100}, 255, ${Math.random() * 0.8 + 0.2})`;
+                        this.size = Math.random() * 1.5 + 0.5;
+                    } else {
+                        // Bụi Vành đai hình dẹt
+                        let angle = Math.random() * Math.PI * 2;
+                        let r = coreRadius + 20 + Math.random() * (ringRadius - coreRadius);
+                        this.baseX = Math.cos(angle) * r;
+                        this.baseZ = Math.sin(angle) * r;
+                        this.baseY = (Math.random() - 0.5) * (isMobile ? 30 : 50); // Độ dày của vành
+                        this.color = `rgba(200, 100, 255, ${Math.random() * 0.5 + 0.1})`;
+                        this.size = Math.random() * 1 + 0.2;
+                    }
                 }
                 
-                draw(ctx, w, h, cosRx, sinRx, cosRy, sinRy, beatScale) {
-                    let x = this.baseX * beatScale; let y = this.baseY * beatScale; let z = this.baseZ * beatScale;
-                    let mag = Math.sqrt(x*x + y*y + z*z) || 1;
-                    let ex = x + (x/mag) * this.rayLength; let ey = y + (y/mag) * this.rayLength; let ez = z + (z/mag) * this.rayLength;
+                draw(ctx, w, h, rxRad, ryRad) {
+                    // Thuật toán quay ma trận 3D
+                    let y1 = this.baseY * Math.cos(rxRad) - this.baseZ * Math.sin(rxRad);
+                    let z1 = this.baseY * Math.sin(rxRad) + this.baseZ * Math.cos(rxRad);
+                    let x2 = this.baseX * Math.cos(ryRad) + z1 * Math.sin(ryRad);
+                    let z2 = -this.baseX * Math.sin(ryRad) + z1 * Math.cos(ryRad);
+                    
+                    let scale = 800 / (800 + z2);
+                    let xProj = w / 2 + x2 * scale;
+                    let yProj = h / 2 + y1 * scale;
 
-                    const project = (px, py, pz) => {
-                        let y1 = py * cosRx - pz * sinRx; let z1 = py * sinRx + pz * cosRx;
-                        let x2 = px * cosRy + z1 * sinRy; let z2 = -px * sinRy + z1 * cosRy;
-                        let scale = 800 / (800 + z2);
-                        return { x: w / 2 + x2 * scale, y: h / 2 + y1 * scale, scale: scale };
-                    };
-
-                    let p1 = project(x, y, z); let p2 = project(ex, ey, ez);
-
-                    if (p1.scale > 0 && p2.scale > 0) {
-                        ctx.strokeStyle = this.color; ctx.lineWidth = 1.8 * p1.scale;
-                        ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                    if (scale > 0) {
+                        ctx.fillStyle = this.color;
+                        ctx.beginPath();
+                        ctx.arc(xProj, yProj, this.size * scale, 0, Math.PI * 2);
+                        ctx.fill();
                     }
                 }
             }
 
-            for (let i = 0; i < 700; i++) { particles.push(new Particle()); } // Giảm số lượng để đỡ giật trên đt
+            // Tạo lượng bụi vừa đủ để mượt mà
+            for (let i = 0; i < 400; i++) particles.push(new Dust(true)); // Lõi
+            for (let i = 0; i < 800; i++) particles.push(new Dust(false)); // Vành đai
 
-            let time = 0;
             function animate() {
-                ctx.fillStyle = "rgba(0, 0, 0, 0.3)"; ctx.fillRect(0, 0, w, h);
-                time += 0.05;
+                // Xóa Canvas mờ nhẹ tạo vệt chuyển động
+                ctx.fillStyle = "rgba(0, 0, 0, 0.4)"; ctx.fillRect(0, 0, w, h);
 
-                if (!isDragging) { currentRy += 0.005; }
-                let cosRx = Math.cos(currentRx); let sinRx = Math.sin(currentRx);
-                let cosRy = Math.cos(currentRy); let sinRy = Math.sin(currentRy);
-                let beat = Math.abs(Math.sin(time)) * 0.1; let beatScale = 1 + beat;
+                // Tự động xoay quanh trục Y nếu không vuốt
+                if (!isDragging) { currentRy += 0.2; }
 
-                particles.forEach(p => { p.draw(ctx, w, h, cosRx, sinRx, cosRy, sinRy, beatScale); });
+                // 1. ÁP DỤNG XOAY CHO VÒNG ẢNH CSS
+                orbitDiv.style.transform = `rotateX(${-currentRx}deg) rotateY(${currentRy}deg)`;
+
+                // 2. ÁP DỤNG XOAY CHO BỤI CANVAS (Chuyển độ sang radian)
+                let rxRad = currentRx * Math.PI / 180;
+                let ryRad = currentRy * Math.PI / 180;
+
+                particles.forEach(p => p.draw(ctx, w, h, rxRad, ryRad));
+                
                 requestAnimationFrame(animate);
             }
             animate();
+        }
+
+        // ================= MODAL PHÓNG TO ẢNH =================
+        const modal = document.getElementById('photo-modal');
+        const modalImg = document.getElementById('modal-img');
+
+        function openModal(src) {
+            modalImg.src = src;
+            modal.style.display = 'flex';
+            // Dùng setTimeout để áp dụng hiệu ứng transition mượt
+            setTimeout(() => { modal.classList.add('active'); }, 10);
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            setTimeout(() => { modal.style.display = 'none'; modalImg.src = ''; }, 300);
         }
     </script>
 </body>
