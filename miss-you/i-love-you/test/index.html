@@ -191,48 +191,45 @@
         #typed-letter { font-size: 0.95rem; color: #2b2d42; font-weight: 700; line-height: 26px; text-shadow: 0.5px 0.5px 0px rgba(0,0,0,0.05); display: inline; }
         .cursor { display: inline-block; width: 2px; height: 1rem; background: #2b2d42; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 4px;}
 
-        /* ================= VŨ TRỤ 3D (GALAXY/SATURN EFFECT) ================= */
+        /* ================= VŨ TRỤ 3D TÌNH YÊU ================= */
         #galaxy-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; 
             display: none; opacity: 0; transition: opacity 2s; background: #000;
-            perspective: 1200px; overflow: hidden;
+            perspective: 1000px; overflow: hidden; /* Giảm perspective để ảnh trông gần hơn */
         }
         
-        /* Canvas bụi vũ trụ */
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* Container chứa 15 bức ảnh xoay 3D */
+        /* Container chứa ảnh xoay 3D */
         #photo-orbit {
             position: absolute; top: 50%; left: 50%; width: 0; height: 0;
             transform-style: preserve-3d; z-index: 2;
         }
 
-        /* Từng thẻ ảnh 3D */
+        /* Ảnh 3D - Đã chỉnh nhỏ lại một chút để không che mất tim */
         .galaxy-photo {
-            position: absolute; width: 60px; height: 80px; /* Kích thước ảnh vừa vặn trên đt */
-            margin-top: -40px; margin-left: -30px;
-            background: #fff; padding: 3px; border-radius: 4px;
-            box-shadow: 0 0 15px rgba(255, 100, 200, 0.6);
+            position: absolute; width: 42px; height: 58px;
+            margin-top: -29px; margin-left: -21px;
+            background: #fff; padding: 2px; border-radius: 3px;
+            box-shadow: 0 0 10px rgba(255, 100, 200, 0.8);
             cursor: pointer; transition: box-shadow 0.3s, transform 0.2s;
-            backface-visibility: visible;
+            backface-visibility: visible; will-change: transform;
         }
         .galaxy-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; pointer-events: none;}
-        .galaxy-photo:hover { box-shadow: 0 0 25px rgba(255, 255, 255, 1); }
+        .galaxy-photo:hover { box-shadow: 0 0 20px rgba(255, 255, 255, 1); }
 
-        /* Vùng bắt sự kiện vuốt xoay 3D */
         #drag-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: grab; }
         #drag-layer:active { cursor: grabbing; }
 
-        /* Chữ trang trí */
         .floating-texts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
-        .float-text { position: absolute; font-family: 'Dancing Script', cursive; color: rgba(255,255,255,0.8); text-shadow: 0 0 15px #ff0055; font-size: 1.5rem; animation: floatUpText 4s ease-in-out infinite alternate; }
+        .float-text { position: absolute; font-family: 'Dancing Script', cursive; color: rgba(255,255,255,0.9); text-shadow: 0 0 15px #ff0055; font-size: 1.4rem; animation: floatUpText 4s ease-in-out infinite alternate; }
 
-        /* Overlay khi bấm phóng to ảnh */
+        /* Modal Phóng To Ảnh */
         #photo-modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
             z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s;
         }
-        #photo-modal img { max-width: 90%; max-height: 80%; border: 5px solid #fff; border-radius: 5px; box-shadow: 0 0 30px rgba(255,100,150,0.5); transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #photo-modal img { max-width: 90%; max-height: 80%; border: 4px solid #fff; border-radius: 5px; box-shadow: 0 0 30px rgba(255,100,150,0.5); transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         #photo-modal.active { opacity: 1; }
         #photo-modal.active img { transform: scale(1); }
         .close-btn { position: absolute; top: 20px; right: 20px; color: white; font-size: 35px; cursor: pointer; font-family: sans-serif; font-weight: bold; }
@@ -246,7 +243,6 @@
         @keyframes floatUpText { 0% { transform: translateY(0px) scale(1); } 100% { transform: translateY(-15px) scale(1.05); } }
         @keyframes floatEnvelope { 0% { transform: translateY(0px); } 100% { transform: translateY(-10px); } }
 
-        /* TỐI ƯU HÓA RESPONSIVE RIÊNG CHO ĐIỆN THOẠI */
         @media (max-width: 768px) {
             :root { --book-width: 280px; --book-height: 420px; }
             .stage.opened { transform: translateX(35px); }
@@ -259,7 +255,6 @@
             .flap { border-left: 140px solid transparent; border-right: 140px solid transparent; border-top: 95px solid #d90429; border-bottom: 95px solid transparent; }
             .wax-seal { top: 90px; width: 35px; height: 35px; font-size: 16px; }
             .paper.out { transform: translateY(-200px); }
-            .galaxy-photo { width: 45px; height: 60px; margin-top:-30px; margin-left:-22.5px; } /* Ảnh nhỏ hơn trên mobile để vòng tròn đẹp */
         }
     </style>
 </head>
@@ -311,7 +306,6 @@
     <div id="galaxy-wrapper">
         <canvas id="galaxyCanvas"></canvas>
         <div id="drag-layer"></div>
-        
         <div id="photo-orbit"></div>
 
         <div class="floating-texts">
@@ -328,7 +322,6 @@
     </div>
 
     <script>
-        // Mảng 15 ảnh dùng chung cho cả Sách và Vũ trụ 3D
         const images = [
             "https://nguyenbacson.io.vn/miss-you/1.jpeg", "https://nguyenbacson.io.vn/miss-you/2.jpeg",
             "https://nguyenbacson.io.vn/miss-you/3.jpeg", "https://nguyenbacson.io.vn/miss-you/4.jpeg",
@@ -340,7 +333,7 @@
             "https://nguyenbacson.io.vn/miss-you/15.jpeg"
         ];
 
-        // ================= PHẦN 1 & 2: SÁCH ẢNH VÀ TÂM THƯ (GIỮ NGUYÊN) =================
+        // ================= PHẦN 1 & 2: SÁCH & TỎ TÌNH (GIỮ NGUYÊN) =================
         const book = document.getElementById('book');
         const stage = document.getElementById('stage');
         const bookAudio = document.getElementById('bookAudio');
@@ -484,13 +477,13 @@
                 let i = 0;
                 function typeWriter() {
                     if (i < text.length) { typeDest.innerHTML += text.charAt(i); i++; setTimeout(typeWriter, 50); } 
-                    else { setTimeout(initGalaxyEffect, 4500); } // Đổi sang gọi Vũ trụ
+                    else { setTimeout(initGalaxyEffect, 4500); }
                 }
                 typeWriter();
             }, 4000);
         }
 
-        // ================= PHẦN 3: HIỆU ỨNG VŨ TRỤ 3D (GALAXY) =================
+        // ================= PHẦN 3: VŨ TRỤ 3D TÌNH YÊU (ĐÃ NÂNG CẤP) =================
         function initGalaxyEffect() {
             document.getElementById('letter-sequence').style.opacity = 0;
             setTimeout(() => {
@@ -504,30 +497,26 @@
             }, 1000);
         }
 
-        // Xây dựng vòng xoay ảnh DOM 3D
         const orbitDiv = document.getElementById('photo-orbit');
-        let currentRx = 15; // Góc ngả ban đầu
-        let currentRy = 0;
+        let currentRx = 15; let currentRy = 0;
         
         function build3DPhotoOrbit() {
-            // Xác định bán kính vòng dựa trên màn hình
+            // Thu hẹp bán kính để ảnh bay gần tim hơn
             const isMobile = window.innerWidth <= 768;
-            const orbitRadius = isMobile ? 130 : 250; 
+            const orbitRadius = isMobile ? 90 : 160; 
 
             images.forEach((src, i) => {
                 const angle = (i / images.length) * 360;
-                // Tạo độ cao ngẫu nhiên cho ảnh để ra dáng vành đai
-                const yOffset = (Math.random() - 0.5) * (isMobile ? 40 : 80); 
+                // Tạo độ lệch Z ngẫu nhiên để ảnh không nằm trên 1 mặt phẳng, tạo cảm giác bay lượn 3D
+                const zOffset = (Math.random() - 0.5) * (isMobile ? 50 : 80);
                 
                 const photoWrapper = document.createElement('div');
                 photoWrapper.className = 'galaxy-photo';
-                // Áp dụng thuật toán đặt vật thể lên đường tròn 3D
-                photoWrapper.style.transform = `rotateY(${angle}deg) translate3d(0, ${yOffset}px, ${orbitRadius}px)`;
+                // Sử dụng translateZ để đẩy ảnh ra xa tâm và thêm độ lệch Z
+                photoWrapper.style.transform = `rotateY(${angle}deg) translateZ(${orbitRadius + zOffset}px)`;
                 
                 const img = document.createElement('img');
                 img.src = src;
-                
-                // Sự kiện Click để phóng to
                 photoWrapper.onclick = function() { openModal(src); };
 
                 photoWrapper.appendChild(img);
@@ -535,129 +524,196 @@
             });
         }
 
-        // Canvas vẽ Hạt bụi sáng (Phần lõi và vành đai)
         function initCanvasGalaxy() {
             const canvas = document.getElementById("galaxyCanvas");
             const ctx = canvas.getContext("2d", { alpha: false });
             const dragLayer = document.getElementById("drag-layer");
-            let w, h; let particles = [];
+            let w, h; let particles = []; let meteors = [];
             
             let isDragging = false; let previousX = 0, previousY = 0;
 
-            // Xử lý vuốt màn hình để xoay đồng thời Canvas và Bức ảnh
             dragLayer.addEventListener('touchstart', (e) => { isDragging = true; previousX = e.touches[0].clientX; previousY = e.touches[0].clientY; }, {passive: true});
             dragLayer.addEventListener('touchmove', (e) => {
                 if(isDragging) {
-                    currentRy += (e.touches[0].clientX - previousX) * 0.4; // Độ nhạy xoay ngang
-                    currentRx -= (e.touches[0].clientY - previousY) * 0.4; // Độ nhạy xoay dọc
-                    // Giới hạn góc lật dọc để không bị lật ngược
+                    currentRy += (e.touches[0].clientX - previousX) * 0.4; 
+                    currentRx -= (e.touches[0].clientY - previousY) * 0.4; 
                     currentRx = Math.max(-45, Math.min(45, currentRx));
                     previousX = e.touches[0].clientX; previousY = e.touches[0].clientY;
                 }
             }, {passive: true});
             dragLayer.addEventListener('touchend', () => { isDragging = false; });
 
-            // PC Support
             dragLayer.addEventListener('mousedown', (e) => { isDragging = true; previousX = e.clientX; previousY = e.clientY; });
             dragLayer.addEventListener('mousemove', (e) => {
                 if(isDragging) { 
-                    currentRy += (e.clientX - previousX) * 0.4; 
-                    currentRx -= (e.clientY - previousY) * 0.4; 
+                    currentRy += (e.clientX - previousX) * 0.4; currentRx -= (e.clientY - previousY) * 0.4; 
                     currentRx = Math.max(-45, Math.min(45, currentRx));
                     previousX = e.clientX; previousY = e.clientY; 
                 }
             });
             dragLayer.addEventListener('mouseup', () => { isDragging = false; });
-            dragLayer.addEventListener('mouseleave', () => { isDragging = false; });
 
             function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
             window.addEventListener("resize", resize); resize();
 
             const isMobile = window.innerWidth <= 768;
-            const coreRadius = isMobile ? 50 : 80;
-            const ringRadius = isMobile ? 150 : 280;
+            // Bán kính cho bụi vành đai bên ngoài (xa hơn ảnh một chút)
+            const ringRadiusMin = isMobile ? 110 : 180;
+            const ringRadiusMax = isMobile ? 200 : 350;
 
             class Dust {
                 constructor(isCore) {
                     this.isCore = isCore;
                     if(isCore) {
-                        // Bụi Lõi hình cầu
-                        let u = Math.random(); let v = Math.random();
-                        let theta = 2 * Math.PI * u; let phi = Math.acos(2 * v - 1);
-                        let r = Math.cbrt(Math.random()) * coreRadius;
-                        this.baseX = r * Math.sin(phi) * Math.cos(theta);
-                        this.baseY = r * Math.sin(phi) * Math.sin(theta);
-                        this.baseZ = r * Math.cos(phi);
-                        this.color = `rgba(255, ${150 + Math.random()*100}, 255, ${Math.random() * 0.8 + 0.2})`;
-                        this.size = Math.random() * 1.5 + 0.5;
+                        // --- TẠO HÌNH TRÁI TIM 3D CHO LÕI ---
+                        let t = Math.random() * Math.PI * 2;
+                        // Công thức hình trái tim 2D
+                        let hx = 16 * Math.pow(Math.sin(t), 3);
+                        let hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
+                        
+                        // Tạo độ dày Z ngẫu nhiên
+                        let hz = (Math.random() - 0.5) * (isMobile ? 30 : 50);
+                        
+                        // Scale kích thước trái tim
+                        let heartScale = isMobile ? 2.5 : 4;
+                        // Điều chỉnh X, Y dựa trên độ dày Z để tạo hình khối phồng hơn
+                        let depthScale = 1 - Math.abs(hz) / (isMobile ? 60 : 100);
+
+                        this.baseX = hx * heartScale * depthScale;
+                        this.baseY = hy * heartScale * depthScale;
+                        this.baseZ = hz;
+                        
+                        // Màu sắc: Hồng đỏ rực rỡ cho lõi tim
+                        let red = 200 + Math.random() * 55;
+                        let green = Math.random() * 50;
+                        let blue = 50 + Math.random() * 100;
+                        this.color = `rgba(${red}, ${green}, ${blue}, ${Math.random() * 0.8 + 0.2})`;
+                        this.size = Math.random() * 2 + 0.8;
                     } else {
-                        // Bụi Vành đai hình dẹt
+                        // Bụi Vành đai hình dẹt bên ngoài
                         let angle = Math.random() * Math.PI * 2;
-                        let r = coreRadius + 20 + Math.random() * (ringRadius - coreRadius);
+                        let r = ringRadiusMin + Math.random() * (ringRadiusMax - ringRadiusMin);
                         this.baseX = Math.cos(angle) * r;
                         this.baseZ = Math.sin(angle) * r;
-                        this.baseY = (Math.random() - 0.5) * (isMobile ? 30 : 50); // Độ dày của vành
-                        this.color = `rgba(200, 100, 255, ${Math.random() * 0.5 + 0.1})`;
-                        this.size = Math.random() * 1 + 0.2;
+                        this.baseY = (Math.random() - 0.5) * (isMobile ? 40 : 80);
+                        this.color = `rgba(${150+Math.random()*50}, ${50+Math.random()*50}, 255, ${Math.random() * 0.4 + 0.1})`;
+                        this.size = Math.random() * 1.2 + 0.3;
                     }
                 }
                 
-                draw(ctx, w, h, rxRad, ryRad) {
-                    // Thuật toán quay ma trận 3D
-                    let y1 = this.baseY * Math.cos(rxRad) - this.baseZ * Math.sin(rxRad);
-                    let z1 = this.baseY * Math.sin(rxRad) + this.baseZ * Math.cos(rxRad);
-                    let x2 = this.baseX * Math.cos(ryRad) + z1 * Math.sin(ryRad);
-                    let z2 = -this.baseX * Math.sin(ryRad) + z1 * Math.cos(ryRad);
+                draw(ctx, w, h, rxRad, ryRad, beatScale) {
+                    let x = this.baseX; let y = this.baseY; let z = this.baseZ;
+                    // Nếu là lõi tim thì áp dụng hiệu ứng đập thình thịch
+                    if(this.isCore) { x *= beatScale; y *= beatScale; z *= beatScale; }
+
+                    let y1 = y * Math.cos(rxRad) - z * Math.sin(rxRad);
+                    let z1 = y * Math.sin(rxRad) + z * Math.cos(rxRad);
+                    let x2 = x * Math.cos(ryRad) + z1 * Math.sin(ryRad);
+                    let z2 = -x * Math.sin(ryRad) + z1 * Math.cos(ryRad);
                     
                     let scale = 800 / (800 + z2);
                     let xProj = w / 2 + x2 * scale;
                     let yProj = h / 2 + y1 * scale;
 
                     if (scale > 0) {
-                        ctx.fillStyle = this.color;
+                        ctx.fillStyle = this.color; ctx.beginPath();
+                        ctx.arc(xProj, yProj, this.size * scale, 0, Math.PI * 2); ctx.fill();
+                    }
+                }
+            }
+
+            // --- LỚP SAO BĂNG (METEOR) ---
+            class Meteor {
+                constructor() {
+                    this.reset();
+                }
+                reset() {
+                    this.x = Math.random() * w + w * 0.5; // Bắt đầu từ bên phải ngoài màn hình
+                    this.y = Math.random() * h * 0.5; // Ở nửa trên
+                    this.speed = Math.random() * 15 + 10;
+                    this.len = Math.random() * 80 + 40;
+                    this.size = Math.random() * 2 + 1;
+                    // Góc bay chéo xuống
+                    this.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.2; 
+                    this.opacity = 0;
+                    this.state = 'appearing'; // appearing -> moving -> fading
+                }
+                draw(ctx) {
+                    if (this.state === 'appearing') {
+                        this.opacity += 0.05;
+                        if (this.opacity >= 1) this.state = 'moving';
+                    } else if (this.state === 'moving') {
+                        this.x -= Math.cos(this.angle) * this.speed;
+                        this.y += Math.sin(this.angle) * this.speed;
+                        if (this.x < -this.len || this.y > h + this.len) this.state = 'fading';
+                    } else if (this.state === 'fading') {
+                        this.opacity -= 0.05;
+                        if (this.opacity <= 0) this.reset();
+                    }
+
+                    if(this.opacity > 0) {
+                        const tailX = this.x + Math.cos(this.angle) * this.len;
+                        const tailY = this.y - Math.sin(this.angle) * this.len;
+                        
+                        // Vẽ đuôi sao băng (gradient mờ dần)
+                        let gradient = ctx.createLinearGradient(this.x, this.y, tailX, tailY);
+                        gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity})`);
+                        gradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
+
                         ctx.beginPath();
-                        ctx.arc(xProj, yProj, this.size * scale, 0, Math.PI * 2);
+                        ctx.strokeStyle = gradient;
+                        ctx.lineWidth = this.size;
+                        ctx.lineCap = 'round';
+                        ctx.moveTo(this.x, this.y);
+                        ctx.lineTo(tailX, tailY);
+                        ctx.stroke();
+                        
+                        // Vẽ đầu sao băng sáng hơn
+                        ctx.beginPath();
+                        ctx.fillStyle = `rgba(255, 255, 200, ${this.opacity})`;
+                        ctx.arc(this.x, this.y, this.size * 1.5, 0, Math.PI*2);
                         ctx.fill();
                     }
                 }
             }
 
-            // Tạo lượng bụi vừa đủ để mượt mà
-            for (let i = 0; i < 400; i++) particles.push(new Dust(true)); // Lõi
-            for (let i = 0; i < 800; i++) particles.push(new Dust(false)); // Vành đai
+            // Tăng số lượng hạt cho lõi tim dày hơn
+            for (let i = 0; i < 800; i++) particles.push(new Dust(true)); // Lõi tim
+            for (let i = 0; i < 600; i++) particles.push(new Dust(false)); // Vành đai bụi
+            // Tạo 3 sao băng thay phiên nhau bay
+            for (let i = 0; i < 3; i++) meteors.push(new Meteor());
 
+            let time = 0;
             function animate() {
-                // Xóa Canvas mờ nhẹ tạo vệt chuyển động
                 ctx.fillStyle = "rgba(0, 0, 0, 0.4)"; ctx.fillRect(0, 0, w, h);
+                time += 0.05;
 
-                // Tự động xoay quanh trục Y nếu không vuốt
                 if (!isDragging) { currentRy += 0.2; }
-
-                // 1. ÁP DỤNG XOAY CHO VÒNG ẢNH CSS
                 orbitDiv.style.transform = `rotateX(${-currentRx}deg) rotateY(${currentRy}deg)`;
 
-                // 2. ÁP DỤNG XOAY CHO BỤI CANVAS (Chuyển độ sang radian)
                 let rxRad = currentRx * Math.PI / 180;
                 let ryRad = currentRy * Math.PI / 180;
+                
+                // Tạo nhịp tim đập
+                let beat = Math.abs(Math.sin(time)) * 0.08; 
+                let beatScale = 1 + beat;
 
-                particles.forEach(p => p.draw(ctx, w, h, rxRad, ryRad));
+                particles.forEach(p => p.draw(ctx, w, h, rxRad, ryRad, beatScale));
+                
+                // Vẽ sao băng (không bị ảnh hưởng bởi xoay 3D)
+                meteors.forEach(m => m.draw(ctx));
                 
                 requestAnimationFrame(animate);
             }
             animate();
         }
 
-        // ================= MODAL PHÓNG TO ẢNH =================
         const modal = document.getElementById('photo-modal');
         const modalImg = document.getElementById('modal-img');
-
         function openModal(src) {
-            modalImg.src = src;
-            modal.style.display = 'flex';
-            // Dùng setTimeout để áp dụng hiệu ứng transition mượt
+            modalImg.src = src; modal.style.display = 'flex';
             setTimeout(() => { modal.classList.add('active'); }, 10);
         }
-
         function closeModal() {
             modal.classList.remove('active');
             setTimeout(() => { modal.style.display = 'none'; modalImg.src = ''; }, 300);
