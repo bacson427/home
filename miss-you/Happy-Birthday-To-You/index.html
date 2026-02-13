@@ -34,26 +34,26 @@
 
         .container-box {
             text-align: center; background: rgba(255, 255, 255, 0.6);
-            padding: 2rem; border-radius: 20px;
+            padding: 1.5rem; border-radius: 20px;
             box-shadow: 0 15px 35px rgba(255, 77, 109, 0.2);
-            border: 2px solid #fff; max-width: 90%;
+            border: 2px solid #fff; max-width: 90%; width: 380px;
             backdrop-filter: blur(10px);
         }
 
-        h1.title { color: var(--text-main); margin-bottom: 20px; font-size: 1.5rem; font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: 1px;}
+        h1.title { color: var(--text-main); margin-bottom: 15px; font-size: 1.3rem; font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: 1px;}
 
-        #countdown { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .countdown-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
         .time-box {
             background: var(--primary); color: white;
-            padding: 10px; border-radius: 12px; min-width: 60px;
+            padding: 8px; border-radius: 12px; min-width: 55px;
             box-shadow: 0 5px 15px rgba(255, 117, 143, 0.4);
         }
-        .time-box span { display: block; font-size: 1.8rem; font-weight: bold; font-family: 'Montserrat', sans-serif; }
-        .label { font-size: 0.7rem; text-transform: uppercase; margin-top: 5px; }
+        .time-box span { display: block; font-size: 1.5rem; font-weight: bold; font-family: 'Montserrat', sans-serif; }
+        .label { font-size: 0.65rem; text-transform: uppercase; margin-top: 3px; }
 
         #admin-btn {
-            margin-top: 20px; cursor: pointer; color: var(--secondary);
-            font-size: 30px; opacity: 0.5; transition: 0.3s;
+            margin-top: 5px; cursor: pointer; color: var(--secondary);
+            font-size: 25px; opacity: 0.5; transition: 0.3s;
         }
         #admin-btn:hover { transform: scale(1.2) rotate(15deg); opacity: 1; color: var(--primary); }
 
@@ -85,16 +85,16 @@
             font-family: 'Courier New', monospace; font-weight: bold; line-height: 1.6;
         }
 
-        /* --- 4. ĐẾM NGƯỢC 10 GIÂY (MỚI) --- */
+        /* --- 4. ĐẾM NGƯỢC 10 GIÂY --- */
         #final-countdown-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 9500; display: none;
             justify-content: center; align-items: center;
-            background: rgba(255, 240, 243, 0.5); /* Mờ nhẹ để thấy code sau lưng */
+            background: rgba(255, 240, 243, 0.5);
             backdrop-filter: blur(2px);
         }
         #final-cnt-num {
-            font-size: 15vw; /* Chữ siêu to */
+            font-size: 15vw;
             font-weight: 900;
             color: var(--primary);
             font-family: 'Montserrat', sans-serif;
@@ -163,13 +163,26 @@
     <div id="countdown-layer">
         <div class="container-box">
             <h1 class="title">SẮP ĐẾN SINH NHẬT DƯƠNG RỒI! 🎂</h1>
-            <div id="countdown">
+            
+            <div style="font-weight: bold; color: var(--text-main); margin-bottom: 8px; font-size: 0.85rem;">ĐẾM NGƯỢC ĐẾN NGÀY (00:00)</div>
+            <div class="countdown-row">
                 <div class="time-box"><span id="d">00</span><div class="label">Ngày</div></div>
                 <div class="time-box"><span id="h">00</span><div class="label">Giờ</div></div>
                 <div class="time-box"><span id="m">00</span><div class="label">Phút</div></div>
                 <div class="time-box"><span id="s">00</span><div class="label">Giây</div></div>
             </div>
-            <div style="margin-top: 20px; font-size: 14px; color: #888;">01/03/2026</div>
+
+            <hr style="border: none; border-top: 1.5px dashed #ff8fa3; margin: 15px 0;">
+
+            <div style="font-weight: bold; color: var(--text-main); margin-bottom: 8px; font-size: 0.85rem;">THỜI GIAN MỞ KHÓA (17:00)</div>
+            <div class="countdown-row">
+                <div class="time-box" style="background: #d90429;"><span id="d2">00</span><div class="label">Ngày</div></div>
+                <div class="time-box" style="background: #d90429;"><span id="h2">00</span><div class="label">Giờ</div></div>
+                <div class="time-box" style="background: #d90429;"><span id="m2">00</span><div class="label">Phút</div></div>
+                <div class="time-box" style="background: #d90429;"><span id="s2">00</span><div class="label">Giây</div></div>
+            </div>
+
+            <div style="margin-top: 15px; font-size: 13px; color: #888;">01/03/2026</div>
             <div id="admin-btn" onclick="adminUnlock()">🔒</div>
         </div>
     </div>
@@ -207,14 +220,12 @@
     <audio id="audio" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
 
 <script>
-    const TARGET_DATE = new Date("March 1, 2026 00:00:00").getTime();
+    // Tách riêng 2 mốc thời gian
+    const TARGET_DATE = new Date("March 1, 2026 00:00:00").getTime(); // Đếm đến ngày
+    const UNLOCK_DATE = new Date("March 1, 2026 17:00:00").getTime(); // Giờ mở khóa
     const PASS = "01032007";
     
-    const LETTER = `"Dương à, 🌸
-\n\nTớ muốn xin lỗi vì thời gian qua đã có những lúc tính cách trẻ trâu của tớ làm cậu phải phiền lòng và khó chịu. Cảm ơn Dương vì đã kiên nhẫn với tớ nhé.\n\nHôm nay là sinh nhật cậu, cũng vào dịp đầu xuân năm mới, tớ chúc cậu luôn rạng rỡ, học tập thật tốt và mọi dự định đều thành công rực rỡ. Mong rằng tuổi mới sẽ mang đến cho cậu thật nhiều niềm vui và những điều dịu dàng nhất.
-\n\nHappy Birthday, my special girl! ❤️
-
--- Nguyễn Bắc Sơn --"`;
+    const LETTER = `"Dương à, 🌸\n\nTớ muốn xin lỗi vì thời gian qua đã có những lúc tính cách trẻ trâu của tớ làm cậu phải phiền lòng và khó chịu. Cảm ơn Dương vì đã kiên nhẫn với tớ nhé.\n\nHôm nay là sinh nhật cậu, cũng vào dịp đầu xuân năm mới, tớ chúc cậu luôn rạng rỡ, học tập thật tốt và mọi dự định đều thành công rực rỡ. Mong rằng tuổi mới sẽ mang đến cho cậu thật nhiều niềm vui và những điều dịu dàng nhất.\n\nHappy Birthday, my special girl! ❤️\n\n-- Nguyễn Bắc Sơn --"`;
 
     const TERMINAL_LOGS = [
         "> KẾT NỐI SERVER TRÁI TIM...", "> TÌM KIẾM: 'TRƯƠNG THỊ DƯƠNG'", 
@@ -266,16 +277,30 @@
     // 1. ĐẾM NGƯỢC
     function updateTimer() {
         const now = new Date().getTime();
-        const dis = TARGET_DATE - now;
-        if(dis < 0) { unlock(); return; }
-        const d = Math.floor(dis / (1000 * 60 * 60 * 24));
-        const ho = Math.floor((dis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const mi = Math.floor((dis % (1000 * 60 * 60)) / (1000 * 60));
-        const se = Math.floor((dis % (1000 * 60)) / 1000);
-        document.getElementById("d").innerText = d.toString().padStart(2, '0');
-        document.getElementById("h").innerText = ho.toString().padStart(2, '0');
-        document.getElementById("m").innerText = mi.toString().padStart(2, '0');
-        document.getElementById("s").innerText = se.toString().padStart(2, '0');
+        
+        // --- BỘ ĐẾM 1: TỚI 00:00 ---
+        let dis1 = TARGET_DATE - now;
+        if (dis1 < 0) dis1 = 0; // Khi qua 00:00 thì đứng im ở số 0 chứ chưa mở khóa
+        const d1 = Math.floor(dis1 / (1000 * 60 * 60 * 24));
+        const ho1 = Math.floor((dis1 % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mi1 = Math.floor((dis1 % (1000 * 60 * 60)) / (1000 * 60));
+        const se1 = Math.floor((dis1 % (1000 * 60)) / 1000);
+        document.getElementById("d").innerText = d1.toString().padStart(2, '0');
+        document.getElementById("h").innerText = ho1.toString().padStart(2, '0');
+        document.getElementById("m").innerText = mi1.toString().padStart(2, '0');
+        document.getElementById("s").innerText = se1.toString().padStart(2, '0');
+
+        // --- BỘ ĐẾM 2: TỚI 17:00 (MỞ KHÓA TẠI ĐÂY) ---
+        const dis2 = UNLOCK_DATE - now;
+        if(dis2 < 0) { unlock(); return; } // Quyền mở khóa thuộc về bộ đếm này
+        const d2 = Math.floor(dis2 / (1000 * 60 * 60 * 24));
+        const ho2 = Math.floor((dis2 % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mi2 = Math.floor((dis2 % (1000 * 60 * 60)) / (1000 * 60));
+        const se2 = Math.floor((dis2 % (1000 * 60)) / 1000);
+        document.getElementById("d2").innerText = d2.toString().padStart(2, '0');
+        document.getElementById("h2").innerText = ho2.toString().padStart(2, '0');
+        document.getElementById("m2").innerText = mi2.toString().padStart(2, '0');
+        document.getElementById("s2").innerText = se2.toString().padStart(2, '0');
     }
     let tmr = setInterval(updateTimer, 1000);
     updateTimer();
@@ -287,6 +312,7 @@
         state = "GIFT";
     }
 
+    // Ổ Khóa bí mật vẫn giữ nguyên
     window.adminUnlock = function() {
         if(prompt("MẬT KHẨU (01032007):") == PASS) unlock(); else alert("Sai mật khẩu rồi!");
     }
@@ -299,7 +325,6 @@
         gift.style.animation = "shake 0.5s";
         setTimeout(() => {
             gift.style.transform = "scale(5)"; gift.style.opacity = "0"; layer.style.opacity = "0";
-            // Bắn pháo hoa nhẹ khi mở
             for(let i=0; i<5; i++) setTimeout(() => launchFirework("normal"), i*200);
             setTimeout(() => { layer.style.display = "none"; runVirus(); }, 800);
         }, 500);
@@ -314,7 +339,7 @@
             if(line >= TERMINAL_LOGS.length) { 
                 setTimeout(() => { 
                     term.style.display = "none"; 
-                    startFinalCountdown(); // CHUYỂN SANG ĐẾM NGƯỢC 10s
+                    startFinalCountdown();
                 }, 1000); 
                 return; 
             }
@@ -353,7 +378,6 @@
         formingText = true; 
         document.getElementById("msg-layer").style.display = "none";
         
-        // Loop bắn pháo hoa chậm
         setInterval(() => {
             if(state === "DRONE" || state === "MSG") {
                 if(Math.random() < 0.8) {
@@ -376,7 +400,6 @@
         state = "MSG"; 
         formingText = false; 
         
-        // HIỆU ỨNG NỔ TUNG (Scatter)
         drones.forEach(d => {
             d.tx = Math.random() * w;
             d.ty = Math.random() * h;
@@ -444,7 +467,6 @@
         });
     }
 
-    // --- LOGIC PHÁO HOA CHẬM ---
     function launchFirework(type = "normal") {
         let fwColor = type === "heart" ? "#ff0040" : `hsl(${Math.random() * 360}, 100%, 60%)`;
         fireworks.push({
@@ -461,7 +483,6 @@
     function loop() {
         ctx.clearRect(0, 0, w, h);
         
-        // Vẽ pháo hoa
         for (let i = fireworks.length - 1; i >= 0; i--) {
             let f = fireworks[i];
             if (!f.exploded) {
@@ -489,7 +510,6 @@
             }
         }
         
-        // Vẽ hạt
         for (let i = particles.length - 1; i >= 0; i--) {
             let p = particles[i]; 
             p.x += p.vx; p.y += p.vy; 
@@ -508,7 +528,6 @@
             }
         }
 
-        // Vẽ Drone (Chỉ vẽ khi ở state Drone hoặc Msg)
         if(state === "DRONE" || state === "MSG") {
             drones.forEach(d => {
                 d.x += (d.tx - d.x) * 0.05; 
