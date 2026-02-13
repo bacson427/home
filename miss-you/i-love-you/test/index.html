@@ -2,96 +2,177 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Album Kỷ Niệm - Nguyễn Bắc Sơn</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Premium Photobook - Nguyễn Bắc Sơn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Dancing+Script:wght@700&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
     <style>
+        /* ================= CẤU HÌNH GỐC ================= */
         :root {
-            --primary-color: #ff9eb5;
-            --book-width: 320px;
+            --book-width: 340px;
             --book-height: 480px;
-            --anim-speed: 0.8s;
+            --page-speed: 1s;
+            --cover-color: #8a1c31; /* Đỏ đô cực sang */
+            --bg-color: #ffd1dc;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background-color: #ffe6ea;
-            background-image: radial-gradient(circle, #fff0f3 0%, #ffc2d1 100%);
+            background-color: var(--bg-color);
+            /* Nền gradient hoàng hôn lãng mạn */
+            background: radial-gradient(circle at 50% 50%, #fff0f3 0%, #ffc2d1 60%, #ff9eb5 100%);
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: sans-serif;
+            font-family: 'Montserrat', sans-serif;
             overflow: hidden;
-            perspective: 1500px;
+            perspective: 2000px; /* Perspective lớn để góc nhìn 3D ít bị méo */
         }
 
-        /* --- MÀN HÌNH CHỜ (INTRO) --- */
-        #intro-screen {
+        /* ================= MÀN HÌNH CHỜ (INTRO) ================= */
+        #intro {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 230, 234, 0.95);
+            inset: 0;
+            background: rgba(255, 240, 243, 0.98);
+            backdrop-filter: blur(10px);
             z-index: 9999;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 1s ease;
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        .heart-wrapper {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .heart-wrapper:hover { transform: scale(1.1); }
 
         .heart-btn {
             font-size: 80px;
-            cursor: pointer;
-            filter: drop-shadow(0 0 20px rgba(255, 0, 80, 0.5));
-            animation: beat 1.2s infinite;
-            background: none;
-            border: none;
-            outline: none;
-            transition: transform 0.3s;
+            filter: drop-shadow(0 15px 25px rgba(255, 50, 100, 0.4));
+            animation: heartbeat 1.5s infinite;
         }
 
-        .heart-btn:hover {
-            transform: scale(1.2);
-        }
-
-        .click-text {
-            margin-top: 20px;
+        .intro-text {
+            margin-top: 30px;
             font-family: 'Dancing Script', cursive;
-            font-size: 24px;
+            font-size: 28px;
             color: #d6336c;
-            animation: fadeIn 2s infinite;
+            letter-spacing: 2px;
+            opacity: 0.8;
+            animation: float 3s ease-in-out infinite;
         }
 
-        @keyframes beat {
-            0% { transform: scale(1); }
-            15% { transform: scale(1.3); }
-            30% { transform: scale(1); }
-            45% { transform: scale(1.15); }
-            60% { transform: scale(1); }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10%, 30% { transform: scale(1.15); }
+            20% { transform: scale(1.05); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
-        /* --- SÂN KHẤU SÁCH --- */
-        .book-container {
+        /* ================= TRÌNH PHÁT NHẠC (VINYL) ================= */
+        #player {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            display: none;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.6);
+            padding: 8px 20px 8px 8px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+        }
+
+        .vinyl {
+            width: 40px;
+            height: 40px;
+            background: #111;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            animation: spin 4s linear infinite;
+            animation-play-state: paused; /* Mặc định dừng */
+        }
+        .vinyl::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: #ff9eb5;
+            border-radius: 50%;
+            border: 1px solid #333;
+        }
+        .vinyl.playing { animation-play-state: running; }
+        
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .track-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ================= SÂN KHẤU & SÁCH 3D ================= */
+        .stage {
             position: relative;
             width: var(--book-width);
             height: var(--book-height);
-            transform-style: preserve-3d;
+            /* Dịch chuyển sách để nằm giữa khi đóng */
+            transform: translateX(-50%);
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
             opacity: 0;
-            transform: scale(0.8) translateY(50px);
-            transition: all 1s ease;
+            pointer-events: none; /* Khóa tương tác khi chưa mở intro */
         }
 
-        /* Hiệu ứng khi sách hiện ra */
-        .book-container.visible {
+        /* Khi mở sách (trang > 0), sách trượt về chính giữa (0) */
+        .stage.opened {
+            transform: translateX(0);
+        }
+
+        .stage.visible {
             opacity: 1;
-            transform: scale(1) translateY(0);
+            pointer-events: all;
         }
 
-        .sheet {
+        /* Bóng đổ khổng lồ dưới sàn */
+        .stage::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            width: 200%;
+            height: 30px;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, transparent 70%);
+            transform: translateX(-25%);
+            z-index: -1;
+            transition: opacity 1s, transform 1s;
+        }
+
+        .book {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        /* CÁC TRANG GIẤY */
+        .page {
             position: absolute;
             top: 0;
             left: 0;
@@ -99,240 +180,355 @@
             height: 100%;
             transform-origin: left center;
             transform-style: preserve-3d;
-            transition: transform var(--anim-speed) cubic-bezier(0.645, 0.045, 0.355, 1);
-            cursor: pointer;
+            transition: transform var(--page-speed) cubic-bezier(0.645, 0.045, 0.355, 1);
+            cursor: grab;
+            will-change: transform;
         }
+        .page:active { cursor: grabbing; }
 
-        /* --- THIẾT KẾ BÌA SÁCH (COVER) --- */
-        .sheet.cover .front {
-            background: #a63e4b; /* Màu đỏ đô sang trọng */
-            border: 2px solid #8a2be2;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.5); /* Bóng đổ tạo độ sâu */
-            border-radius: 5px 15px 15px 5px;
-        }
-        
-        .sheet.cover .front::after {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            bottom: 20px;
-            border: 2px solid #ffd700; /* Viền vàng kim loại */
-            border-radius: 5px;
-        }
-
-        .book-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            text-align: center;
-            color: #ffd700; /* Màu vàng kim */
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            margin-bottom: 20px;
-            z-index: 10;
-        }
-
-        .book-subtitle {
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.5rem;
-            color: #ffcccc;
-            z-index: 10;
-        }
-
-        /* --- THIẾT KẾ TRANG NỘI DUNG (CONTENT) --- */
         .front, .back {
             position: absolute;
             width: 100%;
             height: 100%;
+            top: 0; left: 0;
             backface-visibility: hidden;
-            border-radius: 5px 15px 15px 5px;
+            border-radius: 2px 8px 8px 2px;
             overflow: hidden;
-            background: #fff;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background-color: #faf9f6; /* Màu giấy off-white cao cấp */
         }
 
-        .front {
-            z-index: 2;
-            padding: 15px; /* Viền trắng kiểu Polaroid */
+        /* Hiệu ứng cong và bóng đổ ở GÁY SÁCH (Độ chân thực 100%) */
+        .front::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 40px; height: 100%;
+            background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.02) 40%, transparent 100%);
+            z-index: 10; pointer-events: none;
+        }
+        .back::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 40px; height: 100%;
+            background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.02) 40%, transparent 100%);
+            z-index: 10; pointer-events: none;
+        }
+
+        /* ================= BÌA SÁCH (COVER) ================= */
+        .page.cover .front {
+            background: var(--cover-color);
+            /* Texture da/vải cho bìa */
+            background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3h1v1H1V3zm2-2h1v1H3V1z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            border: 1px solid rgba(0,0,0,0.2);
+            box-shadow: inset 4px 0 10px rgba(0,0,0,0.3), inset -1px 0 2px rgba(255,255,255,0.3);
+            border-radius: 4px 12px 12px 4px;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
+            align-items: center;
         }
 
-        .front img {
-            width: 100%;
-            height: 90%;
-            object-fit: cover;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        /* Khung viền vàng kim loại */
+        .cover-frame {
+            position: absolute;
+            top: 25px; left: 25px; right: 25px; bottom: 25px;
+            border: 2px solid #d4af37; /* Gold */
+            outline: 1px solid #d4af37;
+            outline-offset: -6px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
         }
 
-        .back {
-            transform: rotateY(180deg);
-            z-index: 1;
-            background-color: #f8f8f8;
-            background-image: radial-gradient(#ffb7c5 20%, transparent 20%);
-            background-size: 20px 20px;
+        .cover-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            color: #fcebc0;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
         }
 
-        /* --- CLASS TRẠNG THÁI --- */
-        .flipped {
-            transform: rotateY(-180deg);
-        }
-
-        /* Nút tắt nhạc nhỏ góc màn hình */
-        .music-control {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.7);
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 100;
-            display: none; /* Hiện sau khi vào sách */
+        .cover-subtitle {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: #ff9eb5;
         }
         
+        .cover-year {
+            position: absolute;
+            bottom: 20px;
+            font-size: 12px;
+            color: #d4af37;
+            letter-spacing: 3px;
+        }
+
+        /* Mặt trong của bìa */
+        .page.cover .back {
+            background: #2a0810; /* Lót trong màu tối */
+            border-radius: 12px 4px 4px 12px;
+        }
+
+        /* ================= RUỘT SÁCH (ẢNH) ================= */
+        .back { transform: rotateY(180deg); }
+        .page.flipped { transform: rotateY(-180deg); }
+
+        .front.content, .back.content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+        }
+
+        .photo-frame {
+            width: 100%;
+            height: 90%;
+            background: #fff;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-radius: 2px;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+            border-radius: 2px;
+        }
+
+        .page-num {
+            height: 10%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            font-size: 12px;
+            color: #aaa;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Mặt sau của mỗi trang ảnh (họa tiết nhẹ) */
+        .back.content {
+            background-color: #fdfaf6;
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0zM9 5h2v2H9V5zm0 4h2v6H9V9z' fill='%23ff9eb5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        /* ================= RESPONSIVE ĐIỆN THOẠI ================= */
+        @media (max-width: 768px) {
+            :root {
+                --book-width: 280px;
+                --book-height: 420px;
+            }
+            .stage { transform: translateX(0); } /* Bỏ shift trên mobile vì màn hình hẹp */
+            .stage.opened { transform: translateX(50%); /* Đẩy 1 nửa sang phải để thấy trang bên trái */ }
+            
+            /* Tinh chỉnh UI cho mobile */
+            #player { top: 15px; right: 15px; padding: 5px 15px 5px 5px; }
+            .vinyl { width: 35px; height: 35px; }
+            .track-name { font-size: 11px; }
+            .cover-title { font-size: 1.8rem; }
+        }
     </style>
 </head>
 <body>
 
-    <audio id="bg-music" loop>
+    <audio id="bgMusic" loop preload="auto">
         <source src="https://nguyenbacson.io.vn/pictures.mp3" type="audio/mpeg">
     </audio>
 
-    <div id="intro-screen">
-        <button class="heart-btn" onclick="startExperience()">❤️</button>
-        <div class="click-text">Nhấn vào trái tim để mở sách</div>
+    <div id="intro">
+        <div class="heart-wrapper" onclick="startProExperience()">
+            <div class="heart-btn">❤️</div>
+        </div>
+        <div class="intro-text">Chạm để mở ký ức</div>
     </div>
 
-    <div class="book-container" id="book">
-        </div>
+    <div id="player" onclick="togglePlay()">
+        <div class="vinyl" id="vinylIcon"></div>
+        <div class="track-name">Pictures - Âm Thanh</div>
+    </div>
 
-    <div class="music-control" onclick="toggleMusic()">🎵</div>
+    <div class="stage" id="stage">
+        <div class="book" id="book">
+            </div>
+    </div>
 
     <script>
-        // --- CẤU HÌNH ---
+        // 1. DATA CỦA BẠN
         const images = [
-            "https://nguyenbacson.io.vn/miss-you/1.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/2.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/3.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/4.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/5.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/6.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/7.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/8.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/9.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/10.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/11.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/12.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/13.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/14.jpeg",
+            "https://nguyenbacson.io.vn/miss-you/1.jpeg", "https://nguyenbacson.io.vn/miss-you/2.jpeg",
+            "https://nguyenbacson.io.vn/miss-you/3.jpeg", "https://nguyenbacson.io.vn/miss-you/4.jpeg",
+            "https://nguyenbacson.io.vn/miss-you/5.jpeg", "https://nguyenbacson.io.vn/miss-you/6.jpeg",
+            "https://nguyenbacson.io.vn/miss-you/7.jpeg", "https://nguyenbacson.io.vn/miss-you/8.jpeg",
+            "https://nguyenbacson.io.vn/miss-you/9.jpeg", "https://nguyenbacson.io.vn/miss-you/10.jpeg",
+            "https://nguyenbacson.io.vn/miss-you/11.jpeg", "https://nguyenbacson.io.vn/miss-you/12.jpeg",
+            "https://nguyenbacson.io.vn/miss-you/13.jpeg", "https://nguyenbacson.io.vn/miss-you/14.jpeg",
             "https://nguyenbacson.io.vn/miss-you/15.jpeg"
         ];
 
-        const bookContainer = document.getElementById('book');
-        const introScreen = document.getElementById('intro-screen');
-        const audio = document.getElementById('bg-music');
-        const musicBtn = document.querySelector('.music-control');
-        let pagesElement = [];
+        // 2. DOM ELEMENTS
+        const book = document.getElementById('book');
+        const stage = document.getElementById('stage');
+        const bgMusic = document.getElementById('bgMusic');
+        const vinylIcon = document.getElementById('vinylIcon');
+        const playerUI = document.getElementById('player');
+        
+        let pages = [];
+        let currentPage = 0; // 0 = bìa đang đóng
+        const totalSheets = images.length + 1;
 
-        // --- HÀM KHỞI TẠO ---
-        function startExperience() {
-            // 1. Phát nhạc
-            audio.play().catch(error => console.log("Trình duyệt chặn autoplay, cần tương tác người dùng"));
-            
-            // 2. Ẩn màn hình chờ
-            introScreen.style.opacity = '0';
-            setTimeout(() => {
-                introScreen.style.display = 'none';
-                musicBtn.style.display = 'block';
-            }, 1000);
-
-            // 3. Hiện sách
-            createBook();
-            bookContainer.classList.add('visible');
-        }
-
-        function createBook() {
-            let totalSheets = images.length + 1; // +1 cho trang bìa riêng
-            let zIndex = totalSheets;
-
-            // --- A. TẠO BÌA SÁCH (Hard Cover) ---
-            const coverSheet = document.createElement('div');
-            coverSheet.classList.add('sheet', 'cover');
-            coverSheet.style.zIndex = zIndex--;
-            coverSheet.innerHTML = `
+        // 3. HÀM RENDER SÁCH (CHUYÊN NGHIỆP)
+        function buildBook() {
+            // Render Bìa (Cover) - Index 0
+            const cover = document.createElement('div');
+            cover.className = 'page cover';
+            cover.style.zIndex = totalSheets;
+            cover.innerHTML = `
                 <div class="front">
-                    <div class="book-title">Miss You</div>
-                    <div class="book-subtitle">Nguyễn Bắc Sơn</div>
-                    <div style="margin-top:20px; font-size:30px">❤️</div>
+                    <div class="cover-frame">
+                        <div class="cover-title">MISS YOU</div>
+                        <div class="cover-subtitle">Nguyễn Bắc Sơn</div>
+                        <div class="cover-year">EST. 2007</div>
+                    </div>
                 </div>
                 <div class="back"></div>
             `;
-            // Sự kiện lật bìa
-            setupFlipEvent(coverSheet, totalSheets, 0);
-            bookContainer.appendChild(coverSheet);
-            pagesElement.push(coverSheet);
+            book.appendChild(cover);
+            pages.push({ el: cover, index: 0 });
 
-
-            // --- B. TẠO NỘI DUNG (Inner Pages - Ảnh) ---
-            images.forEach((imgSrc, i) => {
-                const page = document.createElement('div');
-                page.classList.add('sheet');
-                page.style.zIndex = zIndex--;
-
-                page.innerHTML = `
-                    <div class="front">
-                        <img src="${imgSrc}" loading="lazy" alt="Memory">
+            // Render Các Trang Ruột (1 -> 15)
+            images.forEach((src, i) => {
+                const sheetIdx = i + 1;
+                const sheet = document.createElement('div');
+                sheet.className = 'page';
+                sheet.style.zIndex = totalSheets - sheetIdx;
+                sheet.innerHTML = `
+                    <div class="front content">
+                        <div class="photo-frame"><img src="${src}" loading="lazy"></div>
+                        <div class="page-num">- ${sheetIdx} -</div>
                     </div>
-                    <div class="back"></div>
+                    <div class="back content">
+                        </div>
                 `;
+                book.appendChild(sheet);
+                pages.push({ el: sheet, index: sheetIdx });
+            });
 
-                // i + 1 vì trang 0 là bìa
-                setupFlipEvent(page, totalSheets, i + 1); 
-                
-                bookContainer.appendChild(page);
-                pagesElement.push(page);
+            // Gắn Event Listeners
+            pages.forEach((p, idx) => {
+                p.el.addEventListener('click', () => flipTo(idx));
             });
         }
 
-        // --- HÀM XỬ LÝ LẬT TRANG (Z-INDEX LOGIC) ---
-        function setupFlipEvent(element, total, index) {
-            element.onclick = function() {
-                if (this.classList.contains('flipped')) {
-                    // ĐÓNG LẠI (Lật về phải)
-                    this.classList.remove('flipped');
-                    
-                    // Delay z-index để animation chạy xong
-                    setTimeout(() => {
-                        this.style.zIndex = total - index;
-                    }, 400); // 1/2 thời gian animation
-                } else {
-                    // MỞ RA (Lật về trái)
-                    this.classList.add('flipped');
-                    
-                    // Khi nằm bên trái, nó phải đè lên các trang trước nó
-                    this.style.zIndex = index + 1;
-                }
-            };
-        }
+        // 4. THUẬT TOÁN LẬT TRANG (Smart Z-Index & Camera Shift)
+        function flipTo(clickedIndex) {
+            const pageObj = pages[clickedIndex];
+            const el = pageObj.el;
+            const isFlipped = el.classList.contains('flipped');
 
-        // Tắt/Bật nhạc
-        function toggleMusic() {
-            if (audio.paused) {
-                audio.play();
-                musicBtn.innerText = "🎵";
+            if (!isFlipped) {
+                // LẬT SANG TRÁI (MỞ)
+                el.classList.add('flipped');
+                currentPage++;
+                
+                // Đổi Z-index ở giữa chu kỳ animation (500ms) để giấy đan vào nhau hoàn hảo
+                setTimeout(() => {
+                    el.style.zIndex = clickedIndex + 1;
+                }, 500);
+
             } else {
-                audio.pause();
-                musicBtn.innerText = "🔇";
+                // LẬT SANG PHẢI (ĐÓNG)
+                el.classList.remove('flipped');
+                currentPage--;
+                
+                setTimeout(() => {
+                    el.style.zIndex = totalSheets - clickedIndex;
+                }, 500);
+            }
+
+            // Xử lý Camera Shift: Nếu trang bìa được mở, đẩy sách ra giữa
+            if (currentPage > 0) {
+                stage.classList.add('opened');
+            } else {
+                stage.classList.remove('opened');
             }
         }
+
+        // 5. VUỐT THÔNG MINH (ADVANCED SWIPE)
+        let touchStartX = 0;
+        let touchStartY = 0;
+        
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, {passive: true});
+
+        document.addEventListener('touchend', e => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+
+            // Bỏ qua nếu vuốt dọc nhiều hơn vuốt ngang (chống nhiễu)
+            if (Math.abs(deltaY) > Math.abs(deltaX)) return;
+
+            // Vuốt đủ dài (> 40px)
+            if (Math.abs(deltaX) > 40) {
+                if (deltaX < 0) {
+                    // Vuốt Trái <- (Mở trang tiếp theo chưa lật)
+                    for (let i = 0; i < pages.length; i++) {
+                        if (!pages[i].el.classList.contains('flipped')) {
+                            flipTo(i);
+                            break;
+                        }
+                    }
+                } else {
+                    // Vuốt Phải -> (Đóng trang lật gần nhất)
+                    for (let i = pages.length - 1; i >= 0; i--) {
+                        if (pages[i].el.classList.contains('flipped')) {
+                            flipTo(i);
+                            break;
+                        }
+                    }
+                }
+            }
+        }, {passive: true});
+
+        // 6. KHỞI CHẠY (BẮT ĐẦU TRẢI NGHIỆM)
+        function startProExperience() {
+            // Play Audio
+            bgMusic.play().then(() => {
+                vinylIcon.classList.add('playing');
+            }).catch(e => console.log("Cần tương tác người dùng kỹ hơn để phát nhạc"));
+
+            // Ẩn Intro, Hiện Sân Khấu
+            document.getElementById('intro').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('intro').style.display = 'none';
+                stage.classList.add('visible');
+                playerUI.style.display = 'flex';
+                
+                // Mở sẵn trang bìa sau 0.5s để show hiệu ứng 
+                setTimeout(() => {
+                    flipTo(0);
+                }, 500);
+            }, 1200);
+        }
+
+        // Điều khiển nhạc tay
+        function togglePlay() {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                vinylIcon.classList.add('playing');
+            } else {
+                bgMusic.pause();
+                vinylIcon.classList.remove('playing');
+            }
+        }
+
+        // Khởi tạo DOM Sách
+        buildBook();
+
     </script>
 </body>
 </html>
