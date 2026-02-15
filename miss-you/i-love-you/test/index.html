@@ -512,7 +512,7 @@
             }, 4000);
         }
 
-        // ================= PHẦN 3: VŨ TRỤ 3D (ĐÃ CẬP NHẬT: TIM 3D KHỐI) =================
+        // ================= PHẦN 3: VŨ TRỤ 3D (CÓ SAO BĂNG NỔ TIM & ĐỔI MÀU) =================
         const orbitDiv = document.getElementById('photo-orbit');
         let currentRx = 10; let currentRy = 0;
 
@@ -566,6 +566,7 @@
             
             let heartPoints = [];
             let bgStars = [];
+            // Biến cho sao băng và sự kiện nổ
             let meteor = { x: -5000, y: 0, z: 0, vx: 0, vy: 0, vz: 0, active: false, cooldown: 300 };
             let hitOccurred = false;
 
@@ -575,6 +576,7 @@
             let initialPinchDistance = null;
             let lastScale = 1;
 
+            // Hàm tiện ích trộn màu (Lerp Color)
             function lerpColor(a, b, amount) { 
                 let r = a[0] + (b[0] - a[0]) * amount; 
                 let g = a[1] + (b[1] - a[1]) * amount; 
@@ -582,12 +584,14 @@
                 return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(bVal)}, 0.9)`; 
             }
 
+            // Hàm phóng sao băng
             function launchMeteor() {
                 meteor.x = -3000; meteor.y = (Math.random()-0.5)*300; meteor.z = (Math.random()-0.5)*300;
-                meteor.vx = 60; 
-                meteor.vy = -meteor.y / 50; meteor.vz = -meteor.z / 50; 
+                meteor.vx = 60; // Tốc độ bay nhanh
+                meteor.vy = -meteor.y / 50; meteor.vz = -meteor.z / 50; // Hướng về tâm
                 meteor.active = true;
                 hitOccurred = false;
+                // Reset trạng thái hạt tim
                 heartPoints.forEach(p => {
                     p.x = p.ox; p.y = p.oy; p.z = p.oz;
                     p.vx = p.vy = p.vz = 0;
@@ -650,47 +654,52 @@
             window.addEventListener("resize", resize); 
             resize();
 
-            // --- TẠO HẠT TRÁI TIM 3D KHỐI ---
-            // Tăng số lượng hạt để khối đặc hơn
-            for(let i=0; i<650; i++) {
-                // Sử dụng công thức tham số hóa mặt cầu trái tim 3D
-                // u: góc kinh độ (0 -> 2PI), v: góc vĩ độ (-PI/2 -> PI/2)
-                let u = Math.random() * Math.PI * 2;
-                let v = Math.random() * Math.PI - Math.PI/2;
-
-                // Công thức tạo hình dáng trái tim 3D
-                let hx = 16 * Math.pow(Math.sin(u), 3) * Math.cos(v);
-                let hy = (13 * Math.cos(u) - 5 * Math.cos(2*u) - 2 * Math.cos(3*u) - Math.cos(4*u)) * Math.cos(v);
-                let hz = 10 * Math.sin(v); // Độ dày Z
+            // ================== KHU VỰC CHỈNH SỬA THÀNH TRÁI TIM 3D ==================
+            // Tạo hạt trái tim khối 3D (Có thêm trạng thái màu sắc và nổ)
+            for(let i=0; i<600; i++) { // Tăng nhẹ số lượng hạt để khối 3D rõ nét hơn
+                let px, py, pz;
+                while (true) {
+                    let rx = (Math.random() - 0.5) * 3;
+                    let ry = (Math.random() - 0.5) * 3;
+                    let rz = (Math.random() - 0.5) * 3;
+                    
+                    // Phương trình toán học hình trái tim 3D
+                    let a = rx*rx + 2.25*ry*ry + rz*rz - 1;
+                    let val = a*a*a - rx*rx*rz*rz*rz - 0.1125*ry*ry*rz*rz*rz;
+                    
+                    // Lọc để chỉ lấy các hạt nằm trong lớp vỏ của trái tim
+                    if (val <= 0 && val > -0.5) {
+                        px = rx * 55;
+                        py = -rz * 55; // Lật ngược trục Z để tim dựng thẳng trên Canvas
+                        pz = ry * 55;
+                        break;
+                    }
+                }
                 
-                // Đảo ngược Y để trái tim đứng đúng chiều
-                hy = -hy;
-
-                // Hệ số phóng đại kích thước và phân bố ngẫu nhiên vào bên trong thể tích
-                // Sử dụng căn bậc hai để phân bố đều hơn bên trong khối cầu
-                let scale = Math.sqrt(Math.random()); 
-                let HEART_SIZE_MULT = 3.5;
-
-                let x = hx * HEART_SIZE_MULT * scale;
-                let y = hy * HEART_SIZE_MULT * scale;
-                let z = hz * HEART_SIZE_MULT * scale;
+                let spread = Math.random() * 3; 
+                let x = px + (Math.random()-0.5)*spread;
+                let y = py + (Math.random()-0.5)*spread;
+                let z = pz + (Math.random()-0.5)*spread;
                 
                 let colorType = Math.random();
+                // Màu ban đầu (Hồng/Tím/Trắng) dưới dạng mảng RGB
                 let startColorRgb = colorType > 0.8 ? [255,255,255] : (colorType > 0.4 ? [255, 100, 200] : [200, 50, 255]);
+                // Màu mục tiêu khi nổ (Đỏ/Cam rực)
                 let targetColorRgb = [255, 50 + Math.random()*100, 50]; 
 
                 heartPoints.push({
                     x: x, y: y, z: z,
-                    ox: x, oy: y, oz: z, 
-                    vx: 0, vy: 0, vz: 0, 
+                    ox: x, oy: y, oz: z, // Lưu vị trí gốc
+                    vx: 0, vy: 0, vz: 0, // Vận tốc nổ
                     size: Math.random() * 1.8 + 0.8,
                     startColor: startColorRgb,
                     targetColor: targetColorRgb,
                     currentColorStr: `rgba(${startColorRgb.join(',')}, 0.8)`,
-                    colorProgress: 0, 
+                    colorProgress: 0, // Tiến độ đổi màu
                     exploded: false
                 });
             }
+            // =======================================================================
 
             for(let i=0; i<450; i++) {
                 bgStars.push({ x: (Math.random()-0.5)*2500, y: (Math.random()-0.5)*2500, z: (Math.random()-0.5)*2500, size: Math.random()*1.5+0.3 });
@@ -708,16 +717,20 @@
                 let minDim = Math.min(w, h);
                 let sScale = Math.max(0.6, Math.min(minDim / 600, 1.2)); 
 
+                // --- XỬ LÝ SAO BĂNG & VỤ NỔ ---
                 meteor.cooldown--;
-                if(meteor.cooldown <= 0) launchMeteor(); 
+                if(meteor.cooldown <= 0) launchMeteor(); // Phóng sao băng định kỳ
 
                 if(meteor.active) {
                     meteor.x += meteor.vx; meteor.y += meteor.vy; meteor.z += meteor.vz;
+                    // Kiểm tra va chạm với tâm
                     let distToCenter = Math.sqrt(meteor.x*meteor.x + meteor.y*meteor.y + meteor.z*meteor.z);
                     if(!hitOccurred && distToCenter < 150) {
                         hitOccurred = true;
+                        // Kích hoạt nổ cho tất cả hạt tim
                         heartPoints.forEach(p => {
                             p.exploded = true;
+                            // Lực nổ hướng ra ngoài
                             let expForce = Math.random() * 15 + 5;
                             let angle = Math.atan2(p.oy, p.ox);
                             let phi = Math.atan2(Math.sqrt(p.ox*p.ox + p.oy*p.oy), p.oz);
@@ -726,8 +739,9 @@
                             p.vz = expForce * Math.cos(phi);
                         });
                     }
-                    if(meteor.x > 3000) meteor.active = false; 
+                    if(meteor.x > 3000) meteor.active = false; // Reset khi bay ra xa
 
+                    // Vẽ sao băng (chỉ là một điểm sáng nhanh)
                     let mx = meteor.x * sScale; let my = meteor.y * sScale; let mz = meteor.z * sScale;
                     let my1 = my * Math.cos(rxRad) - mz * Math.sin(rxRad);
                     let mz1 = my * Math.sin(rxRad) + mz * Math.cos(rxRad);
@@ -740,6 +754,7 @@
                     }
                 }
 
+                // Vẽ nền sao
                 ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
                 for(let i=0; i<bgStars.length; i++) {
                     let p = bgStars[i];
@@ -748,16 +763,20 @@
                     let x2 = p.x * Math.cos(ryRad) + z1 * Math.sin(ryRad);
                     let z2 = -p.x * Math.sin(ryRad) + z1 * Math.cos(ryRad);
                     let scaleProj = (800 / (800 + z2)) * currentScale;
-                    if (scaleProj > 0 && xProj > 0 && xProj < w && yProj > 0 && yProj < h) {
+                    if (scaleProj > 0) {
                         ctx.beginPath(); ctx.arc(w/2 + x2*scaleProj, h/2 + y1*scaleProj, p.size * scaleProj, 0, Math.PI*2); ctx.fill();
                     }
                 }
 
+                // Vẽ và cập nhật hạt trái tim
                 for(let i=0; i<heartPoints.length; i++) {
                     let p = heartPoints[i];
+                    // Cập nhật vị trí khi nổ
                     if(p.exploded) {
                         p.x += p.vx; p.y += p.vy; p.z += p.vz;
+                        // Ma sát để chậm lại
                         p.vx *= 0.95; p.vy *= 0.95; p.vz *= 0.95;
+                        // Đổi màu mượt mà (Lerp)
                         if(p.colorProgress < 1) p.colorProgress += 0.02;
                         p.currentColorStr = lerpColor(p.startColor, p.targetColor, p.colorProgress);
                     }
@@ -770,6 +789,7 @@
                     let scaleProj = (800 / (800 + z2)) * currentScale;
 
                     if (scaleProj > 0) {
+                        // Sử dụng màu hiện tại (đã đổi hoặc chưa)
                         ctx.fillStyle = p.currentColorStr;
                         ctx.beginPath(); ctx.arc(w/2 + x2*scaleProj, h/2 + y1*scaleProj, p.size * scaleProj * sScale, 0, Math.PI*2); ctx.fill();
                     }
