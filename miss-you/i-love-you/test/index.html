@@ -202,41 +202,29 @@
         }
         .cursor { display: inline-block; width: 2px; height: 1rem; background: #4a2c2a; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 5px;}
 
-        /* ================= PHẦN 3: VŨ TRỤ 3D (TỐI ƯU MOBILE & GIỐNG VIDEO) ================= */
+        /* ================= PHẦN 3: VŨ TRỤ 3D (TỐI ƯU MOBILE) ================= */
         #galaxy-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; 
             display: none; opacity: 0; transition: opacity 2s; 
-            /* Nền đen sâu thẳm giống video */
             background: radial-gradient(circle at center, #11081a 0%, #050208 80%, #000000 100%);
-            perspective: 800px; overflow: hidden; /* Chống tràn */
-            touch-action: none; /* Khóa vuốt web trên mobile */
+            perspective: 800px; overflow: hidden; touch-action: none; 
         }
         
-        /* Canvas dùng để vẽ hạt bụi (Trái tim & Sao) */
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* Container chứa các ảnh xoay bằng CSS 3D (Mượt hơn Canvas trên Mobile) */
         #photo-orbit {
             position: absolute; top: 50%; left: 50%; width: 0; height: 0;
             transform-style: preserve-3d; z-index: 2;
-            will-change: transform; /* Tối ưu render */
+            will-change: transform; 
         }
 
-        /* Khung ảnh tròn, viền Neon */
         .galaxy-photo {
-            position: absolute; 
-            border-radius: 50%;
+            position: absolute; border-radius: 50%;
             border: 2px solid rgba(255, 255, 255, 0.8);
-            /* Đổ bóng neon màu hồng mượt */
             box-shadow: 0 0 10px #ff3366, inset 0 0 10px rgba(255, 51, 102, 0.5); 
-            cursor: pointer; 
-            backface-visibility: visible; 
-            overflow: hidden; 
-            background: #000;
+            cursor: pointer; backface-visibility: visible; overflow: hidden; background: #000;
         }
-        .galaxy-photo img { 
-            width: 100%; height: 100%; object-fit: cover; pointer-events: none;
-        }
+        .galaxy-photo img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
         .galaxy-photo:hover { 
             border-color: #fff;
             box-shadow: 0 0 20px #ff0055, 0 0 30px #ff3366, inset 0 0 15px #ff3366; 
@@ -246,19 +234,14 @@
         #drag-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: grab; }
         #drag-layer:active { cursor: grabbing; }
 
-        /* Text lơ lửng y hệt video */
         .floating-texts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
         .float-text { 
             position: absolute; font-family: 'Quicksand', sans-serif; font-weight: 700;
-            color: #ffffff; 
-            /* Text phát sáng */
-            text-shadow: 0 0 5px #ff5e88, 0 0 10px #ff0055; 
+            color: #ffffff; text-shadow: 0 0 5px #ff5e88, 0 0 10px #ff0055; 
             font-size: clamp(12px, 3.5vw, 18px); 
-            animation: floatUpText 3s ease-in-out infinite alternate; 
-            white-space: nowrap;
+            animation: floatUpText 3s ease-in-out infinite alternate; white-space: nowrap;
         }
 
-        /* Modal Phóng To Ảnh */
         #photo-modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
             z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s;
@@ -349,7 +332,7 @@
             "https://nguyenbacson.io.vn/miss-you/15.jpeg"
         ];
 
-        // ================= PHẦN 1 & 2: GIỮ NGUYÊN HOÀN TOÀN =================
+        // ================= PHẦN 1 & 2: GIỮ NGUYÊN =================
         const book = document.getElementById('book');
         const stage = document.getElementById('stage');
         const bookAudio = document.getElementById('bookAudio');
@@ -529,7 +512,7 @@
             }, 4000);
         }
 
-        // ================= PHẦN 3: VŨ TRỤ 3D (TỐI ƯU MOBILE - HẠT TRÁI TIM & QUỸ ĐẠO ẢNH) =================
+        // ================= PHẦN 3: VŨ TRỤ 3D (ĐÃ CẬP NHẬT: NHIỀU BỤI HƠN & TIM TO HƠN) =================
         const orbitDiv = document.getElementById('photo-orbit');
         let currentRx = 10; let currentRy = 0;
 
@@ -546,19 +529,15 @@
             }, 1000);
         }
         
-        // Tối ưu hóa: Dùng CSS 3D để xoay ảnh thay vì vẽ lại trên Canvas (rất mượt trên mobile)
         function build3DPhotoOrbit() {
             orbitDiv.innerHTML = ''; 
             const minDim = Math.min(window.innerWidth, window.innerHeight);
-            // Kích thước quỹ đạo và ảnh phù hợp với điện thoại
             const orbitRadius = Math.max(120, Math.min(minDim * 0.4, 300)); 
             const photoSize = Math.max(40, Math.min(minDim * 0.12, 80)); 
 
             images.forEach((src, i) => {
-                // Phân bổ ảnh thành hình cầu 3D (Fibonacci sphere algorithm giản lược)
                 const phi = Math.acos(-1 + (2 * i) / images.length);
                 const theta = Math.sqrt(images.length * Math.PI) * phi;
-                
                 const x = orbitRadius * Math.cos(theta) * Math.sin(phi);
                 const y = orbitRadius * Math.sin(theta) * Math.sin(phi);
                 const z = orbitRadius * Math.cos(phi);
@@ -569,14 +548,11 @@
                 photoWrapper.style.height = `${photoSize}px`;
                 photoWrapper.style.marginTop = `-${photoSize/2}px`;
                 photoWrapper.style.marginLeft = `-${photoSize/2}px`;
-                
-                // Đặt vị trí ảnh trong không gian 3D
                 photoWrapper.style.transform = `translate3d(${x}px, ${y}px, ${z}px)`;
                 
                 const img = document.createElement('img');
                 img.src = src;
                 photoWrapper.onclick = function() { openModal(src); };
-
                 photoWrapper.appendChild(img);
                 orbitDiv.appendChild(photoWrapper);
             });
@@ -584,12 +560,10 @@
 
         function initCanvasGalaxy() {
             const canvas = document.getElementById("galaxyCanvas");
-            // Alpha: false giúp tăng FPS trên mobile
             const ctx = canvas.getContext("2d", { alpha: false }); 
             const dragLayer = document.getElementById("drag-layer");
             let w, h; 
             
-            // Mảng chứa điểm tọa độ hạt trái tim
             let heartPoints = [];
             let bgStars = [];
             
@@ -599,7 +573,6 @@
             let initialPinchDistance = null;
             let lastScale = 1;
 
-            // Xử lý kéo xoay mượt mà
             dragLayer.addEventListener('touchstart', (e) => { 
                 if (e.touches.length === 1) {
                     isDragging = true; previousX = e.touches[0].clientX; previousY = e.touches[0].clientY; 
@@ -611,10 +584,10 @@
 
             dragLayer.addEventListener('touchmove', (e) => {
                 if (e.touches.length === 1 && isDragging) {
-                    e.preventDefault(); // Chống cuộn
+                    e.preventDefault(); 
                     currentRy += (e.touches[0].clientX - previousX) * 0.4; 
                     currentRx -= (e.touches[0].clientY - previousY) * 0.4; 
-                    currentRx = Math.max(-60, Math.min(60, currentRx)); // Giới hạn góc lật
+                    currentRx = Math.max(-60, Math.min(60, currentRx)); 
                     previousX = e.touches[0].clientX; previousY = e.touches[0].clientY;
                 } else if (e.touches.length === 2 && initialPinchDistance) {
                     e.preventDefault(); 
@@ -654,116 +627,85 @@
             window.addEventListener("resize", resize); 
             resize();
 
-            // TỐI ƯU HÓA: Tạo trước tọa độ hạt trái tim (Chỉ tính toán 1 lần)
-            // Giới hạn số lượng hạt để mobile không giật (khoảng 250-300 hạt là đẹp)
-            for(let i=0; i<300; i++) {
+            // --- CẬP NHẬT: TRÁI TIM TO HƠN VÀ DÀY HƠN ---
+            // Tăng số lượng hạt cho trái tim lên 400
+            for(let i=0; i<400; i++) {
                 let t = Math.random() * Math.PI * 2;
-                // Phương trình toán học hình trái tim
                 let hx = 16 * Math.pow(Math.sin(t), 3);
                 let hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
                 
-                // Thêm độ nhiễu (scatter) để tạo khối 3D thay vì mảng phẳng
-                let spread = Math.random() * 5; 
-                let x = hx * 2.5 + (Math.random()-0.5)*spread;
-                let y = hy * 2.5 + (Math.random()-0.5)*spread;
-                let z = (Math.random()-0.5) * 30; // Chiều sâu Z
+                let spread = Math.random() * 8; // Tăng độ phân tán
+                // Tăng hệ số nhân lên 3.8 để phóng to trái tim
+                let x = hx * 3.8 + (Math.random()-0.5)*spread;
+                let y = hy * 3.8 + (Math.random()-0.5)*spread;
+                let z = (Math.random()-0.5) * 40; 
                 
-                // Màu sắc: Trắng hồng lấp lánh như video
                 let colorType = Math.random();
                 let color = colorType > 0.8 ? "rgba(255,255,255,0.9)" : 
                             colorType > 0.4 ? "rgba(255, 100, 200, 0.8)" : "rgba(200, 50, 255, 0.7)";
                 
-                heartPoints.push({ x: x, y: y, z: z, size: Math.random() * 1.5 + 0.8, color: color });
+                heartPoints.push({ x: x, y: y, z: z, size: Math.random() * 1.8 + 0.8, color: color });
             }
 
-            // Tạo sao nền (Background stars)
-            for(let i=0; i<150; i++) {
+            // --- CẬP NHẬT: TĂNG SỐ LƯỢNG BỤI VŨ TRỤ NỀN ---
+            // Tăng số lượng lên 450 hạt và mở rộng phạm vi
+            for(let i=0; i<450; i++) {
                 bgStars.push({
-                    x: (Math.random()-0.5) * 1500,
-                    y: (Math.random()-0.5) * 1500,
-                    z: (Math.random()-0.5) * 1500,
-                    size: Math.random() * 1.2 + 0.3
+                    x: (Math.random()-0.5) * 2500,
+                    y: (Math.random()-0.5) * 2500,
+                    z: (Math.random()-0.5) * 2500,
+                    size: Math.random() * 1.5 + 0.3 // Kích thước đa dạng hơn
                 });
             }
 
             let time = 0;
             function animate() {
-                // Xóa canvas với màu nền tối
                 ctx.fillStyle = "#0a0510"; 
                 ctx.fillRect(0, 0, w, h);
-                
                 time += 0.05;
-
-                // Tự động xoay nhẹ khi không vuốt
                 if (!isDragging) { currentRy += 0.2; } 
-                
-                // 1. Áp dụng góc xoay 3D cho Quỹ đạo ảnh (CSS thực hiện)
                 orbitDiv.style.transform = `scale(${currentScale}) rotateX(${-currentRx}deg) rotateY(${currentRy}deg)`;
 
-                // 2. Render Hạt bụi Canvas
-                let rxRad = currentRx * Math.PI / 180; 
-                let ryRad = currentRy * Math.PI / 180;
-                
-                // Nhịp đập trái tim (Heartbeat math)
-                let beat = Math.abs(Math.sin(time * 1.5)) * 0.15; 
-                let beatScale = 1 + beat;
-                
+                let rxRad = currentRx * Math.PI / 180; let ryRad = currentRy * Math.PI / 180;
+                let beat = Math.abs(Math.sin(time * 1.5)) * 0.15; let beatScale = 1 + beat;
                 let minDim = Math.min(w, h);
-                // Hệ số scale để trái tim vừa vặn màn hình điện thoại
                 let sScale = Math.max(0.6, Math.min(minDim / 600, 1.2)); 
 
-                // Vẽ sao nền
-                ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+                ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
                 for(let i=0; i<bgStars.length; i++) {
                     let p = bgStars[i];
-                    // Phép chiếu 3D -> 2D (Rotation Y then X)
                     let y1 = p.y * Math.cos(rxRad) - p.z * Math.sin(rxRad);
                     let z1 = p.y * Math.sin(rxRad) + p.z * Math.cos(rxRad);
                     let x2 = p.x * Math.cos(ryRad) + z1 * Math.sin(ryRad);
                     let z2 = -p.x * Math.sin(ryRad) + z1 * Math.cos(ryRad);
-                    
                     let scaleProj = (800 / (800 + z2)) * currentScale;
                     let xProj = w / 2 + x2 * scaleProj;
                     let yProj = h / 2 + y1 * scaleProj;
-
                     if (scaleProj > 0 && xProj > 0 && xProj < w && yProj > 0 && yProj < h) {
                         ctx.beginPath(); ctx.arc(xProj, yProj, p.size * scaleProj, 0, Math.PI*2); ctx.fill();
                     }
                 }
 
-                // Vẽ hạt bụi Trái Tim
                 for(let i=0; i<heartPoints.length; i++) {
                     let p = heartPoints[i];
-                    
-                    // Áp dụng nhịp đập
-                    let bx = p.x * beatScale * sScale; 
-                    let by = p.y * beatScale * sScale; 
-                    let bz = p.z * beatScale * sScale;
-
-                    // Phép chiếu 3D -> 2D
+                    let bx = p.x * beatScale * sScale; let by = p.y * beatScale * sScale; let bz = p.z * beatScale * sScale;
                     let y1 = by * Math.cos(rxRad) - bz * Math.sin(rxRad);
                     let z1 = by * Math.sin(rxRad) + bz * Math.cos(rxRad);
                     let x2 = bx * Math.cos(ryRad) + z1 * Math.sin(ryRad);
                     let z2 = -bx * Math.sin(ryRad) + z1 * Math.cos(ryRad);
-                    
                     let scaleProj = (800 / (800 + z2)) * currentScale;
                     let xProj = w / 2 + x2 * scaleProj;
                     let yProj = h / 2 + y1 * scaleProj;
 
                     if (scaleProj > 0) {
                         ctx.fillStyle = p.color;
-                        ctx.beginPath(); 
-                        ctx.arc(xProj, yProj, p.size * scaleProj * sScale, 0, Math.PI*2); 
-                        ctx.fill();
-                        
-                        // Lấp lánh (Vẽ thêm lớp viền mờ cho vài hạt)
+                        ctx.beginPath(); ctx.arc(xProj, yProj, p.size * scaleProj * sScale, 0, Math.PI*2); ctx.fill();
                         if (i % 3 === 0) {
-                            ctx.fillStyle = "rgba(255, 100, 200, 0.2)";
+                            ctx.fillStyle = "rgba(255, 100, 200, 0.25)";
                             ctx.beginPath(); ctx.arc(xProj, yProj, p.size * scaleProj * sScale * 3, 0, Math.PI*2); ctx.fill();
                         }
                     }
                 }
-                
                 requestAnimationFrame(animate);
             }
             animate();
