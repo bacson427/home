@@ -123,7 +123,7 @@
         .page-num { height: 10%; display: flex; justify-content: center; align-items: flex-end; font-size: 12px; color: #aaa; font-family: 'Montserrat', sans-serif; }
         .back.content { background-color: #fdfaf6; background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0zM9 5h2v2H9V5zm0 4h2v6H9V9z' fill='%23ff9eb5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E"); }
 
-        /* ================= PHẦN 2: TỎ TÌNH (CONFESSION) ================= */
+        /* ================= PHẦN 2: TỎ TÌNH ================= */
         #confession-stage {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 20; display: none; flex-direction: column;
@@ -202,70 +202,82 @@
         }
         .cursor { display: inline-block; width: 2px; height: 1rem; background: #4a2c2a; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 5px;}
 
-        /* ================= VŨ TRỤ 3D TÌNH YÊU (TỐI ƯU MOBILE & KHÔNG LAG) ================= */
+        /* ================= PHẦN 3: VŨ TRỤ 3D (TỐI ƯU MOBILE & GIỐNG VIDEO) ================= */
         #galaxy-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; 
             display: none; opacity: 0; transition: opacity 2s; 
-            background: radial-gradient(circle at center, #1b0c26 0%, #05020a 100%);
-            perspective: 800px; /* Tối ưu perspective cho mobile */
-            overflow: hidden;
-            touch-action: none; /* Tránh xung đột cuộn trang */
+            /* Nền đen sâu thẳm giống video */
+            background: radial-gradient(circle at center, #11081a 0%, #050208 80%, #000000 100%);
+            perspective: 800px; overflow: hidden; /* Chống tràn */
+            touch-action: none; /* Khóa vuốt web trên mobile */
         }
         
-        /* Canvas chỉ dùng cho sao nền và trái tim hạt (nhẹ hơn nhiều) */
+        /* Canvas dùng để vẽ hạt bụi (Trái tim & Sao) */
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* Container chứa ảnh và text, xoay bằng CSS 3D cực mượt */
-        #scene-3d {
+        /* Container chứa các ảnh xoay bằng CSS 3D (Mượt hơn Canvas trên Mobile) */
+        #photo-orbit {
             position: absolute; top: 50%; left: 50%; width: 0; height: 0;
             transform-style: preserve-3d; z-index: 2;
-            will-change: transform;
+            will-change: transform; /* Tối ưu render */
         }
 
-        /* Khung ảnh vuông/chữ nhật như trong video */
+        /* Khung ảnh tròn, viền Neon */
         .galaxy-photo {
             position: absolute; 
-            background: rgba(255, 255, 255, 0.1); 
-            border-radius: 8px; /* Bo góc nhẹ */
+            border-radius: 50%;
             border: 2px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 10px rgba(255, 150, 200, 0.5); /* Sáng mờ */
+            /* Đổ bóng neon màu hồng mượt */
+            box-shadow: 0 0 10px #ff3366, inset 0 0 10px rgba(255, 51, 102, 0.5); 
             cursor: pointer; 
             backface-visibility: visible; 
-            overflow: hidden;
-            display: flex; justify-content: center; align-items: center;
+            overflow: hidden; 
+            background: #000;
         }
         .galaxy-photo img { 
             width: 100%; height: 100%; object-fit: cover; pointer-events: none;
         }
-
-        /* Text lơ lửng 3D */
-        .float-text-3d { 
-            position: absolute; 
-            font-family: 'Quicksand', sans-serif; font-weight: 700;
-            color: #ffffff; 
-            text-shadow: 0 0 5px #fff, 0 0 15px #ff5e88; 
-            white-space: nowrap;
-            backface-visibility: visible;
-            pointer-events: none;
+        .galaxy-photo:hover { 
+            border-color: #fff;
+            box-shadow: 0 0 20px #ff0055, 0 0 30px #ff3366, inset 0 0 15px #ff3366; 
+            z-index: 10;
         }
 
-        /* Lớp bắt sự kiện vuốt */
-        #drag-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
+        #drag-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: grab; }
+        #drag-layer:active { cursor: grabbing; }
+
+        /* Text lơ lửng y hệt video */
+        .floating-texts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
+        .float-text { 
+            position: absolute; font-family: 'Quicksand', sans-serif; font-weight: 700;
+            color: #ffffff; 
+            /* Text phát sáng */
+            text-shadow: 0 0 5px #ff5e88, 0 0 10px #ff0055; 
+            font-size: clamp(12px, 3.5vw, 18px); 
+            animation: floatUpText 3s ease-in-out infinite alternate; 
+            white-space: nowrap;
+        }
 
         /* Modal Phóng To Ảnh */
         #photo-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
             z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s;
         }
-        #photo-modal img { max-width: 90%; max-height: 80%; border: 3px solid #fff; border-radius: 8px; box-shadow: 0 0 20px rgba(255,50,100,0.5); transform: scale(0.9); transition: transform 0.3s; }
+        #photo-modal img { 
+            max-width: 90%; max-height: 80%; border: 2px solid #fff; border-radius: 50%; 
+            box-shadow: 0 0 30px rgba(255,50,100,0.8); transform: scale(0.9); transition: transform 0.3s; 
+            aspect-ratio: 1/1; object-fit: cover; 
+        }
         #photo-modal.active { opacity: 1; }
         #photo-modal.active img { transform: scale(1); }
-        .close-btn { position: absolute; top: 20px; right: 20px; color: rgba(255,255,255,0.8); font-size: 35px; cursor: pointer; font-family: sans-serif; padding: 10px; }
-
+        .close-btn { position: absolute; top: 20px; right: 20px; color: rgba(255,255,255,0.8); font-size: 35px; cursor: pointer; font-family: sans-serif; font-weight: 300; }
+        
         @keyframes heartbeat { 0%, 100% { transform: scale(1); } 10%, 30% { transform: scale(1.15); } 20% { transform: scale(1.05); } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes pulse { 50% { transform: scale(1.05); } }
         @keyframes pulseFade { 0%, 100% { opacity: 0.5; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes floatUpText { 0% { transform: translateY(0px); opacity: 0.8; } 100% { transform: translateY(-10px); opacity: 1; } }
         @keyframes floatEnvelope { 0% { transform: scale(var(--env-scale)) translateY(0px); } 100% { transform: scale(var(--env-scale)) translateY(-15px); } }
     </style>
 </head>
@@ -310,7 +322,14 @@
     <div id="galaxy-wrapper">
         <canvas id="galaxyCanvas"></canvas>
         <div id="drag-layer"></div>
-        <div id="scene-3d"></div>
+        <div id="photo-orbit"></div>
+
+        <div class="floating-texts">
+            <div class="float-text" style="top: 15%; left: 50%; transform: translateX(-50%); animation-delay: 0s;">Thank girl friend Dương</div>
+            <div class="float-text" style="top: 45%; left: 10%; animation-delay: 0.5s;">I love you</div>
+            <div class="float-text" style="bottom: 25%; left: 15%; animation-delay: 1s;">Girl friend Sơn</div>
+            <div class="float-text" style="bottom: 15%; right: 10%; animation-delay: 1.5s;">Trương Dương ❤️</div>
+        </div>
     </div>
 
     <div id="photo-modal" onclick="closeModal()">
@@ -330,7 +349,7 @@
             "https://nguyenbacson.io.vn/miss-you/15.jpeg"
         ];
 
-        // ================= PHẦN 1 & 2: SÁCH & TỎ TÌNH =================
+        // ================= PHẦN 1 & 2: GIỮ NGUYÊN HOÀN TOÀN =================
         const book = document.getElementById('book');
         const stage = document.getElementById('stage');
         const bookAudio = document.getElementById('bookAudio');
@@ -510,12 +529,9 @@
             }, 4000);
         }
 
-        // ================= PHẦN 3: VŨ TRỤ 3D (TỐI ƯU MOBILE & KHÔNG TRÀN VIỀN) =================
-        const scene3d = document.getElementById('scene-3d');
-        let currentRy = 0;
-        let isDragging = false; 
-        let previousX = 0;
-        let autoRotateSpeed = 0.3; // Tốc độ xoay tự động
+        // ================= PHẦN 3: VŨ TRỤ 3D (TỐI ƯU MOBILE - HẠT TRÁI TIM & QUỸ ĐẠO ẢNH) =================
+        const orbitDiv = document.getElementById('photo-orbit');
+        let currentRx = 10; let currentRy = 0;
 
         function initGalaxyEffect() {
             document.getElementById('letter-sequence').style.opacity = 0;
@@ -525,101 +541,107 @@
                 wrapper.style.display = 'block';
                 setTimeout(() => { wrapper.style.opacity = 1; playerUI.style.opacity = 1; }, 100);
                 
-                buildDOMOrbit(); // Xây dựng ảnh và chữ bằng DOM để nhẹ máy
-                initCanvasParticles(); // Vẽ trái tim và sao nền bằng Canvas
+                build3DPhotoOrbit();
+                initCanvasGalaxy();
             }, 1000);
         }
-
-        function buildDOMOrbit() {
-            scene3d.innerHTML = '';
-            // Tự động điều chỉnh bán kính quỹ đạo vừa khung hình điện thoại (Mobile first)
+        
+        // Tối ưu hóa: Dùng CSS 3D để xoay ảnh thay vì vẽ lại trên Canvas (rất mượt trên mobile)
+        function build3DPhotoOrbit() {
+            orbitDiv.innerHTML = ''; 
             const minDim = Math.min(window.innerWidth, window.innerHeight);
-            const orbitRadius = Math.max(120, minDim * 0.38); // Không văng ra ngoài mép
-            const photoWidth = Math.max(35, minDim * 0.12);
-            const photoHeight = photoWidth * 1.2; // Hình hơi chữ nhật
+            // Kích thước quỹ đạo và ảnh phù hợp với điện thoại
+            const orbitRadius = Math.max(120, Math.min(minDim * 0.4, 300)); 
+            const photoSize = Math.max(40, Math.min(minDim * 0.12, 80)); 
 
-            // Thêm Ảnh
             images.forEach((src, i) => {
-                const angle = (i / images.length) * 360;
-                // Tạo độ nghiêng lên xuống nhẹ (không lộn xộn quá)
-                const yOffset = Math.sin(angle * Math.PI / 180 * 2) * (orbitRadius * 0.3);
+                // Phân bổ ảnh thành hình cầu 3D (Fibonacci sphere algorithm giản lược)
+                const phi = Math.acos(-1 + (2 * i) / images.length);
+                const theta = Math.sqrt(images.length * Math.PI) * phi;
                 
-                const photoWrap = document.createElement('div');
-                photoWrap.className = 'galaxy-photo';
-                photoWrap.style.width = `${photoWidth}px`;
-                photoWrap.style.height = `${photoHeight}px`;
-                photoWrap.style.marginTop = `-${photoHeight/2}px`;
-                photoWrap.style.marginLeft = `-${photoWidth/2}px`;
+                const x = orbitRadius * Math.cos(theta) * Math.sin(phi);
+                const y = orbitRadius * Math.sin(theta) * Math.sin(phi);
+                const z = orbitRadius * Math.cos(phi);
                 
-                // transform3d tận dụng GPU điện thoại
-                photoWrap.style.transform = `rotateY(${angle}deg) translateY(${yOffset}px) translateZ(${orbitRadius}px)`;
+                const photoWrapper = document.createElement('div');
+                photoWrapper.className = 'galaxy-photo';
+                photoWrapper.style.width = `${photoSize}px`;
+                photoWrapper.style.height = `${photoSize}px`;
+                photoWrapper.style.marginTop = `-${photoSize/2}px`;
+                photoWrapper.style.marginLeft = `-${photoSize/2}px`;
+                
+                // Đặt vị trí ảnh trong không gian 3D
+                photoWrapper.style.transform = `translate3d(${x}px, ${y}px, ${z}px)`;
                 
                 const img = document.createElement('img');
                 img.src = src;
-                img.loading = "lazy";
-                photoWrap.onclick = function() { openModal(src); };
+                photoWrapper.onclick = function() { openModal(src); };
 
-                photoWrap.appendChild(img);
-                scene3d.appendChild(photoWrap);
+                photoWrapper.appendChild(img);
+                orbitDiv.appendChild(photoWrapper);
             });
-
-            // Thêm Chữ lơ lửng như trong video
-            const texts = [
-                { txt: "Thank girl friend Dương", y: -orbitRadius*0.7, a: 0 },
-                { txt: "Girl friend Sơn", y: orbitRadius*0.6, a: 180 },
-                { txt: "I love you", y: 0, a: 90 },
-                { txt: "Trương Dương ❤️", y: orbitRadius*0.4, a: 270 }
-            ];
-
-            const fontSize = Math.max(12, minDim * 0.04);
-
-            texts.forEach(item => {
-                const el = document.createElement('div');
-                el.className = 'float-text-3d';
-                el.innerText = item.txt;
-                el.style.fontSize = `${fontSize}px`;
-                // Đẩy chữ ra quỹ đạo xa hơn ảnh một chút
-                el.style.transform = `rotateY(${item.a}deg) translateY(${item.y}px) translateZ(${orbitRadius * 1.3}px)`;
-                // Căn giữa chữ
-                el.style.marginTop = `-${fontSize/2}px`;
-                el.style.marginLeft = `-${el.offsetWidth/2}px`;
-                
-                scene3d.appendChild(el);
-            });
-
-            // Sửa lại lề sau khi render để chữ thực sự nằm giữa
-            setTimeout(() => {
-                document.querySelectorAll('.float-text-3d').forEach(el => {
-                     el.style.marginLeft = `-${el.offsetWidth/2}px`;
-                });
-            }, 50);
         }
 
-        function initCanvasParticles() {
+        function initCanvasGalaxy() {
             const canvas = document.getElementById("galaxyCanvas");
-            // Alpha true để nền trong suốt đè lên gradient CSS
-            const ctx = canvas.getContext("2d", { alpha: true }); 
+            // Alpha: false giúp tăng FPS trên mobile
+            const ctx = canvas.getContext("2d", { alpha: false }); 
             const dragLayer = document.getElementById("drag-layer");
             let w, h; 
-            let heartParticles = [];
-            let bgStars = [];
-
-            // Xử lý vuốt màn hình (Tối giản để không lag)
-            dragLayer.addEventListener('touchstart', (e) => { 
-                isDragging = true; previousX = e.touches[0].clientX; 
-            }, {passive: true});
-            dragLayer.addEventListener('touchmove', (e) => {
-                if (isDragging) {
-                    const deltaX = e.touches[0].clientX - previousX;
-                    currentRy += deltaX * 0.4; 
-                    previousX = e.touches[0].clientX;
-                }
-            }, {passive: true});
-            dragLayer.addEventListener('touchend', () => { isDragging = false; });
             
-            dragLayer.addEventListener('mousedown', (e) => { isDragging = true; previousX = e.clientX; });
+            // Mảng chứa điểm tọa độ hạt trái tim
+            let heartPoints = [];
+            let bgStars = [];
+            
+            let isDragging = false; 
+            let previousX = 0, previousY = 0;
+            let currentScale = 1;
+            let initialPinchDistance = null;
+            let lastScale = 1;
+
+            // Xử lý kéo xoay mượt mà
+            dragLayer.addEventListener('touchstart', (e) => { 
+                if (e.touches.length === 1) {
+                    isDragging = true; previousX = e.touches[0].clientX; previousY = e.touches[0].clientY; 
+                } else if (e.touches.length === 2) {
+                    isDragging = false;
+                    initialPinchDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                }
+            }, {passive: false});
+
+            dragLayer.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1 && isDragging) {
+                    e.preventDefault(); // Chống cuộn
+                    currentRy += (e.touches[0].clientX - previousX) * 0.4; 
+                    currentRx -= (e.touches[0].clientY - previousY) * 0.4; 
+                    currentRx = Math.max(-60, Math.min(60, currentRx)); // Giới hạn góc lật
+                    previousX = e.touches[0].clientX; previousY = e.touches[0].clientY;
+                } else if (e.touches.length === 2 && initialPinchDistance) {
+                    e.preventDefault(); 
+                    const currentPinchDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                    currentScale = Math.min(Math.max(0.4, lastScale * (currentPinchDistance / initialPinchDistance)), 2.5); 
+                }
+            }, {passive: false});
+
+            dragLayer.addEventListener('touchend', (e) => { 
+                if (e.touches.length < 2) { initialPinchDistance = null; lastScale = currentScale; }
+                if (e.touches.length === 0) { isDragging = false; }
+            });
+
+            dragLayer.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                currentScale += e.deltaY * -0.002;
+                currentScale = Math.min(Math.max(0.4, currentScale), 2.5);
+                lastScale = currentScale;
+            }, {passive: false});
+
+            dragLayer.addEventListener('mousedown', (e) => { isDragging = true; previousX = e.clientX; previousY = e.clientY; });
             dragLayer.addEventListener('mousemove', (e) => {
-                if(isDragging) { currentRy += (e.clientX - previousX) * 0.4; previousX = e.clientX; }
+                if(isDragging) { 
+                    currentRy += (e.clientX - previousX) * 0.4; currentRx -= (e.clientY - previousY) * 0.4; 
+                    currentRx = Math.max(-60, Math.min(60, currentRx));
+                    previousX = e.clientX; previousY = e.clientY; 
+                }
             });
             dragLayer.addEventListener('mouseup', () => { isDragging = false; });
             dragLayer.addEventListener('mouseleave', () => { isDragging = false; });
@@ -627,89 +649,121 @@
             function resize() {
                 w = canvas.width = window.innerWidth; 
                 h = canvas.height = window.innerHeight;
-                if (document.getElementById('galaxy-wrapper').style.display === 'block') {
-                    buildDOMOrbit(); // Vẽ lại quỹ đạo ảnh khi đổi hướng đt
-                }
+                if (document.getElementById('galaxy-wrapper').style.display === 'block') build3DPhotoOrbit();
             }
             window.addEventListener("resize", resize); 
             resize();
 
-            // Tính toán trước tọa độ trái tim để đỡ tốn CPU khi render
-            const scaleHeart = Math.min(w, h) / 350; // Kích thước trái tim tự động
-            for (let i = 0; i < 250; i++) {
+            // TỐI ƯU HÓA: Tạo trước tọa độ hạt trái tim (Chỉ tính toán 1 lần)
+            // Giới hạn số lượng hạt để mobile không giật (khoảng 250-300 hạt là đẹp)
+            for(let i=0; i<300; i++) {
                 let t = Math.random() * Math.PI * 2;
                 // Phương trình toán học hình trái tim
                 let hx = 16 * Math.pow(Math.sin(t), 3);
                 let hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
                 
-                // Thêm độ nhiễu để tạo thành cụm mây hạt
-                hx += (Math.random() - 0.5) * 4;
-                hy += (Math.random() - 0.5) * 4;
-
-                heartParticles.push({
-                    x: hx, y: hy, z: (Math.random() - 0.5) * 30, // Tạo độ dày 3D
-                    size: Math.random() * 2 + 1,
-                    // Màu sắc hồng, tím, trắng ngẫu nhiên giống video
-                    color: Math.random() > 0.3 ? `rgba(255, 100, 200, 0.8)` : `rgba(200, 150, 255, 0.8)`
-                });
+                // Thêm độ nhiễu (scatter) để tạo khối 3D thay vì mảng phẳng
+                let spread = Math.random() * 5; 
+                let x = hx * 2.5 + (Math.random()-0.5)*spread;
+                let y = hy * 2.5 + (Math.random()-0.5)*spread;
+                let z = (Math.random()-0.5) * 30; // Chiều sâu Z
+                
+                // Màu sắc: Trắng hồng lấp lánh như video
+                let colorType = Math.random();
+                let color = colorType > 0.8 ? "rgba(255,255,255,0.9)" : 
+                            colorType > 0.4 ? "rgba(255, 100, 200, 0.8)" : "rgba(200, 50, 255, 0.7)";
+                
+                heartPoints.push({ x: x, y: y, z: z, size: Math.random() * 1.5 + 0.8, color: color });
             }
 
-            // Sao nền lấp lánh nhẹ nhàng
-            for(let i=0; i<80; i++) {
+            // Tạo sao nền (Background stars)
+            for(let i=0; i<150; i++) {
                 bgStars.push({
-                    x: Math.random() * w, y: Math.random() * h,
-                    size: Math.random() * 1.5,
-                    speed: Math.random() * 0.05 + 0.01,
-                    offset: Math.random() * Math.PI * 2
+                    x: (Math.random()-0.5) * 1500,
+                    y: (Math.random()-0.5) * 1500,
+                    z: (Math.random()-0.5) * 1500,
+                    size: Math.random() * 1.2 + 0.3
                 });
             }
 
             let time = 0;
             function animate() {
-                ctx.clearRect(0, 0, w, h); // Xoá trong suốt để thấy nền CSS
+                // Xóa canvas với màu nền tối
+                ctx.fillStyle = "#0a0510"; 
+                ctx.fillRect(0, 0, w, h);
+                
                 time += 0.05;
 
-                // Xoay Scene 3D (DOM)
-                if (!isDragging) currentRy += autoRotateSpeed; 
-                scene3d.style.transform = `rotateY(${currentRy}deg)`;
+                // Tự động xoay nhẹ khi không vuốt
+                if (!isDragging) { currentRy += 0.2; } 
+                
+                // 1. Áp dụng góc xoay 3D cho Quỹ đạo ảnh (CSS thực hiện)
+                orbitDiv.style.transform = `scale(${currentScale}) rotateX(${-currentRx}deg) rotateY(${currentRy}deg)`;
+
+                // 2. Render Hạt bụi Canvas
+                let rxRad = currentRx * Math.PI / 180; 
+                let ryRad = currentRy * Math.PI / 180;
+                
+                // Nhịp đập trái tim (Heartbeat math)
+                let beat = Math.abs(Math.sin(time * 1.5)) * 0.15; 
+                let beatScale = 1 + beat;
+                
+                let minDim = Math.min(w, h);
+                // Hệ số scale để trái tim vừa vặn màn hình điện thoại
+                let sScale = Math.max(0.6, Math.min(minDim / 600, 1.2)); 
 
                 // Vẽ sao nền
-                ctx.fillStyle = "white";
-                bgStars.forEach(star => {
-                    let a = Math.abs(Math.sin(time * star.speed + star.offset));
-                    ctx.globalAlpha = a;
-                    ctx.beginPath();
-                    ctx.arc(star.x, star.y, star.size, 0, Math.PI*2);
-                    ctx.fill();
-                });
-                ctx.globalAlpha = 1;
-
-                // Vẽ Trái tim 3D ở giữa bằng Canvas
-                let beat = Math.abs(Math.sin(time * 0.8)) * 0.08; // Nhịp đập tim
-                let currentScale = scaleHeart * (1 + beat);
-                
-                // Đồng bộ góc xoay trái tim với khung ảnh
-                let ryRad = currentRy * Math.PI / 180;
-                let cosRy = Math.cos(ryRad);
-                let sinRy = Math.sin(ryRad);
-
-                // Giả lập 3D đơn giản trên Canvas 2D cực nhanh
-                heartParticles.forEach(p => {
-                    // Xoay quanh trục Y
-                    let xRot = p.x * cosRy + p.z * sinRy;
-                    let zRot = -p.x * sinRy + p.z * cosRy;
+                ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+                for(let i=0; i<bgStars.length; i++) {
+                    let p = bgStars[i];
+                    // Phép chiếu 3D -> 2D (Rotation Y then X)
+                    let y1 = p.y * Math.cos(rxRad) - p.z * Math.sin(rxRad);
+                    let z1 = p.y * Math.sin(rxRad) + p.z * Math.cos(rxRad);
+                    let x2 = p.x * Math.cos(ryRad) + z1 * Math.sin(ryRad);
+                    let z2 = -p.x * Math.sin(ryRad) + z1 * Math.cos(ryRad);
                     
-                    let scale = 400 / (400 + zRot * currentScale); // Phối cảnh sâu
-                    let px = w/2 + xRot * currentScale * scale;
-                    let py = h/2 + p.y * currentScale * scale;
+                    let scaleProj = (800 / (800 + z2)) * currentScale;
+                    let xProj = w / 2 + x2 * scaleProj;
+                    let yProj = h / 2 + y1 * scaleProj;
 
-                    ctx.fillStyle = p.color;
-                    ctx.beginPath();
-                    // Kích thước hạt nhỏ đi khi lùi về sau
-                    ctx.arc(px, py, Math.max(0.5, p.size * scale), 0, Math.PI*2);
-                    ctx.fill();
-                });
+                    if (scaleProj > 0 && xProj > 0 && xProj < w && yProj > 0 && yProj < h) {
+                        ctx.beginPath(); ctx.arc(xProj, yProj, p.size * scaleProj, 0, Math.PI*2); ctx.fill();
+                    }
+                }
 
+                // Vẽ hạt bụi Trái Tim
+                for(let i=0; i<heartPoints.length; i++) {
+                    let p = heartPoints[i];
+                    
+                    // Áp dụng nhịp đập
+                    let bx = p.x * beatScale * sScale; 
+                    let by = p.y * beatScale * sScale; 
+                    let bz = p.z * beatScale * sScale;
+
+                    // Phép chiếu 3D -> 2D
+                    let y1 = by * Math.cos(rxRad) - bz * Math.sin(rxRad);
+                    let z1 = by * Math.sin(rxRad) + bz * Math.cos(rxRad);
+                    let x2 = bx * Math.cos(ryRad) + z1 * Math.sin(ryRad);
+                    let z2 = -bx * Math.sin(ryRad) + z1 * Math.cos(ryRad);
+                    
+                    let scaleProj = (800 / (800 + z2)) * currentScale;
+                    let xProj = w / 2 + x2 * scaleProj;
+                    let yProj = h / 2 + y1 * scaleProj;
+
+                    if (scaleProj > 0) {
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath(); 
+                        ctx.arc(xProj, yProj, p.size * scaleProj * sScale, 0, Math.PI*2); 
+                        ctx.fill();
+                        
+                        // Lấp lánh (Vẽ thêm lớp viền mờ cho vài hạt)
+                        if (i % 3 === 0) {
+                            ctx.fillStyle = "rgba(255, 100, 200, 0.2)";
+                            ctx.beginPath(); ctx.arc(xProj, yProj, p.size * scaleProj * sScale * 3, 0, Math.PI*2); ctx.fill();
+                        }
+                    }
+                }
+                
                 requestAnimationFrame(animate);
             }
             animate();
