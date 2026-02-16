@@ -514,7 +514,7 @@
 
         // ================= PHẦN 3: VŨ TRỤ 3D (CÓ SAO BĂNG NỔ TIM & ĐỔI MÀU) =================
         const orbitDiv = document.getElementById('photo-orbit');
-        let currentRx = 10; let currentRy = 0;
+        let currentRx = 20; let currentRy = 0; // Góc nhìn mặc định hơi cúi xuống để thấy rõ hình tim
 
         function initGalaxyEffect() {
             document.getElementById('letter-sequence').style.opacity = 0;
@@ -566,9 +566,10 @@
             
             let heartPoints = [];
             let bgStars = [];
-            // Mảng chứa nhiều sao băng
-            let meteors = [];
-            let meteorCooldown = 0;
+            // Biến cho sao băng và sự kiện nổ
+            // Thêm thuộc tính trail để vẽ đuôi sao băng
+            let meteor = { x: -5000, y: 0, z: 0, vx: 0, vy: 0, vz: 0, active: false, cooldown: 200, trail: [] };
+            let hitOccurred = false;
 
             let isDragging = false; 
             let previousX = 0, previousY = 0;
@@ -584,17 +585,20 @@
                 return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(bVal)}, 0.9)`; 
             }
 
-            // Hàm phóng sao băng (Tạo nhiều sao băng hơn)
+            // Hàm phóng sao băng
             function launchMeteor() {
-                if (meteors.length >= 5) return; // Giới hạn tối đa 5 sao băng cùng lúc để đỡ lag
-                meteors.push({
-                    x: -3000, 
-                    y: (Math.random()-0.5)*500, // Tăng phạm vi xuất hiện
-                    z: (Math.random()-0.5)*500, 
-                    vx: 60 + Math.random()*20, // Tốc độ ngẫu nhiên
-                    vy: 0, vz: 0,
-                    active: true,
-                    hitOccurred: false
+                meteor.x = -3000; meteor.y = (Math.random()-0.5)*400; meteor.z = (Math.random()-0.5)*400;
+                meteor.vx = 7; // Tốc độ CHẬM LẠI để dễ nhìn (giảm từ 60 xuống 7)
+                meteor.vy = -meteor.y / 400; meteor.vz = -meteor.z / 400; // Hướng về tâm
+                meteor.active = true;
+                meteor.trail = []; // Reset đuôi
+                hitOccurred = false;
+                // Reset trạng thái hạt tim
+                heartPoints.forEach(p => {
+                    p.x = p.ox; p.y = p.oy; p.z = p.oz;
+                    p.vx = p.vy = p.vz = 0;
+                    p.exploded = false;
+                    p.colorProgress = 0;
                 });
             }
 
@@ -652,22 +656,25 @@
             window.addEventListener("resize", resize); 
             resize();
 
-            // ================== KHU VỰC CHỈNH SỬA TRÁI TIM 3D TO HƠN & ĐỔI MÀU LIÊN TỤC ==================
-            // Phát hiện thiết bị di động để giảm số lượng hạt tránh lag
-            const isMobile = Math.min(window.innerWidth, window.innerHeight) < 768;
-            const particleCount = isMobile ? 350 : 700; // Giảm hạt trên mobile
-
-            for(let i=0; i<particleCount; i++) { 
+            // ================== KHU VỰC CHỈNH SỬA THÀNH TRÁI TIM 3D LỚN & ĐỔI MÀU ==================
+            // Giảm nhẹ số lượng hạt xuống 480 để tối ưu hiệu năng khi thêm hiệu ứng đổi màu
+            for(let i=0; i<480; i++) { 
                 let px, py, pz;
                 while (true) {
                     let rx = (Math.random() - 0.5) * 3;
                     let ry = (Math.random() - 0.5) * 3;
                     let rz = (Math.random() - 0.5) * 3;
+                    
+                    // Phương trình toán học hình trái tim 3D
                     let a = rx*rx + 2.25*ry*ry + rz*rz - 1;
                     let val = a*a*a - rx*rx*rz*rz*rz - 0.1125*ry*ry*rz*rz*rz;
+                    
+                    // Lọc để chỉ lấy các hạt nằm trong lớp vỏ của trái tim
                     if (val <= 0 && val > -0.5) {
-                        // TĂNG KÍCH THƯỚC Ở ĐÂY: 55 -> 90
-                        px = rx * 90; py = -rz * 90; pz = ry * 90;
+                        // Tăng hệ số nhân từ 55 lên 85 để trái tim TO HƠN RÕ RỆT
+                        px = rx * 85;
+                        py = -rz * 85; 
+                        pz = ry * 85;
                         break;
                     }
                 }
@@ -677,23 +684,24 @@
                 let y = py + (Math.random()-0.5)*spread;
                 let z = pz + (Math.random()-0.5)*spread;
                 
-                let colorType = Math.random();
-                let startColorRgb = colorType > 0.8 ? [255,255,255] : (colorType > 0.4 ? [255, 100, 200] : [200, 50, 255]);
-                let targetColorRgb = [255, 50 + Math.random()*100, 50]; 
+                // Định nghĩa 2 màu gốc để chuyển đổi (Hồng đậm và Tím xanh)
+                let color1 = [255, 20, 147]; // Deep Pink
+                let color2 = [138, 43, 226]; // Blue Violet
+                // Màu mục tiêu khi nổ (Cam vàng rực)
+                let targetColorRgb = [255, 100 + Math.random()*100, 50]; 
 
                 heartPoints.push({
                     x: x, y: y, z: z,
-                    ox: x, oy: y, oz: z,
+                    ox: x, oy: y, oz: z, 
                     vx: 0, vy: 0, vz: 0,
-                    size: Math.random() * 1.8 + 0.8,
-                    startColor: startColorRgb,
+                    size: Math.random() * 2.0 + 1.0, // Hạt to hơn một chút
+                    color1: color1, // Lưu màu gốc 1
+                    color2: color2, // Lưu màu gốc 2
                     targetColor: targetColorRgb,
-                    currentColorStr: `rgba(${startColorRgb.join(',')}, 0.8)`,
-                    colorProgress: 0,
+                    currentColorStr: '', // Sẽ được tính toán trong vòng lặp animate
+                    colorProgress: 0, 
                     exploded: false,
-                    // Thêm thuộc tính để đổi màu liên tục
-                    colorOffset: Math.random() * Math.PI * 2,
-                    baseRgb: startColorRgb 
+                    offset: Math.random() * Math.PI * 2 // Offset ngẫu nhiên cho hiệu ứng đổi màu gợn sóng
                 });
             }
             // =======================================================================
@@ -705,32 +713,34 @@
             let time = 0;
             function animate() {
                 ctx.fillStyle = "#0a0510"; ctx.fillRect(0, 0, w, h);
-                time += 0.05;
-                if (!isDragging) { currentRy += 0.2; } 
+                time += 0.03; // Giảm tốc độ thời gian một chút cho hiệu ứng mượt hơn
+                if (!isDragging) { currentRy += 0.15; } 
                 orbitDiv.style.transform = `scale(${currentScale}) rotateX(${-currentRx}deg) rotateY(${currentRy}deg)`;
 
                 let rxRad = currentRx * Math.PI / 180; let ryRad = currentRy * Math.PI / 180;
-                let beat = Math.abs(Math.sin(time * 1.5)) * 0.15; let beatScale = 1 + beat;
+                // Nhịp tim đập nhẹ hơn để đỡ rối mắt khi đổi màu
+                let beat = Math.abs(Math.sin(time * 1.2)) * 0.1; let beatScale = 1 + beat;
+                
+                // Tính toán scale cơ bản dựa trên chiều nhỏ nhất của màn hình để luôn vừa vặn
                 let minDim = Math.min(w, h);
-                // Điều chỉnh scale một chút để trái tim to không bị cắt khi quay ngang
-                let sScale = Math.max(0.5, Math.min(minDim / 650, 1.1)); 
+                let sScale = Math.max(0.5, Math.min(minDim / 700, 1.1)); 
 
-                // --- XỬ LÝ NHIỀU SAO BĂNG & VỤ NỔ ---
-                meteorCooldown--;
-                if(meteorCooldown <= 0) {
-                    launchMeteor();
-                    meteorCooldown = Math.random() * 80 + 40; // Thời gian xuất hiện sao băng ngẫu nhiên nhanh hơn
-                }
+                // --- XỬ LÝ SAO BĂNG & VỤ NỔ ---
+                meteor.cooldown--;
+                if(meteor.cooldown <= 0) launchMeteor(); 
 
-                // Duyệt qua danh sách sao băng
-                meteors.forEach((meteor, index) => {
-                    if(!meteor.active) return;
-
+                if(meteor.active) {
                     meteor.x += meteor.vx; meteor.y += meteor.vy; meteor.z += meteor.vz;
                     
+                    // Lưu vị trí cũ để vẽ đuôi
+                    meteor.trail.push({x: meteor.x, y: meteor.y, z: meteor.z});
+                    if(meteor.trail.length > 15) meteor.trail.shift(); // Giới hạn độ dài đuôi
+
+                    // Kiểm tra va chạm với tâm (Tăng bán kính va chạm vì tim to hơn)
                     let distToCenter = Math.sqrt(meteor.x*meteor.x + meteor.y*meteor.y + meteor.z*meteor.z);
-                    if(!meteor.hitOccurred && distToCenter < 200) { // Tăng phạm vi va chạm một chút
-                        meteor.hitOccurred = true;
+                    if(!hitOccurred && distToCenter < 180) {
+                        hitOccurred = true;
+                        // Kích hoạt nổ
                         heartPoints.forEach(p => {
                             p.exploded = true;
                             let expForce = Math.random() * 15 + 5;
@@ -741,13 +751,26 @@
                             p.vz = expForce * Math.cos(phi);
                         });
                     }
-                    
-                    if(meteor.x > 3000) {
-                         meteors.splice(index, 1); // Xóa sao băng khi bay ra xa
-                         return;
+                    if(meteor.x > 3000) meteor.active = false; 
+
+                    // VẼ ĐUÔI SAO BĂNG
+                    for(let i=0; i<meteor.trail.length; i++){
+                         let tp = meteor.trail[i];
+                         let trailOpacity = (i / meteor.trail.length) * 0.5; // Đuôi mờ dần
+                         let my = tp.y * sScale; let mz = tp.z * sScale;
+                         let my1 = my * Math.cos(rxRad) - mz * Math.sin(rxRad);
+                         let mz1 = my * Math.sin(rxRad) + mz * Math.cos(rxRad);
+                         let mx2 = (tp.x * sScale) * Math.cos(ryRad) + mz1 * Math.sin(ryRad);
+                         let mz2 = -(tp.x * sScale) * Math.sin(ryRad) + mz1 * Math.cos(ryRad);
+                         let mScaleProj = (800 / (800 + mz2)) * currentScale;
+                         if(mScaleProj > 0) {
+                            ctx.fillStyle = `rgba(255, 255, 255, ${trailOpacity})`; ctx.beginPath();
+                            // Đuôi nhỏ hơn đầu một chút
+                            ctx.arc(w/2 + mx2*mScaleProj, h/2 + my1*mScaleProj, (i/meteor.trail.length)*5*mScaleProj, 0, Math.PI*2); ctx.fill();
+                        }
                     }
 
-                    // Vẽ sao băng
+                    // VẼ ĐẦU SAO BĂNG (To hơn và rõ hơn)
                     let mx = meteor.x * sScale; let my = meteor.y * sScale; let mz = meteor.z * sScale;
                     let my1 = my * Math.cos(rxRad) - mz * Math.sin(rxRad);
                     let mz1 = my * Math.sin(rxRad) + mz * Math.cos(rxRad);
@@ -755,10 +778,16 @@
                     let mz2 = -mx * Math.sin(ryRad) + mz1 * Math.cos(ryRad);
                     let mScaleProj = (800 / (800 + mz2)) * currentScale;
                     if(mScaleProj > 0) {
-                        ctx.fillStyle = "#ffffff"; ctx.beginPath();
-                        ctx.arc(w/2 + mx2*mScaleProj, h/2 + my1*mScaleProj, 3*mScaleProj, 0, Math.PI*2); ctx.fill();
+                        // Tạo hiệu ứng phát sáng cho đầu sao băng
+                        let gradient = ctx.createRadialGradient(w/2 + mx2*mScaleProj, h/2 + my1*mScaleProj, 0, w/2 + mx2*mScaleProj, h/2 + my1*mScaleProj, 15*mScaleProj);
+                        gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+                        gradient.addColorStop(0.4, 'rgba(255, 200, 200, 0.8)');
+                        gradient.addColorStop(1, 'rgba(255, 100, 100, 0)');
+                        ctx.fillStyle = gradient; ctx.beginPath();
+                        // Tăng kích thước đầu sao băng lên 15
+                        ctx.arc(w/2 + mx2*mScaleProj, h/2 + my1*mScaleProj, 15*mScaleProj, 0, Math.PI*2); ctx.fill();
                     }
-                });
+                }
 
                 // Vẽ nền sao
                 ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
@@ -777,18 +806,21 @@
                 // Vẽ và cập nhật hạt trái tim
                 for(let i=0; i<heartPoints.length; i++) {
                     let p = heartPoints[i];
+                    
                     if(p.exploded) {
+                        // Nếu đã nổ: Bay ra và chuyển sang màu vàng cam
                         p.x += p.vx; p.y += p.vy; p.z += p.vz;
                         p.vx *= 0.95; p.vy *= 0.95; p.vz *= 0.95;
                         if(p.colorProgress < 1) p.colorProgress += 0.02;
-                        p.currentColorStr = lerpColor(p.startColor, p.targetColor, p.colorProgress);
+                        // Trộn màu hiện tại với màu mục tiêu khi nổ
+                        let mixAmount = (Math.sin(time + p.offset) + 1) / 2; 
+                        let currentBaseColor = lerpColor(p.color1, p.color2, mixAmount).match(/\d+/g).map(Number);
+                        p.currentColorStr = lerpColor(currentBaseColor, p.targetColor, p.colorProgress);
                     } else {
-                        // HIỆU ỨNG ĐỔI MÀU LIÊN TỤC KHI CHƯA NỔ
-                        // Tạo dao động màu sắc nhẹ nhàng dựa trên thời gian và vị trí
-                        let shimmer = Math.sin(time * 2 + p.colorOffset) * 30;
-                        let r = Math.max(0, Math.min(255, p.baseRgb[0] + shimmer));
-                        let b = Math.max(0, Math.min(255, p.baseRgb[2] - shimmer));
-                        p.currentColorStr = `rgba(${Math.round(r)}, ${p.baseRgb[1]}, ${Math.round(b)}, 0.8)`;
+                        // Nếu chưa nổ: Đổi màu liên tục giữa Hồng và Tím
+                        // Sử dụng hàm sin để tạo dao động màu mượt mà dựa trên thời gian và offset của hạt
+                        let mixAmount = (Math.sin(time * 1.5 + p.offset + p.z * 0.01) + 1) / 2; 
+                        p.currentColorStr = lerpColor(p.color1, p.color2, mixAmount);
                     }
 
                     let bx = p.x * beatScale * sScale; let by = p.y * beatScale * sScale; let bz = p.z * beatScale * sScale;
