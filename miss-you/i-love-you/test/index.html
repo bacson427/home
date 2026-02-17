@@ -31,35 +31,36 @@
             background: radial-gradient(circle at 50% 50%, #fff0f3 0%, #ffc2d1 60%, #ff9eb5 100%);
             height: 100%; width: 100%; overflow: hidden; font-family: 'Quicksand', sans-serif;
             perspective: 2000px; transition: background 2s ease;
-            text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
         }
 
         .bg-pattern {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px);
             background-size: 20px 20px; z-index: 0; pointer-events: none; transition: opacity 2s ease;
+            will-change: opacity;
         }
 
         /* ================= PHẦN 1: SÁCH ẢNH ================= */
         #player {
             position: fixed; top: max(15px, 3vh); right: max(15px, 3vw); display: none; align-items: center; gap: 15px;
-            z-index: 1000; background: rgba(255,255,255,0.7); padding: 8px 20px 8px 8px;
-            border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.5); cursor: pointer; transition: opacity 1s;
+            z-index: 1000; background: rgba(255,255,255,0.6); padding: 8px 20px 8px 8px;
+            border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); backdrop-filter: blur(5px);
+            cursor: pointer; transition: opacity 1s; will-change: opacity;
         }
         .vinyl {
             width: clamp(30px, 8vw, 40px); height: clamp(30px, 8vw, 40px); background: #111; border-radius: 50%;
             display: flex; justify-content: center; align-items: center; border: 2px solid #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3); animation: spin 4s linear infinite; animation-play-state: paused; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.2); animation: spin 4s linear infinite; animation-play-state: paused; 
+            will-change: transform;
         }
         .vinyl::after { content: ''; width: 30%; height: 30%; background: #ff9eb5; border-radius: 50%; border: 1px solid #333; }
         .vinyl.playing { animation-play-state: running; }
-        .track-name { font-size: clamp(10px, 3vw, 13px); font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: 1.5px; }
+        .track-name { font-size: clamp(10px, 3vw, 13px); font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 1px; }
 
         .stage {
             position: relative; width: var(--book-width); height: var(--book-height);
             transform: translateX(0); transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 1s;
-            z-index: 10;
+            z-index: 10; will-change: transform, opacity;
             position: absolute; top: 50%; left: 50%; margin-top: calc(var(--book-height) / -2); margin-left: calc(var(--book-width) / -2);
         }
         .stage.opened { transform: translateX(50%); }
@@ -92,7 +93,7 @@
 
         .page.cover .front {
             background: var(--cover-color); background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3h1v1H1V3zm2-2h1v1H3V1z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-            border: 1px solid rgba(0,0,0,0.2); box-shadow: inset 4px 0 15px rgba(0,0,0,0.4), inset -1px 0 2px rgba(255,255,255,0.3);
+            border: 1px solid rgba(0,0,0,0.2); box-shadow: inset 4px 0 10px rgba(0,0,0,0.3), inset -1px 0 2px rgba(255,255,255,0.3);
             border-radius: 4px 12px 12px 4px; display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
         .cover-frame {
@@ -100,13 +101,17 @@
             border: 2px solid #d4af37; outline: 1px solid #d4af37; outline-offset: -6px; border-radius: 4px;
             display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; text-align: center;
         }
-        .cover-title { font-family: 'Cinzel', serif; font-size: clamp(1.2rem, 5vw, 2.2rem); color: #fcebc0; text-shadow: 2px 2px 8px rgba(0,0,0,0.6); margin-bottom: 5px; letter-spacing: 2px; }
+        .cover-title { font-family: 'Cinzel', serif; font-size: clamp(1.2rem, 5vw, 2.2rem); color: #fcebc0; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); margin-bottom: 5px; letter-spacing: 2px; }
         .cover-subtitle { font-family: 'Dancing Script', cursive; font-size: clamp(1rem, 4.5vw, 1.8rem); color: #ff9eb5; }
 
         .cover-heart {
-            font-size: clamp(35px, 12vw, 55px); margin-top: 15px; cursor: pointer;
-            animation: heartbeat 1.5s infinite; filter: drop-shadow(0 5px 15px rgba(255, 50, 100, 0.6));
-            transition: transform 0.2s, opacity 0.5s; z-index: 20;
+            font-size: clamp(35px, 12vw, 55px);
+            margin-top: 15px;
+            cursor: pointer;
+            animation: heartbeat 1.5s infinite;
+            filter: drop-shadow(0 5px 15px rgba(255, 50, 100, 0.5));
+            transition: transform 0.2s, opacity 0.5s;
+            z-index: 20; will-change: transform;
         }
 
         .cover-year { position: absolute; bottom: 20px; font-size: clamp(8px, 2.5vw, 12px); color: #d4af37; letter-spacing: 3px; }
@@ -114,98 +119,115 @@
 
         .back { transform: rotateY(180deg); }
         .page.flipped { transform: rotateY(-180deg); }
-        .front.content, .back.content { padding: 5%; display: flex; flex-direction: column; box-shadow: inset 0 0 30px rgba(0,0,0,0.03); }
-        .photo-frame { width: 100%; height: 90%; background: #fff; padding: 3%; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-radius: 2px; }
+        .front.content, .back.content { padding: 5%; display: flex; flex-direction: column; box-shadow: inset 0 0 20px rgba(0,0,0,0.02); }
+        .photo-frame { width: 100%; height: 90%; background: #fff; padding: 3%; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 2px; }
         .photo-frame img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; border-radius: 2px; }
         .page-num { height: 10%; display: flex; justify-content: center; align-items: flex-end; font-size: 12px; color: #aaa; font-family: 'Montserrat', sans-serif; }
         .back.content { background-color: #fdfaf6; background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0zM9 5h2v2H9V5zm0 4h2v6H9V9z' fill='%23ff9eb5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E"); }
 
         /* ================= PHẦN 2: TỎ TÌNH ================= */
         #confession-stage {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; display: none; flex-direction: column;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 20; display: none; flex-direction: column;
             justify-content: center; align-items: center; padding: 10px; text-align: center;
         }
 
         #text-wrapper { min-height: 200px; display: flex; align-items: center; justify-content: center; width: 100%; padding: 0 15px; }
         #main-text {
             font-family: 'Dancing Script', cursive; font-size: clamp(24px, 7vw, 48px); 
-            line-height: 1.4; color: #ffffff; text-shadow: 2px 2px 0px #ff5e88, 0 0 20px rgba(255, 0, 80, 0.8), 0 0 40px rgba(255, 0, 80, 0.4); width: 100%;
+            line-height: 1.4; color: #ffffff; text-shadow: 2px 2px 0px #ff5e88, 0 0 15px rgba(255, 0, 80, 0.5); width: 100%;
+            will-change: transform, opacity;
         }
         .word { display: inline-block; white-space: nowrap; margin: 0 4px; }
         .letter { display: inline-block; opacity: 0; transform: translateY(10px); }
 
         .glass-btn {
-            background: rgba(255, 255, 255, 0.95); color: #ff0055;
-            padding: 12px 35px; border-radius: 50px; font-size: clamp(0.9rem, 3vw, 1.1rem); font-weight: 800;
-            box-shadow: 0 8px 25px rgba(255, 50, 100, 0.5); border: 1px solid rgba(255,255,255,0.8);
-            cursor: pointer; animation: pulse 2s infinite; backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.9); color: #ff0055;
+            padding: 12px 30px; border-radius: 50px; font-size: clamp(0.9rem, 3vw, 1.1rem); font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 100, 150, 0.4); border: none; cursor: pointer; animation: pulse 2s infinite;
         }
 
         #ask-section { display: none; width: 100%; margin-top: 20px; }
         .btn-group { display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%; }
-        .btn { width: 80%; max-width: 300px; padding: 16px; border-radius: 50px; border: none; font-weight: 800; font-size: clamp(1rem, 4vw, 1.2rem); transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
-        #yes { background: linear-gradient(45deg, #ff0055, #ff3377); color: white; box-shadow: 0 10px 25px rgba(255, 0, 85, 0.5); z-index: 100; border: 1px solid #ff4d88; }
-        #yes:active { transform: scale(0.95); }
-        #no { background: rgba(255,255,255,0.85); color: #555; position: relative; touch-action: none; backdrop-filter: blur(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn { width: 80%; max-width: 300px; padding: 16px; border-radius: 50px; border: none; font-weight: bold; font-size: clamp(1rem, 4vw, 1.2rem); transition: 0.1s; cursor: pointer; }
+        #yes { background: #ff0055; color: white; box-shadow: 0 8px 20px rgba(255, 0, 85, 0.4); z-index: 100; }
+        #no { background: rgba(255,255,255,0.8); color: #555; position: relative; touch-action: none; will-change: top, left, transform; }
 
         /* ================= KỊCH BẢN TÂM THƯ ================= */
         #letter-sequence {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50;
             justify-content: center; align-items: center; flex-direction: column;
-            background: rgba(0,0,0,0.75); backdrop-filter: blur(10px); opacity: 0; transition: opacity 1s;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); opacity: 0; transition: opacity 1s;
         }
-        #loading-text { font-family: 'Dancing Script', cursive; font-size: clamp(2rem, 8vw, 3rem); color: #ffb3c6; text-shadow: 0 0 30px #ff0055; animation: pulseFade 1.5s infinite; display: none; text-align: center; }
+
+        /* HIỆU ỨNG LOADING MỚI VIP PRO MAX */
+        #loading-text { 
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .loading-heart {
+            font-size: clamp(3rem, 10vw, 4rem);
+            animation: heartbeat 1s infinite;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 85, 0.9));
+        }
+        .loading-words {
+            font-family: 'Dancing Script', cursive; font-size: clamp(2rem, 8vw, 3.5rem); color: #ffb3c6; text-shadow: 0 0 25px #ff0055;
+        }
+        .dots::after { content: ''; animation: loadingDots 1.5s infinite steps(4); }
 
         .envelope-container { 
-            display: none; position: relative; 
-            width: clamp(320px, 90vw, 420px); 
-            height: 250px; margin-top: 150px; 
+            display: none; position: relative; width: clamp(280px, 85vw, 360px); height: 190px; margin-top: 25vh; 
             animation: floatEnvelope 3s ease-in-out infinite alternate;
+            will-change: transform;
         }
-        .envelope { position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, #e63946, #c1121f); border-radius: 0 0 10px 10px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); z-index: 3; }
+        .envelope { position: absolute; width: 100%; height: 100%; background: #e63946; border-radius: 0 0 10px 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 3; }
         .envelope:before {
             content: ''; position: absolute; top: 0; left: 0;
-            border-left: calc(var(--book-width) * 0.7) solid transparent; border-right: calc(var(--book-width) * 0.7) solid transparent;
-            border-bottom: 130px solid #ff4d6d; border-top: 125px solid transparent; z-index: 3;
-            filter: drop-shadow(0 -5px 5px rgba(0,0,0,0.1));
+            border-left: calc(clamp(280px, 85vw, 360px) / 2) solid transparent; 
+            border-right: calc(clamp(280px, 85vw, 360px) / 2) solid transparent;
+            border-bottom: 100px solid #ff4d6d; border-top: 95px solid transparent; z-index: 3;
         }
         .flap {
             position: absolute; top: 0; left: 0;
-            border-left: calc(var(--book-width) * 0.7) solid transparent; border-right: calc(var(--book-width) * 0.7) solid transparent;
-            border-top: 130px solid #d90429; border-bottom: 130px solid transparent;
-            transform-origin: top; transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 4; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.3));
+            border-left: calc(clamp(280px, 85vw, 360px) / 2) solid transparent; 
+            border-right: calc(clamp(280px, 85vw, 360px) / 2) solid transparent;
+            border-top: 100px solid #d90429; border-bottom: 100px solid transparent;
+            transform-origin: top; transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 4; drop-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            will-change: transform;
         }
-        .flap.open { transform: rotateX(180deg); z-index: 1; filter: drop-shadow(0 -8px 10px rgba(0,0,0,0.2)); }
+        .flap.open { transform: rotateX(180deg); z-index: 1; }
 
         .wax-seal {
-            position: absolute; top: 125px; left: 50%; transform: translate(-50%, -50%);
-            width: 55px; height: 55px; background: radial-gradient(circle at 30% 30%, #ff4d6d, #a70000);
+            position: absolute; top: 95px; left: 50%; transform: translate(-50%, -50%);
+            width: 50px; height: 50px; background: radial-gradient(circle at 30% 30%, #d90429, #800000);
             border-radius: 50%; z-index: 5;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.6), 0 8px 20px rgba(0,0,0,0.4), 0 0 0 2px rgba(255, 215, 0, 0.4);
-            display: flex; justify-content: center; align-items: center; color: #ffcccb; font-size: 26px; 
-            transition: opacity 0.5s ease, transform 0.3s; border: 2px solid rgba(139, 0, 0, 0.9);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3), 0 0 0 2px rgba(255, 215, 0, 0.3);
+            display: flex; justify-content: center; align-items: center; color: #ffcccb; font-size: 24px; 
+            transition: opacity 0.5s ease; border: 2px solid rgba(139, 0, 0, 0.8);
+            will-change: opacity;
         }
-        .wax-seal:before { content: '🔓'; text-shadow: 1px 1px 3px rgba(0,0,0,0.6); }
-        .flap.open + .wax-seal { opacity: 0; transform: translate(-50%, -50%) scale(0.5); pointer-events: none; }
+        .wax-seal:before { content: '🔓'; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        .flap.open + .wax-seal { opacity: 0; pointer-events: none; }
 
+        /* CẬP NHẬT KÍCH THƯỚC GIẤY CHUẨN VIP */
         .paper {
-            position: absolute; top: 10px; left: 5%; width: 90%; 
-            height: 480px; 
+            position: absolute; top: 10px; left: 2.5%; width: 95%; height: auto; min-height: 60vh; max-height: 70vh;
             background-color: #f8f1e5;
-            background-image: repeating-linear-gradient(transparent, transparent 27px, rgba(0,0,0,0.06) 27px, rgba(0,0,0,0.06) 28px); 
-            border-radius: 5px; box-shadow: 0 -10px 25px rgba(0,0,0,0.15); transition: transform 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
-            z-index: 2; padding: 35px 25px 25px 25px; text-align: left; overflow: hidden; transform: translateY(0);
+            background-image: repeating-linear-gradient(transparent, transparent 27px, rgba(0,0,0,0.05) 27px, rgba(0,0,0,0.05) 28px); 
+            border-radius: 5px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: transform 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 2; padding: 30px 20px 40px 20px; text-align: left; transform: translateY(0);
+            overflow-y: auto; overflow-x: hidden; scrollbar-width: none; will-change: transform;
         }
-        .paper.out { transform: translateY(-380px); } 
+        .paper::-webkit-scrollbar { display: none; }
+        .paper.out { transform: translateY(-80%); } /* Kéo giấy lên cao tự động hiển thị đủ chữ */
 
         #typed-letter { 
-            font-size: clamp(0.95rem, 3.8vw, 1.2rem); 
-            color: #3d211f; font-weight: 700; line-height: 28px; 
-            font-family: 'Dancing Script', cursive; display: inline; text-shadow: 0.5px 0.5px 0px rgba(255,255,255,0.5);
+            font-size: clamp(1.1rem, 4vw, 1.25rem); color: #4a2c2a; font-weight: 600; line-height: 28px; 
+            font-family: 'Dancing Script', cursive; display: inline; 
         }
-        .cursor { display: inline-block; width: 2px; height: 1.1rem; background: #d90429; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 5px;}
+        .cursor { display: inline-block; width: 2px; height: 1rem; background: #4a2c2a; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 5px;}
 
-        /* ================= PHẦN 3: VŨ TRỤ 3D (VIP PRO MOBILE) ================= */
+        /* ================= PHẦN 3: VŨ TRỤ 3D (TỐI ƯU MOBILE) ================= */
         #galaxy-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; 
             display: none; opacity: 0; transition: opacity 2s; 
@@ -217,18 +239,22 @@
 
         #photo-orbit {
             position: absolute; top: 50%; left: 50%; width: 0; height: 0;
-            transform-style: preserve-3d; z-index: 2; will-change: transform; 
+            transform-style: preserve-3d; z-index: 2;
+            will-change: transform; 
         }
 
         .galaxy-photo {
-            position: absolute; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 15px #ff3366, inset 0 0 10px rgba(255, 51, 102, 0.6); 
+            position: absolute; border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 10px #ff3366, inset 0 0 10px rgba(255, 51, 102, 0.5); 
             cursor: pointer; backface-visibility: visible; overflow: hidden; background: #000;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            will-change: transform;
         }
         .galaxy-photo img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
         .galaxy-photo:hover { 
-            border-color: #fff; box-shadow: 0 0 25px #ff0055, 0 0 40px #ff3366, inset 0 0 20px #ff3366; z-index: 10;
+            border-color: #fff;
+            box-shadow: 0 0 20px #ff0055, 0 0 30px #ff3366, inset 0 0 15px #ff3366; 
+            z-index: 10;
         }
 
         #drag-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: grab; }
@@ -236,32 +262,33 @@
 
         .floating-texts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
         .float-text { 
-            position: absolute; font-family: 'Quicksand', sans-serif; font-weight: 800; letter-spacing: 1px;
-            color: #ffffff; text-shadow: 0 0 8px #ff5e88, 0 0 15px #ff0055, 0 0 30px rgba(255,0,85,0.5); 
-            font-size: clamp(14px, 4vw, 20px); 
-            animation: floatUpText 4s ease-in-out infinite alternate; white-space: nowrap;
+            position: absolute; font-family: 'Quicksand', sans-serif; font-weight: 700;
+            color: #ffffff; text-shadow: 0 0 5px #ff5e88, 0 0 10px #ff0055; 
+            font-size: clamp(12px, 3.5vw, 18px); 
+            animation: floatUpText 3s ease-in-out infinite alternate; white-space: nowrap;
+            will-change: transform;
         }
 
         #photo-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
             z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s;
         }
         #photo-modal img { 
-            max-width: 90%; max-height: 80%; border: 3px solid #fff; border-radius: 50%; 
-            box-shadow: 0 0 40px rgba(255,50,100,0.9), 0 0 80px rgba(255,50,100,0.4); transform: scale(0.8); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            max-width: 90%; max-height: 80%; border: 2px solid #fff; border-radius: 50%; 
+            box-shadow: 0 0 30px rgba(255,50,100,0.8); transform: scale(0.9); transition: transform 0.3s; 
             aspect-ratio: 1/1; object-fit: cover; 
         }
         #photo-modal.active { opacity: 1; }
         #photo-modal.active img { transform: scale(1); }
-        .close-btn { position: absolute; top: 20px; right: 20px; color: rgba(255,255,255,0.9); font-size: 40px; cursor: pointer; font-family: sans-serif; font-weight: 300; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .close-btn { position: absolute; top: 20px; right: 20px; color: rgba(255,255,255,0.8); font-size: 35px; cursor: pointer; font-family: sans-serif; font-weight: 300; }
 
         @keyframes heartbeat { 0%, 100% { transform: scale(1); } 10%, 30% { transform: scale(1.15); } 20% { transform: scale(1.05); } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes pulse { 50% { transform: scale(1.05); } }
-        @keyframes pulseFade { 0%, 100% { opacity: 0.5; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } }
+        @keyframes loadingDots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } 100% { content: ''; } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        @keyframes floatUpText { 0% { transform: translateY(0px); opacity: 0.85; } 100% { transform: translateY(-15px); opacity: 1; } }
-        @keyframes floatEnvelope { 0% { transform: scale(var(--env-scale)) translateY(0px); } 100% { transform: scale(var(--env-scale)) translateY(-20px); } }
+        @keyframes floatUpText { 0% { transform: translateY(0px); opacity: 0.8; } 100% { transform: translateY(-10px); opacity: 1; } }
+        @keyframes floatEnvelope { 0% { transform: scale(var(--env-scale)) translateY(0px); } 100% { transform: scale(var(--env-scale)) translateY(-15px); } }
     </style>
 </head>
 <body>
@@ -291,7 +318,10 @@
     </div>
 
     <div id="letter-sequence">
-        <div id="loading-text">I LOVE YOU...</div>
+        <div id="loading-text">
+            <div class="loading-heart">❤️</div>
+            <div class="loading-words">I LOVE YOU<span class="dots"></span></div>
+        </div>
         <div class="envelope-container" id="envelope-container">
             <div class="flap" id="flap"></div>
             <div class="wax-seal" id="wax-seal"></div>
@@ -308,10 +338,10 @@
         <div id="photo-orbit"></div>
 
         <div class="floating-texts">
-            <div class="float-text" style="top: 12%; left: 50%; transform: translateX(-50%); animation-delay: 0s;">Thank girl friend Dương</div>
-            <div class="float-text" style="top: 40%; left: 8%; animation-delay: 0.5s;">I love you</div>
-            <div class="float-text" style="bottom: 22%; left: 12%; animation-delay: 1s;">Girl friend Sơn</div>
-            <div class="float-text" style="bottom: 12%; right: 8%; animation-delay: 1.5s;">Trương Dương ❤️</div>
+            <div class="float-text" style="top: 15%; left: 50%; transform: translateX(-50%); animation-delay: 0s;">Thank girl friend Dương</div>
+            <div class="float-text" style="top: 45%; left: 10%; animation-delay: 0.5s;">I love you</div>
+            <div class="float-text" style="bottom: 25%; left: 15%; animation-delay: 1s;">Girl friend Sơn</div>
+            <div class="float-text" style="bottom: 15%; right: 10%; animation-delay: 1.5s;">Trương Dương ❤️</div>
         </div>
     </div>
 
@@ -332,7 +362,7 @@
             "https://nguyenbacson.io.vn/miss-you/15.jpeg"
         ];
 
-        // ================= PHẦN 1 & 2: GIỮ NGUYÊN HIỆU ỨNG VÀ KỊCH BẢN =================
+        // ================= PHẦN 1 & 2: GIỮ NGUYÊN =================
         const book = document.getElementById('book');
         const stage = document.getElementById('stage');
         const bookAudio = document.getElementById('bookAudio');
@@ -483,7 +513,7 @@
             btn.style.position = 'fixed'; btn.style.left = Math.max(20, Math.random() * w) + 'px'; btn.style.top = Math.max(20, Math.random() * h) + 'px';
             const phrases = ["Mơ đi cưng 😎", "Đừng hòng thoát", "Bấm nút kia kìa", "Lêu lêu 😝", "Tay chậm thế?"];
             btn.innerText = phrases[Math.floor(Math.random() * phrases.length)];
-            btn.style.background = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.95)`; btn.style.color = "#fff";
+            btn.style.background = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.9)`; btn.style.color = "#fff";
         }
 
         function accepted() {
@@ -491,8 +521,10 @@
             document.getElementById('bg-pattern').style.opacity = 0; playerUI.style.opacity = 0; 
             const letterSeq = document.getElementById('letter-sequence');
             letterSeq.style.display = 'flex'; setTimeout(() => letterSeq.style.opacity = 1, 100);
-            const loading = document.getElementById('loading-text'); loading.style.display = 'block';
-            setTimeout(() => { loading.style.display = 'none'; showLetter(); }, 3000);
+            
+            // Hiện loading VIP
+            const loading = document.getElementById('loading-text'); loading.style.display = 'flex';
+            setTimeout(() => { loading.style.display = 'none'; showLetter(); }, 3500);
         }
 
         function showLetter() {
@@ -502,31 +534,31 @@
             setTimeout(() => { flap.classList.add('open'); }, 800);
             setTimeout(() => { paper.classList.add('out'); }, 2000);
             setTimeout(() => {
-                const text = "Dương à, <br><br> Cảm ơn cậu vì đã gật đầu đồng ý làm người yêu của tớ. Đến tận bây giờ, tớ vẫn thấy mình thật sự may mắn khi có được cậu. <br><br> Tớ biết bản thân mình vẫn còn nhiều thiếu sót, vẫn còn đó sự thiếu tinh tế và đôi lúc cái tính trẻ con, thích hơn thua vẫn chưa sửa được. Tớ cũng muốn gửi lời xin lỗi đến cậu vì trong những ngày nghỉ Tết vừa qua đã làm cậu thêm mệt mỏi. Cậu vốn đã bận rộn phụ giúp gia đình bao nhiêu việc nhà, vậy mà vẫn phải kiên nhẫn 'chịu đựng' và trả lời hết những câu hỏi ngớ ngẩn của tớ. <br><br> Nhưng điều làm tớ cảm động và trân trọng nhất là dù tớ có vô tư đến mức vô tâm như vậy, cậu cũng không vì thế mà ghét bỏ hay đẩy tớ ra xa. Cảm ơn sự dịu dàng và lòng bao dung mà cậu đã dành cho tớ trong suốt thời gian qua. <br><br> Tớ không dám hứa sẽ trở nên hoàn hảo ngay lập tức, nhưng tớ hứa sẽ cố gắng trưởng thành, thấu hiểu và tinh tế hơn mỗi ngày để có thể che chở, yêu thương cậu thật tốt. <br><br> I LOVE YOU! ❤️ <br><br> Người yêu của cậu,<br>Sơn";
-                
+                const text = "Dương à,\nCảm ơn cậu vì đã gật đầu đồng ý làm người yêu của tớ. Đến tận bây giờ, tớ vẫn thấy mình thật sự may mắn khi có được cậu.\nTớ biết bản thân mình vẫn còn nhiều thiếu sót, vẫn còn đó sự thiếu tinh tế và đôi lúc cái tính trẻ con, thích hơn thua vẫn chưa sửa được. Tớ cũng muốn gửi lời xin lỗi đến cậu vì trong những ngày nghỉ Tết vừa qua đã làm cậu thêm mệt mỏi. Cậu vốn đã bận rộn phụ giúp gia đình bao nhiêu việc nhà, vậy mà vẫn phải kiên nhẫn \"chịu đựng\" và trả lời hết những câu hỏi ngớ ngẩn của tớ.\nNhưng điều làm tớ cảm động và trân trọng nhất là dù tớ có vô tư đến mức vô tâm như vậy, cậu cũng không vì thế mà ghét bỏ hay đẩy tớ ra xa. Cảm ơn sự dịu dàng và lòng bao dung mà cậu đã dành cho tớ trong suốt thời gian qua.\nTớ không dám hứa sẽ trở nên hoàn hảo ngay lập tức, nhưng tớ hứa sẽ cố gắng trưởng thành, thấu hiểu và tinh tế hơn mỗi ngày để có thể che chở, yêu thương cậu thật tốt.\nI LOVE YOU! ❤️\nNgười yêu của cậu,\nSơn";
                 let i = 0;
-                let speed = 25; 
-                
                 function typeWriter() {
                     if (i < text.length) { 
-                        if (text.substring(i, i + 4) === "<br>") {
-                            typeDest.innerHTML += "<br>";
-                            i += 4;
+                        if(text.charAt(i) === '\n') {
+                            typeDest.innerHTML += '<br>';
                         } else {
                             typeDest.innerHTML += text.charAt(i); 
-                            i++; 
                         }
+                        
+                        // VIP: Tự động cuộn trang giấy xuống khi dòng chữ vượt quá giới hạn khung
                         paper.scrollTop = paper.scrollHeight;
-                        setTimeout(typeWriter, speed); 
+
+                        i++; 
+                        setTimeout(typeWriter, 35); // Tốc độ nhanh hơn chút để không mỏi mắt chờ đợi
                     } else { 
-                        setTimeout(initGalaxyEffect, 5000); 
+                        // Dành thêm 6 giây để đọc xong nội dung dài rồi mới chuyển
+                        setTimeout(initGalaxyEffect, 6000); 
                     }
                 }
                 typeWriter();
             }, 4000);
         }
 
-        // ================= PHẦN 3: VŨ TRỤ 3D (TỐI ƯU HÓA HD VIP PRO) =================
+        // ================= PHẦN 3: VŨ TRỤ =================
         const orbitDiv = document.getElementById('photo-orbit');
         let currentRx = 20; let currentRy = 0; 
 
@@ -577,9 +609,6 @@
             const ctx = canvas.getContext("2d", { alpha: false }); 
             const dragLayer = document.getElementById("drag-layer");
             let w, h; 
-            
-            // CẬP NHẬT VIP: Nhân độ phân giải để ảnh Canvas nét căng trên Mobile/Retina
-            const dpr = window.devicePixelRatio || 1;
 
             let isDragging = false; 
             let previousX = 0, previousY = 0;
@@ -634,38 +663,21 @@
             dragLayer.addEventListener('mouseleave', () => { isDragging = false; });
 
             function resize() {
-                w = window.innerWidth; 
-                h = window.innerHeight;
-                canvas.width = w * dpr;
-                canvas.height = h * dpr;
-                canvas.style.width = w + "px";
-                canvas.style.height = h + "px";
-                ctx.scale(dpr, dpr); // Scale theo DPI để hạt nét mượt
+                w = canvas.width = window.innerWidth; 
+                h = canvas.height = window.innerHeight;
                 if (document.getElementById('galaxy-wrapper').style.display === 'block') build3DPhotoOrbit();
             }
             window.addEventListener("resize", resize); 
             resize();
 
-            // ================== HIỆU ỨNG TRÁI TIM RƠI HẠT (CHẤT LỎNG / SPLASH) ==================
+            // ================== HIỆU ỨNG TRÁI TIM RƠI HẠT ==================
             let particles = [];
             let heartPaths = [];
-            let bgStars = [];
-            const PI2 = Math.PI * 2; // Tối ưu tính toán
             
-            // Tính toán trước các điểm viền của trái tim (Dày hơn một chút để tạo khối 3D)
-            for (let i = 0; i < Math.PI * 2; i += 0.03) {
+            for (let i = 0; i < Math.PI * 2; i += 0.05) {
                 let x = 16 * Math.pow(Math.sin(i), 3);
                 let y = -(13 * Math.cos(i) - 5 * Math.cos(2 * i) - 2 * Math.cos(3 * i) - Math.cos(4 * i));
                 heartPaths.push({ x: x, y: y });
-            }
-
-            // Tạo các vì sao nhấp nháy ở background
-            for(let i=0; i<150; i++) {
-                bgStars.push({ 
-                    x: Math.random() * w, y: Math.random() * h, 
-                    size: Math.random() * 2, speed: Math.random() * 0.05, 
-                    alpha: Math.random() 
-                });
             }
 
             class FallingParticle {
@@ -675,59 +687,47 @@
 
                 reset(isInit = false) {
                     let target = heartPaths[Math.floor(Math.random() * heartPaths.length)];
-                    let scatter = Math.random() * 12; // Bo góc mượt
-                    let angle = Math.random() * PI2;
+                    let scatter = Math.random() * 15; 
+                    let angle = Math.random() * Math.PI * 2;
                     
                     this.baseX = target.x;
                     this.baseY = target.y;
                     this.offsetX = Math.cos(angle) * scatter;
                     this.offsetY = Math.sin(angle) * scatter;
-                    // Tạo chút chiều sâu ảo 3D
-                    this.zOffset = (Math.random() - 0.5) * 20;
 
-                    // Màu pha trộn cực quang VIP
                     let colors = [
-                        [255, 105, 180], // Hot Pink
-                        [255, 182, 193], // Light Pink
-                        [255, 255, 255], // White
-                        [255, 20, 147],  // Deep Pink
+                        [255, 105, 180], [255, 182, 193], [255, 255, 255], [238, 130, 238]
                     ];
                     let c = colors[Math.floor(Math.random() * colors.length)];
-                    this.r = c[0]; this.g = c[1]; this.b = c[2];
+                    this.color = `rgba(${c[0]}, ${c[1]}, ${c[2]}, `; 
                     
-                    // Cỡ hạt động tự nhiên
-                    this.size = Math.random() * 2.0 + 0.5;
+                    this.size = Math.random() * 1.5 + 0.5;
                     this.state = 0;
                     this.age = isInit ? Math.random() * 500 : 0; 
-                    this.timeToFall = 150 + Math.random() * 500; 
+                    this.timeToFall = 100 + Math.random() * 400; 
                     
-                    // Vật lý khi rơi: Lực văng tóe (Splash physics)
-                    this.vx = (Math.random() - 0.5) * 1.5;
+                    this.vx = (Math.random() - 0.5) * 2;
                     this.vy = 0;
-                    this.gravity = 0.08 + Math.random() * 0.06;
-                    this.bounce = 0.3 + Math.random() * 0.4; 
+                    this.gravity = 0.08 + Math.random() * 0.05;
+                    this.bounce = 0.4 + Math.random() * 0.3; 
                     this.alpha = 1;
                     this.decay = 0.005 + Math.random() * 0.01; 
                 }
                 
-                update(scale, time) {
+                update(scale) {
                     let targetX = w / 2 + this.baseX * scale + this.offsetX;
                     let targetY = h / 2 - 50 + this.baseY * scale + this.offsetY; 
 
                     if (this.state === 0) {
                         this.x = targetX;
                         this.y = targetY;
-                        
-                        // Tim rung nhẹ theo thời gian
-                        this.x += Math.sin(this.age * 0.05 + this.zOffset) * 1.2;
-                        this.y += Math.cos(this.age * 0.05 + this.zOffset) * 1.2;
+                        this.x += Math.sin(this.age * 0.1) * 1.5;
+                        this.y += Math.cos(this.age * 0.1) * 1.5;
                         this.age++;
-                        
-                        if (this.age > this.timeToFall && Math.random() < 0.04) {
+                        if (this.age > this.timeToFall && Math.random() < 0.05) {
                             this.state = 1; 
                         }
                     } else {
-                        // Rơi có quán tính
                         this.vy += this.gravity;
                         this.x += this.vx;
                         this.y += this.vy;
@@ -736,9 +736,7 @@
                         if (this.y > floorY) {
                             this.y = floorY;
                             this.vy *= -this.bounce; 
-                            // TẠO HIỆU ỨNG NƯỚC BẮN TÓE LÚC CHẠM SÀN
-                            this.vx += (Math.random() - 0.5) * 2.5; 
-                            this.bounce *= 0.7; // Tắt dần độ nảy
+                            this.vx *= 0.9; 
                         }
                         
                         this.alpha -= this.decay;
@@ -749,67 +747,45 @@
                 }
                 
                 draw(ctx) {
-                    // Vẽ hạt siêu nét
-                    ctx.fillStyle = `rgba(${this.r}, ${this.g}, ${this.b}, ${Math.max(0, this.alpha)})`;
+                    ctx.fillStyle = this.color + Math.max(0, this.alpha) + ')';
                     ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, PI2);
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                     ctx.fill();
                 }
             }
 
-            // Tăng hẳn số lượng lên 2500 hạt để rực rỡ nhất
-            for (let i = 0; i < 2500; i++) {
+            // TỐI ƯU MƯỢT MÀ VIP: Kiểm tra nếu là điện thoại (màn hình nhỏ) thì giảm hạt xuống để không bị giật lag
+            let isMobile = window.innerWidth < 768;
+            let particleCount = isMobile ? 600 : 1600;
+
+            for (let i = 0; i < particleCount; i++) {
                 particles.push(new FallingParticle());
             }
 
-            let time = 0;
             function animate() {
-                time += 1;
-                // Làm mờ chuyển động mượt mà với tông màu Đỏ Nhung
-                ctx.fillStyle = "rgba(40, 5, 10, 0.25)"; 
+                ctx.fillStyle = "rgba(40, 5, 10, 0.2)"; 
                 ctx.fillRect(0, 0, w, h);
-                
-                // Vẽ sao lấp lánh (Ambient Stars)
-                bgStars.forEach(star => {
-                    star.alpha += star.speed;
-                    if(star.alpha > 1 || star.alpha < 0.1) star.speed *= -1;
-                    ctx.fillStyle = `rgba(255, 200, 220, ${star.alpha})`;
-                    ctx.beginPath(); ctx.arc(star.x, star.y, star.size, 0, PI2); ctx.fill();
-                });
                 
                 if (!isDragging) { currentRy += 0.15; } 
                 orbitDiv.style.transform = `scale(${currentScale}) rotateX(${-currentRx}deg) rotateY(${currentRy}deg)`;
 
                 let minDim = Math.min(w, h);
-                
-                // Nhịp đập tim lãng mạn
-                let beat = 1 + Math.sin(time * 0.05) * 0.04; 
-                let sScale = Math.max(8, Math.min(minDim / 40, 15)) * beat; 
+                let sScale = Math.max(8, Math.min(minDim / 40, 15)); 
 
-                // Hào quang phát sáng quanh khối tim
-                let cx = w/2, cy = h/2 - 50;
-                let glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, sScale * 18);
-                glow.addColorStop(0, 'rgba(255, 50, 100, 0.15)');
-                glow.addColorStop(1, 'rgba(255, 50, 100, 0)');
-                ctx.fillStyle = glow;
-                ctx.fillRect(0, 0, w, h);
-
-                // Vũng sáng dội bóng dưới sàn
                 let floorY = h * 0.85;
                 ctx.save();
                 ctx.scale(1, 0.2); 
-                let puddleGrad = ctx.createRadialGradient(w/2, floorY/0.2, 0, w/2, floorY/0.2, w/2.2);
-                puddleGrad.addColorStop(0, 'rgba(255, 100, 150, 0.2)');
+                let puddleGrad = ctx.createRadialGradient(w/2, floorY/0.2, 0, w/2, floorY/0.2, w/2.5);
+                puddleGrad.addColorStop(0, 'rgba(255, 100, 150, 0.15)');
                 puddleGrad.addColorStop(1, 'rgba(255, 100, 150, 0)');
                 ctx.fillStyle = puddleGrad;
                 ctx.beginPath();
-                ctx.arc(w/2, floorY/0.2, w/2.2, 0, PI2);
+                ctx.arc(w/2, floorY/0.2, w/2.5, 0, Math.PI*2);
                 ctx.fill();
                 ctx.restore();
 
-                // Cập nhật hạt
                 for (let i = 0; i < particles.length; i++) {
-                    particles[i].update(sScale, time);
+                    particles[i].update(sScale);
                     particles[i].draw(ctx);
                 }
 
