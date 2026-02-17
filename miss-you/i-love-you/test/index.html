@@ -202,11 +202,12 @@
         }
         .cursor { display: inline-block; width: 2px; height: 1rem; background: #4a2c2a; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 5px;}
 
-        /* ================= PHẦN 3: VŨ TRỤ 3D (TỐI ƯU MOBILE) ================= */
+        /* ================= PHẦN 3: VŨ TRỤ 3D (MÀU HỒNG - ĐỎ - TÍM) ================= */
         #galaxy-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; 
             display: none; opacity: 0; transition: opacity 2s; 
-            background: radial-gradient(circle at center, #11081a 0%, #050208 80%, #000000 100%);
+            /* Gradient nền mới: Hồng -> Đỏ -> Tím đậm */
+            background: radial-gradient(circle at center, #ff8fa3 0%, #ff4d6d 40%, #800f2f 100%);
             perspective: 800px; overflow: hidden; touch-action: none; 
         }
 
@@ -506,7 +507,7 @@
                 let i = 0;
                 function typeWriter() {
                     if (i < text.length) { typeDest.innerHTML += text.charAt(i); i++; setTimeout(typeWriter, 50); } 
-                    else { setTimeout(initGalaxyEffect, 4500); }
+                    else { setTimeout(initGalaxyEffect, 5000); } // Đợi đúng 5 giây sau khi viết xong
                 }
                 typeWriter();
             }, 4000);
@@ -731,8 +732,12 @@
             // =======================================================================
 
             function animate() {
-                // Xóa nền với độ mờ 0.2 để tạo hiệu ứng vệt sáng (Motion Blur) cho hạt đang rơi
-                ctx.fillStyle = "rgba(10, 5, 16, 0.2)"; 
+                // Xóa nền với Gradient kết hợp độ mờ 0.2 để tạo vệt sáng (Motion Blur) cho hạt đang rơi
+                let bgGrad = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w);
+                bgGrad.addColorStop(0, "rgba(255, 143, 163, 0.2)"); // Hồng
+                bgGrad.addColorStop(0.5, "rgba(255, 77, 109, 0.2)"); // Đỏ
+                bgGrad.addColorStop(1, "rgba(128, 15, 47, 0.2)"); // Tím đậm
+                ctx.fillStyle = bgGrad;
                 ctx.fillRect(0, 0, w, h);
                 
                 // Khối div ảnh vẫn xoay 3D bình thường
