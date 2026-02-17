@@ -17,14 +17,15 @@
             --book-height: calc(var(--book-width) * 1.4); 
             --page-speed: 0.8s;
             --cover-color: #8a1c31; --bg-color: #ffd1dc;
-            --env-scale: 1;
+            /* Phóng to toàn bộ phong thư để đọc dễ hơn trên di động */
+            --env-scale: 1.25;
         }
 
-        @media (max-width: 1024px) { :root { --env-scale: 0.9; } }
-        @media (max-width: 768px) { :root { --env-scale: 0.8; } }
-        @media (max-width: 480px) { :root { --env-scale: 0.7; } }
-        @media (max-height: 600px) and (orientation: landscape) { :root { --env-scale: 0.55; } }
-        @media (max-height: 400px) and (orientation: landscape) { :root { --env-scale: 0.4; } }
+        @media (max-width: 1024px) { :root { --env-scale: 1.2; } }
+        @media (max-width: 768px) { :root { --env-scale: 1.15; } }
+        @media (max-width: 480px) { :root { --env-scale: 1.05; } }
+        @media (max-height: 600px) and (orientation: landscape) { :root { --env-scale: 0.7; } }
+        @media (max-height: 400px) and (orientation: landscape) { :root { --env-scale: 0.5; } }
 
         body, html {
             background-color: var(--bg-color);
@@ -37,12 +38,6 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px);
             background-size: 20px 20px; z-index: 0; pointer-events: none; transition: opacity 2s ease;
-        }
-
-        /* ================= TỐI ƯU PHẦN CỨNG (VIP PRO MAX MƯỢT MÀ) ================= */
-        .page, .paper, .flap, .envelope-container, #galaxy-wrapper canvas, .galaxy-photo {
-            will-change: transform;
-            transform: translateZ(0); /* Kích hoạt tăng tốc phần cứng */
         }
 
         /* ================= PHẦN 1: SÁCH ẢNH ================= */
@@ -79,7 +74,7 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             transform-origin: left center; transform-style: preserve-3d;
             transition: transform var(--page-speed) cubic-bezier(0.645, 0.045, 0.355, 1);
-            cursor: pointer;
+            cursor: pointer; will-change: transform;
         }
         .front, .back {
             position: absolute; width: 100%; height: 100%; top: 0; left: 0;
@@ -156,18 +151,18 @@
         #yes { background: #ff0055; color: white; box-shadow: 0 8px 20px rgba(255, 0, 85, 0.4); z-index: 100; }
         #no { background: rgba(255,255,255,0.8); color: #555; position: relative; touch-action: none; }
 
-        /* ================= KỊCH BẢN TÂM THƯ (ĐÃ NÂNG CẤP KÍCH THƯỚC) ================= */
+        /* ================= KỊCH BẢN TÂM THƯ (ĐÃ PHÓNG TO & TỐI ƯU) ================= */
         #letter-sequence {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50;
             justify-content: center; align-items: center; flex-direction: column;
             background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); opacity: 0; transition: opacity 1s;
         }
-
-        /* --- Tối ưu hiệu ứng Loading (Mới) --- */
-        #loading-text { display: none; font-family: 'Dancing Script', cursive; font-size: clamp(2.2rem, 8vw, 3.5rem); color: #ffb3c6; text-shadow: 0 0 25px #ff0055; }
-        .loading-dots { display: inline-block; width: 40px; text-align: left; }
-        .loading-dots::after { content: '.'; animation: typingDots 1.5s infinite steps(4, end); }
-        .loading-heart { display: inline-block; animation: heartbeat 0.8s infinite; margin-left: 5px; color: #ff0055; }
+        
+        #loading-text { 
+            font-family: 'Dancing Script', cursive; font-size: clamp(2.5rem, 10vw, 4rem); 
+            color: #ffb3c6; text-shadow: 0 0 25px #ff0055; 
+            animation: pulseFade 1.5s infinite alternate; display: none; text-align: left; width: 280px; 
+        }
 
         .envelope-container { 
             display: none; position: relative; width: 300px; height: 190px; margin-top: 100px; 
@@ -198,27 +193,29 @@
         .wax-seal:before { content: '🔓'; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
         .flap.open + .wax-seal { opacity: 0; pointer-events: none; }
 
-        /* --- Tối ưu độ cao tờ giấy --- */
         .paper {
             position: absolute; top: 10px; left: 5%; width: 90%; 
-            height: 420px; /* PHÓNG TO CHIỀU CAO THƯ */
-            max-height: 65vh; overflow-y: auto; /* CHỐNG TRÀN DI ĐỘNG */
+            height: 450px; /* Tăng chiều cao tờ giấy */
             background-color: #f8f1e5;
             background-image: repeating-linear-gradient(transparent, transparent 27px, rgba(0,0,0,0.05) 27px, rgba(0,0,0,0.05) 28px); 
             border-radius: 5px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: transform 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
-            z-index: 2; padding: 30px 20px 20px 20px; text-align: left; transform: translateY(0);
+            z-index: 2; padding: 30px 20px 20px 20px; text-align: left; 
+            overflow-y: auto; /* Thêm cuộn nếu tràn */
+            scrollbar-width: none; -ms-overflow-style: none; /* Ẩn thanh cuộn */
+            transform: translateY(0);
         }
-        .paper::-webkit-scrollbar { display: none; } /* Làm mượt thanh cuộn */
-        .paper.out { transform: translateY(-290px); } /* KÉO THƯ LÊN CAO HƠN */
+        .paper::-webkit-scrollbar { display: none; }
+        
+        .paper.out { transform: translateY(-300px); } /* Kéo giấy lên cao hơn */
 
         #typed-letter { 
-            font-size: 1.05rem; color: #4a2c2a; font-weight: 500; line-height: 28px; 
+            font-size: clamp(1.2rem, 4.5vw, 1.4rem); /* Chữ to rõ hơn */
+            color: #4a2c2a; font-weight: 500; line-height: 28px; 
             font-family: 'Dancing Script', cursive; display: inline; 
-            white-space: pre-wrap; /* CHO PHÉP XUỐNG DÒNG THEO CODE */
         }
-        .cursor { display: inline-block; width: 2px; height: 1rem; background: #4a2c2a; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 5px;}
+        .cursor { display: inline-block; width: 2px; height: 1.2rem; background: #4a2c2a; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 5px;}
 
-        /* ================= PHẦN 3: VŨ TRỤ 3D ================= */
+        /* ================= PHẦN 3: VŨ TRỤ 3D (TỐI ƯU MOBILE VIP PRO MAX) ================= */
         #galaxy-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; 
             display: none; opacity: 0; transition: opacity 2s; 
@@ -226,7 +223,7 @@
             perspective: 800px; overflow: hidden; touch-action: none; 
         }
 
-        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
 
         #photo-orbit {
             position: absolute; top: 50%; left: 50%; width: 0; height: 0;
@@ -274,8 +271,8 @@
         @keyframes heartbeat { 0%, 100% { transform: scale(1); } 10%, 30% { transform: scale(1.15); } 20% { transform: scale(1.05); } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes pulse { 50% { transform: scale(1.05); } }
+        @keyframes pulseFade { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; text-shadow: 0 0 35px #ff0055, 0 0 15px #ff0055; } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        @keyframes typingDots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60%, 100% { content: '...'; } }
         @keyframes floatUpText { 0% { transform: translateY(0px); opacity: 0.8; } 100% { transform: translateY(-10px); opacity: 1; } }
         @keyframes floatEnvelope { 0% { transform: scale(var(--env-scale)) translateY(0px); } 100% { transform: scale(var(--env-scale)) translateY(-15px); } }
     </style>
@@ -307,7 +304,7 @@
     </div>
 
     <div id="letter-sequence">
-        <div id="loading-text">I LOVE YOU<span class="loading-dots"></span><span class="loading-heart">❤️</span></div>
+        <div id="loading-text">I LOVE YOU<span id="loading-dots"></span></div>
         <div class="envelope-container" id="envelope-container">
             <div class="flap" id="flap"></div>
             <div class="wax-seal" id="wax-seal"></div>
@@ -502,15 +499,31 @@
             btn.style.background = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.9)`; btn.style.color = "#fff";
         }
 
+        // BIẾN THỜI GIAN HIỆU ỨNG LOADING CHẤM ĐỘNG
+        let dotInterval;
+
         function accepted() {
             askSection.style.display = 'none'; mainText.style.display = 'none';
             document.getElementById('bg-pattern').style.opacity = 0; playerUI.style.opacity = 0; 
             const letterSeq = document.getElementById('letter-sequence');
             letterSeq.style.display = 'flex'; setTimeout(() => letterSeq.style.opacity = 1, 100);
             
-            // Hiệu ứng Loading "I LOVE YOU" VIP PRO MAX
-            const loading = document.getElementById('loading-text'); loading.style.display = 'block';
-            setTimeout(() => { loading.style.display = 'none'; showLetter(); }, 3500);
+            const loading = document.getElementById('loading-text'); 
+            const dots = document.getElementById('loading-dots');
+            loading.style.display = 'block';
+            
+            // Chạy hiệu ứng I LOVE YOU . .. ...
+            let dotCount = 0;
+            dotInterval = setInterval(() => {
+                dotCount = (dotCount + 1) % 4;
+                dots.innerText = ".".repeat(dotCount);
+            }, 400);
+
+            setTimeout(() => { 
+                clearInterval(dotInterval);
+                loading.style.display = 'none'; 
+                showLetter(); 
+            }, 3000);
         }
 
         function showLetter() {
@@ -520,14 +533,28 @@
             setTimeout(() => { flap.classList.add('open'); }, 800);
             setTimeout(() => { paper.classList.add('out'); }, 2000);
             setTimeout(() => {
-                // TÂM THƯ MỚI CÓ XUỐNG DÒNG (\n)
-                const text = "Dương à, cảm ơn cậu đã đồng ý làm người yêu tớ. Tớ biết mình vẫn còn thiếu tinh tế và đôi lúc hay hơn thua. Xin lỗi vì dịp Tết vừa rồi cậu đã bận rộn việc nhà mà vẫn phải mệt mỏi trả lời những câu hỏi ngớ ngẩn của tớ. Thật may vì cậu đã luôn kiên nhẫn và không ghét bỏ tớ. Tớ hứa sẽ cố gắng thay đổi để yêu thương cậu thật tốt. I LOVE YOU! ❤️\n\nKý Tên :\n\nNGỐ CỦA YEUU\n\nNgười yêu của cậu, Sơn";
+                // NỘI DUNG TÂM THƯ MỚI CỦA SƠN (Sử dụng thẻ <br> để xuống dòng)
+                const text = "Dương à, cảm ơn cậu đã đồng ý làm người yêu tớ. Tớ biết mình vẫn còn thiếu tinh tế và đôi lúc hay hơn thua. Xin lỗi vì dịp Tết vừa rồi cậu đã bận rộn việc nhà mà vẫn phải mệt mỏi trả lời những câu hỏi ngớ ngẩn của tớ. Thật may vì cậu đã luôn kiên nhẫn và không ghét bỏ tớ. Tớ hứa sẽ cố gắng thay đổi để yêu thương cậu thật tốt. I LOVE YOU! ❤️<br><br>Ký Tên :<br>NGỐ CỦA YEUU<br><br>Người yêu của cậu,<br>Sơn";
+                
                 let i = 0;
                 function typeWriter() {
                     if (i < text.length) { 
-                        // Dùng textContent thay vì innerHTML để giảm lag khi render từng ký tự
-                        typeDest.textContent += text.charAt(i); 
-                        i++; 
+                        // Xử lý đọc thẻ HTML (ví dụ <br>) để không bị in ra chữ "b" "r"
+                        if (text.charAt(i) === '<') {
+                            let tag = '';
+                            while (text.charAt(i) !== '>' && i < text.length) {
+                                tag += text.charAt(i);
+                                i++;
+                            }
+                            tag += '>';
+                            typeDest.innerHTML += tag;
+                        } else {
+                            typeDest.innerHTML += text.charAt(i); 
+                            i++; 
+                        }
+                        
+                        // Tự động cuộn giấy xuống khi chữ dài
+                        paper.scrollTop = paper.scrollHeight;
                         setTimeout(typeWriter, 50); 
                     } else { 
                         setTimeout(initGalaxyEffect, 5000); 
@@ -537,7 +564,7 @@
             }, 4000);
         }
 
-        // ================= PHẦN 3: VŨ TRỤ TRÁI TIM =================
+        // ================= PHẦN 3: VŨ TRỤ (VIP PRO MAX - KHÔNG LAG TRÊN ĐIỆN THOẠI) =================
         const orbitDiv = document.getElementById('photo-orbit');
         let currentRx = 20; let currentRy = 0; 
 
@@ -641,15 +668,22 @@
             dragLayer.addEventListener('mouseup', () => { isDragging = false; });
             dragLayer.addEventListener('mouseleave', () => { isDragging = false; });
 
+            // TỐI ƯU CỰC MẠNH: Tính năng Device Pixel Ratio giúp đồ họa Retina siêu sắc nét
             function resize() {
-                w = canvas.width = window.innerWidth; 
-                h = canvas.height = window.innerHeight;
+                const dpr = window.devicePixelRatio || 1;
+                w = window.innerWidth; 
+                h = window.innerHeight;
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                ctx.scale(dpr, dpr);
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
                 if (document.getElementById('galaxy-wrapper').style.display === 'block') build3DPhotoOrbit();
             }
             window.addEventListener("resize", resize); 
             resize();
 
-            // ================== HIỆU ỨNG TRÁI TIM RƠI HẠT ==================
+            // ================== HIỆU ỨNG TRÁI TIM RƠI HẠT (VẬT LÝ MƯỢT MÀ HƠN) ==================
             let particles = [];
             let heartPaths = [];
             
@@ -660,7 +694,9 @@
             }
 
             class FallingParticle {
-                constructor() { this.reset(true); }
+                constructor() {
+                    this.reset(true);
+                }
 
                 reset(isInit = false) {
                     let target = heartPaths[Math.floor(Math.random() * heartPaths.length)];
@@ -673,17 +709,20 @@
                     this.offsetY = Math.sin(angle) * scatter;
 
                     let colors = [
-                        [255, 105, 180], [255, 182, 193], [255, 255, 255], [238, 130, 238], 
+                        [255, 105, 180], 
+                        [255, 182, 193], 
+                        [255, 255, 255], 
+                        [238, 130, 238], 
                     ];
                     let c = colors[Math.floor(Math.random() * colors.length)];
                     this.color = `rgba(${c[0]}, ${c[1]}, ${c[2]}, `; 
                     
-                    this.size = Math.random() * 1.5 + 0.5;
+                    this.size = Math.random() * 1.8 + 0.8; // Hạt to hơn chút xíu để dễ thấy
                     this.state = 0;
                     this.age = isInit ? Math.random() * 500 : 0; 
                     this.timeToFall = 100 + Math.random() * 400; 
                     
-                    this.vx = (Math.random() - 0.5) * 2;
+                    this.vx = (Math.random() - 0.5) * 2.5;
                     this.vy = 0;
                     this.gravity = 0.08 + Math.random() * 0.05;
                     this.bounce = 0.4 + Math.random() * 0.3; 
@@ -705,6 +744,8 @@
                             this.state = 1; 
                         }
                     } else {
+                        // VẬT LÝ MỚI: Thêm lực cản không khí cho mượt
+                        this.vx *= 0.99; 
                         this.vy += this.gravity;
                         this.x += this.vx;
                         this.y += this.vy;
@@ -731,14 +772,14 @@
                 }
             }
 
-            // TỐI ƯU SỐ LƯỢNG HẠT ĐỂ TĂNG ĐỘ MƯỢT CHO ĐIỆN THOẠI (VIP PRO MAX)
-            let maxParticles = window.innerWidth < 768 ? 500 : 1400; 
-            for (let i = 0; i < maxParticles; i++) {
+            // Giảm hạt xuống còn 800 để tối ưu tốc độ khóa FPS siêu mượt cho di động (tránh giật/lag hao pin)
+            for (let i = 0; i < 800; i++) {
                 particles.push(new FallingParticle());
             }
 
             function animate() {
-                ctx.fillStyle = "rgba(40, 5, 10, 0.2)"; 
+                // Làm mờ bóng ảnh đẹp hơn
+                ctx.fillStyle = "rgba(40, 5, 10, 0.25)"; 
                 ctx.fillRect(0, 0, w, h);
                 
                 if (!isDragging) { currentRy += 0.15; } 
