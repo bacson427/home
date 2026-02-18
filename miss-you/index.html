@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Happy Birthday Dương ❤️</title>
+    <title>Miss You ❤️</title>
     <meta property="og:title" content="Happy Birthday - Nguyễn Bắc Sơn">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
 
@@ -151,28 +151,6 @@
             box-shadow: 0 0 5px rgba(255,255,255,0.5);
         }
 
-        /* ================= OVERLAY THIỆP SINH NHẬT ================= */
-        #bday-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            z-index: 1000; display: none; justify-content: center; align-items: center;
-            opacity: 0; transition: opacity 0.4s;
-        }
-        .bday-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,0,85,0.2));
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 30px 20px; border-radius: 25px; text-align: center;
-            width: 85%; max-width: 350px;
-            box-shadow: 0 15px 40px rgba(255,0,85,0.4);
-            transform: scale(0.7); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .bday-card.show { transform: scale(1); }
-        .bday-card .gift-icon { font-size: 60px; animation: floatIcon 2s infinite alternate; filter: drop-shadow(0 0 15px rgba(255,255,255,0.5)); margin-bottom: 10px; }
-        .bday-card p {
-            font-size: 1.05rem; line-height: 1.6; margin: 20px 0; color: #fff; font-weight: 600;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-        }
-
         @keyframes floatUp {
             0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
             10% { opacity: 1; }
@@ -198,8 +176,8 @@
             <div class="hb-icon">🎉</div>
         </div>
 
-        <div class="neon-title">Happy 19th Birthday</div>
-        <div class="subtitle">Dương Của Tớ ❤️</div>
+        <div class="neon-title">Happy Birthday Yeuu</div>
+        <div class="subtitle">Yeuu Của Ngố ❤️</div>
         
         <div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 8px; font-weight: bold;">THỜI GIAN BÊN NHAU</div>
         <div id="clock">
@@ -213,18 +191,9 @@
             <source src="https://nguyenbacson.io.vn/miss-you/Happy-Birthday-To-You/Chuc-Mung-Sinh-Nhat.mp3" type="audio/mpeg">
         </audio>
 
-        <button onclick="triggerBirthdayBurst(event)" class="btn-newyear">🎁 BẤM VÀO ĐÂY ĐỂ NHẬN QUÀ</button>
+        <button onclick="window.location.href='https://nguyenbacson.io.vn/miss-you/Happy-Birthday-To-You/'" class="btn-newyear">🎁 BẤM VÀO ĐÂY ĐỂ NHẬN QUÀ</button>
 
         <div class="footer">Chạm đúp vào màn hình để gửi nụ hôn 💋</div>
-    </div>
-
-    <div id="bday-overlay" onclick="closeCard()">
-        <div class="bday-card" id="bday-card" onclick="event.stopPropagation()">
-            <div class="gift-icon">🎁</div>
-            <div class="neon-title" style="font-size: 2.2rem;">Tuổi 19 Rực Rỡ!</div>
-            <p>Chúc công chúa của tớ tuổi mới luôn xinh đẹp, vui vẻ và mãi cười thật tươi nhé. Cảm ơn cậu vì đã luôn ở bên tớ. Yêu cậu rất nhiều! ❤️</p>
-            <button class="btn-newyear" onclick="closeCard()" style="padding: 10px 25px; font-size: 1rem;">Đóng lại 💋</button>
-        </div>
     </div>
 
     <script>
@@ -383,38 +352,6 @@
             const w = window.innerWidth; const h = window.innerHeight;
             rockets.push(new Rocket(w * 0.25, h * 0.25));
             rockets.push(new Rocket(w * 0.75, h * 0.3));
-        }
-
-        // --- SỰ KIỆN NÚT VIP (MỞ THIỆP) ---
-        function triggerBirthdayBurst(e) {
-            if(e) e.preventDefault();
-            const w = window.innerWidth; const h = window.innerHeight;
-            
-            // Nổ pháo hoa & pháo giấy
-            setTimeout(() => rockets.push(new Rocket(w * 0.2, h * 0.3)), 0);
-            setTimeout(() => rockets.push(new Rocket(w * 0.5, h * 0.15)), 300);
-            setTimeout(() => rockets.push(new Rocket(w * 0.8, h * 0.3)), 600);
-            setTimeout(() => rockets.push(new Rocket(w * 0.5, h * 0.4)), 900);
-            spawnConfetti(100); 
-            
-            // Đợi 1 giây rồi hiện Popup Thiệp
-            setTimeout(() => {
-                const overlay = document.getElementById('bday-overlay');
-                const card = document.getElementById('bday-card');
-                overlay.style.display = 'flex';
-                // Trigger reflow
-                void overlay.offsetWidth;
-                overlay.style.opacity = 1;
-                card.classList.add('show');
-            }, 1000);
-        }
-
-        function closeCard() {
-            const overlay = document.getElementById('bday-overlay');
-            const card = document.getElementById('bday-card');
-            overlay.style.opacity = 0;
-            card.classList.remove('show');
-            setTimeout(() => { overlay.style.display = 'none'; }, 400);
         }
 
         // --- 3. ĐỒNG HỒ ---
