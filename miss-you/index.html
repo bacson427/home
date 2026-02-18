@@ -21,7 +21,7 @@
             position: relative;
         }
 
-        /* --- BÓNG BAY 3D --- */
+        /* --- BÓNG BAY & ICON SINH NHẬT 3D --- */
         .balloons-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1; pointer-events: none; overflow: hidden;
@@ -31,19 +31,44 @@
             width: 50px; height: 65px;
             border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
             background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), var(--c1) 40%, var(--c2) 85%);
-            /* Bỏ shadow phức tạp trên mobile */
             box-shadow: inset -2px -2px 6px rgba(0,0,0,0.1); 
             animation: floatUp var(--d) linear infinite;
-            will-change: transform; /* Quan trọng: Ép GPU xử lý */
+            will-change: transform;
             opacity: 0.9;
         }
         .balloon::after { content: ''; position: absolute; bottom: -25px; left: 50%; width: 1px; height: 25px; background: rgba(255,255,255,0.5); }
         .balloon::before { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 6px; height: 4px; border-radius: 50%; background: var(--c2); }
         
+        .bday-emoji {
+            position: absolute; bottom: -80px;
+            animation: floatUp var(--d) linear forwards;
+            will-change: transform;
+            font-size: clamp(25px, 6vw, 40px);
+            z-index: 2;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+        }
+
         @keyframes floatUp {
             0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
             10% { opacity: 1; }
             100% { transform: translateY(-120vh) translateX(var(--x)) rotate(var(--r)); opacity: 0; }
+        }
+
+        /* --- PHÁO GIẤY (CONFETTI) --- */
+        #confetti-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 15; pointer-events: none; overflow: hidden;
+        }
+        .confetti {
+            position: absolute; top: -20px;
+            width: 10px; height: 10px;
+            animation: fall linear forwards;
+            will-change: transform;
+            border-radius: 2px;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg) scale(0.6); opacity: 0; }
         }
 
         /* --- CANVAS PHÁO HOA --- */
@@ -55,7 +80,6 @@
             padding: 30px 20px; border-radius: 30px;
             width: 88%; max-width: 450px; text-align: center;
             
-            /* GIAO DIỆN MÁY TÍNH (Mặc định đẹp) */
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(8px); 
             -webkit-backdrop-filter: blur(8px);
@@ -63,17 +87,14 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
 
-        /* VIỀN ĐỎ XOAY */
         .glass-box::before {
             content: ''; position: absolute;
             top: -2px; left: -2px; right: -2px; bottom: -2px;
             border-radius: 32px; z-index: -1;
-            /* Dùng Conic Gradient thay vì Blur nặng */
             background: conic-gradient(from 0deg, transparent 0deg, #ff0055 90deg, transparent 180deg, #ff0055 270deg, transparent 360deg);
             animation: spinBorder 4s linear infinite;
             opacity: 0.7;
         }
-        /* Lớp nền che viền */
         .glass-box::after {
             content: ''; position: absolute;
             top: 2px; left: 2px; right: 2px; bottom: 2px;
@@ -118,38 +139,35 @@
         .btn-newyear {
             display: inline-block; margin-top: 15px; text-decoration: none;
             background: linear-gradient(45deg, #ff0055, #ff6b81); color: white;
-            padding: 12px 30px; border-radius: 50px; font-weight: bold;
-            box-shadow: 0 4px 10px rgba(255, 0, 50, 0.3);
+            padding: 12px 25px; border-radius: 50px; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(255, 0, 50, 0.3); border: none; cursor: pointer;
+            font-size: 0.9rem; letter-spacing: 0.5px;
+            transition: transform 0.2s;
         }
+        .btn-newyear:active { transform: scale(0.95); }
         .footer { margin-top: 15px; font-size: 0.75rem; opacity: 0.8; }
 
-        /* --- TỐI ƯU RIÊNG CHO MOBILE (KHẮC PHỤC LAG) --- */
+        /* --- TỐI ƯU RIÊNG CHO MOBILE --- */
         @media (max-width: 768px) {
-            /* Tắt hiệu ứng Blur nặng nề */
             .glass-box {
                 backdrop-filter: none;
                 -webkit-backdrop-filter: none;
-                background: rgba(180, 58, 80, 0.6); /* Nền màu trơn bán trong suốt */
+                background: rgba(180, 58, 80, 0.6); 
                 box-shadow: none;
                 border: 1px solid rgba(255,255,255,0.3);
             }
-            /* Lớp nền sau hộp kính đơn giản hơn */
             .glass-box::after { background: transparent; }
-            
-            /* Giảm kích thước chữ và padding */
             h1 { font-size: 2rem; }
             .time-item { min-width: 58px; padding: 8px; }
             .time-item span { font-size: 1.5rem; }
             .hb-icon { font-size: 35px; }
-            
-            /* Tắt animation xoay viền nếu máy quá yếu (Giữ lại nếu máy ổn) */
-            /* .glass-box::before { animation: none; background: #ff0055; opacity: 0.5; } */
         }
     </style>
 </head>
 <body>
     
     <div class="balloons-container" id="balloonBox"></div>
+    <div id="confetti-container"></div>
     <canvas id="fwCanvas"></canvas>
 
     <div class="glass-box">
@@ -174,16 +192,15 @@
         </audio>
 
         <br>
-        <a href="https://nguyenbacson.io.vn/happynewyear-your/" class="btn-newyear">🎉 CHÚC MỪNG NĂM MỚI 🎊</a>
+        <button onclick="triggerBirthdayBurst(event)" class="btn-newyear">🎉 CHÚC MỪNG SINH NHẬT DƯƠNG 01/03 🎂</button>
 
         <div class="footer">Gặp Em Đúng Lúc • Nhấp đúp vào màn hình</div>
     </div>
 
     <script>
-        // Kiểm tra xem có phải mobile không
         const isMobile = window.innerWidth < 768;
 
-        // --- 1. TẠO BÓNG BAY (Chỉ 5 quả) ---
+        // --- 1. TẠO BÓNG BAY ---
         function createBalloons() {
             const container = document.getElementById('balloonBox');
             const colors = [
@@ -192,7 +209,6 @@
                 {c1: '#f6d365', c2: '#fda085'}
             ];
             
-            // Giảm số lượng nếu là mobile (4 quả), PC (6 quả)
             const count = isMobile ? 4 : 6; 
 
             for (let i = 0; i < count; i++) {
@@ -211,6 +227,46 @@
         }
         createBalloons();
 
+        // --- 1.1 TẠO ICON SINH NHẬT LƠ LỬNG ---
+        function spawnBdayEmojis() {
+            const emojis = ['🎂', '🎁', '🎉', '✨', '🎈', '🍰'];
+            const container = document.getElementById('balloonBox');
+            const el = document.createElement('div');
+            el.className = 'bday-emoji';
+            el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            el.style.left = (Math.random() * 90 + 5) + 'vw';
+            el.style.setProperty('--d', (12 + Math.random() * 8) + 's');
+            el.style.setProperty('--x', (Math.random() - 0.5) * 80 + 'px');
+            el.style.setProperty('--r', (Math.random() - 0.5) * 60 + 'deg');
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 20000); // Tự xóa sau khi bay qua
+        }
+        // Thả từ từ từng icon lơ lửng
+        setInterval(spawnBdayEmojis, 3000);
+
+        // --- 1.2 TẠO PHÁO GIẤY (CONFETTI) ---
+        function spawnConfetti(amount) {
+            const colors = ['#ff0a54', '#ff477e', '#ff7096', '#ff85a1', '#fbb1bd', '#ffd700', '#87ceeb', '#9d4edd', '#00f5d4'];
+            const container = document.getElementById('confetti-container');
+            for (let i = 0; i < amount; i++) {
+                let conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Random hình vuông hoặc tròn
+                if(Math.random() > 0.5) conf.style.borderRadius = '50%';
+                else conf.style.width = '8px', conf.style.height = '14px';
+
+                conf.style.animationDuration = (Math.random() * 3 + 2.5) + 's';
+                conf.style.animationDelay = Math.random() * 1 + 's';
+                container.appendChild(conf);
+                setTimeout(() => conf.remove(), 6000);
+            }
+        }
+        // Rơi lác đác liên tục làm nền
+        setInterval(() => spawnConfetti(isMobile ? 3 : 5), 1500);
+
         // --- 2. HỆ THỐNG PHÁO HOA TỐI ƯU ---
         const cvs = document.getElementById('fwCanvas');
         const ctx = cvs.getContext('2d');
@@ -218,12 +274,9 @@
         let particles = [];
 
         function resize() { 
-            // GIẢM ĐỘ PHÂN GIẢI CANVAS TRÊN MOBILE ĐỂ KHÔNG LAG
-            // Nếu là mobile, giảm pixel density xuống 1 nửa
             const scale = isMobile ? 0.7 : 1; 
             cvs.width = window.innerWidth * scale; 
             cvs.height = window.innerHeight * scale; 
-            // Scale CSS để nó vẫn full màn hình
             cvs.style.width = "100%";
             cvs.style.height = "100%";
             ctx.scale(scale, scale);
@@ -232,7 +285,7 @@
 
         class Rocket {
             constructor(x, targetY) {
-                this.x = x; this.y = window.innerHeight; // Dùng window.height vì canvas đã scale
+                this.x = x; this.y = window.innerHeight; 
                 this.targetY = targetY;
                 this.speed = 9;
                 this.color = '#ff0055';
@@ -264,7 +317,6 @@
 
         function explodeHeart(x, y) {
             const colors = ['#ff0055', '#ff9a9e', '#ffd700'];
-            // GIẢM HẠT TRÊN MOBILE CỰC MẠNH (Mobile: 15 hạt, PC: 30 hạt)
             const pCount = isMobile ? 15 : 30;
             
             for(let i=0; i<pCount; i++) {
@@ -279,7 +331,6 @@
 
         function loop() {
             requestAnimationFrame(loop);
-            // Clear rect dùng kích thước thật của canvas
             ctx.clearRect(0, 0, cvs.width / (isMobile?0.7:1), cvs.height / (isMobile?0.7:1)); 
             
             for(let i = rockets.length - 1; i >= 0; i--) {
@@ -298,6 +349,21 @@
             const h = window.innerHeight;
             rockets.push(new Rocket(w * 0.2, h * 0.3));
             rockets.push(new Rocket(w * 0.8, h * 0.3));
+        }
+
+        // Bùng nổ hoành tráng khi ấn nút sinh nhật
+        function triggerBirthdayBurst(e) {
+            if(e) e.preventDefault();
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            
+            // 3 Pháo hoa bắn lên cùng lúc
+            rockets.push(new Rocket(w * 0.3, h * 0.4));
+            rockets.push(new Rocket(w * 0.5, h * 0.25));
+            rockets.push(new Rocket(w * 0.7, h * 0.4));
+
+            // Tung 60 mảnh pháo giấy một lúc
+            spawnConfetti(60);
         }
 
         // --- 3. ĐỒNG HỒ ---
@@ -321,7 +387,6 @@
             if ((s === 0 || s === 30) && s !== lastSec) { launchDoubleFireworks(); lastSec = s; }
             if (s !== 0 && s !== 30) lastSec = -1;
 
-            // Mobile giảm tần suất tim bay
             if (!isMobile || s % 2 === 0) { 
                 spawnMiniHeart('b-secs', '❤️', rnd(30), rnd(40));
             }
@@ -349,7 +414,7 @@
         });
         function createClickEffect(x, y) {
             const el = document.createElement('div'); el.innerText = '💋';
-            el.style.cssText = `position:absolute;left:${x}px;top:${y}px;font-size:24px;pointer-events:none;animation:flyMini 0.8s ease-out forwards;--tx:0px;--rot:0deg;filter:drop-shadow(0 0 2px red);`;
+            el.style.cssText = `position:absolute;left:${x}px;top:${y}px;font-size:24px;pointer-events:none;animation:flyMini 0.8s ease-out forwards;--tx:0px;--rot:0deg;filter:drop-shadow(0 0 2px red);z-index:999;`;
             document.body.appendChild(el); setTimeout(() => el.remove(), 800);
         }
     </script>
