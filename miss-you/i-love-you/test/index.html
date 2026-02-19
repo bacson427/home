@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, touch-action=none">
     <title>❤️I LOVE YOU ❤️</title>
 
+    <meta property="og:title" content="❤️ I LOVE YOU ❤️">
+    <meta property="og:description" content="Một món quà nhỏ dành cho cậu...">
+    <meta property="og:image" content="https://nguyenbacson.io.vn/miss-you/miss-you/avatar-miss-you">
+    <meta property="og:type" content="website">
+
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
@@ -22,14 +27,14 @@
 
         @media (max-width: 1024px) { :root { --env-scale: 0.9; } }
         @media (max-width: 768px) { :root { --env-scale: 0.8; } }
-        @media (max-width: 480px) { :root { --env-scale: 0.75; } }
+        @media (max-width: 480px) { :root { --env-scale: 0.7; } }
         
         /* ================= TỰ ĐỘNG NHẬN DIỆN VÀ TỐI ƯU KHI QUAY NGANG ĐIỆN THOẠI (LANDSCAPE) ================= */
         @media (orientation: landscape) and (max-height: 600px) {
             :root {
                 --book-height: 85vh; 
                 --book-width: calc(var(--book-height) / 1.4);
-                --env-scale: 0.65; /* Thu nhỏ phong bì thư cho vừa chiều cao màn ngang */
+                --env-scale: 0.6; /* Thu nhỏ phong bì thư cho vừa chiều cao màn ngang */
             }
             
             #text-wrapper { min-height: 35vh !important; }
@@ -38,7 +43,14 @@
             .btn-group { flex-direction: row !important; justify-content: center; gap: 20px !important; }
             .btn { width: auto !important; padding: 10px 25px !important; font-size: clamp(0.9rem, 3.5vh, 1.1rem) !important; }
             
-            .envelope-container { margin-top: 10vh !important; }
+            /* Cập nhật lại width/height cho chuẩn với tỷ lệ rộng mới trên di động xoay ngang */
+            .envelope-container { margin-top: 10vh !important; width: 540px !important; height: 260px !important; } 
+            .paper { 
+                height: 380px !important; 
+                top: 15px !important;
+            }
+            .paper.out { transform: translateY(-240px) !important; } 
+            
             #player { top: 5px !important; right: 5px !important; transform: scale(0.75); transform-origin: top right; }
             .floating-texts .float-text { font-size: clamp(10px, 4vh, 14px) !important; }
         }
@@ -194,31 +206,31 @@
             filter: drop-shadow(0 0 10px #ff0055);
         }
 
-        /* --- BỨC THƯ (ĐÃ ĐƯỢC LÀM TO BỀ NGANG) --- */
+        /* --- BỨC THƯ (TĂNG ĐỘ RỘNG MỘT LẦN NỮA LÊN 540PX) --- */
         .envelope-container { 
             display: none; position: relative; 
-            width: 400px; height: 230px; /* Tăng độ rộng ngang từ 300px -> 400px */
+            width: 540px; height: 260px; /* Độ rộng tối đa rất to */
             margin-top: 50px; 
             animation: floatEnvelope 3s ease-in-out infinite alternate;
         }
         .envelope { position: absolute; width: 100%; height: 100%; background: #e63946; border-radius: 0 0 10px 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); z-index: 3; }
         
-        /* Cập nhật lại hình học của nét gấp (border) theo chiều rộng mới (400px) */
+        /* Viền nắp gấp = width / 2 = 270px */
         .envelope:before {
             content: ''; position: absolute; top: 0; left: 0;
-            border-left: 200px solid transparent; border-right: 200px solid transparent;
-            border-bottom: 120px solid #ff4d6d; border-top: 110px solid transparent; z-index: 3;
+            border-left: 270px solid transparent; border-right: 270px solid transparent;
+            border-bottom: 130px solid #ff4d6d; border-top: 130px solid transparent; z-index: 3;
         }
         .flap {
             position: absolute; top: 0; left: 0;
-            border-left: 200px solid transparent; border-right: 200px solid transparent;
-            border-top: 120px solid #d90429; border-bottom: 120px solid transparent;
+            border-left: 270px solid transparent; border-right: 270px solid transparent;
+            border-top: 130px solid #d90429; border-bottom: 130px solid transparent;
             transform-origin: top; transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 4; drop-shadow: 0 5px 10px rgba(0,0,0,0.2);
         }
         .flap.open { transform: rotateX(180deg); z-index: 1; }
 
         .wax-seal {
-            position: absolute; top: 120px; left: 50%; transform: translate(-50%, -50%);
+            position: absolute; top: 130px; left: 50%; transform: translate(-50%, -50%);
             width: 50px; height: 50px; background: radial-gradient(circle at 30% 30%, #d90429, #800000);
             border-radius: 50%; z-index: 5;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3), 0 0 0 2px rgba(255, 215, 0, 0.3);
@@ -230,16 +242,18 @@
 
         .paper {
             position: absolute; top: 15px; left: 5%; 
-            width: 90%; height: 350px; /* Giảm bớt chiều cao xuống để tờ giấy trông mập mạp hơn, chữ không bị dồn */
+            width: 90%; height: 420px; /* Cao thêm một chút để không lòi đáy khi bị rút lên */
             background-color: #f8f1e5;
             background-image: repeating-linear-gradient(transparent, transparent 27px, rgba(0,0,0,0.05) 27px, rgba(0,0,0,0.05) 28px); 
             border-radius: 5px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: transform 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
-            z-index: 2; padding: 30px 25px 20px 25px; /* Tăng lề 2 bên để chữ thở */
+            z-index: 2; padding: 30px 30px 20px 30px;
             text-align: left; overflow-y: auto; overflow-x: hidden; transform: translateY(0);
             -ms-overflow-style: none; scrollbar-width: none;
         }
         .paper::-webkit-scrollbar { display: none; }
-        .paper.out { transform: translateY(-240px); } /* Căn chỉnh độ trồi lên của giấy */
+        
+        /* Rút giấy lên cao thêm 30px so với bản trước (-270px -> -300px) */
+        .paper.out { transform: translateY(-300px); } 
 
         #typed-letter { 
             font-size: 1.15rem; color: #4a2c2a; font-weight: 500; line-height: 28px; 
@@ -385,7 +399,7 @@
             "https://nguyenbacson.io.vn/miss-you/15.jpeg"
         ];
 
-        // ================= PHẦN 1 & 2: =================
+        // ================= PHẦN 1 & 2 =================
         const book = document.getElementById('book');
         const stage = document.getElementById('stage');
         const bookAudio = document.getElementById('bookAudio');
@@ -539,7 +553,6 @@
             btn.style.background = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.9)`; btn.style.color = "#fff";
         }
 
-        // ================= KỊCH BẢN MỚI CÓ LOADING =================
         function accepted() {
             askSection.style.display = 'none'; mainText.style.display = 'none';
             document.getElementById('bg-pattern').style.opacity = 0; playerUI.style.opacity = 0; 
@@ -548,19 +561,16 @@
             letterSeq.style.display = 'flex'; 
             setTimeout(() => letterSeq.style.opacity = 1, 100);
 
-            // 1. Hiển thị UI Loading
             const loadingUI = document.getElementById('loading-ui');
             loadingUI.style.display = 'flex';
             
-            // 2. Kích hoạt hiệu ứng chạy thanh progress (tốn 3 giây)
             setTimeout(() => {
                 document.getElementById('loading-progress').style.width = '100%';
             }, 300);
 
-            // 3. Đợi thanh chạy xong (3s) + nán lại thêm (2s) = Tổng 5.3s rồi mới mở thư
             setTimeout(() => { 
-                loadingUI.style.display = 'none'; // Ẩn loading
-                showLetter(); // Mở cảnh thư
+                loadingUI.style.display = 'none'; 
+                showLetter(); 
             }, 5300);
         }
 
@@ -568,16 +578,9 @@
             const envContainer = document.getElementById('envelope-container');
             const flap = document.getElementById('flap'); const paper = document.getElementById('paper'); const typeDest = document.getElementById('typed-letter');
             
-            // Hiện thư
             envContainer.style.display = 'block';
-            
-            // Mở nắp
             setTimeout(() => { flap.classList.add('open'); }, 800);
-            
-            // Kéo giấy lên
             setTimeout(() => { paper.classList.add('out'); }, 2000);
-            
-            // Đánh máy chữ
             setTimeout(() => {
                 const text = "Dương à, cảm ơn cậu đã đồng ý làm người yêu tớ. Tớ biết mình vẫn còn thiếu tinh tế và đôi lúc hay hơn thua. Xin lỗi vì dịp Tết vừa rồi cậu đã bận rộn việc nhà mà vẫn phải mệt mỏi trả lời những câu hỏi ngớ ngẩn của tớ. Thật may vì cậu đã luôn kiên nhẫn và không ghét bỏ tớ. Tớ hứa sẽ cố gắng thay đổi để yêu thương cậu thật tốt. I LOVE YOU! ❤️";
                 let i = 0;
@@ -587,7 +590,6 @@
                         i++; 
                         setTimeout(typeWriter, 50); 
                     } else { 
-                        // Đợi 5 giây rồi mới chuyển cảnh vũ trụ
                         setTimeout(initGalaxyEffect, 5000); 
                     }
                 }
@@ -707,7 +709,6 @@
             window.addEventListener("resize", resize); 
             resize();
 
-            // ================== HIỆU ỨNG TRÁI TIM RƠI HẠT ==================
             let particles = [];
             let heartPaths = [];
             
@@ -799,7 +800,6 @@
             }
 
             function animate() {
-                // CẬP NHẬT: Xóa nền bằng màu Đỏ Thẫm trong suốt để tạo hiệu ứng mờ ảo phù hợp background mới
                 ctx.fillStyle = "rgba(40, 5, 10, 0.2)"; 
                 ctx.fillRect(0, 0, w, h);
                 
