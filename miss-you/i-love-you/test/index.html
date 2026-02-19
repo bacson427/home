@@ -48,9 +48,9 @@
             
             /* Tinh chỉnh Fix lỗi mất chữ bức thư khi quay ngang */
             .envelope-container { margin-top: 5vh !important; } 
-            .paper { padding: 25px 35px 20px 35px !important; } /* Nới rộng lề chữ ngang dọc */
-            .paper.out { transform: translateY(-230px) !important; } /* Kéo giấy trồi lên để không bị khuất dòng cuối */
-            #typed-letter { font-size: 1.05rem !important; line-height: 24px !important; } /* Thu nhỏ chữ 1 chút để dàn đủ trang */
+            .paper { padding: 25px 35px 20px 35px !important; } 
+            .paper.out { transform: translateY(-240px) !important; } 
+            #typed-letter { font-size: 1.05rem !important; line-height: 24px !important; } 
         }
 
         body, html {
@@ -239,20 +239,28 @@
         .wax-seal:before { content: '❤'; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
         .flap.open + .wax-seal { opacity: 0; pointer-events: none; }
 
+        /* MẶT NẠ CẮT: Tàng hình phần lòi ra dưới đáy phong bì */
+        .paper-mask {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2; /* Đặt mask nằm giữa phong bì sau và trước */
+            clip-path: inset(-200% 0 0 0); /* Cho phép giấy bay lên, nhưng cắt đứt ngay tại đáy */
+            -webkit-clip-path: inset(-200% 0 0 0); /* Hỗ trợ Safari/iOS */
+        }
+
         .paper {
             position: absolute; top: 15px; left: 4%; 
-            width: 92%; height: 460px; /* Làm tờ giấy to và dài ra để chứa được nhiều chữ */
+            width: 92%; height: 550px; /* Tờ giấy tha hồ dài không lo bị lòi */
             background-color: #f8f1e5;
             background-image: repeating-linear-gradient(transparent, transparent 27px, rgba(0,0,0,0.05) 27px, rgba(0,0,0,0.05) 28px); 
             border-radius: 5px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: transform 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
-            z-index: 2; padding: 40px 45px 30px 45px; /* Khoảng cách lề cực rộng, chữ không bị ép */
+            padding: 40px 45px 30px 45px; 
             text-align: left; overflow-y: auto; overflow-x: hidden; transform: translateY(0);
             -ms-overflow-style: none; scrollbar-width: none;
         }
         .paper::-webkit-scrollbar { display: none; }
         
-        /* Kéo thẳng lên cao, lòi thêm gần 2 dòng chữ, đảm bảo không hở viền đáy ra khỏi phong bì */
-        .paper.out { transform: translateY(-330px); } 
+        /* Kéo thẳng lên cao thoải mái để dễ đọc */
+        .paper.out { transform: translateY(-350px); } 
 
         #typed-letter { 
             font-size: 1.25rem; color: #4a2c2a; font-weight: 500; line-height: 28px; 
@@ -361,8 +369,10 @@
         <div class="envelope-container" id="envelope-container">
             <div class="flap" id="flap"></div>
             <div class="wax-seal" id="wax-seal"></div>
-            <div class="paper" id="paper">
-                <div id="typed-letter"></div><span class="cursor" id="cursor"></span>
+            <div class="paper-mask">
+                <div class="paper" id="paper">
+                    <div id="typed-letter"></div><span class="cursor" id="cursor"></span>
+                </div>
             </div>
             <div class="envelope"></div>
         </div>
