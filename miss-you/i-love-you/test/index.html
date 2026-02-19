@@ -3,18 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, touch-action=none">
+    
     <title>❤️I LOVE YOU ❤️</title>
-
-    <meta property="og:title" content="❤️ I LOVE YOU ❤️">
-    <meta property="og:description" content="Một món quà nhỏ dành cho cậu...">
-    <meta property="og:image" content="https://nguyenbacson.io.vn/miss-you/miss-you/avatar-miss-you">
+    <meta name="description" content="Mở ra để xem điều bất ngờ nhé! ❤️">
+    
+    <meta property="og:title" content="❤️I LOVE YOU ❤️">
+    <meta property="og:description" content="Mở ra để xem điều bất ngờ nhé! ❤️">
+    <meta property="og:image" content="https://nguyenbacson.io.vn/miss-you/avatar-miss-you.jpg">
     <meta property="og:type" content="website">
-
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="❤️I LOVE YOU ❤️">
+    <meta name="twitter:description" content="Mở ra để xem điều bất ngờ nhé! ❤️">
+    <meta name="twitter:image" content="https://nguyenbacson.io.vn/miss-you/avatar-miss-you.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
     <style>
-        /* ================= CẤU HÌNH GỐC TỰ ĐỘNG CO GIÃN (FLUID RESPONSIVE) ================= */
+        /* ================= CẤU HÌNH GỐC TỰ ĐỘNG CO GIÃN ================= */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
@@ -22,35 +28,21 @@
             --book-height: calc(var(--book-width) * 1.4); 
             --page-speed: 0.8s;
             --cover-color: #8a1c31; --bg-color: #ffd1dc;
-            --env-scale: 1; /* Tỷ lệ zoom cho bức thư */
+            /* Biến này sẽ được JS tự động tính toán tùy theo kích thước máy */
+            --env-scale: 1; 
         }
 
-        @media (max-width: 1024px) { :root { --env-scale: 0.9; } }
-        @media (max-width: 768px) { :root { --env-scale: 0.8; } }
-        @media (max-width: 480px) { :root { --env-scale: 0.7; } }
-        
-        /* ================= TỰ ĐỘNG NHẬN DIỆN VÀ TỐI ƯU KHI QUAY NGANG ĐIỆN THOẠI (LANDSCAPE) ================= */
+        /* ================= TỐI ƯU KHI QUAY NGANG ĐIỆN THOẠI ================= */
         @media (orientation: landscape) and (max-height: 600px) {
             :root {
                 --book-height: 85vh; 
                 --book-width: calc(var(--book-height) / 1.4);
-                --env-scale: 0.6; /* Thu nhỏ phong bì thư cho vừa chiều cao màn ngang */
             }
-            
             #text-wrapper { min-height: 35vh !important; }
             #main-text { font-size: clamp(20px, 7vh, 35px) !important; }
             #ask-section { margin-top: 5px !important; }
             .btn-group { flex-direction: row !important; justify-content: center; gap: 20px !important; }
             .btn { width: auto !important; padding: 10px 25px !important; font-size: clamp(0.9rem, 3.5vh, 1.1rem) !important; }
-            
-            /* Cập nhật lại width/height cho chuẩn với tỷ lệ rộng mới trên di động xoay ngang */
-            .envelope-container { margin-top: 10vh !important; width: 540px !important; height: 260px !important; } 
-            .paper { 
-                height: 380px !important; 
-                top: 15px !important;
-            }
-            .paper.out { transform: translateY(-240px) !important; } 
-            
             #player { top: 5px !important; right: 5px !important; transform: scale(0.75); transform-origin: top right; }
             .floating-texts .float-text { font-size: clamp(10px, 4vh, 14px) !important; }
         }
@@ -186,7 +178,7 @@
             background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); opacity: 0; transition: opacity 1s;
         }
 
-        /* --- LOADING UI --- */
+        /* --- LOADING UI TRÁI TIM --- */
         #loading-ui {
             display: none; flex-direction: column; align-items: center; gap: 15px;
             width: 80%; max-width: 350px;
@@ -206,31 +198,33 @@
             filter: drop-shadow(0 0 10px #ff0055);
         }
 
-        /* --- BỨC THƯ (TĂNG ĐỘ RỘNG MỘT LẦN NỮA LÊN 540PX) --- */
+        /* --- BỨC THƯ & PHONG BÌ (SIÊU RỘNG & CAO) --- */
+        /* Biến tỷ lệ sẽ được JS quản lý để không bao giờ bị overflow ra ngoài màn hình */
         .envelope-container { 
             display: none; position: relative; 
-            width: 540px; height: 260px; /* Độ rộng tối đa rất to */
-            margin-top: 50px; 
+            width: 600px; height: 320px; /* Bề ngang khổng lồ 600px, đảm bảo chữ siêu thoáng */
+            transform-origin: center center;
             animation: floatEnvelope 3s ease-in-out infinite alternate;
         }
+        
         .envelope { position: absolute; width: 100%; height: 100%; background: #e63946; border-radius: 0 0 10px 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); z-index: 3; }
         
-        /* Viền nắp gấp = width / 2 = 270px */
+        /* Hình học nét gấp chính xác theo tỷ lệ Width 600 - Height 320 */
         .envelope:before {
             content: ''; position: absolute; top: 0; left: 0;
-            border-left: 270px solid transparent; border-right: 270px solid transparent;
-            border-bottom: 130px solid #ff4d6d; border-top: 130px solid transparent; z-index: 3;
+            border-left: 300px solid transparent; border-right: 300px solid transparent;
+            border-bottom: 160px solid #ff4d6d; border-top: 160px solid transparent; z-index: 3;
         }
         .flap {
             position: absolute; top: 0; left: 0;
-            border-left: 270px solid transparent; border-right: 270px solid transparent;
-            border-top: 130px solid #d90429; border-bottom: 130px solid transparent;
+            border-left: 300px solid transparent; border-right: 300px solid transparent;
+            border-top: 160px solid #d90429; border-bottom: 160px solid transparent;
             transform-origin: top; transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 4; drop-shadow: 0 5px 10px rgba(0,0,0,0.2);
         }
         .flap.open { transform: rotateX(180deg); z-index: 1; }
 
         .wax-seal {
-            position: absolute; top: 130px; left: 50%; transform: translate(-50%, -50%);
+            position: absolute; top: 160px; left: 50%; transform: translate(-50%, -50%);
             width: 50px; height: 50px; background: radial-gradient(circle at 30% 30%, #d90429, #800000);
             border-radius: 50%; z-index: 5;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3), 0 0 0 2px rgba(255, 215, 0, 0.3);
@@ -241,27 +235,27 @@
         .flap.open + .wax-seal { opacity: 0; pointer-events: none; }
 
         .paper {
-            position: absolute; top: 15px; left: 5%; 
-            width: 90%; height: 420px; /* Cao thêm một chút để không lòi đáy khi bị rút lên */
+            position: absolute; top: 15px; left: 4%; 
+            width: 92%; height: 460px; /* Làm tờ giấy to và dài ra để chứa được nhiều chữ */
             background-color: #f8f1e5;
             background-image: repeating-linear-gradient(transparent, transparent 27px, rgba(0,0,0,0.05) 27px, rgba(0,0,0,0.05) 28px); 
             border-radius: 5px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: transform 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
-            z-index: 2; padding: 30px 30px 20px 30px;
+            z-index: 2; padding: 40px 45px 30px 45px; /* Khoảng cách lề cực rộng, chữ không bị ép */
             text-align: left; overflow-y: auto; overflow-x: hidden; transform: translateY(0);
             -ms-overflow-style: none; scrollbar-width: none;
         }
         .paper::-webkit-scrollbar { display: none; }
         
-        /* Rút giấy lên cao thêm 30px so với bản trước (-270px -> -300px) */
-        .paper.out { transform: translateY(-300px); } 
+        /* Kéo thẳng lên cao, lòi thêm gần 2 dòng chữ, dễ dàng đọc từ trên xuống dưới */
+        .paper.out { transform: translateY(-330px); } 
 
         #typed-letter { 
-            font-size: 1.15rem; color: #4a2c2a; font-weight: 500; line-height: 28px; 
+            font-size: 1.25rem; color: #4a2c2a; font-weight: 500; line-height: 28px; 
             font-family: 'Dancing Script', cursive; display: inline; 
         }
         .cursor { display: inline-block; width: 2px; height: 1rem; background: #4a2c2a; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 5px;}
 
-        /* ================= PHẦN 3: VŨ TRỤ 3D (TỐI ƯU MOBILE) ================= */
+        /* ================= PHẦN 3: VŨ TRỤ 3D ================= */
         #galaxy-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; 
             display: none; opacity: 0; transition: opacity 2s; 
@@ -388,6 +382,36 @@
     </div>
 
     <script>
+        // ================= TỰ ĐỘNG NHẬN DIỆN KÍCH THƯỚC MÀN HÌNH (SCALING) =================
+        function adjustEnvelopeScale() {
+            // Khung gốc của phong bì + phần trồi lên của thư
+            const envBaseWidth = 600; 
+            const envTotalHeight = 700; // Tổng chiều cao an toàn để phong bì và tờ giấy lộ rõ
+            
+            // Lấy không gian màn hình thực tế (trừ hao lề 30px để ko chạm sát mép)
+            const availableW = window.innerWidth - 30; 
+            const availableH = window.innerHeight - 30;
+            
+            // Tính toán tỷ lệ
+            const scaleW = availableW / envBaseWidth;
+            const scaleH = availableH / envTotalHeight;
+            
+            // Chọn tỷ lệ nhỏ nhất để đảm bảo nằm gọn hoàn toàn trong thiết bị (không bao giờ bị lẹm viền)
+            let finalScale = Math.min(scaleW, scaleH);
+            
+            // Giới hạn max scale = 1 để trên máy tính PC nó không bị phóng to một cách quá lố
+            if (finalScale > 1) finalScale = 1; 
+            
+            // Đẩy vào CSS
+            document.documentElement.style.setProperty('--env-scale', finalScale);
+        }
+
+        // Lắng nghe sự kiện xoay ngang/dọc thiết bị hoặc thay đổi cửa sổ
+        window.addEventListener('resize', adjustEnvelopeScale);
+        window.addEventListener('orientationchange', adjustEnvelopeScale);
+        adjustEnvelopeScale(); // Gọi ngay khi load
+
+        // ================= DANH SÁCH HÌNH ẢNH =================
         const images = [
             "https://nguyenbacson.io.vn/miss-you/1.jpeg", "https://nguyenbacson.io.vn/miss-you/2.jpeg",
             "https://nguyenbacson.io.vn/miss-you/3.jpeg", "https://nguyenbacson.io.vn/miss-you/4.jpeg",
@@ -553,6 +577,7 @@
             btn.style.background = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.9)`; btn.style.color = "#fff";
         }
 
+        // KỊCH BẢN HIỆU ỨNG MỞ THƯ
         function accepted() {
             askSection.style.display = 'none'; mainText.style.display = 'none';
             document.getElementById('bg-pattern').style.opacity = 0; playerUI.style.opacity = 0; 
@@ -564,9 +589,7 @@
             const loadingUI = document.getElementById('loading-ui');
             loadingUI.style.display = 'flex';
             
-            setTimeout(() => {
-                document.getElementById('loading-progress').style.width = '100%';
-            }, 300);
+            setTimeout(() => { document.getElementById('loading-progress').style.width = '100%'; }, 300);
 
             setTimeout(() => { 
                 loadingUI.style.display = 'none'; 
