@@ -23,8 +23,32 @@
         @media (max-width: 1024px) { :root { --env-scale: 0.9; } }
         @media (max-width: 768px) { :root { --env-scale: 0.8; } }
         @media (max-width: 480px) { :root { --env-scale: 0.7; } }
-        @media (max-height: 600px) and (orientation: landscape) { :root { --env-scale: 0.55; } }
-        @media (max-height: 400px) and (orientation: landscape) { :root { --env-scale: 0.4; } }
+        
+        /* ================= TỰ ĐỘNG NHẬN DIỆN VÀ TỐI ƯU KHI QUAY NGANG ĐIỆN THOẠI (LANDSCAPE) ================= */
+        @media (orientation: landscape) and (max-height: 600px) {
+            :root {
+                /* Tự động tính toán lấy chiều cao (vh) làm chuẩn thay vì chiều rộng (vw) để sách không lẹm viền */
+                --book-height: 85vh; 
+                --book-width: calc(var(--book-height) / 1.4);
+                --env-scale: 0.5; /* Thu nhỏ phong bì thư cho vừa */
+            }
+            
+            /* Tỏ tình: Xếp 2 nút bấm nằm ngang, tối ưu cỡ chữ theo chiều cao */
+            #text-wrapper { min-height: 35vh !important; }
+            #main-text { font-size: clamp(20px, 7vh, 35px) !important; }
+            #ask-section { margin-top: 5px !important; }
+            .btn-group { flex-direction: row !important; justify-content: center; gap: 20px !important; }
+            .btn { width: auto !important; padding: 10px 25px !important; font-size: clamp(0.9rem, 3.5vh, 1.1rem) !important; }
+            
+            /* Bức thư: Kéo cao tờ giấy để dễ vuốt đọc trên màn hình hẹp */
+            .envelope-container { margin-top: 10vh !important; }
+            .paper { height: 350px !important; }
+            .paper.out { transform: translateY(-210px) !important; }
+            
+            /* Nhạc và phông nền */
+            #player { top: 5px !important; right: 5px !important; transform: scale(0.75); transform-origin: top right; }
+            .floating-texts .float-text { font-size: clamp(10px, 4vh, 14px) !important; }
+        }
 
         body, html {
             background-color: var(--bg-color);
@@ -208,7 +232,6 @@
         #galaxy-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; 
             display: none; opacity: 0; transition: opacity 2s; 
-            /* CẬP NHẬT: Màu nền Đỏ Nhung lãng mạn */
             background: radial-gradient(circle at center, #660f22 0%, #2e030a 100%);
             perspective: 800px; overflow: hidden; touch-action: none; 
         }
