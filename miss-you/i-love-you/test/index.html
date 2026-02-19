@@ -45,6 +45,10 @@
             .btn { width: auto !important; padding: 10px 25px !important; font-size: clamp(0.9rem, 3.5vh, 1.1rem) !important; }
             #player { top: 5px !important; right: 5px !important; transform: scale(0.75); transform-origin: top right; }
             .floating-texts .float-text { font-size: clamp(10px, 4vh, 14px) !important; }
+            
+            /* Tinh chỉnh thư khi quay ngang: Hạ thấp độ trồi của giấy để không lộ đáy */
+            .envelope-container { margin-top: 5vh !important; } 
+            .paper.out { transform: translateY(-160px) !important; } 
         }
 
         body, html {
@@ -199,7 +203,6 @@
         }
 
         /* --- BỨC THƯ & PHONG BÌ (SIÊU RỘNG & CAO) --- */
-        /* Biến tỷ lệ sẽ được JS quản lý để không bao giờ bị overflow ra ngoài màn hình */
         .envelope-container { 
             display: none; position: relative; 
             width: 600px; height: 320px; /* Bề ngang khổng lồ 600px, đảm bảo chữ siêu thoáng */
@@ -236,18 +239,18 @@
 
         .paper {
             position: absolute; top: 15px; left: 4%; 
-            width: 92%; height: 460px; /* Làm tờ giấy to và dài ra để chứa được nhiều chữ */
+            width: 92%; height: 460px; 
             background-color: #f8f1e5;
             background-image: repeating-linear-gradient(transparent, transparent 27px, rgba(0,0,0,0.05) 27px, rgba(0,0,0,0.05) 28px); 
             border-radius: 5px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: transform 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
-            z-index: 2; padding: 40px 45px 30px 45px; /* Khoảng cách lề cực rộng, chữ không bị ép */
+            z-index: 2; padding: 40px 45px 30px 45px; 
             text-align: left; overflow-y: auto; overflow-x: hidden; transform: translateY(0);
             -ms-overflow-style: none; scrollbar-width: none;
         }
         .paper::-webkit-scrollbar { display: none; }
         
-        /* Kéo thẳng lên cao, lòi thêm gần 2 dòng chữ, dễ dàng đọc từ trên xuống dưới */
-        .paper.out { transform: translateY(-330px); } 
+        /* FIX LỖI KÉO LỐ: Đã hạ thấp xuống, đảm bảo phần đáy tờ giấy luôn giấu gọn trong phong bì */
+        .paper.out { transform: translateY(-240px); } 
 
         #typed-letter { 
             font-size: 1.25rem; color: #4a2c2a; font-weight: 500; line-height: 28px; 
@@ -384,32 +387,24 @@
     <script>
         // ================= TỰ ĐỘNG NHẬN DIỆN KÍCH THƯỚC MÀN HÌNH (SCALING) =================
         function adjustEnvelopeScale() {
-            // Khung gốc của phong bì + phần trồi lên của thư
             const envBaseWidth = 600; 
-            const envTotalHeight = 700; // Tổng chiều cao an toàn để phong bì và tờ giấy lộ rõ
+            const envTotalHeight = 700; 
             
-            // Lấy không gian màn hình thực tế (trừ hao lề 30px để ko chạm sát mép)
             const availableW = window.innerWidth - 30; 
             const availableH = window.innerHeight - 30;
             
-            // Tính toán tỷ lệ
             const scaleW = availableW / envBaseWidth;
             const scaleH = availableH / envTotalHeight;
             
-            // Chọn tỷ lệ nhỏ nhất để đảm bảo nằm gọn hoàn toàn trong thiết bị (không bao giờ bị lẹm viền)
             let finalScale = Math.min(scaleW, scaleH);
-            
-            // Giới hạn max scale = 1 để trên máy tính PC nó không bị phóng to một cách quá lố
             if (finalScale > 1) finalScale = 1; 
             
-            // Đẩy vào CSS
             document.documentElement.style.setProperty('--env-scale', finalScale);
         }
 
-        // Lắng nghe sự kiện xoay ngang/dọc thiết bị hoặc thay đổi cửa sổ
         window.addEventListener('resize', adjustEnvelopeScale);
         window.addEventListener('orientationchange', adjustEnvelopeScale);
-        adjustEnvelopeScale(); // Gọi ngay khi load
+        adjustEnvelopeScale(); 
 
         // ================= DANH SÁCH HÌNH ẢNH =================
         const images = [
