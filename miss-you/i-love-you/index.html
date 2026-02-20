@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, touch-action=none">
-
+    
     <title>❤️I LOVE YOU ❤️</title>
     <meta name="description" content="Mở ra để xem điều bất ngờ nhé! ❤️">
-
+    
     <meta property="og:title" content="❤️I LOVE YOU ❤️">
     <meta property="og:description" content="Mở ra để xem điều bất ngờ nhé! ❤️">
     <meta property="og:image" content="https://nguyenbacson.io.vn/miss-you/avatar-miss-you.jpg">
     <meta property="og:type" content="website">
-
+    
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="❤️I LOVE YOU ❤️">
     <meta name="twitter:description" content="Mở ra để xem điều bất ngờ nhé! ❤️">
@@ -45,7 +45,7 @@
             .btn { width: auto !important; padding: 10px 25px !important; font-size: clamp(0.9rem, 3.5vh, 1.1rem) !important; }
             #player { top: 5px !important; right: 5px !important; transform: scale(0.75); transform-origin: top right; }
             .floating-texts .float-text { font-size: clamp(10px, 4vh, 14px) !important; }
-
+            
             /* Tinh chỉnh Fix lỗi mất chữ bức thư khi quay ngang */
             .envelope-container { margin-top: 5vh !important; } 
             .paper { padding: 25px 35px 20px 35px !important; } 
@@ -211,9 +211,9 @@
             transform-origin: center center;
             animation: floatEnvelope 3s ease-in-out infinite alternate;
         }
-
+        
         .envelope { position: absolute; width: 100%; height: 100%; background: #e63946; border-radius: 0 0 10px 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); z-index: 3; }
-
+        
         /* Hình học nét gấp chính xác theo tỷ lệ Width 600 - Height 320 */
         .envelope:before {
             content: ''; position: absolute; top: 0; left: 0;
@@ -258,7 +258,7 @@
             -ms-overflow-style: none; scrollbar-width: none;
         }
         .paper::-webkit-scrollbar { display: none; }
-
+        
         /* Kéo thẳng lên cao thoải mái để dễ đọc */
         .paper.out { transform: translateY(-350px); } 
 
@@ -297,7 +297,8 @@
             z-index: 10;
         }
 
-        #drag-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: grab; }        #drag-layer:active { cursor: grabbing; }
+        #drag-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: grab; }
+        #drag-layer:active { cursor: grabbing; }
 
         .floating-texts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
         .float-text { 
@@ -400,21 +401,21 @@
         function adjustEnvelopeScale() {
             const envBaseWidth = 600; // Chiều rộng gốc của envelope trong CSS
             const envTotalHeight = 700; // Chiều cao an toàn (bao gồm cả độ trồi của giấy khi mở ra)
-
+            
             // Lấy không gian màn hình thực tế (trừ hao lề 30px để ko chạm sát mép)
             const availableW = window.innerWidth - 30; 
             const availableH = window.innerHeight - 30;
-
+            
             // Tính toán tỷ lệ
             const scaleW = availableW / envBaseWidth;
             const scaleH = availableH / envTotalHeight;
-
+            
             // Chọn tỷ lệ nhỏ nhất để đảm bảo nằm gọn hoàn toàn trong thiết bị (không bao giờ lẹm chữ/phong bì)
             let finalScale = Math.min(scaleW, scaleH);
-
+            
             // Giới hạn max scale = 1 để trên máy tính PC nó không bị phóng to một cách quá lố
             if (finalScale > 1) finalScale = 1; 
-
+            
             // Gán giá trị tính được vào biến CSS để kích hoạt thu nhỏ
             document.documentElement.style.setProperty('--env-scale', finalScale);
         }
@@ -594,13 +595,14 @@
         function accepted() {
             askSection.style.display = 'none'; mainText.style.display = 'none';
             document.getElementById('bg-pattern').style.opacity = 0; playerUI.style.opacity = 0; 
-
+            
             const letterSeq = document.getElementById('letter-sequence');
-            letterSeq.style.display = 'flex';             setTimeout(() => letterSeq.style.opacity = 1, 100);
+            letterSeq.style.display = 'flex'; 
+            setTimeout(() => letterSeq.style.opacity = 1, 100);
 
             const loadingUI = document.getElementById('loading-ui');
             loadingUI.style.display = 'flex';
-
+            
             setTimeout(() => { document.getElementById('loading-progress').style.width = '100%'; }, 300);
 
             setTimeout(() => { 
@@ -612,7 +614,7 @@
         function showLetter() {
             const envContainer = document.getElementById('envelope-container');
             const flap = document.getElementById('flap'); const paper = document.getElementById('paper'); const typeDest = document.getElementById('typed-letter');
-
+            
             envContainer.style.display = 'block';
             setTimeout(() => { flap.classList.add('open'); }, 800);
             setTimeout(() => { paper.classList.add('out'); }, 2000);
@@ -746,7 +748,7 @@
 
             let particles = [];
             let heartPaths = [];
-
+            
             for (let i = 0; i < Math.PI * 2; i += 0.05) {
                 let x = 16 * Math.pow(Math.sin(i), 3);
                 let y = -(13 * Math.cos(i) - 5 * Math.cos(2 * i) - 2 * Math.cos(3 * i) - Math.cos(4 * i));
@@ -762,7 +764,7 @@
                     let target = heartPaths[Math.floor(Math.random() * heartPaths.length)];
                     let scatter = Math.random() * 15; 
                     let angle = Math.random() * Math.PI * 2;
-
+                    
                     this.baseX = target.x;
                     this.baseY = target.y;
                     this.offsetX = Math.cos(angle) * scatter;
@@ -776,12 +778,12 @@
                     ];
                     let c = colors[Math.floor(Math.random() * colors.length)];
                     this.color = `rgba(${c[0]}, ${c[1]}, ${c[2]}, `; 
-
+                    
                     this.size = Math.random() * 1.5 + 0.5;
                     this.state = 0;
                     this.age = isInit ? Math.random() * 500 : 0; 
                     this.timeToFall = 100 + Math.random() * 400; 
-
+                    
                     this.vx = (Math.random() - 0.5) * 2;
                     this.vy = 0;
                     this.gravity = 0.08 + Math.random() * 0.05;
@@ -789,7 +791,7 @@
                     this.alpha = 1;
                     this.decay = 0.005 + Math.random() * 0.01; 
                 }
-
+                
                 update(scale) {
                     let targetX = w / 2 + this.baseX * scale + this.offsetX;
                     let targetY = h / 2 - 50 + this.baseY * scale + this.offsetY; 
@@ -807,21 +809,21 @@
                         this.vy += this.gravity;
                         this.x += this.vx;
                         this.y += this.vy;
-
+                        
                         let floorY = h * 0.85; 
                         if (this.y > floorY) {
                             this.y = floorY;
                             this.vy *= -this.bounce; 
                             this.vx *= 0.9; 
                         }
-
+                        
                         this.alpha -= this.decay;
                         if (this.alpha <= 0) {
                             this.reset();
                         }
                     }
                 }
-
+                
                 draw(ctx) {
                     ctx.fillStyle = this.color + Math.max(0, this.alpha) + ')';
                     ctx.beginPath();
@@ -837,7 +839,7 @@
             function animate() {
                 ctx.fillStyle = "rgba(40, 5, 10, 0.2)"; 
                 ctx.fillRect(0, 0, w, h);
-
+                
                 if (!isDragging) { currentRy += 0.15; } 
                 orbitDiv.style.transform = `scale(${currentScale}) rotateX(${-currentRx}deg) rotateY(${currentRy}deg)`;
 
