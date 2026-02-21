@@ -2,881 +2,309 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, touch-action=none">
-    
-    <title>❤️I LOVE YOU ❤️</title>
-    <meta name="description" content="Mở ra để xem điều bất ngờ nhé! ❤️">
-    
-    <meta property="og:title" content="❤️I LOVE YOU ❤️">
-    <meta property="og:description" content="Mở ra để xem điều bất ngờ nhé! ❤️">
-    <meta property="og:image" content="https://nguyenbacson.io.vn/miss-you/avatar-miss-you.jpg">
-    <meta property="og:type" content="website">
-    
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="❤️I LOVE YOU ❤️">
-    <meta name="twitter:description" content="Mở ra để xem điều bất ngờ nhé! ❤️">
-    <meta name="twitter:image" content="https://nguyenbacson.io.vn/miss-you/avatar-miss-you.jpg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>❤️I LOVE YOU❤️</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
     <style>
-        /* ================= CẤU HÌNH GỐC TỰ ĐỘNG CO GIÃN ================= */
+        /* ================= RESET & CORE ================= */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
         :root {
             --book-width: clamp(140px, 45vw, 360px); 
             --book-height: calc(var(--book-width) * 1.4); 
             --page-speed: 0.8s;
             --cover-color: #8a1c31; --bg-color: #ffd1dc;
-            /* Biến này sẽ được JS tự động tính toán tùy theo kích thước máy */
-            --env-scale: 1; 
-        }
-
-        /* ================= TỐI ƯU KHI QUAY NGANG ĐIỆN THOẠI ================= */
-        @media (orientation: landscape) and (max-height: 600px) {
-            :root {
-                --book-height: 85vh; 
-                --book-width: calc(var(--book-height) / 1.4);
-            }
-            #text-wrapper { min-height: 35vh !important; }
-            #main-text { font-size: clamp(20px, 7vh, 35px) !important; }
-            #ask-section { margin-top: 5px !important; }
-            .btn-group { flex-direction: row !important; justify-content: center; gap: 20px !important; }
-            .btn { width: auto !important; padding: 10px 25px !important; font-size: clamp(0.9rem, 3.5vh, 1.1rem) !important; }
-            #player { top: 5px !important; right: 5px !important; transform: scale(0.75); transform-origin: top right; }
-            .floating-texts .float-text { font-size: clamp(10px, 4vh, 14px) !important; }
-            
-            /* Tinh chỉnh Fix lỗi mất chữ bức thư khi quay ngang */
-            .envelope-container { margin-top: 5vh !important; } 
-            .paper { padding: 25px 35px 20px 35px !important; } 
-            .paper.out { transform: translateY(-240px) !important; } 
-            #typed-letter { font-size: 1.05rem !important; line-height: 24px !important; } 
         }
 
         body, html {
             background-color: var(--bg-color);
             background: radial-gradient(circle at 50% 50%, #fff0f3 0%, #ffc2d1 60%, #ff9eb5 100%);
             height: 100%; width: 100%; overflow: hidden; font-family: 'Quicksand', sans-serif;
-            perspective: 2000px; transition: background 2s ease;
-        }
-
-        .bg-pattern {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px);
-            background-size: 20px 20px; z-index: 0; pointer-events: none; transition: opacity 2s ease;
+            perspective: 2000px;
         }
 
         /* ================= PHẦN 1: SÁCH ẢNH ================= */
-        #player {
-            position: fixed; top: max(15px, 3vh); right: max(15px, 3vw); display: none; align-items: center; gap: 15px;
-            z-index: 1000; background: rgba(255,255,255,0.6); padding: 8px 20px 8px 8px;
-            border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); backdrop-filter: blur(5px);
-            cursor: pointer; transition: opacity 1s;
-        }
-        .vinyl {
-            width: clamp(30px, 8vw, 40px); height: clamp(30px, 8vw, 40px); background: #111; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; border: 2px solid #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2); animation: spin 4s linear infinite; animation-play-state: paused; 
-        }
-        .vinyl::after { content: ''; width: 30%; height: 30%; background: #ff9eb5; border-radius: 50%; border: 1px solid #333; }
-        .vinyl.playing { animation-play-state: running; }
-        .track-name { font-size: clamp(10px, 3vw, 13px); font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 1px; }
-
         .stage {
-            position: relative; width: var(--book-width); height: var(--book-height);
-            transform: translateX(0); transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 1s;
-            z-index: 10;
-            position: absolute; top: 50%; left: 50%; margin-top: calc(var(--book-height) / -2); margin-left: calc(var(--book-width) / -2);
+            position: absolute; top: 50%; left: 50%; width: var(--book-width); height: var(--book-height);
+            margin-top: calc(var(--book-height) / -2); margin-left: calc(var(--book-width) / -2);
+            transition: transform 1s, opacity 1s; z-index: 10;
         }
         .stage.opened { transform: translateX(50%); }
-        .stage::after {
-            content: ''; position: absolute; bottom: -40px; left: 0; width: 200%; height: 30px;
-            background: radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, transparent 70%);
-            transform: translateX(-25%); z-index: -1; transition: opacity 1s, transform 1s;
-        }
-
         .book { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; }
         .page {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             transform-origin: left center; transform-style: preserve-3d;
             transition: transform var(--page-speed) cubic-bezier(0.645, 0.045, 0.355, 1);
-            cursor: pointer; will-change: transform;
-        }
-        .front, .back {
-            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
-            backface-visibility: hidden; border-radius: 2px 8px 8px 2px;
-            overflow: hidden; background-color: #faf9f6; 
-        }
-        .front::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 40px; height: 100%;
-            background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.02) 40%, transparent 100%); z-index: 10; pointer-events: none;
-        }
-        .back::before {
-            content: ''; position: absolute; top: 0; right: 0; width: 40px; height: 100%;
-            background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.02) 40%, transparent 100%); z-index: 10; pointer-events: none;
-        }
-
-        .page.cover .front {
-            background: var(--cover-color); background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3h1v1H1V3zm2-2h1v1H3V1z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-            border: 1px solid rgba(0,0,0,0.2); box-shadow: inset 4px 0 10px rgba(0,0,0,0.3), inset -1px 0 2px rgba(255,255,255,0.3);
-            border-radius: 4px 12px 12px 4px; display: flex; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .cover-frame {
-            position: absolute; top: 5%; left: 7%; right: 7%; bottom: 5%;
-            border: 2px solid #d4af37; outline: 1px solid #d4af37; outline-offset: -6px; border-radius: 4px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; text-align: center;
-        }
-        .cover-title { font-family: 'Cinzel', serif; font-size: clamp(1.2rem, 5vw, 2.2rem); color: #fcebc0; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); margin-bottom: 5px; letter-spacing: 2px; }
-        .cover-subtitle { font-family: 'Dancing Script', cursive; font-size: clamp(1rem, 4.5vw, 1.8rem); color: #ff9eb5; }
-
-        .cover-heart {
-            font-size: clamp(35px, 12vw, 55px);
-            margin-top: 15px;
             cursor: pointer;
-            animation: heartbeat 1.5s infinite;
-            filter: drop-shadow(0 5px 15px rgba(255, 50, 100, 0.5));
-            transition: transform 0.2s, opacity 0.5s;
-            z-index: 20;
         }
-
-        .cover-year { position: absolute; bottom: 20px; font-size: clamp(8px, 2.5vw, 12px); color: #d4af37; letter-spacing: 3px; }
-        .page.cover .back { background: #2a0810; border-radius: 12px 4px 4px 12px; }
-
+        .front, .back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 2px 8px 8px 2px; overflow: hidden; background-color: #faf9f6; }
         .back { transform: rotateY(180deg); }
         .page.flipped { transform: rotateY(-180deg); }
-        .front.content, .back.content { padding: 5%; display: flex; flex-direction: column; box-shadow: inset 0 0 20px rgba(0,0,0,0.02); }
-        .photo-frame { width: 100%; height: 90%; background: #fff; padding: 3%; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 2px; }
-        .photo-frame img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; border-radius: 2px; }
-        .page-num { height: 10%; display: flex; justify-content: center; align-items: flex-end; font-size: 12px; color: #aaa; font-family: 'Montserrat', sans-serif; }
-        .back.content { background-color: #fdfaf6; background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0zM9 5h2v2H9V5zm0 4h2v6H9V9z' fill='%23ff9eb5' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E"); }
+        .content { padding: 5%; display: flex; flex-direction: column; }
+        .photo-frame { width: 100%; height: 90%; background: #fff; padding: 3%; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* ================= PHẦN 2: TỎ TÌNH ================= */
-        #confession-stage {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 20; display: none; flex-direction: column;
-            justify-content: center; align-items: center; padding: 10px; text-align: center;
+        /* ================= PHẦN 2: TÂM THƯ VIP ================= */
+        #letter-sequence {
+            display: none; position: absolute; inset: 0; z-index: 50;
+            justify-content: center; align-items: center; flex-direction: column;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); opacity: 0; transition: opacity 1s;
         }
+        .envelope-container { display: none; position: relative; width: 360px; height: 230px; margin-top: 180px; }
+        .envelope { position: absolute; inset: 0; background: #e63946; border-radius: 0 0 10px 10px; z-index: 3; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .envelope:before { content: ''; position: absolute; top: 0; left: 0; border-left: 180px solid transparent; border-right: 180px solid transparent; border-bottom: 120px solid #ff4d6d; border-top: 110px solid transparent; z-index: 3; }
+        .flap { position: absolute; top: 0; left: 0; border-left: 180px solid transparent; border-right: 180px solid transparent; border-top: 120px solid #d90429; border-bottom: 110px solid transparent; transform-origin: top; transition: transform 1.2s; z-index: 4; }
+        .flap.open { transform: rotateX(180deg); z-index: 1; }
+        .paper {
+            position: absolute; top: 10px; left: 5%; width: 90%; height: 420px; 
+            background: #f8f1e5; border-radius: 5px; padding: 30px 20px; text-align: left; overflow-y: auto; 
+            transform: translateY(0); transition: transform 2s; z-index: 2; scrollbar-width: none;
+        }
+        .paper.out { transform: translateY(-360px); }
+        #typed-letter { font-size: 1.1rem; color: #4a2c2a; font-weight: 600; font-family: 'Dancing Script', cursive; white-space: pre-wrap; }
 
-        #text-wrapper { min-height: 200px; display: flex; align-items: center; justify-content: center; width: 100%; padding: 0 15px; }
-        #main-text {
-            font-family: 'Dancing Script', cursive; font-size: clamp(24px, 7vw, 48px); 
-            line-height: 1.4; color: #ffffff; text-shadow: 2px 2px 0px #ff5e88, 0 0 15px rgba(255, 0, 80, 0.5); width: 100%;
+        /* ================= HIỆU ỨNG DRONE TRAO NHẪN VIP ================= */
+        #drone-stage {
+            position: absolute; inset: 0; z-index: 100; display: none;
+            justify-content: center; align-items: center; pointer-events: none;
         }
-        .word { display: inline-block; white-space: nowrap; margin: 0 4px; }
-        .letter { display: inline-block; opacity: 0; transform: translateY(10px); }
+        #drone { position: absolute; width: 100px; font-size: 80px; text-align: center; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3)); }
+        #ring-box-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; }
+        .ring-box { font-size: 80px; position: relative; animation: floatBox 2s infinite ease-in-out; }
+        .rings {
+            position: absolute; top: -40px; left: 50%; transform: translateX(-50%) scale(0);
+            font-size: 60px; display: flex; gap: -20px; opacity: 0;
+            filter: drop-shadow(0 0 20px #fff) drop-shadow(0 0 40px #ff0055);
+        }
+        @keyframes floatBox { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        /* ================= PHẦN 3: VŨ TRỤ TRÁI TIM HD ================= */
+        #galaxy-wrapper {
+            position: absolute; inset: 0; z-index: 60; display: none; opacity: 0; transition: opacity 2s; 
+            background: radial-gradient(circle at center, #660f22 0%, #2e030a 100%);
+        }
+        #galaxyCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+        #photo-orbit { position: absolute; top: 50%; left: 50%; transform-style: preserve-3d; z-index: 10; }
+        .galaxy-photo { position: absolute; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 15px #ff3366; overflow: hidden; background: #000; cursor: pointer; }
+        .galaxy-photo img { width: 100%; height: 100%; object-fit: cover; }
 
         .glass-btn {
             background: rgba(255, 255, 255, 0.9); color: #ff0055;
-            padding: 12px 30px; border-radius: 50px; font-size: clamp(0.9rem, 3vw, 1.1rem); font-weight: bold;
-            box-shadow: 0 5px 15px rgba(255, 100, 150, 0.4); border: none; cursor: pointer; animation: pulse 2s infinite;
+            padding: 12px 30px; border-radius: 50px; font-size: 1.1rem; font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 100, 150, 0.4); border: none; cursor: pointer;
         }
-
-        #ask-section { display: none; width: 100%; margin-top: 20px; }
-        .btn-group { display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%; }
-        .btn { width: 80%; max-width: 300px; padding: 16px; border-radius: 50px; border: none; font-weight: bold; font-size: clamp(1rem, 4vw, 1.2rem); transition: 0.1s; cursor: pointer; }
-        #yes { background: #ff0055; color: white; box-shadow: 0 8px 20px rgba(255, 0, 85, 0.4); z-index: 100; }
-        #no { background: rgba(255,255,255,0.8); color: #555; position: relative; touch-action: none; }
-
-        /* ================= KỊCH BẢN TÂM THƯ ================= */
-        #letter-sequence {
-            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50;
-            justify-content: center; align-items: center; flex-direction: column;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); opacity: 0; transition: opacity 1s;
-        }
-
-        /* --- LOADING UI TRÁI TIM --- */
-        #loading-ui {
-            display: none; flex-direction: column; align-items: center; gap: 15px;
-            width: 80%; max-width: 350px;
-        }
-        #loading-text { font-family: 'Dancing Script', cursive; font-size: clamp(2rem, 8vw, 3rem); color: #ffb3c6; text-shadow: 0 0 20px #ff0055; text-align: center; }
-        .loading-bar-wrapper {
-            width: 100%; height: 10px; background: rgba(255,255,255,0.2);
-            border-radius: 20px; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
-        }
-        .loading-progress {
-            width: 0%; height: 100%; background: linear-gradient(90deg, #ff4d6d, #ff0055);
-            border-radius: 20px; position: relative; transition: width 3s linear;
-            box-shadow: 0 0 15px #ff0055;
-        }
-        .loading-heart-icon {
-            position: absolute; right: -15px; top: -15px; font-size: 30px;
-            filter: drop-shadow(0 0 10px #ff0055);
-        }
-
-        /* --- BỨC THƯ & PHONG BÌ (SIÊU RỘNG & CAO) --- */
-        .envelope-container { 
-            display: none; position: relative; 
-            width: 600px; height: 320px; /* Bề ngang khổng lồ 600px, đảm bảo chữ siêu thoáng */
-            transform-origin: center center;
-            animation: floatEnvelope 3s ease-in-out infinite alternate;
-        }
-        
-        .envelope { position: absolute; width: 100%; height: 100%; background: #e63946; border-radius: 0 0 10px 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); z-index: 3; }
-        
-        /* Hình học nét gấp chính xác theo tỷ lệ Width 600 - Height 320 */
-        .envelope:before {
-            content: ''; position: absolute; top: 0; left: 0;
-            border-left: 300px solid transparent; border-right: 300px solid transparent;
-            border-bottom: 160px solid #ff4d6d; border-top: 160px solid transparent; z-index: 3;
-        }
-        .flap {
-            position: absolute; top: 0; left: 0;
-            border-left: 300px solid transparent; border-right: 300px solid transparent;
-            border-top: 160px solid #d90429; border-bottom: 160px solid transparent;
-            transform-origin: top; transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 4; drop-shadow: 0 5px 10px rgba(0,0,0,0.2);
-        }
-        .flap.open { transform: rotateX(180deg); z-index: 1; }
-
-        .wax-seal {
-            position: absolute; top: 160px; left: 50%; transform: translate(-50%, -50%);
-            width: 50px; height: 50px; background: radial-gradient(circle at 30% 30%, #d90429, #800000);
-            border-radius: 50%; z-index: 5;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3), 0 0 0 2px rgba(255, 215, 0, 0.3);
-            display: flex; justify-content: center; align-items: center; color: #ffcccb; font-size: 24px; 
-            transition: opacity 0.5s ease; border: 2px solid rgba(139, 0, 0, 0.8);
-        }
-        .wax-seal:before { content: '❤'; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
-        .flap.open + .wax-seal { opacity: 0; pointer-events: none; }
-
-        /* MẶT NẠ CẮT: Tàng hình phần lòi ra dưới đáy phong bì */
-        .paper-mask {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 2; /* Đặt mask nằm giữa phong bì sau và trước */
-            clip-path: inset(-200% 0 0 0); /* Cho phép giấy bay lên, nhưng cắt đứt ngay tại đáy */
-            -webkit-clip-path: inset(-200% 0 0 0); /* Hỗ trợ Safari/iOS */
-        }
-
-        .paper {
-            position: absolute; top: 15px; left: 4%; 
-            width: 92%; height: 550px; /* Tờ giấy tha hồ dài không lo bị lòi */
-            background-color: #f8f1e5;
-            background-image: repeating-linear-gradient(transparent, transparent 27px, rgba(0,0,0,0.05) 27px, rgba(0,0,0,0.05) 28px); 
-            border-radius: 5px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: transform 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
-            padding: 40px 45px 30px 45px; 
-            text-align: left; overflow-y: auto; overflow-x: hidden; transform: translateY(0);
-            -ms-overflow-style: none; scrollbar-width: none;
-        }
-        .paper::-webkit-scrollbar { display: none; }
-        
-        /* Kéo thẳng lên cao thoải mái để dễ đọc */
-        .paper.out { transform: translateY(-350px); } 
-
-        #typed-letter { 
-            font-size: 1.25rem; color: #4a2c2a; font-weight: 500; line-height: 28px; 
-            font-family: 'Dancing Script', cursive; display: inline; 
-        }
-        .cursor { display: inline-block; width: 2px; height: 1rem; background: #4a2c2a; animation: blink 0.7s infinite; vertical-align: bottom; margin-bottom: 5px;}
-
-        /* ================= PHẦN 3: VŨ TRỤ 3D ================= */
-        #galaxy-wrapper {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; 
-            display: none; opacity: 0; transition: opacity 2s; 
-            background: radial-gradient(circle at center, #660f22 0%, #2e030a 100%);
-            perspective: 800px; overflow: hidden; touch-action: none; 
-        }
-
-        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-
-        #photo-orbit {
-            position: absolute; top: 50%; left: 50%; width: 0; height: 0;
-            transform-style: preserve-3d; z-index: 2;
-            will-change: transform; 
-        }
-
-        .galaxy-photo {
-            position: absolute; border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 10px #ff3366, inset 0 0 10px rgba(255, 51, 102, 0.5); 
-            cursor: pointer; backface-visibility: visible; overflow: hidden; background: #000;
-        }
-        .galaxy-photo img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-        .galaxy-photo:hover { 
-            border-color: #fff;
-            box-shadow: 0 0 20px #ff0055, 0 0 30px #ff3366, inset 0 0 15px #ff3366; 
-            z-index: 10;
-        }
-
-        #drag-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: grab; }
-        #drag-layer:active { cursor: grabbing; }
-
-        .floating-texts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
-        .float-text { 
-            position: absolute; font-family: 'Quicksand', sans-serif; font-weight: 700;
-            color: #ffffff; text-shadow: 0 0 5px #ff5e88, 0 0 10px #ff0055; 
-            font-size: clamp(12px, 3.5vw, 18px); 
-            animation: floatUpText 3s ease-in-out infinite alternate; white-space: nowrap;
-        }
-
-        #photo-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
-            z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s;
-        }
-        #photo-modal img { 
-            max-width: 90%; max-height: 80%; border: 2px solid #fff; border-radius: 50%; 
-            box-shadow: 0 0 30px rgba(255,50,100,0.8); transform: scale(0.9); transition: transform 0.3s; 
-            aspect-ratio: 1/1; object-fit: cover; 
-        }
-        #photo-modal.active { opacity: 1; }
-        #photo-modal.active img { transform: scale(1); }
-        .close-btn { position: absolute; top: 20px; right: 20px; color: rgba(255,255,255,0.8); font-size: 35px; cursor: pointer; font-family: sans-serif; font-weight: 300; }
-
-        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 10%, 30% { transform: scale(1.15); } 20% { transform: scale(1.05); } }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes pulse { 50% { transform: scale(1.05); } }
-        @keyframes pulseFade { 0%, 100% { opacity: 0.5; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        @keyframes floatUpText { 0% { transform: translateY(0px); opacity: 0.8; } 100% { transform: translateY(-10px); opacity: 1; } }
-        @keyframes floatEnvelope { 0% { transform: scale(var(--env-scale)) translateY(0px); } 100% { transform: scale(var(--env-scale)) translateY(-15px); } }
     </style>
 </head>
 <body>
 
-    <audio id="bookAudio" loop preload="auto"><source src="https://nguyenbacson.io.vn/pictures.mp3" type="audio/mpeg"></audio>
-    <audio id="confessAudio" preload="auto"><source src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3" type="audio/mpeg"></audio>
+    <audio id="bookAudio" loop><source src="https://nguyenbacson.io.vn/pictures.mp3" type="audio/mpeg"></audio>
+    <audio id="confessAudio"><source src="https://nguyenbacson.io.vn/nguyenbacson-missyou.mp3" type="audio/mpeg"></audio>
 
-    <div class="bg-pattern" id="bg-pattern"></div>
-
-    <div id="player" onclick="togglePlay()">
-        <div class="vinyl" id="vinylIcon"></div>
-        <div class="track-name">Pictures</div>
-    </div>
-
-    <div class="stage" id="stage">
-        <div class="book" id="book"></div>
-    </div>
-
-    <div id="confession-stage">
-        <div id="text-wrapper"><h1 id="main-text"></h1></div>
-        <div id="ask-section">
-            <div class="btn-group">
-                <button class="btn" id="yes" onclick="accepted()">Đồng ý ❤️</button>
-                <button class="btn" id="no" onclick="moveButton(this)" ontouchstart="moveButton(this)">Suy nghĩ thêm</button>
-            </div>
-        </div>
-    </div>
+    <div class="stage" id="stage"><div class="book" id="book"></div></div>
 
     <div id="letter-sequence">
-        <div id="loading-ui">
-            <div id="loading-text">I LOVE YOU...</div>
-            <div class="loading-bar-wrapper">
-                <div class="loading-progress" id="loading-progress">
-                    <div class="loading-heart-icon">❤️</div>
-                </div>
-            </div>
-        </div>
-
         <div class="envelope-container" id="envelope-container">
             <div class="flap" id="flap"></div>
-            <div class="wax-seal" id="wax-seal"></div>
-            <div class="paper-mask">
-                <div class="paper" id="paper">
-                    <div id="typed-letter"></div><span class="cursor" id="cursor"></span>
-                </div>
-            </div>
             <div class="envelope"></div>
+            <div class="paper" id="paper">
+                <div id="typed-letter"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="drone-stage">
+        <div id="drone">🚁</div>
+        <div id="ring-box-container">
+            <div class="ring-box">🎁</div>
+            <div class="rings" id="rings">💍💍</div>
         </div>
     </div>
 
     <div id="galaxy-wrapper">
         <canvas id="galaxyCanvas"></canvas>
-        <div id="drag-layer"></div>
         <div id="photo-orbit"></div>
-
-        <div class="floating-texts">
-            <div class="float-text" style="top: 15%; left: 50%; transform: translateX(-50%); animation-delay: 0s;">Thank girl friend</div>
-            <div class="float-text" style="top: 45%; left: 10%; animation-delay: 0.5s;">I love you</div>
-            <div class="float-text" style="bottom: 25%; left: 15%; animation-delay: 1s;">Likes To Miss You</div>
-            <div class="float-text" style="bottom: 15%; right: 10%; animation-delay: 1.5s;">Trương Thị Dương ❤️</div>
-        </div>
-    </div>
-
-    <div id="photo-modal" onclick="closeModal()">
-        <div class="close-btn">&times;</div>
-        <img id="modal-img" src="" alt="Zoomed">
     </div>
 
     <script>
-        // ================= TỰ ĐỘNG NHẬN DIỆN KÍCH THƯỚC MÀN HÌNH (SCALING) CHUẨN XÁC NHẤT =================
-        function adjustEnvelopeScale() {
-            const envBaseWidth = 600; // Chiều rộng gốc của envelope trong CSS
-            const envTotalHeight = 700; // Chiều cao an toàn (bao gồm cả độ trồi của giấy khi mở ra)
-            
-            // Lấy không gian màn hình thực tế (trừ hao lề 30px để ko chạm sát mép)
-            const availableW = window.innerWidth - 30; 
-            const availableH = window.innerHeight - 30;
-            
-            // Tính toán tỷ lệ
-            const scaleW = availableW / envBaseWidth;
-            const scaleH = availableH / envTotalHeight;
-            
-            // Chọn tỷ lệ nhỏ nhất để đảm bảo nằm gọn hoàn toàn trong thiết bị (không bao giờ lẹm chữ/phong bì)
-            let finalScale = Math.min(scaleW, scaleH);
-            
-            // Giới hạn max scale = 1 để trên máy tính PC nó không bị phóng to một cách quá lố
-            if (finalScale > 1) finalScale = 1; 
-            
-            // Gán giá trị tính được vào biến CSS để kích hoạt thu nhỏ
-            document.documentElement.style.setProperty('--env-scale', finalScale);
-        }
+        const images = ["https://nguyenbacson.io.vn/miss-you/1.jpeg", "https://nguyenbacson.io.vn/miss-you/2.jpeg", "https://nguyenbacson.io.vn/miss-you/3.jpeg", "https://nguyenbacson.io.vn/miss-you/4.jpeg", "https://nguyenbacson.io.vn/miss-you/5.jpeg", "https://nguyenbacson.io.vn/miss-you/6.jpeg", "https://nguyenbacson.io.vn/miss-you/7.jpeg", "https://nguyenbacson.io.vn/miss-you/8.jpeg", "https://nguyenbacson.io.vn/miss-you/9.jpeg", "https://nguyenbacson.io.vn/miss-you/10.jpeg", "https://nguyenbacson.io.vn/miss-you/11.jpeg", "https://nguyenbacson.io.vn/miss-you/12.jpeg", "https://nguyenbacson.io.vn/miss-you/13.jpeg", "https://nguyenbacson.io.vn/miss-you/14.jpeg", "https://nguyenbacson.io.vn/miss-you/15.jpeg"];
 
-        // Lắng nghe sự kiện để tự động tính toán lại khi người dùng xoay ngang, dọc hay đổi cỡ cửa sổ
-        window.addEventListener('resize', adjustEnvelopeScale);
-        window.addEventListener('orientationchange', adjustEnvelopeScale);
-        adjustEnvelopeScale(); // Gọi ngay khi mới load trang
-
-        // ================= DANH SÁCH HÌNH ẢNH =================
-        const images = [
-            "https://nguyenbacson.io.vn/miss-you/1.jpeg", "https://nguyenbacson.io.vn/miss-you/2.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/3.jpeg", "https://nguyenbacson.io.vn/miss-you/4.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/5.jpeg", "https://nguyenbacson.io.vn/miss-you/6.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/7.jpeg", "https://nguyenbacson.io.vn/miss-you/8.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/9.jpeg", "https://nguyenbacson.io.vn/miss-you/10.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/11.jpeg", "https://nguyenbacson.io.vn/miss-you/12.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/13.jpeg", "https://nguyenbacson.io.vn/miss-you/14.jpeg",
-            "https://nguyenbacson.io.vn/miss-you/15.jpeg"
-        ];
-
-        // ================= PHẦN 1 & 2 =================
         const book = document.getElementById('book');
-        const stage = document.getElementById('stage');
-        const bookAudio = document.getElementById('bookAudio');
-        const confessAudio = document.getElementById('confessAudio');
-        const vinylIcon = document.getElementById('vinylIcon');
-        const playerUI = document.getElementById('player');
-
-        let pages = [];
-        const totalSheets = images.length + 2; 
-        let hasStarted = false;
-
+        const pages = [];
+        
         function buildBook() {
             const cover = document.createElement('div');
-            cover.className = 'page cover'; cover.style.zIndex = totalSheets;
-            cover.innerHTML = `
-                <div class="front">
-                    <div class="cover-frame">
-                        <div class="cover-title">MISS YOU</div>
-                        <div class="cover-subtitle">Trương Thị Dương</div>
-                        <div class="cover-heart" id="coverHeart" onclick="openBookAndPlay(event)">❤️</div>
-                        <div class="cover-year">EST. 2007</div>
-                    </div>
-                </div>
-                <div class="back"></div>`;
-            book.appendChild(cover); pages.push({ el: cover, index: 0 });
+            cover.className = 'page cover';
+            cover.innerHTML = `<div class="front" style="background:var(--cover-color); display:flex; align-items:center; justify-content:center; flex-direction:column; color:#fcebc0;">
+                <h2 style="font-family:'Cinzel';">MISS YOU</h2>
+                <div style="font-size:50px; cursor:pointer;" onclick="start()">❤️</div>
+                <p>Trương Thị Dương</p>
+            </div><div class="back"></div>`;
+            book.appendChild(cover); pages.push(cover);
 
             images.forEach((src, i) => {
-                const sheetIdx = i + 1;
-                const sheet = document.createElement('div');
-                sheet.className = 'page'; sheet.style.zIndex = totalSheets - sheetIdx;
-                sheet.innerHTML = `<div class="front content"><div class="photo-frame"><img src="${src}" loading="lazy"></div><div class="page-num">- ${sheetIdx} -</div></div><div class="back content"></div>`;
-                book.appendChild(sheet); pages.push({ el: sheet, index: sheetIdx });
+                const p = document.createElement('div'); p.className = 'page';
+                p.style.zIndex = images.length - i;
+                p.innerHTML = `<div class="front content"><div class="photo-frame"><img src="${src}"></div></div><div class="back"></div>`;
+                book.appendChild(p); pages.push(p);
+                p.onclick = () => p.classList.add('flipped');
             });
 
-            const finalSheetIdx = images.length + 1;
-            const finalSheet = document.createElement('div');
-            finalSheet.className = 'page'; finalSheet.style.zIndex = 1;
-            finalSheet.innerHTML = `<div class="front content" style="justify-content: center; align-items: center; background: #fff0f3;"><h2 style="font-family: 'Dancing Script', cursive; color: #d6336c; font-size: clamp(1.5rem, 5vw, 2rem); margin-bottom: 25px; text-align:center;">Gửi<br>Trương Thị Dương</h2><button class="glass-btn" onclick="transitionToConfession(event)">❤️OPEN❤️</button></div><div class="back content"></div>`;
-            book.appendChild(finalSheet); pages.push({ el: finalSheet, index: finalSheetIdx });
-
-            pages.forEach((p, idx) => { 
-                p.el.addEventListener('click', (e) => { 
-                    if (idx === 0 && !hasStarted) {
-                        const heartBtn = document.getElementById('coverHeart');
-                        if(heartBtn) {
-                            heartBtn.style.transform = 'scale(1.3)';
-                            setTimeout(() => heartBtn.style.transform = 'scale(1)', 200);
-                        }
-                        return; 
-                    }
-                    if(e.target.tagName !== 'BUTTON' && e.target.id !== 'coverHeart') flipTo(idx); 
-                }); 
-            });
+            const last = document.createElement('div'); last.className = 'page';
+            last.innerHTML = `<div class="front content" style="justify-content:center; align-items:center; background:#fff0f3;">
+                <button class="glass-btn" onclick="toLetter()">Xem Tâm Thư ❤️</button>
+            </div>`;
+            book.appendChild(last); pages.push(last);
         }
-
-        function openBookAndPlay(e) {
-            if(e) e.stopPropagation();
-            if (!hasStarted) {
-                bookAudio.play().catch(err => console.log("Lỗi tự động phát nhạc:", err));
-                vinylIcon.classList.add('playing');
-                playerUI.style.display = 'flex';
-                hasStarted = true;
-
-                const heartBtn = document.getElementById('coverHeart');
-                if(heartBtn) {
-                    heartBtn.style.opacity = '0';
-                    setTimeout(() => heartBtn.style.display = 'none', 500);
-                }
-            }
-            flipTo(0);
-        }
-
-        function flipTo(clickedIndex) {
-            const pageObj = pages[clickedIndex]; const el = pageObj.el;
-            if (!el.classList.contains('flipped')) {
-                el.classList.add('flipped'); setTimeout(() => { el.style.zIndex = clickedIndex + 1; }, 400);
-            } else {
-                el.classList.remove('flipped'); setTimeout(() => { el.style.zIndex = totalSheets - clickedIndex; }, 400);
-            }
-            setTimeout(() => { document.querySelectorAll('.page.flipped').length > 0 ? stage.classList.add('opened') : stage.classList.remove('opened'); }, 50);
-        }
-
-        let touchStartX = 0, touchStartY = 0;
-        document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, {passive: true});
-        document.addEventListener('touchend', e => {
-            const deltaX = e.changedTouches[0].screenX - touchStartX;
-            const deltaY = e.changedTouches[0].screenY - touchStartY;
-            if (Math.abs(deltaY) > Math.abs(deltaX)) return;
-            if (Math.abs(deltaX) > 40) {
-                if (deltaX < 0) { for (let i = 0; i < pages.length; i++) { if (!pages[i].el.classList.contains('flipped')) { flipTo(i); break; } } } 
-                else { for (let i = pages.length - 1; i >= 0; i--) { if (pages[i].el.classList.contains('flipped')) { flipTo(i); break; } } }
-            }
-        }, {passive: true});
-
-        function togglePlay() {
-            let activeAudio = (document.getElementById('confession-stage').style.display === 'flex' || document.getElementById('galaxy-wrapper').style.display === 'block') ? confessAudio : bookAudio;
-            if (activeAudio.paused) { activeAudio.play(); vinylIcon.classList.add('playing'); } 
-            else { activeAudio.pause(); vinylIcon.classList.remove('playing'); }
-        }
-
         buildBook();
 
-        let checkTime;
-        const mainText = document.getElementById('main-text');
-        const askSection = document.getElementById('ask-section');
-        const timelineText = [
-            { time: 1, text: "Xin chào Dương...", clearAt: 4 }, { time: 5, text: "Hôm nay là một ngày đặc biệt.", clearAt: 9 }, { time: 10, text: "Chúc mừng sinh nhật cậu! 🎂", clearAt: 15 },
-            { time: 16, text: "Tớ đã suy nghĩ rất nhiều...", clearAt: 20 }, { time: 21, text: "Về những lúc chúng mình ở bên nhau.", clearAt: 27 },
-            { time: 28, text: "Có cậu, mọi thứ trở nên ý nghĩa hơn.", clearAt: 34 }, { time: 35, text: "Nên là...", clearAt: 38 }
-        ];
+        function start() { document.getElementById('bookAudio').play(); pages[0].classList.add('flipped'); document.getElementById('stage').classList.add('opened'); }
 
-        function transitionToConfession(e) {
-            e.stopPropagation(); stage.style.opacity = 0; playerUI.style.opacity = 0; 
-            let fadeAudio = setInterval(() => {
-                if (bookAudio.volume > 0.1) bookAudio.volume -= 0.1;
-                else { clearInterval(fadeAudio); bookAudio.pause(); bookAudio.volume = 1; }
-            }, 100);
+        function toLetter() {
+            document.getElementById('stage').style.opacity = 0;
             setTimeout(() => {
-                stage.style.display = 'none'; document.getElementById('confession-stage').style.display = 'flex';
-                playerUI.querySelector('.track-name').innerText = "Miss You"; playerUI.style.opacity = 1;
-                confessAudio.play(); vinylIcon.classList.add('playing'); startConfessionTimeline();
-            }, 1500);
-        }
-
-        function splitAndAnimate(text) {
-            mainText.innerHTML = text.split(' ').map(word => `<span class='word'>${word.split('').map(char => `<span class='letter'>${char}</span>`).join('')}</span>`).join(' '); 
-            anime({ targets: '.letter', opacity: [0, 1], translateY: [20, 0], rotateZ: [-5, 0], easing: "easeOutExpo", duration: 1000, delay: anime.stagger(40) });
-        }
-        function clearText() { anime({ targets: '#main-text', opacity: 0, translateY: -10, duration: 500, easing: "easeInQuad", complete: () => { mainText.innerHTML = ""; mainText.style.opacity = 1; mainText.style.transform = 'none'; } }); }
-
-        function startConfessionTimeline() {
-            checkTime = setInterval(() => {
-                const t = Math.floor(confessAudio.currentTime);
-                const scene = timelineText.find(item => item.time === t); if (scene) splitAndAnimate(scene.text);
-                const clearScene = timelineText.find(item => item.clearAt === t); if (clearScene) clearText();
-
-                if (t >= 40) {
-                    clearInterval(checkTime); mainText.innerHTML = "";
-                    mainText.style.fontSize = "clamp(30px, 8vw, 55px)"; mainText.style.color = "#ff0055"; mainText.style.textShadow = "2px 2px 0px #fff";
-                    splitAndAnimate("Làm người yêu tớ nhé? ❤️");
-                    setTimeout(() => { askSection.style.display = 'block'; anime({ targets: '#ask-section', opacity: [0, 1], translateY: [30, 0], duration: 1000 }); }, 2500);
-                }
+                document.getElementById('stage').style.display = 'none';
+                const seq = document.getElementById('letter-sequence');
+                seq.style.display = 'flex'; setTimeout(() => seq.style.opacity = 1, 100);
+                document.getElementById('confessAudio').play();
+                document.getElementById('envelope-container').style.display = 'block';
+                setTimeout(() => document.getElementById('flap').classList.add('open'), 800);
+                setTimeout(startTyping, 2000);
             }, 1000);
         }
 
-        function moveButton(btn) {
-            const w = window.innerWidth - 120; const h = window.innerHeight - 80;
-            btn.style.position = 'fixed'; btn.style.left = Math.max(20, Math.random() * w) + 'px'; btn.style.top = Math.max(20, Math.random() * h) + 'px';
-            const phrases = ["Mơ đi cưng 😎", "Đừng hòng thoát", "Bấm nút kia kìa", "Lêu lêu 😝", "Tay chậm thế?"];
-            btn.innerText = phrases[Math.floor(Math.random() * phrases.length)];
-            btn.style.background = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.9)`; btn.style.color = "#fff";
-        }
-
-        // KỊCH BẢN HIỆU ỨNG MỞ THƯ
-        function accepted() {
-            askSection.style.display = 'none'; mainText.style.display = 'none';
-            document.getElementById('bg-pattern').style.opacity = 0; playerUI.style.opacity = 0; 
+        function startTyping() {
+            const paper = document.getElementById('paper');
+            paper.classList.add('out');
+            const dest = document.getElementById('typed-letter');
+            const msg = `Dương à,\n\nCảm ơn cậu vì đã gật đầu đồng ý làm người yêu của tớ. Đến tận bây giờ, tớ vẫn thấy mình thật sự may mắn khi có được cậu.\n\nTớ biết bản thân mình vẫn còn nhiều thiếu sót, vẫn còn đó sự thiếu tinh tế và đôi lúc cái tính trẻ con, thích hơn thua vẫn chưa sửa được. Tớ cũng muốn gửi lời xin lỗi đến cậu vì trong những ngày nghỉ Tết vừa qua đã làm cậu thêm mệt mỏi. Cậu vốn đã bận rộn phụ giúp gia đình bao nhiêu việc nhà, vậy mà vẫn phải kiên nhẫn "chịu đựng" và trả lời hết những câu hỏi ngớ ngẩn của tớ.\n\nNhưng điều làm tớ cảm động và trân trọng nhất là dù tớ có vô tư đến mức vô tâm như vậy, cậu cũng không vì thế mà ghét bỏ hay đẩy tớ ra xa. Cảm ơn sự dịu dàng và lòng bao dung mà cậu đã dành cho tớ trong suốt thời gian qua.\n\nTớ không dám hứa sẽ trở nên hoàn hảo ngay lập tức, nhưng tớ hứa sẽ cố gắng trưởng thành, thấu hiểu và tinh tế hơn mỗi ngày để có thể che chở, yêu thương cậu thật tốt.\n\nI LOVE YOU! ❤️\n\nNgười yêu của cậu,\nSơn`;
             
-            const letterSeq = document.getElementById('letter-sequence');
-            letterSeq.style.display = 'flex'; 
-            setTimeout(() => letterSeq.style.opacity = 1, 100);
-
-            const loadingUI = document.getElementById('loading-ui');
-            loadingUI.style.display = 'flex';
-            
-            setTimeout(() => { document.getElementById('loading-progress').style.width = '100%'; }, 300);
-
-            setTimeout(() => { 
-                loadingUI.style.display = 'none'; 
-                showLetter(); 
-            }, 5300);
-        }
-
-        function showLetter() {
-            const envContainer = document.getElementById('envelope-container');
-            const flap = document.getElementById('flap'); const paper = document.getElementById('paper'); const typeDest = document.getElementById('typed-letter');
-            
-            envContainer.style.display = 'block';
-            setTimeout(() => { flap.classList.add('open'); }, 800);
-            setTimeout(() => { paper.classList.add('out'); }, 2000);
-            setTimeout(() => {
-                const text = "Dương à, cảm ơn cậu đã đồng ý làm người yêu tớ. Tớ biết mình vẫn còn thiếu tinh tế và đôi lúc hay hơn thua. Xin lỗi vì dịp Tết vừa rồi cậu đã bận rộn việc nhà mà vẫn phải mệt mỏi trả lời những câu hỏi ngớ ngẩn của tớ. Thật may vì cậu đã luôn kiên nhẫn và không ghét bỏ tớ. Tớ hứa sẽ cố gắng thay đổi để yêu thương cậu thật tốt. I LOVE YOU! ❤️";
-                let i = 0;
-                function typeWriter() {
-                    if (i < text.length) { 
-                        typeDest.innerHTML += text.charAt(i); 
-                        i++; 
-                        setTimeout(typeWriter, 50); 
-                    } else { 
-                        setTimeout(initGalaxyEffect, 5000); 
-                    }
+            let i = 0;
+            function typing() {
+                if(i < msg.length) {
+                    dest.innerHTML += msg.charAt(i); i++;
+                    paper.scrollTop = paper.scrollHeight;
+                    setTimeout(typing, 45);
+                } else {
+                    setTimeout(initDroneSequence, 5000); // Đợi 5 giây rồi chạy Drone
                 }
-                typeWriter();
-            }, 4000);
+            }
+            typing();
         }
 
-        // ================= PHẦN 3: VŨ TRỤ =================
-        const orbitDiv = document.getElementById('photo-orbit');
-        let currentRx = 20; let currentRy = 0; 
-
-        function initGalaxyEffect() {
+        // ================= LOGIC DRONE TRAO NHẪN =================
+        function initDroneSequence() {
             document.getElementById('letter-sequence').style.opacity = 0;
             setTimeout(() => {
                 document.getElementById('letter-sequence').style.display = 'none';
-                const wrapper = document.getElementById('galaxy-wrapper');
-                wrapper.style.display = 'block';
-                setTimeout(() => { wrapper.style.opacity = 1; playerUI.style.opacity = 1; }, 100);
+                const dStage = document.getElementById('drone-stage');
+                dStage.style.display = 'flex';
 
-                build3DPhotoOrbit();
-                initCanvasGalaxy();
+                // Drone bay vào
+                anime({
+                    targets: '#drone',
+                    translateX: [-500, 0], translateY: [-200, -100],
+                    rotate: [20, 0], duration: 3000, easing: 'easeOutExpo',
+                    complete: () => {
+                        // Thả hộp quà
+                        document.getElementById('ring-box-container').style.display = 'block';
+                        anime({
+                            targets: '#ring-box-container',
+                            translateY: [-200, 0], scale: [0.5, 1.2],
+                            duration: 2000, easing: 'easeOutBounce',
+                            complete: () => {
+                                // Drone bay đi
+                                anime({ targets: '#drone', translateX: 800, opacity: 0, duration: 2000, easing: 'easeInSine' });
+                                // Mở hộp quà hiện nhẫn
+                                setTimeout(() => {
+                                    document.querySelector('.ring-box').innerHTML = "🎁✨";
+                                    const rings = document.getElementById('rings');
+                                    rings.style.opacity = 1;
+                                    anime({ targets: '#rings', scale: [0, 1], translateY: -60, duration: 1500, easing: 'easeOutBack' });
+                                    // Chuyển sang Vũ trụ
+                                    setTimeout(initGalaxy, 5000);
+                                }, 1000);
+                            }
+                        });
+                    }
+                });
             }, 1000);
         }
 
-        function build3DPhotoOrbit() {
-            orbitDiv.innerHTML = ''; 
-            const minDim = Math.min(window.innerWidth, window.innerHeight);
-            const orbitRadius = Math.max(120, Math.min(minDim * 0.4, 300)); 
-            const photoSize = Math.max(40, Math.min(minDim * 0.12, 80)); 
+        // ================= KẾT THÚC: VŨ TRỤ TRÁI TIM HD =================
+        function initGalaxy() {
+            document.getElementById('drone-stage').style.opacity = 0;
+            setTimeout(() => {
+                document.getElementById('drone-stage').style.display = 'none';
+                const wrapper = document.getElementById('galaxy-wrapper');
+                wrapper.style.display = 'block'; wrapper.style.opacity = 1;
+                startGalaxyCanvas();
+                buildOrbit();
+            }, 1000);
+        }
 
+        function buildOrbit() {
+            const orbit = document.getElementById('photo-orbit');
             images.forEach((src, i) => {
-                const phi = Math.acos(-1 + (2 * i) / images.length);
-                const theta = Math.sqrt(images.length * Math.PI) * phi;
-                const x = orbitRadius * Math.cos(theta) * Math.sin(phi);
-                const y = orbitRadius * Math.sin(theta) * Math.sin(phi);
-                const z = orbitRadius * Math.cos(phi);
-
-                const photoWrapper = document.createElement('div');
-                photoWrapper.className = 'galaxy-photo';
-                photoWrapper.style.width = `${photoSize}px`;
-                photoWrapper.style.height = `${photoSize}px`;
-                photoWrapper.style.marginTop = `-${photoSize/2}px`;
-                photoWrapper.style.marginLeft = `-${photoSize/2}px`;
-                photoWrapper.style.transform = `translate3d(${x}px, ${y}px, ${z}px)`;
-
-                const img = document.createElement('img');
-                img.src = src;
-                photoWrapper.onclick = function() { openModal(src); };
-                photoWrapper.appendChild(img);
-                orbitDiv.appendChild(photoWrapper);
+                const img = document.createElement('div');
+                img.className = 'galaxy-photo'; img.style.width = '60px'; img.style.height = '60px';
+                const angle = (i / images.length) * Math.PI * 2;
+                const x = Math.cos(angle) * 160; const z = Math.sin(angle) * 160;
+                img.style.transform = `translate3d(${x}px, 0px, ${z}px)`;
+                img.innerHTML = `<img src="${src}" style="width:100%; height:100%;">`;
+                orbit.appendChild(img);
             });
+            anime({ targets: '#photo-orbit', rotateY: 360, duration: 20000, easing: 'linear', loop: true });
         }
 
-        function initCanvasGalaxy() {
-            const canvas = document.getElementById("galaxyCanvas");
-            const ctx = canvas.getContext("2d", { alpha: false }); 
-            const dragLayer = document.getElementById("drag-layer");
-            let w, h; 
+        function startGalaxyCanvas() {
+            const canvas = document.getElementById('galaxyCanvas');
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            let w, h, particles = [];
 
-            let isDragging = false; 
-            let previousX = 0, previousY = 0;
-            let currentScale = 1;
-            let initialPinchDistance = null;
-            let lastScale = 1;
-
-            dragLayer.addEventListener('touchstart', (e) => { 
-                if (e.touches.length === 1) {
-                    isDragging = true; previousX = e.touches[0].clientX; previousY = e.touches[0].clientY; 
-                } else if (e.touches.length === 2) {
-                    isDragging = false;
-                    initialPinchDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                }
-            }, {passive: false});
-
-            dragLayer.addEventListener('touchmove', (e) => {
-                if (e.touches.length === 1 && isDragging) {
-                    e.preventDefault(); 
-                    currentRy += (e.touches[0].clientX - previousX) * 0.4; 
-                    currentRx -= (e.touches[0].clientY - previousY) * 0.4; 
-                    currentRx = Math.max(-60, Math.min(60, currentRx)); 
-                    previousX = e.touches[0].clientX; previousY = e.touches[0].clientY;
-                } else if (e.touches.length === 2 && initialPinchDistance) {
-                    e.preventDefault(); 
-                    const currentPinchDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                    currentScale = Math.min(Math.max(0.4, lastScale * (currentPinchDistance / initialPinchDistance)), 2.5); 
-                }
-            }, {passive: false});
-
-            dragLayer.addEventListener('touchend', (e) => { 
-                if (e.touches.length < 2) { initialPinchDistance = null; lastScale = currentScale; }
-                if (e.touches.length === 0) { isDragging = false; }
-            });
-
-            dragLayer.addEventListener('wheel', (e) => {
-                e.preventDefault();
-                currentScale += e.deltaY * -0.002;
-                currentScale = Math.min(Math.max(0.4, currentScale), 2.5);
-                lastScale = currentScale;
-            }, {passive: false});
-
-            dragLayer.addEventListener('mousedown', (e) => { isDragging = true; previousX = e.clientX; previousY = e.clientY; });
-            dragLayer.addEventListener('mousemove', (e) => {
-                if(isDragging) { 
-                    currentRy += (e.clientX - previousX) * 0.4; currentRx -= (e.clientY - previousY) * 0.4; 
-                    currentRx = Math.max(-60, Math.min(60, currentRx));
-                    previousX = e.clientX; previousY = e.clientY; 
-                }
-            });
-            dragLayer.addEventListener('mouseup', () => { isDragging = false; });
-            dragLayer.addEventListener('mouseleave', () => { isDragging = false; });
-
-            function resize() {
-                w = canvas.width = window.innerWidth; 
-                h = canvas.height = window.innerHeight;
-                if (document.getElementById('galaxy-wrapper').style.display === 'block') build3DPhotoOrbit();
+            function setSize() {
+                w = window.innerWidth; h = window.innerHeight;
+                canvas.width = w * dpr; canvas.height = h * dpr;
+                ctx.scale(dpr, dpr);
             }
-            window.addEventListener("resize", resize); 
-            resize();
+            setSize(); window.onresize = setSize;
 
-            let particles = [];
-            let heartPaths = [];
-            
-            for (let i = 0; i < Math.PI * 2; i += 0.05) {
-                let x = 16 * Math.pow(Math.sin(i), 3);
-                let y = -(13 * Math.cos(i) - 5 * Math.cos(2 * i) - 2 * Math.cos(3 * i) - Math.cos(4 * i));
-                heartPaths.push({ x: x, y: y });
+            const heartPoints = [];
+            for (let t = 0; t < Math.PI * 2; t += 0.01) {
+                let x = 16 * Math.pow(Math.sin(t), 3);
+                let y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
+                heartPoints.push({x: x * 10, y: y * 10});
             }
 
-            class FallingParticle {
-                constructor() {
-                    this.reset(true);
+            class P {
+                constructor() { this.reset(); }
+                reset() {
+                    const pt = heartPoints[Math.floor(Math.random()*heartPoints.length)];
+                    this.x = w/2 + pt.x; this.y = h/2 + pt.y - 50;
+                    this.state = 0; this.age = 0; this.maxAge = 100 + Math.random()*200;
+                    this.vx = (Math.random()-0.5)*2; this.vy = 0;
+                    this.alpha = 1; this.color = `rgba(255, ${100 + Math.random()*100}, ${150 + Math.random()*50},`;
                 }
-
-                reset(isInit = false) {
-                    let target = heartPaths[Math.floor(Math.random() * heartPaths.length)];
-                    let scatter = Math.random() * 15; 
-                    let angle = Math.random() * Math.PI * 2;
-                    
-                    this.baseX = target.x;
-                    this.baseY = target.y;
-                    this.offsetX = Math.cos(angle) * scatter;
-                    this.offsetY = Math.sin(angle) * scatter;
-
-                    let colors = [
-                        [255, 105, 180], 
-                        [255, 182, 193], 
-                        [255, 255, 255], 
-                        [238, 130, 238], 
-                    ];
-                    let c = colors[Math.floor(Math.random() * colors.length)];
-                    this.color = `rgba(${c[0]}, ${c[1]}, ${c[2]}, `; 
-                    
-                    this.size = Math.random() * 1.5 + 0.5;
-                    this.state = 0;
-                    this.age = isInit ? Math.random() * 500 : 0; 
-                    this.timeToFall = 100 + Math.random() * 400; 
-                    
-                    this.vx = (Math.random() - 0.5) * 2;
-                    this.vy = 0;
-                    this.gravity = 0.08 + Math.random() * 0.05;
-                    this.bounce = 0.4 + Math.random() * 0.3; 
-                    this.alpha = 1;
-                    this.decay = 0.005 + Math.random() * 0.01; 
+                update() {
+                    if(this.state === 0) { this.age++; if(this.age > this.maxAge) this.state = 1; }
+                    else { this.vy += 0.1; this.x += this.vx; this.y += this.vy; this.alpha -= 0.01; if(this.alpha <= 0) this.reset(); }
                 }
-                
-                update(scale) {
-                    let targetX = w / 2 + this.baseX * scale + this.offsetX;
-                    let targetY = h / 2 - 50 + this.baseY * scale + this.offsetY; 
-
-                    if (this.state === 0) {
-                        this.x = targetX;
-                        this.y = targetY;
-                        this.x += Math.sin(this.age * 0.1) * 1.5;
-                        this.y += Math.cos(this.age * 0.1) * 1.5;
-                        this.age++;
-                        if (this.age > this.timeToFall && Math.random() < 0.05) {
-                            this.state = 1; 
-                        }
-                    } else {
-                        this.vy += this.gravity;
-                        this.x += this.vx;
-                        this.y += this.vy;
-                        
-                        let floorY = h * 0.85; 
-                        if (this.y > floorY) {
-                            this.y = floorY;
-                            this.vy *= -this.bounce; 
-                            this.vx *= 0.9; 
-                        }
-                        
-                        this.alpha -= this.decay;
-                        if (this.alpha <= 0) {
-                            this.reset();
-                        }
-                    }
-                }
-                
-                draw(ctx) {
-                    ctx.fillStyle = this.color + Math.max(0, this.alpha) + ')';
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
+                draw() {
+                    ctx.fillStyle = this.color + this.alpha + ")";
+                    ctx.beginPath(); ctx.arc(this.x, this.y, 1.5, 0, 7); ctx.fill();
                 }
             }
 
-            for (let i = 0; i < 1600; i++) {
-                particles.push(new FallingParticle());
+            for(let i=0; i<1500; i++) particles.push(new P());
+
+            function loop() {
+                ctx.fillStyle = "rgba(46, 3, 10, 0.25)"; ctx.fillRect(0,0,w,h);
+                particles.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(loop);
             }
-
-            function animate() {
-                ctx.fillStyle = "rgba(40, 5, 10, 0.2)"; 
-                ctx.fillRect(0, 0, w, h);
-                
-                if (!isDragging) { currentRy += 0.15; } 
-                orbitDiv.style.transform = `scale(${currentScale}) rotateX(${-currentRx}deg) rotateY(${currentRy}deg)`;
-
-                let minDim = Math.min(w, h);
-                let sScale = Math.max(8, Math.min(minDim / 40, 15)); 
-
-                let floorY = h * 0.85;
-                ctx.save();
-                ctx.scale(1, 0.2); 
-                let puddleGrad = ctx.createRadialGradient(w/2, floorY/0.2, 0, w/2, floorY/0.2, w/2.5);
-                puddleGrad.addColorStop(0, 'rgba(255, 100, 150, 0.15)');
-                puddleGrad.addColorStop(1, 'rgba(255, 100, 150, 0)');
-                ctx.fillStyle = puddleGrad;
-                ctx.beginPath();
-                ctx.arc(w/2, floorY/0.2, w/2.5, 0, Math.PI*2);
-                ctx.fill();
-                ctx.restore();
-
-                for (let i = 0; i < particles.length; i++) {
-                    particles[i].update(sScale);
-                    particles[i].draw(ctx);
-                }
-
-                requestAnimationFrame(animate);
-            }
-            animate();
-        }
-
-        const modal = document.getElementById('photo-modal');
-        const modalImg = document.getElementById('modal-img');
-        function openModal(src) {
-            modalImg.src = src; modal.style.display = 'flex';
-            setTimeout(() => { modal.classList.add('active'); }, 10);
-        }
-        function closeModal() {
-            modal.classList.remove('active');
-            setTimeout(() => { modal.style.display = 'none'; modalImg.src = ''; }, 300);
+            loop();
         }
     </script>
 </body>
