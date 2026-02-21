@@ -82,9 +82,28 @@
         }
         .auth-box button:hover { background-color: #2c241b; }
         .error-msg { color: var(--danger); font-size: 0.85rem; margin-top: -10px; margin-bottom: 15px; display: none; }
-        /* --------------------------- */
 
-        .container { max-width: 900px; margin: 0 auto; display: none; } /* Ẩn container ban đầu */
+        /* CẢNH BÁO BẢO MẬT HIỂN THỊ TRÊN MÀN HÌNH */
+        #securityAlert {
+            display: none;
+            position: fixed;
+            top: 20px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--danger);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            z-index: 10000;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(217, 83, 79, 0.4);
+            animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown {
+            from { top: -50px; opacity: 0; }
+            to { top: 20px; opacity: 1; }
+        }
+
+        .container { max-width: 900px; margin: 0 auto; display: none; }
 
         header {
             text-align: center;
@@ -161,6 +180,17 @@
         .btn-main:hover {
             background-color: #2c241b;
         }
+
+        /* Nút AI đặc biệt */
+        .btn-ai {
+            background-color: #1a73e8; /* Màu xanh của Google/AI */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.05rem;
+        }
+        .btn-ai:hover { background-color: #1557b0; }
 
         .secret-row {
             display: flex;
@@ -304,6 +334,10 @@
 </head>
 <body>
 
+    <div id="securityAlert">
+        <i class="fas fa-shield-alt"></i> CẢNH BÁO: Không được phép truy cập mã nguồn!
+    </div>
+
     <div id="authOverlay">
         <div class="auth-box">
             <h2><i class="fas fa-lock" style="color: var(--accent); margin-right: 10px;"></i>Xác Thực Thiết Bị</h2>
@@ -321,6 +355,16 @@
         </header>
 
         <div class="grid">
+
+            <div class="paper-card full-width" style="border-left: 4px solid #1a73e8;">
+                <div class="card-title">
+                    <span><i class="fas fa-robot" style="color: #1a73e8;"></i> Trợ Lý AI Khắc Phục Lỗi Laptop</span>
+                </div>
+                <p>Mô hình AI đã được huấn luyện chuyên sâu để chẩn đoán các lỗi hệ điều hành, màn hình xanh, kết nối mạng và tối ưu hóa phần cứng. Nhập triệu chứng lỗi để nhận cách khắc phục ngay lập tức.</p>
+                <a href="https://gemini.google.com/gem/1XuxIRcoKd4aSoGWYIPPQ9wpgnfooI7qo?usp=sharing" target="_blank" class="btn-main btn-ai">
+                    <i class="fas fa-magic"></i> Mở Tra Cứu Bằng AI
+                </a>
+            </div>
 
             <div class="paper-card full-width">
                 <div class="card-title">
@@ -390,7 +434,7 @@
                     <span class="tag heavy">One Drive</span>
                     <span class="tag heavy">Google Drive</span>
                 </div>
-                <p style="margin-top: 15px; font-size: 0.9rem;">Bạn muốn gửi file. Hãy xem kĩ file nặng hay nhẹ.</p>
+                <p style="margin-top: 15px; font-size: 0.9rem;">Phân loại gửi file:</p>
                 <p style="font-size: 0.9rem;">Nhẹ < 200MB ➡️ Telegram, Phone Link, Zalo</p>
                 <p style="font-size: 0.9rem;">Nặng > 200MB ➡️ One Drive, Google Drive</p>
             </div>
@@ -398,18 +442,17 @@
             <div class="paper-card full-width">
                 <div class="card-title" style="color: var(--danger);">Quy Tắc Vận Hành</div>
                 <ul class="simple-list">
-                    <li><strong>Tắt máy:</strong> Không gập máy để Sleep. Bắt buộc dùng <em>Shutdown</em> hoặc <em>Shift + Shutdown</em>.</li>
-                    <li><strong>Phần cứng:</strong> Giữ nguyên bản, không tự ý cập nhật Driver hay can thiệp phần cứng.</li>
-                    <li><strong>An toàn mạng:</strong> Tuyệt đối không nhấn vào các đường link lạ hoặc không rõ nguồn gốc.</li>
-                    <li><strong>Sử dụng:</strong> Tránh các tác động vật lý mạnh lên thiết bị.</li>
+                    <li><strong>Tắt máy:</strong> Không gập máy để Sleep qua đêm. Bắt buộc dùng <em>Shutdown</em> hoặc <em>Shift + Shutdown</em>.</li>
+                    <li><strong>Phần cứng:</strong> Giữ nguyên bản, không tự ý cập nhật Driver hệ thống hay tháo lắp máy.</li>
+                    <li><strong>An toàn:</strong> Tránh tác động vật lý mạnh và tuyệt đối không nhấp vào đường link lạ.</li>
                 </ul>
             </div>
 
             <div class="paper-card full-width">
                 <div class="card-title">
-                    <span><i class="fas fa-book"></i> Cẩm Nang Windows Dễ Hiểu</span>
+                    <span><i class="fas fa-book"></i> Cẩm Nang Thủ Thuật Windows</span>
                 </div>
-                <p style="margin-bottom: 15px; font-size: 0.9rem; color: var(--text-light);">Bản rút gọn giúp tra cứu và áp dụng ngay các thủ thuật sửa lỗi, bảo quản máy.</p>
+                <p style="margin-bottom: 15px; font-size: 0.9rem; color: var(--text-light);">Tra cứu nhanh các bước sửa lỗi cơ bản mà không cần phải gọi thợ.</p>
                 
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
@@ -419,52 +462,52 @@
                 <div id="guideContainer">
                     
                     <details class="guide-item">
-                        <summary>1. Xử Lý Khi Máy Gặp Lỗi (Treo, Chậm, Lỗi Vặt)</summary>
+                        <summary>1. Khắc Phục Nhanh Lỗi Hệ Thống</summary>
                         <ul class="simple-list">
-                            [cite_start]<li><b>Lỗi vặt, giật lag:</b> Đầu tiên hãy thử khởi động lại máy (Restart), cách này trị được rất nhiều lỗi[cite: 2, 3].</li>
-                            [cite_start]<li><b>Cập nhật máy:</b> Bấm vào Cài đặt (Settings) → Windows Update → Chọn "Check for updates" để tải bản vá lỗi mới nhất về[cite: 4, 5, 6].</li>
-                            [cite_start]<li><b>Máy bị Màn hình xanh chữ trắng (BSOD):</b> Đừng hoảng, hãy lấy điện thoại chụp lại mã lỗi hiển thị trên màn hình rồi tra Google tìm cách sửa[cite: 43, 433].</li>
-                            <li><b>Sửa file hệ thống bị hỏng:</b> Tìm kiếm chữ "cmd", chuột phải chọn "Run as administrator". [cite_start]Sau đó gõ chữ <code>sfc /scannow</code> rồi nhấn Enter, đợi máy tự quét và sửa lỗi[cite: 11, 12, 14].</li>
+                            <li><b>Lỗi treo máy, đơ chuột:</b> Hãy khởi động lại (Restart). Đây là giải pháp xử lý được 90% các lỗi phần mềm tạm thời.</li>
+                            <li><b>Vá lỗi bảo mật:</b> Vào Cài đặt → Windows Update → Chọn Check for updates để cài bản cập nhật mới nhất từ Microsoft.</li>
+                            <li><b>Khắc phục màn hình xanh chữ trắng:</b> Chụp ảnh lại màn hình để lưu lại mã lỗi. Sau đó khởi động lại máy.</li>
+                            <li><b>Sửa file hỏng bằng lệnh CMD:</b> Mở ứng dụng Command Prompt dưới quyền Quản trị viên (Admin). Sau đó nhập dòng chữ <code>sfc /scannow</code> rồi nhấn Enter để máy tự động quét.</li>
                         </ul>
                     </details>
 
                     <details class="guide-item">
-                        <summary>2. Mở, Đóng & Bảo Quản Máy Đúng Cách</summary>
+                        <summary>2. Mở, Đóng & Bảo Quản Máy Tính</summary>
                         <ul class="simple-list">
-                            <li><b>Mở/Gập màn hình:</b> Luôn dùng 2 tay, giữ ở chính giữa mép màn hình. [cite_start]<i>Tuyệt đối không</i> cầm 1 tay ở góc để mở vì rất dễ làm gãy bản lề máy[cite: 55, 56, 57, 58, 94, 95].</li>
-                            <li><b>Khi đi ăn, nghỉ ngắn (15-30 phút):</b> Hãy cho máy Sleep (Ngủ) bằng cách gập máy lại. [cite_start]Lúc sau mở lên làm việc tiếp được ngay lập tức[cite: 84, 87, 113, 114].</li>
-                            <li><b>Khi đi ngủ trưa, nghỉ làm lâu (2-8 tiếng):</b> Hãy chọn chế độ Hibernate (Ngủ đông). [cite_start]Chế độ này giữ nguyên công việc đang làm nhưng không tốn một chút pin nào[cite: 88, 89, 90, 115, 116].</li>
-                            [cite_start]<li><b>Qua đêm hoặc nhét máy vào balo:</b> Bắt buộc phải Tắt hẳn máy (Shut down)[cite: 74, 98, 117]. [cite_start]Nhớ không được che kín các khe tản nhiệt của máy[cite: 109].</li>
+                            <li><b>Gập và mở màn hình:</b> Dùng hai tay cầm ở chính giữa mép màn hình để mở. Không cầm ở một góc vì sẽ làm gãy bản lề.</li>
+                            <li><b>Chế độ Sleep (Ngủ):</b> Dùng khi bạn chỉ đi ăn hoặc nghỉ ngơi khoảng 15 đến 30 phút. Khởi động lại rất nhanh.</li>
+                            <li><b>Chế độ Hibernate (Ngủ đông):</b> Dùng khi bạn nghỉ vài tiếng. Chế độ này lưu lại ứng dụng đang mở mà không làm tụt pin.</li>
+                            <li><b>Tắt hẳn máy:</b> Bắt buộc phải Tắt máy (Shut down) nếu không sử dụng qua đêm hoặc trước khi cho vào balo di chuyển.</li>
                         </ul>
                     </details>
 
                     <details class="guide-item">
                         <summary>3. Phím Tắt Tiết Kiệm Thời Gian</summary>
                         <ul class="simple-list">
-                            [cite_start]<li><b>Chuyển cửa sổ siêu tốc:</b> Nhấn giữ phím <code>Alt</code> rồi bấm phím <code>Tab</code>[cite: 183, 534].</li>
-                            [cite_start]<li><b>Chụp một góc màn hình:</b> Nhấn cùng lúc <code>Win + Shift + S</code>, kéo chuột vùng cần chụp và dán vào Zalo/Messenger[cite: 279, 340].</li>
-                            [cite_start]<li><b>Chụp tự động lưu toàn bộ:</b> Nhấn <code>Win + PrtSc</code>, ảnh sẽ bay thẳng vào thư mục Pictures > Screenshots[cite: 298, 339].</li>
-                            <li><b>Lịch sử copy:</b> Chắc hẳn bạn hay copy đè mất dòng chữ cũ? [cite_start]Bấm <code>Win + V</code> để xem lại và dán mọi thứ bạn từng copy[cite: 273, 274, 524, 525].</li>
-                            [cite_start]<li><b>Chia đôi màn hình làm việc:</b> Mở ứng dụng, nhấn phím <code>Win + Mũi tên trái</code> (hoặc phải) để ứng dụng bám gọn vào một nửa màn hình[cite: 187, 188, 189].</li>
+                            <li><b>Chuyển đổi cửa sổ:</b> Bấm giữ phím <code>Alt</code> và nhấn <code>Tab</code>.</li>
+                            <li><b>Chụp một vùng màn hình:</b> Nhấn tổ hợp <code>Win + Shift + S</code>, kéo chuột để chụp và dán trực tiếp ảnh vào khung chat.</li>
+                            <li><b>Chụp toàn bộ màn hình:</b> Nhấn tổ hợp <code>Win + PrtSc</code>, ảnh sẽ được tự động lưu vào thư mục Pictures của bạn.</li>
+                            <li><b>Xem lại lịch sử Copy:</b> Bấm <code>Win + V</code> để xem lại tất cả các đoạn văn bản mà bạn đã từng copy trước đó.</li>
+                            <li><b>Chia đôi cửa sổ làm việc:</b> Nhấn phím <code>Win + Mũi tên trái/phải</code> để thu gọn ứng dụng sang một bên màn hình.</li>
                         </ul>
                     </details>
 
                     <details class="guide-item">
                         <summary>4. Vài Lệnh Gõ Nhanh Hữu Ích</summary>
                         <ul class="simple-list">
-                            <li><b>Kiểm tra mạng có chập chờn không:</b> Mở CMD lên, gõ <code>ping google.com</code>. [cite_start]Nếu dòng nào cũng báo "Reply from..." là mạng ngon[cite: 212, 213].</li>
-                            [cite_start]<li><b>Lỗi mất kết nối mạng:</b> Lần lượt gõ <code>netsh winsock reset</code> (Enter) rồi <code>netsh int ip reset</code> (Enter) sau đó khởi động lại máy là có mạng[cite: 46, 47, 48].</li>
-                            [cite_start]<li><b>Tắt ép phần mềm bị treo:</b> Gõ <code>taskkill /F /IM tên_phần_mềm.exe</code> (Ví dụ: notepad.exe)[cite: 227].</li>
+                            <li><b>Kiểm tra tín hiệu mạng internet:</b> Mở ứng dụng CMD, gõ <code>ping google.com</code>.</li>
+                            <li><b>Khôi phục mạng khi bị rớt:</b> Gõ lần lượt hai lệnh sau vào CMD: <code>netsh winsock reset</code> và <code>netsh int ip reset</code> rồi khởi động lại máy.</li>
+                            <li><b>Đóng ép phần mềm bị đơ:</b> Gõ <code>taskkill /F /IM tên-phần-mềm.exe</code> (Ví dụ: notepad.exe).</li>
                         </ul>
                     </details>
 
                     <details class="guide-item">
-                        <summary>5. Làm Máy Chạy Nhanh Hơn</summary>
+                        <summary>5. Làm Máy Chạy Nhanh Trơn Tru Hơn</summary>
                         <ul class="simple-list">
-                            <li><b>Tìm xem phần mềm nào làm máy giật:</b> Nhấn <code>Ctrl + Shift + Esc</code> mở Task Manager. [cite_start]Cột CPU hay RAM nào đỏ lét thì bấm vào ứng dụng đó rồi chọn "End Task"[cite: 49, 416, 417, 418, 419].</li>
-                            <li><b>Tắt phần mềm tự bật:</b> Cũng trong Task Manager, qua tab "Startup", ứng dụng nào không cần thì chuột phải chọn "Disable". [cite_start]Máy khởi động sẽ nhanh hơn hẳn[cite: 420, 437, 438, 439].</li>
-                            <li><b>Dọn rác máy tính:</b> Tìm ở Start chữ "Disk Cleanup". [cite_start]Chọn ổ C. Nhớ bấm vào nút "Clean up system files" để máy xóa triệt để rác hệ thống (có thể dọn được vài GB)[cite: 106, 441, 442, 443, 448].</li>
-                            <li><b>Bảo vệ máy:</b> Không cần tải phần mềm diệt virus bên ngoài cho nặng máy. [cite_start]Chỉ cần luôn bật Windows Security (Defender) quét máy là đủ[cite: 30, 366, 399, 401, 402].</li>
+                            <li><b>Tắt ứng dụng chạy ngầm:</b> Nhấn <code>Ctrl + Shift + Esc</code> mở Task Manager. Ứng dụng nào đang chiếm nhiều CPU hay RAM thì nhấn chuột phải chọn End Task.</li>
+                            <li><b>Tắt phần mềm khởi động cùng máy:</b> Trong Task Manager, chuyển sang tab Startup. Ứng dụng nào không cần thiết thì chọn Disable để máy mở nhanh hơn.</li>
+                            <li><b>Dọn rác máy tính:</b> Tìm công cụ Disk Cleanup ở thanh tìm kiếm. Tích chọn ổ C, nhấn Clean up system files để xóa triệt để rác.</li>
+                            <li><b>Trình diệt virus:</b> Luôn đảm bảo Windows Security (Defender) đang được bật tính năng bảo vệ theo thời gian thực (Real-time protection).</li>
                         </ul>
                     </details>
 
@@ -483,7 +526,6 @@
         // --- 1. CHỨC NĂNG BẢO MẬT & MẬT KHẨU ---
         const correctPassword = "040207";
         
-        // Kiểm tra xem máy đã từng nhập đúng mật khẩu chưa
         window.onload = function() {
             if (localStorage.getItem("isAuthorized") === "true") {
                 document.getElementById("authOverlay").style.display = "none";
@@ -494,7 +536,6 @@
         function checkPassword() {
             let pass = document.getElementById("passInput").value;
             if (pass === correctPassword) {
-                // Nhập đúng: Lưu vào bộ nhớ trình duyệt và hiển thị web
                 localStorage.setItem("isAuthorized", "true");
                 document.getElementById("authOverlay").style.opacity = "0";
                 setTimeout(() => {
@@ -502,13 +543,11 @@
                     document.getElementById("mainContainer").style.display = "block";
                 }, 400);
             } else {
-                // Nhập sai
                 document.getElementById("errorMsg").style.display = "block";
                 document.getElementById("passInput").value = "";
             }
         }
 
-        // Bắt sự kiện nhấn Enter ở ô nhập mật khẩu
         document.getElementById("passInput").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
@@ -516,27 +555,51 @@
             }
         });
 
-        // --- 2. CHẶN F12 & CHẶN CHUỘT PHẢI (CHỐNG KIỂM TRA) ---
+        // --- 2. CHẶN F12 & HIỂN THỊ CẢNH BÁO ---
+        function triggerSecurityAlert() {
+            const alertBox = document.getElementById('securityAlert');
+            alertBox.style.display = 'block';
+            
+            // Phát âm thanh cảnh báo (tùy chọn)
+            // let audio = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
+            // audio.play().catch(e => console.log("Audio play prevented"));
+
+            // Ẩn thông báo sau 3 giây
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 3000);
+            
+            // Hiển thị hộp thoại Alert mặc định của trình duyệt để chặn hành vi
+            alert("⚠️ CẢNH BÁO: Hành động mở DevTools hoặc Inspect đã bị vô hiệu hóa để bảo vệ dữ liệu!");
+        }
+
         // Chặn chuột phải
-        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+            triggerSecurityAlert();
+        });
         
-        // Chặn F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+        // Chặn các phím tắt F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
         document.onkeydown = function(e) {
-            if (e.keyCode === 123) { // F12
+            if (e.keyCode === 123) { // Phím F12
+                triggerSecurityAlert();
                 return false;
             }
             if (e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0)) { // Ctrl+Shift+I
+                triggerSecurityAlert();
                 return false;
             }
             if (e.ctrlKey && e.shiftKey && e.keyCode === 'J'.charCodeAt(0)) { // Ctrl+Shift+J
+                triggerSecurityAlert();
                 return false;
             }
             if (e.ctrlKey && e.keyCode === 'U'.charCodeAt(0)) { // Ctrl+U
+                triggerSecurityAlert();
                 return false;
             }
         };
 
-        // --- 3. CÁC HÀM HIỂN THỊ CŨ ---
+        // --- 3. CÁC HÀM HIỂN THỊ ---
         function toggleVisibility(elementId, realValue) {
             const element = document.getElementById(elementId);
             const currentText = element.innerText;
