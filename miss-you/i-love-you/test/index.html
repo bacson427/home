@@ -46,10 +46,10 @@
             #player { top: 5px !important; right: 5px !important; transform: scale(0.75); transform-origin: top right; }
             .floating-texts .float-text { font-size: clamp(10px, 4vh, 14px) !important; }
             
-            /* Tinh chỉnh Fix lỗi mất chữ bức thư khi quay ngang */
-            .envelope-container { margin-top: 5vh !important; } 
+            /* Tinh chỉnh Fix lỗi giấy bị vút lên quá cao khi quay ngang */
+            .envelope-container { margin-top: 15vh !important; } 
             .paper { padding: 25px 35px 20px 35px !important; } 
-            .paper.out { transform: translateY(-240px) !important; } 
+            .paper.out { transform: translateY(-160px) !important; } /* Hạ thấp xuống để dễ đọc */
             #typed-letter { font-size: 1.05rem !important; line-height: 24px !important; } 
         }
 
@@ -259,8 +259,8 @@
         }
         .paper::-webkit-scrollbar { display: none; }
         
-        /* Kéo thẳng lên cao thoải mái để dễ đọc */
-        .paper.out { transform: translateY(-350px); } 
+        /* ĐÃ ĐƯỢC CHỈNH LẠI: Kéo vừa vặn, không bị bay mất nóc, cân đối ở giữa màn hình */
+        .paper.out { transform: translateY(-240px); } 
 
         #typed-letter { 
             font-size: 1.25rem; color: #4a2c2a; font-weight: 500; line-height: 28px; 
@@ -399,31 +399,25 @@
     <script>
         // ================= TỰ ĐỘNG NHẬN DIỆN KÍCH THƯỚC MÀN HÌNH (SCALING) CHUẨN XÁC NHẤT =================
         function adjustEnvelopeScale() {
-            const envBaseWidth = 600; // Chiều rộng gốc của envelope trong CSS
-            const envTotalHeight = 700; // Chiều cao an toàn (bao gồm cả độ trồi của giấy khi mở ra)
+            const envBaseWidth = 600; 
+            const envTotalHeight = 700; 
             
-            // Lấy không gian màn hình thực tế (trừ hao lề 30px để ko chạm sát mép)
             const availableW = window.innerWidth - 30; 
             const availableH = window.innerHeight - 30;
             
-            // Tính toán tỷ lệ
             const scaleW = availableW / envBaseWidth;
             const scaleH = availableH / envTotalHeight;
             
-            // Chọn tỷ lệ nhỏ nhất để đảm bảo nằm gọn hoàn toàn trong thiết bị (không bao giờ lẹm chữ/phong bì)
             let finalScale = Math.min(scaleW, scaleH);
             
-            // Giới hạn max scale = 1 để trên máy tính PC nó không bị phóng to một cách quá lố
             if (finalScale > 1) finalScale = 1; 
             
-            // Gán giá trị tính được vào biến CSS để kích hoạt thu nhỏ
             document.documentElement.style.setProperty('--env-scale', finalScale);
         }
 
-        // Lắng nghe sự kiện để tự động tính toán lại khi người dùng xoay ngang, dọc hay đổi cỡ cửa sổ
         window.addEventListener('resize', adjustEnvelopeScale);
         window.addEventListener('orientationchange', adjustEnvelopeScale);
-        adjustEnvelopeScale(); // Gọi ngay khi mới load trang
+        adjustEnvelopeScale(); 
 
         // ================= DANH SÁCH HÌNH ẢNH =================
         const images = [
@@ -448,6 +442,9 @@
         let pages = [];
         const totalSheets = images.length + 2; 
         let hasStarted = false;
+        
+        // Quản lý trang hiện tại để lật bằng phím cứng
+        let currentPageIndex = 0;
 
         function buildBook() {
             const cover = document.createElement('div');
@@ -513,22 +510,73 @@
         function flipTo(clickedIndex) {
             const pageObj = pages[clickedIndex]; const el = pageObj.el;
             if (!el.classList.contains('flipped')) {
-                el.classList.add('flipped'); setTimeout(() => { el.style.zIndex = clickedIndex + 1; }, 400);
+                el.classList.add('flipped'); 
+                setTimeout(() => { el.style.zIndex = clickedIndex + 1; }, 400);
+                currentPageIndex = clickedIndex + 1; // Cập nhật trang hiện tại (lật sang phải)
             } else {
-                el.classList.remove('flipped'); setTimeout(() => { el.style.zIndex = totalSheets - clickedIndex; }, 400);
+                el.classList.remove('flipped'); 
+                setTimeout(() => { el.style.zIndex = totalSheets - clickedIndex; }, 400);
+                currentPageIndex = clickedIndex; // Cập nhật trang hiện tại (lật về trái)
             }
             setTimeout(() => { document.querySelectorAll('.page.flipped').length > 0 ? stage.classList.add('opened') : stage.classList.remove('opened'); }, 50);
         }
 
+        // ================= XỬ LÝ PHÍM CỨNG (SPACE, TRÁI, PHẢI) =================
+        document.addEventListener('keydown', (e) => {
+            // Kiểm tra xem đang ở màn hình nào
+            const isStageVisible = stage.style.display !== 'none';
+            const isConfessionVisible = document.getElementById('confession-stage').style.display === 'flex';
+            
+            // Nếu đang ở màn hình sách (Phần 1)
+            if (isStageVisible) {
+                if (!hasStarted && (e.code === 'Space' || e.key === 'ArrowRight')) {
+                    openBookAndPlay(null);
+                    return;
+                }
+
+                if (e.code === 'Space' || e.key === 'ArrowRight') {
+                    // Ấn nút Cách hoặc Mũi tên Phải: Tiến tới trang tiếp theo chưa lật
+                    for (let i = 0; i < pages.length; i++) { 
+                        if (!pages[i].el.classList.contains('flipped')) { 
+                            flipTo(i); break; 
+                        } 
+                    }
+                } 
+                else if (e.key === 'ArrowLeft') {
+                    // Ấn mũi tên Trái: Lùi về trang trước đó đã lật
+                    for (let i = pages.length - 1; i >= 0; i--) { 
+                        if (pages[i].el.classList.contains('flipped')) { 
+                            flipTo(i); break; 
+                        } 
+                    }
+                }
+            }
+            // Nếu đang ở màn hình Tỏ Tình (Phần 2) và hiện nút bấm
+            else if (isConfessionVisible && document.getElementById('ask-section').style.display === 'block') {
+                if (e.code === 'Space' || e.key === 'Enter') {
+                    e.preventDefault(); // Chặn cuộn trang mặc định của Space
+                    accepted(); // Tự động click Đồng ý
+                }
+            }
+        });
+
+        // ================= CẢM ỨNG VUỐT TRÊN ĐIỆN THOẠI =================
         let touchStartX = 0, touchStartY = 0;
         document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, {passive: true});
         document.addEventListener('touchend', e => {
+            if (stage.style.display === 'none') return; // Chỉ cho vuốt khi đang ở sách
             const deltaX = e.changedTouches[0].screenX - touchStartX;
             const deltaY = e.changedTouches[0].screenY - touchStartY;
             if (Math.abs(deltaY) > Math.abs(deltaX)) return;
             if (Math.abs(deltaX) > 40) {
-                if (deltaX < 0) { for (let i = 0; i < pages.length; i++) { if (!pages[i].el.classList.contains('flipped')) { flipTo(i); break; } } } 
-                else { for (let i = pages.length - 1; i >= 0; i--) { if (pages[i].el.classList.contains('flipped')) { flipTo(i); break; } } }
+                if (deltaX < 0) { 
+                    // Vuốt sang Trái -> Mở sách
+                    for (let i = 0; i < pages.length; i++) { if (!pages[i].el.classList.contains('flipped')) { flipTo(i); break; } } 
+                } 
+                else { 
+                    // Vuốt sang Phải -> Đóng sách
+                    for (let i = pages.length - 1; i >= 0; i--) { if (pages[i].el.classList.contains('flipped')) { flipTo(i); break; } } 
+                }
             }
         }, {passive: true});
 
@@ -550,7 +598,8 @@
         ];
 
         function transitionToConfession(e) {
-            e.stopPropagation(); stage.style.opacity = 0; playerUI.style.opacity = 0; 
+            if(e) e.stopPropagation(); 
+            stage.style.opacity = 0; playerUI.style.opacity = 0; 
             let fadeAudio = setInterval(() => {
                 if (bookAudio.volume > 0.1) bookAudio.volume -= 0.1;
                 else { clearInterval(fadeAudio); bookAudio.pause(); bookAudio.volume = 1; }
