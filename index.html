@@ -49,7 +49,16 @@
             z-index: 0; 
             pointer-events: none; 
         }
-        .container { position: relative; z-index: 10; max-width: 480px; margin: 30px auto; padding: 0 15px; }
+
+        /* Thêm perspective để tạo hiệu ứng 3D cho thẻ con bên trong */
+        .container { 
+            position: relative; 
+            z-index: 10; 
+            max-width: 480px; 
+            margin: 30px auto; 
+            padding: 0 15px; 
+            perspective: 1000px; 
+        }
 
         /* --- 2. AVATAR NEON --- */
         .profile-card {
@@ -61,6 +70,10 @@
             border: 1px solid rgba(100, 255, 218, 0.15);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             margin-top: 60px; 
+            
+            /* Thêm hiệu ứng mượt khi di chuột 3D */
+            transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
         }
 
         .profile-img-wrapper {
@@ -73,6 +86,8 @@
             box-shadow: 0 0 25px rgba(100, 255, 218, 0.6), 
                         0 0 50px rgba(2, 132, 199, 0.4);
             animation: neonPulseTech 3s ease-in-out infinite alternate;
+            /* Đẩy ảnh nhô lên trong không gian 3D */
+            transform: translateZ(50px);
         }
         @keyframes neonPulseTech {
             from { box-shadow: 0 0 25px rgba(100, 255, 218, 0.6), 0 0 50px rgba(2, 132, 199, 0.4); scale: 1; }
@@ -104,6 +119,7 @@
             background: linear-gradient(to right, #64ffda, #0ea5e9, #8b5cf6, #64ffda);
             background-size: 300% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             animation: textShine 4s linear infinite; text-transform: uppercase; letter-spacing: 1px;
+            transform: translateZ(30px);
         }
         @keyframes textShine { to { background-position: 200% center; } }
 
@@ -114,10 +130,11 @@
             display: inline-block; text-transform: uppercase; letter-spacing: 1px;
             box-shadow: 0 0 15px rgba(100, 255, 218, 0.5);
             animation: pulseNeonCyan 1.5s ease-in-out infinite alternate;
+            transform: translateZ(20px);
         }
         @keyframes pulseNeonCyan {
-            from { box-shadow: 0 0 10px rgba(100, 255, 218, 0.4); transform: scale(1); }
-            to { box-shadow: 0 0 20px rgba(100, 255, 218, 0.8); transform: scale(1.03); }
+            from { box-shadow: 0 0 10px rgba(100, 255, 218, 0.4); transform: scale(1) translateZ(20px); }
+            to { box-shadow: 0 0 20px rgba(100, 255, 218, 0.8); transform: scale(1.03) translateZ(20px); }
         }
 
         .slot-machine { font-family: 'Courier New', monospace; font-size: 1.8rem; font-weight: bold; color: #64ffda; text-shadow: 0 0 10px rgba(100, 255, 218, 0.5); margin: 25px 0; letter-spacing: 2px; }
@@ -167,7 +184,7 @@
     </div>
 
     <div class="container">
-        <div class="profile-card">
+        <div class="profile-card" id="profileCard">
             <div class="profile-img-wrapper">
                 <img src="nguyen-bac-son-cover.png" alt="Avatar" class="profile-img">
             </div>
@@ -241,11 +258,50 @@
             m.style.display = m.style.display === 'block' ? 'none' : 'block'; 
         });
 
-        // --- HIỆU ỨNG MẠNG LƯỚI CÔNG NGHỆ (NETWORK PARTICLES) ---
+        // --- HIỆU ỨNG TƯƠNG TÁC CHUỘT 3D (PARALLAX TILT) ---
+        const profileCard = document.getElementById('profileCard');
+        document.addEventListener('mousemove', (e) => {
+            if (window.innerWidth > 768) { // Chỉ bật hiệu ứng nghiêng trên màn hình lớn
+                let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+                let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+                profileCard.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+        });
+        // Reset lại vị trí cũ khi chuột rời khỏi trang
+        document.addEventListener('mouseleave', () => {
+            profileCard.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
+
+        // --- HIỆU ỨNG MẠNG LƯỚI CÔNG NGHỆ TƯƠNG TÁC (NETWORK PARTICLES) ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particles = []; 
         let isPlaying = false;
+
+        // Bắt tọa độ chuột
+        let mouse = {
+            x: null,
+            y: null,
+            radius: 150 // Bán kính tương tác của chuột
+        };
+
+        window.addEventListener('mousemove', function(event) {
+            mouse.x = event.clientX;
+            mouse.y = event.clientY;
+        });
+        window.addEventListener('mouseout', function() {
+            mouse.x = null;
+            mouse.y = null;
+        });
+        // Hỗ trợ cảm ứng trên Mobile
+        window.addEventListener('touchmove', function(event) {
+            mouse.x = event.touches[0].clientX;
+            mouse.y = event.touches[0].clientY;
+        });
+        window.addEventListener('touchend', function() {
+            mouse.x = null;
+            mouse.y = null;
+        });
 
         function resize() { 
             canvas.width = window.innerWidth; 
@@ -265,11 +321,30 @@
             update() {
                 // Tăng tốc độ khi nhạc bật
                 let speedMultiplier = isPlaying ? 3 : 1;
+                
+                // Tương tác chuột (Lực đẩy từ trường)
+                if (mouse.x != null && mouse.y != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        // Lực đẩy tỷ lệ nghịch với khoảng cách
+                        const force = (mouse.radius - distance) / mouse.radius; 
+                        this.x -= forceDirectionX * force * 2;
+                        this.y -= forceDirectionY * force * 2;
+                    }
+                }
+
                 this.x += this.vx * speedMultiplier;
                 this.y += this.vy * speedMultiplier;
 
-                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                // Nảy lại khi chạm viền
+                if (this.x < 0) { this.x = 0; this.vx *= -1; }
+                if (this.x > canvas.width) { this.x = canvas.width; this.vx *= -1; }
+                if (this.y < 0) { this.y = 0; this.vy *= -1; }
+                if (this.y > canvas.height) { this.y = canvas.height; this.vy *= -1; }
             }
             draw() {
                 ctx.beginPath();
@@ -281,8 +356,8 @@
 
         function initParticles() {
             particles = [];
-            let numParticles = (window.innerWidth * window.innerHeight) / 15000;
-            if(numParticles > 120) numParticles = 120; // Giới hạn số lượng
+            let numParticles = (window.innerWidth * window.innerHeight) / 12000;
+            if(numParticles > 150) numParticles = 150; // Giới hạn số lượng cho mượt
             for (let i = 0; i < numParticles; i++) {
                 particles.push(new Particle());
             }
@@ -290,6 +365,7 @@
 
         function drawLines() {
             for (let i = 0; i < particles.length; i++) {
+                // Vẽ tia kết nối giữa các hạt
                 for (let j = i + 1; j < particles.length; j++) {
                     let dx = particles[i].x - particles[j].x;
                     let dy = particles[i].y - particles[j].y;
@@ -300,7 +376,6 @@
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
                         
-                        // Đổi màu dây kết nối khi có nhạc
                         let alpha = 1 - (distance / 120);
                         if(isPlaying) {
                             ctx.strokeStyle = `rgba(255, 0, 204, ${alpha * 0.5})`;
@@ -308,6 +383,23 @@
                             ctx.strokeStyle = `rgba(100, 255, 218, ${alpha * 0.3})`;
                         }
                         ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+                
+                // Vẽ tia kết nối từ hạt đến con trỏ chuột
+                if (mouse.x != null && mouse.y != null) {
+                    let dxMouse = mouse.x - particles[i].x;
+                    let dyMouse = mouse.y - particles[i].y;
+                    let distanceMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+                    
+                    if (distanceMouse < mouse.radius) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        let alphaMouse = 1 - (distanceMouse / mouse.radius);
+                        ctx.strokeStyle = isPlaying ? `rgba(255, 0, 204, ${alphaMouse * 0.8})` : `rgba(100, 255, 218, ${alphaMouse * 0.6})`;
+                        ctx.lineWidth = 1.5;
                         ctx.stroke();
                     }
                 }
