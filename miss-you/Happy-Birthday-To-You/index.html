@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>HPBD DƯƠNG 19 ❤️</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary: #ff4d6d;
@@ -118,7 +118,7 @@
             opacity: 0; transition: opacity 1.5s;
         }
         #msg-layer.visible { opacity: 1; }
-        
+
         #msg-box {
             width: 85%; max-width: 550px; max-height: 60vh; overflow-y: auto;
             background: rgba(255, 255, 255, 0.9); border: 2px solid #fff;
@@ -128,7 +128,7 @@
             line-height: 1.8; white-space: pre-wrap; font-weight: 600;
             backdrop-filter: blur(15px);
         }
-        
+
         #next-btn {
             margin-top: 25px; padding: 12px 35px; border: none;
             background: var(--primary); color: white; border-radius: 30px;
@@ -156,15 +156,15 @@
     </style>
 </head>
 <body>
-    
+
     <div id="hearts-bg"></div>
     <canvas id="c"></canvas>
 
     <div id="countdown-layer">
         <div class="container-box">
             <h1 class="title">SẮP ĐẾN SINH NHẬT DƯƠNG RỒI! 🎂</h1>
-            
-            <div style="font-weight: bold; color: var(--text-main); margin-bottom: 8px; font-size: 0.85rem;">ĐẾM NGƯỢC ĐẾN NGÀY (00:00 01/03/2007)</div>
+
+            <div style="font-weight: bold; color: var(--text-main); margin-bottom: 8px; font-size: 0.85rem;">ĐẾM NGƯỢC ĐẾN NGÀY (00:00 01/03/2026)</div>
             <div class="countdown-row">
                 <div class="time-box"><span id="d">00</span><div class="label">Ngày</div></div>
                 <div class="time-box"><span id="h">00</span><div class="label">Giờ</div></div>
@@ -174,7 +174,7 @@
 
             <hr style="border: none; border-top: 1.5px dashed #ff8fa3; margin: 15px 0;">
 
-            <div style="font-weight: bold; color: var(--text-main); margin-bottom: 8px; font-size: 0.85rem;">THỜI GIAN MỞ KHÓA (17:00 01/03/2007)</div>
+            <div style="font-weight: bold; color: var(--text-main); margin-bottom: 8px; font-size: 0.85rem;">THỜI GIAN MỞ KHÓA (17:00 01/03/2026)</div>
             <div class="countdown-row">
                 <div class="time-box" style="background: #d90429;"><span id="d2">00</span><div class="label">Ngày</div></div>
                 <div class="time-box" style="background: #d90429;"><span id="h2">00</span><div class="label">Giờ</div></div>
@@ -222,9 +222,9 @@
 <script>
     // Tách riêng 2 mốc thời gian
     const TARGET_DATE = new Date("March 1, 2026 00:00:00").getTime(); // Đếm đến ngày
-    const UNLOCK_DATE = new Date("March 1, 2026 00:00:00").getTime(); // Giờ mở khóa
+    const UNLOCK_DATE = new Date("March 1, 2026 17:00:00").getTime(); // Giờ mở khóa
     const PASS = "ngocuayeu";
-    
+
     const LETTER = `"Yeuu à, 🌸\n\nCảm ơn cậu đã kiên nhẫn với tớ nhé khi tớ trẻ trâu nhá.\n\nHôm nay là sinh nhật cậu, cũng vào dịp đầu xuân năm mới, tớ chúc cậu luôn rạng rỡ, học tập thật tốt và mọi dự định đều thành công rực rỡ. Mong rằng tuổi mới sẽ mang đến cho cậu thật nhiều niềm vui và những điều dịu dàng nhất.\n\nHappy Birthday, my special girl! ❤️\n\n-- Ngố của Yeuu --"`;
 
     const TERMINAL_LOGS = [
@@ -277,7 +277,7 @@
     // 1. ĐẾM NGƯỢC
     function updateTimer() {
         const now = new Date().getTime();
-        
+
         // --- BỘ ĐẾM 1: TỚI 00:00 ---
         let dis1 = TARGET_DATE - now;
         if (dis1 < 0) dis1 = 0; // Khi qua 00:00 thì đứng im ở số 0 chứ chưa mở khóa
@@ -290,44 +290,38 @@
         document.getElementById("m").innerText = mi1.toString().padStart(2, '0');
         document.getElementById("s").innerText = se1.toString().padStart(2, '0');
 
-        // Cài đặt thời gian mở khóa: 00h00 ngày 01/03/2026
-const UNLOCK_DATE = new Date("2026-03-01T00:00:00").getTime();
+        // --- BỘ ĐẾM 2: TỚI 17:00 01/03/2026 (MỞ KHÓA TẠI ĐÂY) ---
+        const dis2 = UNLOCK_DATE - now;
+        if(dis2 < 0) { 
+            unlock(); 
+            return; // Quyền mở khóa thuộc về bộ đếm này
+        } 
 
-function updateTimer() {
-    const now = new Date().getTime();
-    
-    // --- BỘ ĐẾM 2: TỚI 00:00 01/03/2026 (MỞ KHÓA TẠI ĐÂY) ---
-    const dis2 = UNLOCK_DATE - now;
-    if(dis2 < 0) { 
-        unlock(); 
-        return; // Quyền mở khóa thuộc về bộ đếm này
-    } 
-    
-    const d2 = Math.floor(dis2 / (1000 * 60 * 60 * 24));
-    const ho2 = Math.floor((dis2 % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const mi2 = Math.floor((dis2 % (1000 * 60 * 60)) / (1000 * 60));
-    const se2 = Math.floor((dis2 % (1000 * 60)) / 1000);
-    
-    document.getElementById("d2").innerText = d2.toString().padStart(2, '0');
-    document.getElementById("h2").innerText = ho2.toString().padStart(2, '0');
-    document.getElementById("m2").innerText = mi2.toString().padStart(2, '0');
-    document.getElementById("s2").innerText = se2.toString().padStart(2, '0');
-}
+        const d2 = Math.floor(dis2 / (1000 * 60 * 60 * 24));
+        const ho2 = Math.floor((dis2 % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mi2 = Math.floor((dis2 % (1000 * 60 * 60)) / (1000 * 60));
+        const se2 = Math.floor((dis2 % (1000 * 60)) / 1000);
 
-let tmr = setInterval(updateTimer, 1000);
-updateTimer();
+        document.getElementById("d2").innerText = d2.toString().padStart(2, '0');
+        document.getElementById("h2").innerText = ho2.toString().padStart(2, '0');
+        document.getElementById("m2").innerText = mi2.toString().padStart(2, '0');
+        document.getElementById("s2").innerText = se2.toString().padStart(2, '0');
+    }
 
-function unlock() {
-    clearInterval(tmr);
-    document.getElementById("countdown-layer").style.display = "none";
-    document.getElementById("gift-layer").style.display = "flex";
-    state = "GIFT";
-}
+    let tmr = setInterval(updateTimer, 1000);
+    updateTimer();
 
-// Ổ Khóa bí mật vẫn giữ nguyên
-window.adminUnlock = function() {
-    if(prompt("nguyenbacson.io.vn :") == PASS) unlock(); else alert("Sai mật khẩu rồi!");
-}
+    function unlock() {
+        clearInterval(tmr);
+        document.getElementById("countdown-layer").style.display = "none";
+        document.getElementById("gift-layer").style.display = "flex";
+        state = "GIFT";
+    }
+
+    // Ổ Khóa bí mật vẫn giữ nguyên
+    window.adminUnlock = function() {
+        if(prompt("nguyenbacson.io.vn :") == PASS) unlock(); else alert("Sai mật khẩu rồi!");
+    }
 
     // 2. MỞ QUÀ
     function openGift() {
@@ -368,7 +362,7 @@ window.adminUnlock = function() {
         const layer = document.getElementById("final-countdown-layer");
         const num = document.getElementById("final-cnt-num");
         layer.style.display = "flex";
-        
+
         let count = 10;
         num.innerText = count;
 
@@ -389,7 +383,7 @@ window.adminUnlock = function() {
         state = "DRONE";
         formingText = true; 
         document.getElementById("msg-layer").style.display = "none";
-        
+
         setInterval(() => {
             if(state === "DRONE" || state === "MSG") {
                 if(Math.random() < 0.8) {
@@ -411,7 +405,7 @@ window.adminUnlock = function() {
     function showMessage() {
         state = "MSG"; 
         formingText = false; 
-        
+
         drones.forEach(d => {
             d.tx = Math.random() * w;
             d.ty = Math.random() * h;
@@ -494,14 +488,14 @@ window.adminUnlock = function() {
 
     function loop() {
         ctx.clearRect(0, 0, w, h);
-        
+
         for (let i = fireworks.length - 1; i >= 0; i--) {
             let f = fireworks[i];
             if (!f.exploded) {
                 f.x += f.vx; f.y += f.vy; 
                 f.vy += 0.1; 
                 ctx.fillStyle = f.color; ctx.beginPath(); ctx.arc(f.x, f.y, 3, 0, Math.PI * 2); ctx.fill();
-                
+
                 if (f.vy >= 0) { 
                     f.exploded = true;
                     if(f.type === "heart") {
@@ -521,13 +515,13 @@ window.adminUnlock = function() {
                 }
             }
         }
-        
+
         for (let i = particles.length - 1; i >= 0; i--) {
             let p = particles[i]; 
             p.x += p.vx; p.y += p.vy; 
             p.life -= 0.01; 
             p.vy += 0.03; 
-            
+
             if (p.life <= 0) {
                 particles.splice(i, 1); 
             } else { 
