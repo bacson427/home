@@ -222,8 +222,8 @@
 <script>
     // Tách riêng 2 mốc thời gian
     const TARGET_DATE = new Date("March 1, 2026 00:00:00").getTime(); // Đếm đến ngày
-    const UNLOCK_DATE = new Date("March 1, 2026 17:00:00").getTime(); // Giờ mở khóa
-    const PASS = "030207016612";
+    const UNLOCK_DATE = new Date("March 1, 2026 00:00:00").getTime(); // Giờ mở khóa
+    const PASS = "ngocuayeu";
     
     const LETTER = `"Yeuu à, 🌸\n\nCảm ơn cậu đã kiên nhẫn với tớ nhé khi tớ trẻ trâu nhá.\n\nHôm nay là sinh nhật cậu, cũng vào dịp đầu xuân năm mới, tớ chúc cậu luôn rạng rỡ, học tập thật tốt và mọi dự định đều thành công rực rỡ. Mong rằng tuổi mới sẽ mang đến cho cậu thật nhiều niềm vui và những điều dịu dàng nhất.\n\nHappy Birthday, my special girl! ❤️\n\n-- Ngố của Yeuu --"`;
 
@@ -290,32 +290,44 @@
         document.getElementById("m").innerText = mi1.toString().padStart(2, '0');
         document.getElementById("s").innerText = se1.toString().padStart(2, '0');
 
-        // --- BỘ ĐẾM 2: TỚI 17:00 (MỞ KHÓA TẠI ĐÂY) ---
-        const dis2 = UNLOCK_DATE - now;
-        if(dis2 < 0) { unlock(); return; } // Quyền mở khóa thuộc về bộ đếm này
-        const d2 = Math.floor(dis2 / (1000 * 60 * 60 * 24));
-        const ho2 = Math.floor((dis2 % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const mi2 = Math.floor((dis2 % (1000 * 60 * 60)) / (1000 * 60));
-        const se2 = Math.floor((dis2 % (1000 * 60)) / 1000);
-        document.getElementById("d2").innerText = d2.toString().padStart(2, '0');
-        document.getElementById("h2").innerText = ho2.toString().padStart(2, '0');
-        document.getElementById("m2").innerText = mi2.toString().padStart(2, '0');
-        document.getElementById("s2").innerText = se2.toString().padStart(2, '0');
-    }
-    let tmr = setInterval(updateTimer, 1000);
-    updateTimer();
+        // Cài đặt thời gian mở khóa: 00h00 ngày 01/03/2026
+const UNLOCK_DATE = new Date("2026-03-01T00:00:00").getTime();
 
-    function unlock() {
-        clearInterval(tmr);
-        document.getElementById("countdown-layer").style.display = "none";
-        document.getElementById("gift-layer").style.display = "flex";
-        state = "GIFT";
-    }
+function updateTimer() {
+    const now = new Date().getTime();
+    
+    // --- BỘ ĐẾM 2: TỚI 00:00 01/03/2026 (MỞ KHÓA TẠI ĐÂY) ---
+    const dis2 = UNLOCK_DATE - now;
+    if(dis2 < 0) { 
+        unlock(); 
+        return; // Quyền mở khóa thuộc về bộ đếm này
+    } 
+    
+    const d2 = Math.floor(dis2 / (1000 * 60 * 60 * 24));
+    const ho2 = Math.floor((dis2 % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mi2 = Math.floor((dis2 % (1000 * 60 * 60)) / (1000 * 60));
+    const se2 = Math.floor((dis2 % (1000 * 60)) / 1000);
+    
+    document.getElementById("d2").innerText = d2.toString().padStart(2, '0');
+    document.getElementById("h2").innerText = ho2.toString().padStart(2, '0');
+    document.getElementById("m2").innerText = mi2.toString().padStart(2, '0');
+    document.getElementById("s2").innerText = se2.toString().padStart(2, '0');
+}
 
-    // Ổ Khóa bí mật vẫn giữ nguyên
-    window.adminUnlock = function() {
-        if(prompt("nguyenbacson.io.vn :") == PASS) unlock(); else alert("Sai mật khẩu rồi!");
-    }
+let tmr = setInterval(updateTimer, 1000);
+updateTimer();
+
+function unlock() {
+    clearInterval(tmr);
+    document.getElementById("countdown-layer").style.display = "none";
+    document.getElementById("gift-layer").style.display = "flex";
+    state = "GIFT";
+}
+
+// Ổ Khóa bí mật vẫn giữ nguyên
+window.adminUnlock = function() {
+    if(prompt("nguyenbacson.io.vn :") == PASS) unlock(); else alert("Sai mật khẩu rồi!");
+}
 
     // 2. MỞ QUÀ
     function openGift() {
