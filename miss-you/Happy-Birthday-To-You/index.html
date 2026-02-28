@@ -25,30 +25,6 @@
         canvas { display: block; position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none; }
         #hearts-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; }
 
-        /* --- 0. MÀN HÌNH ĐĂNG NHẬP (BẮT BUỘC) --- */
-        #login-layer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: var(--bg); transition: opacity 0.5s;
-        }
-        .login-box {
-            text-align: center; background: rgba(255, 255, 255, 0.7);
-            padding: 2.5rem 2rem; border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.2);
-            border: 2px solid #fff; width: 85%; max-width: 350px;
-            backdrop-filter: blur(10px);
-        }
-        .login-box input {
-            width: 100%; padding: 12px; margin: 20px 0; border-radius: 10px; border: 2px solid var(--secondary);
-            font-size: 16px; text-align: center; font-family: 'Quicksand', sans-serif; box-sizing: border-box; outline: none;
-        }
-        .login-box input:focus { border-color: var(--primary); }
-        .login-box button {
-            background: var(--primary); color: white; padding: 12px 25px; border: none; border-radius: 10px;
-            font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; font-family: 'Montserrat', sans-serif; width: 100%;
-        }
-        .login-box button:hover { background: #d90429; transform: scale(1.05); }
-
         /* --- 1. MÀN HÌNH ĐẾM NGƯỢC NGÀY --- */
         #countdown-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -74,12 +50,6 @@
         }
         .time-box span { display: block; font-size: 1.5rem; font-weight: bold; font-family: 'Montserrat', sans-serif; }
         .label { font-size: 0.65rem; text-transform: uppercase; margin-top: 3px; }
-
-        #admin-btn {
-            margin-top: 5px; cursor: pointer; color: var(--secondary);
-            font-size: 25px; opacity: 0.5; transition: 0.3s;
-        }
-        #admin-btn:hover { transform: scale(1.2) rotate(15deg); opacity: 1; color: var(--primary); }
 
         /* --- 2. HỘP QUÀ BÍ MẬT --- */
         #gift-layer {
@@ -184,15 +154,6 @@
     <div id="hearts-bg"></div>
     <canvas id="c"></canvas>
 
-    <div id="login-layer">
-        <div class="login-box">
-            <h1 class="title" style="font-size: 1.2rem;">XÁC NHẬN DANH TÍNH 🌸</h1>
-            <div style="font-size: 14px; color: var(--text-main); font-weight: 600;">Nhập mật khẩu bí mật để vào trong nhé!</div>
-            <input type="password" id="login-pwd" placeholder="Mật khẩu là gì nhỉ?">
-            <button onclick="checkLogin()">MỞ CỬA</button>
-        </div>
-    </div>
-
     <div id="countdown-layer">
         <div class="container-box">
             <h1 class="title">SẮP ĐẾN SINH NHẬT DƯƠNG RỒI! 🎂</h1>
@@ -216,7 +177,6 @@
             </div>
 
             <div style="margin-top: 15px; font-size: 13px; color: #888;">01/03/2026</div>
-            <div id="admin-btn" onclick="adminUnlock()">🔒</div>
         </div>
     </div>
 
@@ -253,27 +213,6 @@
     <audio id="audio" src="https://nguyenbacson.io.vn/miss-you-happy-birthday.mp3" loop></audio>
 
 <script>
-    const PASS = "ngocuayeu";
-
-    // --- KIỂM TRA ĐĂNG NHẬP ---
-    function checkLogin() {
-        const input = document.getElementById("login-pwd").value;
-        if(input === PASS) {
-            document.getElementById("login-layer").style.opacity = "0";
-            setTimeout(() => { document.getElementById("login-layer").style.display = "none"; }, 500);
-        } else {
-            alert("Mật khẩu chưa đúng rồi, thử lại xem nào! 😝");
-        }
-    }
-
-    // Cho phép ấn Enter để đăng nhập
-    document.getElementById("login-pwd").addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            checkLogin();
-        }
-    });
-
     // Tách riêng 2 mốc thời gian
     const TARGET_DATE = new Date("March 1, 2026 00:00:00").getTime(); // Đếm đến ngày
     const UNLOCK_DATE = new Date("March 1, 2026 17:00:00").getTime(); // Giờ mở khóa
@@ -369,11 +308,6 @@
         document.getElementById("countdown-layer").style.display = "none";
         document.getElementById("gift-layer").style.display = "flex";
         state = "GIFT";
-    }
-
-    // Ổ Khóa bí mật vẫn giữ nguyên để lỡ muốn skip đếm ngược
-    window.adminUnlock = function() {
-        if(prompt("Nhập lại mật khẩu để MỞ SỚM:") == PASS) unlock(); else alert("Sai mật khẩu rồi!");
     }
 
     // 2. MỞ QUÀ
