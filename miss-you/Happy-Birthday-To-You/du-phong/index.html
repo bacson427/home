@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đếm Ngược Sinh Nhật 🎂</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@800&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --bg-color: #fff0f3;
+            --text-color: #800f2f;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #ffccd5 0%, #fff0f3 100%);
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Bong bóng bay nền */
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            font-size: 40px;
+            animation: floatUp 8s linear infinite;
+            opacity: 0.7;
+            user-select: none;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(-10deg); }
+            50% { transform: translateY(-55vh) rotate(10deg); }
+            100% { transform: translateY(-110vh) rotate(-10deg); }
+        }
+
+        .countdown-container {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(255, 77, 109, 0.3);
+            text-align: center;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            border: 3px solid #ffb3c1;
+            max-width: 90%;
+            width: 400px;
+            animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--primary);
+            font-size: 2.8rem;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(255, 77, 109, 0.2);
+        }
+
+        p.subtitle {
+            color: var(--text-color);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+
+        .time-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .time-box {
+            background: linear-gradient(135deg, #ff4d6d, #c9184a);
+            color: white;
+            width: 80px;
+            height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(201, 24, 74, 0.4);
+            transition: transform 0.3s;
+        }
+
+        .time-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .time-box span {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .time-box .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-top: 5px;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        #finish-msg {
+            display: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            color: #d90429;
+            font-weight: bold;
+            margin-top: 20px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="balloon-container"></div>
+
+    <div class="countdown-container">
+        <h1>Happy Birthday! 🎈</h1>
+        <p class="subtitle">Sắp tới giờ hẹn với Dương rồi nhaaa</p>
+        
+        <div class="time-wrapper" id="timer-boxes">
+            <div class="time-box">
+                <span id="hours">00</span>
+                <div class="label">Giờ</div>
+            </div>
+            <div class="time-box">
+                <span id="minutes">00</span>
+                <div class="label">Phút</div>
+            </div>
+            <div class="time-box">
+                <span id="seconds">00</span>
+                <div class="label">Giây</div>
+            </div>
+        </div>
+
+        <div id="finish-msg">ĐẾN GIỜ RỒI!!! ĐI CHƠI THÔI CẬU ƠI ❤️</div>
+    </div>
+
+    <script>
+        // Cài đặt đích đến: 17:00 ngày 01/03/2026
+        const targetDate = new Date("2026-03-01T17:00:00").getTime();
+
+        const timer = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance <= 0) {
+                clearInterval(timer);
+                document.getElementById("timer-boxes").style.display = "none";
+                document.getElementById("finish-msg").style.display = "block";
+                return;
+            }
+
+            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("hours").innerText = h.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = m.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = s.toString().padStart(2, '0');
+        }, 1000);
+
+        // Code tạo hiệu ứng bong bóng bay
+        const emojis = ['🎈', '🎂', '💖', '🎉', '🌸'];
+        function createBalloon() {
+            const balloon = document.createElement('div');
+            balloon.classList.add('balloon');
+            balloon.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            balloon.style.left = Math.random() * 100 + 'vw';
+            balloon.style.fontSize = (Math.random() * 30 + 20) + 'px';
+            balloon.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            document.body.appendChild(balloon);
+
+            setTimeout(() => {
+                balloon.remove();
+            }, 10000);
+        }
+
+        setInterval(createBalloon, 800);
+    </script>
+
+</body>
+</html>
