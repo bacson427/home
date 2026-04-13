@@ -5,58 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nguyễn Bắc Sơn - Liên hệ</title>
     <style>
-        /* Cài đặt màu sắc - Giao diện Dark Mode lấy cảm hứng từ GitHub */
         :root {
-            --bg-color: #0d1117; 
-            --card-bg: #161b22;
+            --card-bg: rgba(22, 27, 34, 0.6); /* Làm nền trong suốt nhẹ để thấy nền chuyển động */
             --text-color: #c9d1d9;
-            --hover-bg: #21262d;
-            --border-color: #30363d;
+            --hover-bg: rgba(33, 38, 45, 0.8);
+            --border-color: rgba(48, 54, 61, 0.5);
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 50px 20px;
+            padding: 40px 20px;
             box-sizing: border-box;
+            
+            /* Hiệu ứng nền chuyển động */
+            background: linear-gradient(-45deg, #0d1117, #1a202c, #0d1117, #10141b);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
         }
 
-        /* Khung Profile */
+        /* Khung hình chuyển động của nền */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Tiện ích Thời tiết */
+        .weather-widget {
+            background-color: rgba(13, 17, 23, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            color: #8b949e;
+            display: inline-flex;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: color 0.3s ease;
+        }
+
+        .weather-widget:hover {
+            color: #ffffff;
+        }
+
         .profile-container {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
         .profile-logo {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%; /* Bo tròn logo cá nhân */
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
             object-fit: cover;
-            border: 3px solid var(--border-color);
-            margin-bottom: 15px;
-            transition: transform 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 3px solid #30363d;
+            margin-bottom: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         }
 
-        /* Hiệu ứng mượt cho avatar */
         .profile-logo:hover {
-            transform: scale(1.05);
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
         }
 
         .profile-name {
             font-size: 1.5rem;
             font-weight: 600;
-            margin: 0 0 5px 0;
+            margin: 0;
             color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        /* Khung chứa các nút link */
         .links-container {
             width: 100%;
             max-width: 450px;
@@ -65,33 +93,32 @@
             gap: 16px;
         }
 
-        /* Nút mạng xã hội */
         .link-card {
             display: flex;
             align-items: center;
             background-color: var(--card-bg);
+            backdrop-filter: blur(8px); /* Hiệu ứng kính mờ (glassmorphism) */
+            -webkit-backdrop-filter: blur(8px);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 12px 20px;
             text-decoration: none;
             color: var(--text-color);
-            /* Tối ưu hiệu ứng mượt: dùng cubic-bezier và will-change */
             transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.2s ease, box-shadow 0.25s ease;
             will-change: transform;
         }
 
-        /* Hiệu ứng khi di chuột qua */
         .link-card:hover {
-            transform: translateY(-4px); /* Nảy lên nhẹ */
+            transform: translateY(-4px);
             background-color: var(--hover-bg);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); /* Bóng đổ nổi khối */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            border-color: #4b5563;
         }
 
-        /* Logo của các app */
         .link-icon {
             width: 36px;
             height: 36px;
-            border-radius: 8px; /* Bo góc nhẹ cho các icon */
+            border-radius: 8px;
             margin-right: 18px;
             object-fit: cover;
         }
@@ -101,11 +128,10 @@
             font-size: 1.1rem;
         }
 
-        /* Tối ưu cho màn hình điện thoại nhỏ */
         @media (max-width: 480px) {
             .profile-logo {
-                width: 110px;
-                height: 110px;
+                width: 100px;
+                height: 100px;
             }
             .link-card {
                 padding: 10px 15px;
@@ -119,6 +145,10 @@
     </style>
 </head>
 <body>
+
+    <div class="weather-widget" id="weather-widget">
+        <span id="weather-text">⏳ Đang tải thời tiết Hà Nội...</span>
+    </div>
 
     <div class="profile-container">
         <img src="logo.png" alt="Profile Logo" class="profile-logo">
@@ -162,5 +192,39 @@
         </a>
     </div>
 
+    <script>
+        async function getHanoiWeather() {
+            try {
+                // Tọa độ của Hà Nội (Latitude: 21.0285, Longitude: 105.8542)
+                const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=21.0285&longitude=105.8542&current_weather=true');
+                const data = await response.json();
+                
+                if(data && data.current_weather) {
+                    const temp = data.current_weather.temperature;
+                    const code = data.current_weather.weathercode;
+                    
+                    // Phân loại icon thời tiết dựa trên mã code của WMO
+                    let icon = "☁️"; // Mặc định là mây
+                    if (code === 0) icon = "☀️"; // Trời quang
+                    else if (code > 0 && code <= 3) icon = "⛅"; // Ít mây / Nhiều mây
+                    else if (code >= 45 && code <= 48) icon = "🌫️"; // Sương mù
+                    else if (code >= 51 && code <= 67) icon = "🌧️"; // Mưa phùn / Mưa rào
+                    else if (code >= 71 && code <= 77) icon = "❄️"; // Tuyết
+                    else if (code >= 80 && code <= 82) icon = "🌦️"; // Mưa rào
+                    else if (code >= 95) icon = "⛈️"; // Giông bão
+
+                    document.getElementById('weather-text').innerHTML = `${icon} Hà Nội: <b>${temp}°C</b>`;
+                }
+            } catch (error) {
+                document.getElementById('weather-text').innerHTML = "Hà Nội: Lỗi tải thời tiết";
+                console.error("Lỗi lấy dữ liệu thời tiết:", error);
+            }
+        }
+        
+        // Chạy hàm khi trang web tải xong
+        getHanoiWeather();
+        // Cập nhật lại thời tiết mỗi 30 phút (1800000 milliseconds)
+        setInterval(getHanoiWeather, 1800000);
+    </script>
 </body>
 </html>
