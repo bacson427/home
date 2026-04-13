@@ -410,69 +410,22 @@
     </script>
 </body>
 </html>
-<div id="ai-bubble" style="position: fixed; bottom: 20px; right: 20px; width: 55px; height: 55px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 9999;">💬</div>
-
-    <div id="ai-window" style="display: none; position: fixed; bottom: 90px; right: 20px; width: 350px; height: 500px; background: #1a1a2e; border-radius: 12px; border: 1px solid #383854; box-shadow: 0 10px 30px rgba(0,0,0,0.7); z-index: 9999; flex-direction: column; overflow: hidden; font-family: sans-serif;">
-        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 12px; text-align: center; font-weight: bold;">Trợ lý AI - Bắc Sơn</div>
-        <div id="ai-messages" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 14px; color: #e2e8f0;">
-            <div style="background: #2a2a40; padding: 10px; border-radius: 10px; align-self: flex-start;">Chào bạn, mình là trợ lý AI của anh Sơn HACTECH. Bạn cần mình giúp gì không?</div>
-        </div>
-        <div style="display: flex; border-top: 1px solid #383854; background: #161625;">
-            <input type="text" id="ai-input" placeholder="Nhập tin nhắn..." style="flex: 1; padding: 12px; border: none; background: transparent; color: white; outline: none;">
-            <button id="ai-send" style="padding: 0 20px; background: transparent; color: #667eea; border: none; cursor: pointer; font-weight: bold;">Gửi</button>
-        </div>
-    </div>
-
-    <script>
-    const bubble = document.getElementById('ai-bubble');
-    const win = document.getElementById('ai-window');
-    const input = document.getElementById('ai-input');
-    const sendBtn = document.getElementById('ai-send');
-    const msgs = document.getElementById('ai-messages');
-
-    bubble.onclick = () => win.style.display = win.style.display === 'none' ? 'flex' : 'none';
-
-    async function sendMsg() {
-        const text = input.value.trim();
-        if (!text) return;
-        
-        msgs.innerHTML += `<div style="background: #667eea; color: white; padding: 10px; border-radius: 10px; align-self: flex-end; max-width: 85%;">${text}</div>`;
-        input.value = '';
-        msgs.scrollTop = msgs.scrollHeight;
-
-        const typingId = "typing-" + Date.now();
-        msgs.innerHTML += `<div id="${typingId}" style="background: #2a2a40; color: #a0aec0; padding: 10px; border-radius: 10px; align-self: flex-start; font-style: italic;">Đang suy nghĩ...</div>`;
-        msgs.scrollTop = msgs.scrollHeight;
-
-        try {
-            // SỬ DỤNG MÃ BASE64 BÁC VỪA GỬI
-            const apiKey = atob('QUl6YVN5QVdzb0R3ZVBPOGNMSFo4VnNtRWw4eXd2YmVkWDlSclN3');
-const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-            
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    system_instruction: { 
-                        parts: [{ text: `Mày là một Siêu Trợ lý AI đa năng của Nguyễn Bắc Sơn. Sơn học điện công nghiệp tại HACTECH. Nếu khách hỏi liên hệ, đưa email bacson20062007@gmail.com hoặc các link MXH của Sơn. Mày có tri thức vô hạn, trả lời mọi thứ như ChatGPT.` }] 
-                    },
-                    contents: [{ parts: [{ text: text }] }]
-                })
-            });
-
-            const data = await res.json();
-            if (data.error) throw new Error(data.error.message);
-
-            const botReply = data.candidates[0].content.parts[0].text;
-            document.getElementById(typingId).remove();
-            msgs.innerHTML += `<div style="background: #2a2a40; color: #e2e8f0; padding: 10px; border-radius: 10px; align-self: flex-start; max-width: 85%; line-height: 1.5;">${botReply.replace(/\n/g, '<br>')}</div>`;
-        } catch (e) {
-            if (document.getElementById(typingId)) document.getElementById(typingId).remove();
-            msgs.innerHTML += `<div style="color: #fc8181; background: #2a2a40; padding: 10px; border-radius: 10px; align-self: flex-start;">Lỗi: ${e.message}</div>`;
-        }
-        msgs.scrollTop = msgs.scrollHeight;
+<script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
+<script>
+  new CozeWebSDK.WebChatClient({
+    config: {
+      bot_id: '7628268478511857717',
+    },
+    componentProps: {
+      title: 'Trợ lý AI của Sơn',
+    },
+    // CHIÊU CUỐI: Gọi qua Cloudflare Worker để lấy quyền
+    auth: async () => {
+      const res = await fetch("https://api-proxy-service.bacson20062007.workers.dev/v1/auth/token", {
+        method: "POST"
+      });
+      // Worker của bác sẽ tự lo phần Authorization, web chỉ việc chạy thôi
+      return ""; 
     }
-
-    sendBtn.onclick = sendMsg;
-    input.onkeypress = (e) => { if (e.key === 'Enter') sendMsg(); };
-    </script>
+  });
+</script>
