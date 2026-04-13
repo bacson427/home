@@ -412,22 +412,7 @@
 </html>
 <script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
 <script>
-  new CozeWebSDK.WebChatClient({
-    config: {
-      bot_id: '7628268478511857717',
-    },
-    componentProps: {
-      title: 'Trợ lý AI của Sơn',
-    },
-    // GIAO TIẾP QUA PROXY WORKER
-    auth: async () => {
-      // Ở đây mình không dán PAT nữa, Worker sẽ tự chèn PAT vào
-      return ""; 
-    }
-  });
-
   // CHIÊU CHỐT: ÉP SDK GỌI QUA WORKER CỦA BÁC
-  // Đoạn này cực kỳ quan trọng để lách qua Cloudflare
   const originalFetch = window.fetch;
   window.fetch = function() {
     let url = arguments[0];
@@ -436,4 +421,22 @@
     }
     return originalFetch.apply(this, arguments);
   };
+
+  new CozeWebSDK.WebChatClient({
+    config: {
+      bot_id: '7628268478511857717',
+    },
+    componentProps: {
+      title: 'Trợ lý AI của Sơn',
+    },
+    auth: {
+      type: 'token',
+      // Dùng một chuỗi bất kỳ để lừa nó là có token, 
+      // thực tế PAT thật đã được Worker của bác tự dán vào rồi
+      token: 'dummy_token', 
+      onRefreshToken: function () {
+        return 'dummy_token'
+      }
+    }
+  });
 </script>
