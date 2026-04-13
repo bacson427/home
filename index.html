@@ -6,7 +6,6 @@
     <title>NGUYỄN BẮC SƠN - Liên hệ</title>
     <style>
         :root {
-            /* Biến CSS mặc định - Sẽ tự động đổi theo thời tiết */
             --bg-color: #0d1117; 
             --bg-gradient: radial-gradient(at 10% 20%, rgba(31, 111, 235, 0.15) 0px, transparent 50%),
                            radial-gradient(at 90% 10%, rgba(22, 27, 34, 0.6) 0px, transparent 50%),
@@ -28,7 +27,6 @@
             overflow-x: hidden;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             
-            /* Nền 3D */
             background-color: var(--bg-color);
             background-image: var(--bg-gradient);
             background-size: 200% 200%;
@@ -50,7 +48,7 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Khung chứa Ngày tháng + Thời tiết trên cùng */
+        /* Widget Ngày tháng + Thời tiết */
         .top-info-widget {
             background-color: var(--card-bg);
             backdrop-filter: blur(12px);
@@ -75,7 +73,6 @@
             border-color: #58a6ff;
         }
 
-        /* Đường chia giữa ngày tháng và thời tiết */
         .divider {
             width: 1px;
             height: 16px;
@@ -103,7 +100,7 @@
             transform: scale(1.05) rotate(2deg);
         }
 
-        /* Tên nhảy màu chuyển động */
+        /* Tên nhảy */
         .profile-name-wrapper {
             font-size: 1.8rem;
             font-weight: 700;
@@ -131,7 +128,7 @@
             background-clip: initial;
         }
 
-        /* Đồng hồ Giờ Phút Giây dưới tên */
+        /* Đồng hồ */
         .profile-time-sub {
             font-size: 1.1rem;
             font-weight: 600;
@@ -207,7 +204,7 @@
     <div class="top-info-widget">
         <span id="date-text">Đang tải ngày...</span>
         <div class="divider"></div>
-        <span id="weather-text">⏳ Đang tải thời tiết Hà Nội...</span>
+        <span id="weather-text">⏳ Đang tải thời tiết...</span>
     </div>
 
     <div class="profile-container">
@@ -217,61 +214,69 @@
     </div>
 
     <div class="links-container">
+        <a href="https://drive.google.com/file/d/1FDnrMnqD4nQgQuVtNQ_sii85y1G6u40R/view?usp=sharing" class="link-card" target="_blank" rel="noopener noreferrer">
+            <img src="drive.png" alt="Google Drive" class="link-icon">
+            <span class="link-text">Tài liệu Drive</span>
+        </a>
+
         <a href="https://www.facebook.com/bacson427" class="link-card" target="_blank" rel="noopener noreferrer">
             <img src="facebook.png" alt="Facebook" class="link-icon">
             <span class="link-text">Facebook</span>
         </a>
+
         <a href="https://www.threads.com/@nguyenbacson427" class="link-card" target="_blank" rel="noopener noreferrer">
             <img src="threads.png" alt="Threads" class="link-icon">
             <span class="link-text">Threads</span>
         </a>
+
         <a href="https://locket.cam/bacson.427" class="link-card" target="_blank" rel="noopener noreferrer">
             <img src="locket.jpg" alt="Locket" class="link-icon">
             <span class="link-text">Locket</span>
         </a>
+
         <a href="https://t.me/bacson_427" class="link-card" target="_blank" rel="noopener noreferrer">
             <img src="telegram.jpg" alt="Telegram" class="link-icon">
             <span class="link-text">Telegram</span>
         </a>
+
         <a href="https://www.tiktok.com/@bacson.427" class="link-card" target="_blank" rel="noopener noreferrer">
             <img src="tiktok.png" alt="TikTok" class="link-icon">
             <span class="link-text">TikTok</span>
         </a>
+
         <a href="https://wa.me/message/2WSCQKYPNQHCI1?src=qr" class="link-card" target="_blank" rel="noopener noreferrer">
             <img src="whatsapp.jpg" alt="WhatsApp" class="link-icon">
             <span class="link-text">WhatsApp</span>
         </a>
-        <a href="https://zaloapp.com/qr/p/13gt23dbftkk0" class="link-card" target="_blank" rel="noopener noreferrer">
-            <img src="zalo.png" alt="Zalo" class="link-icon">
-            <span class="link-text">Zalo</span>
+
+        <a href="mailto:bacson20062007@gmail.com" class="link-card">
+            <img src="gmail.png" alt="Gmail" class="link-icon">
+            <span class="link-text">Gửi Email cho tôi</span>
         </a>
     </div>
 
     <script>
-        // --- XỬ LÝ TÊN NẢY TỪNG CHỮ ---
+        // Hiệu ứng chữ nảy
         const profileName = "NGUYỄN BẮC SƠN";
         const nameContainer = document.getElementById('profile-name');
         nameContainer.innerHTML = profileName.split('').map(char => 
             `<span>${char === ' ' ? '&nbsp;' : char}</span>`
         ).join('');
 
-        // --- XỬ LÝ THỜI GIAN (Chạy mỗi giây) ---
+        // Cập nhật ngày giờ thực tế
         function updateClock() {
             const now = new Date();
-            
-            // Ngày tháng năm
             const days = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
             const dateStr = `${days[now.getDay()]}, ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
             document.getElementById('date-text').innerText = dateStr;
 
-            // Giờ phút giây
             const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
             document.getElementById('time-text').innerText = timeStr;
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        // --- XỬ LÝ THỜI TIẾT VÀ ĐỔI MÀU GIAO DIỆN ---
+        // API Lấy Thời tiết chính xác (Tọa độ Hà Nội)
         async function getWeatherAndTheme() {
             try {
                 const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=21.0285&longitude=105.8542&current_weather=true');
@@ -287,12 +292,12 @@
                     const root = document.documentElement;
 
                     if (isDay === 1) {
-                        if (code === 0) { // Nắng
+                        if (code === 0) { // Nắng quang mây
                             icon = "☀️"; 
                             theme = {
                                 bg: '#e0f2fe',
                                 gradient: 'radial-gradient(at 10% 20%, rgba(253, 224, 71, 0.4) 0px, transparent 50%), radial-gradient(at 90% 10%, rgba(56, 189, 248, 0.6) 0px, transparent 50%), radial-gradient(at 80% 50%, rgba(255, 255, 255, 0.8) 0px, transparent 50%), radial-gradient(at 10% 80%, rgba(125, 211, 252, 0.5) 0px, transparent 50%), radial-gradient(at 50% 50%, #bae6fd 0px, #e0f2fe 100%)',
-                                cardBg: 'rgba(255, 255, 255, 0.5)', text: '#0f172a', hover: 'rgba(255, 255, 255, 0.8)', border: 'rgba(148, 163, 184, 0.4)',
+                                cardBg: 'rgba(255, 255, 255, 0.6)', text: '#0f172a', hover: 'rgba(255, 255, 255, 0.9)', border: 'rgba(148, 163, 184, 0.5)',
                                 nameGrad: 'linear-gradient(-45deg, #FF9966, #FF5E62, #00C6FF, #0072FF)'
                             };
                         } else if (code > 0 && code <= 3) { // Nhiều mây
@@ -300,10 +305,10 @@
                             theme = {
                                 bg: '#cbd5e1',
                                 gradient: 'radial-gradient(at 10% 20%, rgba(248, 250, 252, 0.5) 0px, transparent 50%), radial-gradient(at 90% 10%, rgba(148, 163, 184, 0.5) 0px, transparent 50%), radial-gradient(at 80% 50%, rgba(226, 232, 240, 0.7) 0px, transparent 50%), radial-gradient(at 10% 80%, rgba(203, 213, 225, 0.6) 0px, transparent 50%), radial-gradient(at 50% 50%, #e2e8f0 0px, #cbd5e1 100%)',
-                                cardBg: 'rgba(248, 250, 252, 0.4)', text: '#334155', hover: 'rgba(248, 250, 252, 0.7)', border: 'rgba(100, 116, 139, 0.3)',
+                                cardBg: 'rgba(248, 250, 252, 0.5)', text: '#334155', hover: 'rgba(248, 250, 252, 0.8)', border: 'rgba(100, 116, 139, 0.4)',
                                 nameGrad: 'linear-gradient(-45deg, #00C6FF, #0072FF, #8E2DE2, #4A00E0)'
                             };
-                        } else { // Mưa, sương mù
+                        } else { // Cảnh báo thời tiết xấu (Mưa, sương mù, dông)
                             if (code >= 45 && code <= 48) icon = "🌫️";
                             else if (code >= 51 && code <= 67) icon = "🌧️";
                             else if (code >= 80 && code <= 82) icon = "🌦️";
@@ -311,22 +316,22 @@
                             theme = {
                                 bg: '#475569',
                                 gradient: 'radial-gradient(at 10% 20%, rgba(100, 116, 139, 0.6) 0px, transparent 50%), radial-gradient(at 90% 10%, rgba(51, 65, 85, 0.7) 0px, transparent 50%), radial-gradient(at 80% 50%, rgba(71, 85, 105, 0.6) 0px, transparent 50%), radial-gradient(at 10% 80%, rgba(15, 23, 42, 0.4) 0px, transparent 50%), radial-gradient(at 50% 50%, #334155 0px, #475569 100%)',
-                                cardBg: 'rgba(30, 41, 59, 0.5)', text: '#f8fafc', hover: 'rgba(30, 41, 59, 0.8)', border: 'rgba(148, 163, 184, 0.3)',
+                                cardBg: 'rgba(30, 41, 59, 0.6)', text: '#f8fafc', hover: 'rgba(30, 41, 59, 0.9)', border: 'rgba(148, 163, 184, 0.4)',
                                 nameGrad: 'linear-gradient(-45deg, #a8c0ff, #3f2b96)'
                             };
                         }
-                    } else { // Ban Đêm
+                    } else { // Ban đêm (Tự động đổi nền tối)
                         if (code === 0 || code <= 3) icon = "🌙";
                         else icon = "🌧️";
                         theme = {
                             bg: '#0d1117',
                             gradient: 'radial-gradient(at 10% 20%, rgba(31, 111, 235, 0.15) 0px, transparent 50%), radial-gradient(at 90% 10%, rgba(22, 27, 34, 0.6) 0px, transparent 50%), radial-gradient(at 80% 50%, rgba(16, 118, 230, 0.12) 0px, transparent 50%), radial-gradient(at 10% 80%, rgba(31, 111, 235, 0.18) 0px, transparent 50%), radial-gradient(at 50% 50%, #0d1117 0px, #0d1117 100%)',
-                            cardBg: 'rgba(22, 27, 34, 0.4)', text: '#f0f6fc', hover: 'rgba(33, 38, 45, 0.6)', border: 'rgba(60, 68, 79, 0.4)',
+                            cardBg: 'rgba(22, 27, 34, 0.5)', text: '#f0f6fc', hover: 'rgba(33, 38, 45, 0.8)', border: 'rgba(60, 68, 79, 0.5)',
                             nameGrad: 'linear-gradient(-45deg, #00C6FF, #0072FF, #8E2DE2, #4A00E0)'
                         };
                     }
 
-                    // Ghi đè CSS
+                    // Áp dụng màu giao diện dựa theo kết quả thời tiết
                     root.style.setProperty('--bg-color', theme.bg);
                     root.style.setProperty('--bg-gradient', theme.gradient);
                     root.style.setProperty('--card-bg', theme.cardBg);
@@ -338,13 +343,13 @@
                     document.getElementById('weather-text').innerHTML = `${icon} Hà Nội: <b>${temp}°C</b>`;
                 }
             } catch (error) {
-                document.getElementById('weather-text').innerHTML = "Hà Nội: Lỗi tải";
+                document.getElementById('weather-text').innerHTML = "Hà Nội: Lỗi kết nối thời tiết";
             }
         }
         
         getWeatherAndTheme();
-        setInterval(getWeatherAndTheme, 1800000); // Tải lại thời tiết mỗi 30p
+        // Tự động cập nhật lại thời tiết mỗi 30 phút
+        setInterval(getWeatherAndTheme, 1800000); 
     </script>
 </body>
 </html>
-a
