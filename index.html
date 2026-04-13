@@ -419,13 +419,21 @@
     componentProps: {
       title: 'Trợ lý AI của Sơn',
     },
-    // CHIÊU CUỐI: Gọi qua Cloudflare Worker để lấy quyền
+    // GIAO TIẾP QUA PROXY WORKER
     auth: async () => {
-      const res = await fetch("https://api-proxy-service.bacson20062007.workers.dev/v1/auth/token", {
-        method: "POST"
-      });
-      // Worker của bác sẽ tự lo phần Authorization, web chỉ việc chạy thôi
+      // Ở đây mình không dán PAT nữa, Worker sẽ tự chèn PAT vào
       return ""; 
     }
   });
+
+  // CHIÊU CHỐT: ÉP SDK GỌI QUA WORKER CỦA BÁC
+  // Đoạn này cực kỳ quan trọng để lách qua Cloudflare
+  const originalFetch = window.fetch;
+  window.fetch = function() {
+    let url = arguments[0];
+    if (typeof url === 'string' && url.includes('api.coze.com')) {
+      arguments[0] = url.replace('https://api.coze.com', 'https://api-proxy-service.bacson20062007.workers.dev');
+    }
+    return originalFetch.apply(this, arguments);
+  };
 </script>
