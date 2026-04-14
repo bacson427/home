@@ -27,7 +27,8 @@
             --hover-bg: rgba(33, 38, 45, 0.6);
             --border-color: rgba(60, 68, 79, 0.4);
             --profile-name-gradient: linear-gradient(-45deg, #00C6FF, #0072FF, #8E2DE2, #4A00E0);
-            --time-gradient: linear-gradient(-45deg, #00C6FF, #FF5E62, #FF9966, #0072FF); /* Màu cho ngày giờ */
+            --time-gradient: linear-gradient(-45deg, #00C6FF, #FF5E62, #FF9966, #0072FF);
+            --cloud-color: rgba(255, 255, 255, 0.4); /* Màu mây thay đổi theo thời tiết */
         }
 
         html, body {
@@ -42,6 +43,7 @@
             display: flex; flex-direction: column; align-items: center;
             padding-top: 25px; box-sizing: border-box; perspective: 1000px;
             transition: background-color 1s ease, color 0.5s ease;
+            position: relative;
         }
 
         @keyframes mesh3D {
@@ -50,7 +52,41 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* ----- HIỆU ỨNG CHỮ ĐỔI MÀU ----- */
+        /* ----- HIỆU ỨNG MÂY BAY VÀ GIÓ ----- */
+        #clouds-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+
+        .cloud {
+            position: absolute; background: var(--cloud-color);
+            border-radius: 50px; animation: drift linear infinite;
+            transition: background 1s ease;
+        }
+        
+        .cloud::before, .cloud::after {
+            content: ''; position: absolute; background: inherit; border-radius: 50%;
+        }
+        .cloud::before { width: 50px; height: 50px; top: -25px; left: 15px; }
+        .cloud::after { width: 70px; height: 70px; top: -35px; right: 15px; }
+
+        @keyframes drift {
+            from { transform: translateX(-200px) scale(var(--scale)); }
+            to { transform: translateX(100vw) scale(var(--scale)); }
+        }
+
+        /* Gió thổi làm mây bay nhanh hơn */
+        .windy .cloud {
+            animation-duration: 8s !important;
+            transition: animation-duration 2s ease-in-out;
+        }
+
+        /* Định hình lại các layer cho nổi lên trên mây */
+        .top-info-widget, .profile-container, .links-container {
+            position: relative; z-index: 10;
+        }
+
+        /* ----- HIỆU ỨNG CHỮ ----- */
         @keyframes textColorMove {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -58,72 +94,43 @@
         }
 
         .gradient-text {
-            background-image: var(--time-gradient);
-            background-size: 300% 300%;
-            -webkit-background-clip: text; background-clip: text;
-            color: transparent; animation: textColorMove 4s ease infinite;
-            font-weight: bold;
+            background-image: var(--time-gradient); background-size: 300% 300%;
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            animation: textColorMove 4s ease infinite; font-weight: bold;
         }
 
-        /* Widget Ngày tháng + Thời tiết */
+        /* Widget */
         .top-info-widget {
-            background-color: var(--card-bg);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color); padding: 8px 20px;
-            border-radius: 25px; font-size: 1rem; margin-bottom: 25px;
-            display: flex; align-items: center; gap: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            transform: translateZ(50px); transition: all 0.3s ease;
+            background-color: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color); padding: 8px 20px; border-radius: 25px;
+            font-size: 1rem; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: all 0.3s ease;
         }
+        .divider { width: 1px; height: 16px; background-color: var(--border-color); }
 
-        .top-info-widget:hover {
-            transform: translateZ(60px) scale(1.02);
-            border-color: #58a6ff; box-shadow: 0 6px 15px rgba(0,0,0,0.25);
-        }
-
-        .divider {
-            width: 1px; height: 16px; background-color: var(--border-color);
-        }
-
-        /* ----- KHU VỰC PROFILE ----- */
+        /* ----- KHU VỰC AVATAR VÀ NÚT GỌI SONG SONG ----- */
         .profile-container {
-            text-align: center; margin-bottom: 30px; transform: translateZ(70px);
-            display: flex; flex-direction: column; align-items: center;
+            text-align: center; margin-bottom: 30px; display: flex; flex-direction: column; align-items: center;
+        }
+
+        .avatar-call-wrapper {
+            display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 15px;
         }
 
         .profile-logo {
-            width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
-            border: 3px solid var(--border-color); margin-bottom: 0px; /* Bỏ margin để nút gọi áp sát */
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            position: relative; z-index: 5;
+            width: 110px; height: 110px; border-radius: 50%; object-fit: cover;
+            border: 3px solid var(--border-color); box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
         }
+        .profile-logo:hover { transform: scale(1.05) rotate(2deg); }
 
-        .profile-logo:hover {
-            transform: scale(1.05) rotate(2deg);
-        }
-
-        /* --- NÚT GỌI ĐIỆN NẰM DƯỚI LOGO, TRÊN TÊN --- */
         .call-bubble {
-            display: flex;
-            width: 55px; height: 55px;
-            background: #2ecc71; /* Màu xanh lá cuộc gọi */
-            border-radius: 50%;
-            align-items: center; justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            cursor: pointer; transition: all 0.3s ease;
-            text-decoration: none;
-            margin-top: -15px; /* Hơi lùi lên đè nhẹ vào logo */
-            margin-bottom: 15px; /* Cách một khoảng với tên */
-            z-index: 10; position: relative;
+            display: flex; width: 60px; height: 60px; background: #2ecc71; border-radius: 50%;
+            align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            cursor: pointer; transition: all 0.3s ease; text-decoration: none;
             animation: call-shake 1.5s infinite;
         }
-
-        .call-bubble:hover {
-            transform: scale(1.1); background: #27ae60;
-            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.5);
-        }
-
+        .call-bubble:hover { transform: scale(1.1); background: #27ae60; box-shadow: 0 6px 20px rgba(46, 204, 113, 0.5); }
         .call-bubble svg { width: 28px; height: 28px; fill: white; }
 
         @keyframes call-shake {
@@ -140,88 +147,54 @@
             color: transparent; background-image: var(--profile-name-gradient);
             background-size: 400% 400%; -webkit-background-clip: text;
             background-clip: text; animation: textColorMove 6s ease infinite;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
-
-        .profile-name-wrapper > span {
-            display: inline-block; transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1.2);
-            cursor: default;
-        }
-
-        .profile-name-wrapper > span:hover {
-            transform: translateY(-8px); color: #ffffff;
-            -webkit-background-clip: initial; background-clip: initial;
-        }
-
-        /* Đồng hồ Giờ Phút Giây */
-        .profile-time-sub {
-            font-size: 1.2rem; margin-top: 8px; letter-spacing: 2px;
-        }
+        .profile-name-wrapper > span { display: inline-block; transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1.2); cursor: default; }
+        .profile-name-wrapper > span:hover { transform: translateY(-8px); color: #ffffff; -webkit-background-clip: initial; background-clip: initial; }
+        .profile-time-sub { font-size: 1.2rem; margin-top: 8px; letter-spacing: 2px; }
 
         /* ----- DANH SÁCH LINK BIO ----- */
-        .links-container {
-            width: 100%; max-width: 450px; display: flex; flex-direction: column;
-            gap: 16px; padding-bottom: 40px; perspective: 800px;
-        }
-
-        /* Hiệu ứng thanh trượt cho nút link */
+        .links-container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px; }
         .link-card {
-            display: flex; align-items: center; background-color: var(--card-bg);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--border-color); border-radius: 14px;
-            padding: 12px 20px; text-decoration: none; color: var(--text-color);
-            transform: translateZ(20px); position: relative; overflow: hidden; 
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease, border-color 0.2s ease;
-            will-change: transform;
+            display: flex; align-items: center; background-color: var(--card-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color); border-radius: 14px; padding: 12px 20px; text-decoration: none; color: var(--text-color);
+            position: relative; overflow: hidden; transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease, border-color 0.2s ease;
         }
-
-        .link-card::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 3px;
-            background: var(--profile-name-gradient); transition: width 0.4s ease;
-        }
-
-        .link-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 0%; height: 100%;
-            background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.15));
-            transition: width 0.4s ease; z-index: 0;
-        }
-
-        .link-card:hover {
-            transform: translateY(-5px) translateZ(60px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); border-color: #58a6ff;
-        }
-
+        .link-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 3px; background: var(--profile-name-gradient); transition: width 0.4s ease; }
+        .link-card::before { content: ''; position: absolute; top: 0; left: 0; width: 0%; height: 100%; background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.15)); transition: width 0.4s ease; z-index: 0; }
+        .link-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); border-color: #58a6ff; }
         .link-card:hover::after, .link-card:hover::before { width: 100%; }
         .link-icon, .link-text { position: relative; z-index: 2; }
-
-        .link-icon {
-            width: 36px; height: 36px; border-radius: 8px; margin-right: 18px;
-            object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
+        .link-icon { width: 36px; height: 36px; border-radius: 8px; margin-right: 18px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .link-text { font-weight: 500; font-size: 1.1rem; }
 
         @media (max-width: 480px) {
             .top-info-widget { font-size: 0.85rem; padding: 8px 15px; }
-            .profile-logo { width: 100px; height: 100px; }
+            .profile-logo { width: 90px; height: 90px; }
+            .call-bubble { width: 50px; height: 50px; }
             .link-card { padding: 10px 15px; }
         }
     </style>
 </head>
-<body oncontextmenu="return false;"> <div class="top-info-widget">
+<body oncontextmenu="return false;">
+
+    <div id="clouds-container"></div>
+
+    <div class="top-info-widget">
         <span id="date-text" class="gradient-text">Đang tải ngày...</span>
         <div class="divider"></div>
         <span id="weather-text" class="gradient-text">⏳ Đang tải thời tiết...</span>
     </div>
 
     <div class="profile-container">
-        <img src="logo.png" alt="Profile Logo" class="profile-logo">
-        
-        <a href="tel:0347432736" class="call-bubble" title="Gọi ngay cho Sơn">
-            <svg viewBox="0 0 24 24">
-                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-            </svg>
-        </a>
+        <div class="avatar-call-wrapper">
+            <img src="logo.png" alt="Profile Logo" class="profile-logo">
+            
+            <a href="tel:0347432736" class="call-bubble" title="Gọi ngay cho Sơn">
+                <svg viewBox="0 0 24 24">
+                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+            </a>
+        </div>
 
         <h1 class="profile-name-wrapper" id="profile-name"></h1>
         <div class="profile-time-sub gradient-text" id="time-text">00:00:00</div>
@@ -232,37 +205,30 @@
             <img src="drive.png" alt="Google Drive" class="link-icon">
             <span class="link-text">Drive</span>
         </a>
-
         <a href="https://www.facebook.com/bacson427" class="link-card" target="_blank" rel="noopener noreferrer">
             <img src="facebook.png" alt="Facebook" class="link-icon">
             <span class="link-text">Facebook</span>
         </a>
-
         <a href="https://www.threads.com/@nguyenbacson427" class="link-card" target="_blank" rel="noopener noreferrer">
             <img src="threads.png" alt="Threads" class="link-icon">
             <span class="link-text">Threads</span>
         </a>
-
         <a href="https://locket.cam/bacson.427" class="link-card" target="_blank" rel="noopener noreferrer">
             <img src="locket.jpg" alt="Locket" class="link-icon">
             <span class="link-text">Locket</span>
         </a>
-
         <a href="https://t.me/bacson_427" class="link-card" target="_blank" rel="noopener noreferrer">
             <img src="telegram.jpg" alt="Telegram" class="link-icon">
             <span class="link-text">Telegram</span>
         </a>
-
         <a href="https://www.tiktok.com/@bacson.427" class="link-card" target="_blank" rel="noopener noreferrer">
             <img src="tiktok.png" alt="TikTok" class="link-icon">
             <span class="link-text">TikTok</span>
         </a>
-
         <a href="https://wa.me/message/2WSCQKYPNQHCI1?src=qr" class="link-card" target="_blank" rel="noopener noreferrer">
             <img src="whatsapp.jpg" alt="WhatsApp" class="link-icon">
             <span class="link-text">WhatsApp</span>
         </a>
-
         <a href="mailto:bacson20062007@gmail.com" class="link-card">
             <img src="gmail.png" alt="Gmail" class="link-icon">
             <span class="link-text">Gmail</span>
@@ -270,27 +236,56 @@
     </div>
 
     <script>
-        // Chữ Nảy
+        // --- 1. HIỆU ỨNG MÂY BAY VÀ GIÓ THỜI GIAN THỰC ---
+        function createClouds() {
+            const container = document.getElementById('clouds-container');
+            container.innerHTML = '';
+            for(let i = 0; i < 6; i++) {
+                let cloud = document.createElement('div');
+                cloud.className = 'cloud';
+                // Tạo hình dáng ngẫu nhiên cho mây
+                let scale = Math.random() * 0.8 + 0.4;
+                let topPos = Math.random() * 60 + 5; // Độ cao mây từ 5% đến 65% màn hình
+                let duration = Math.random() * 30 + 25; // Tốc độ trôi tự nhiên
+                let delay = Math.random() * -40; // Đảm bảo lúc mới mở web mây đã rải rác sẵn
+                
+                cloud.style.width = '140px';
+                cloud.style.height = '40px';
+                cloud.style.top = topPos + '%';
+                cloud.style.setProperty('--scale', scale);
+                cloud.style.animationDuration = duration + 's';
+                cloud.style.animationDelay = delay + 's';
+                
+                container.appendChild(cloud);
+            }
+        }
+        createClouds();
+
+        // Thi thoảng có cơn gió lùa làm mây trôi nhanh (Cứ 30s gió thổi 1 lần, thổi trong 6s)
+        setInterval(() => {
+            const container = document.getElementById('clouds-container');
+            container.classList.add('windy');
+            setTimeout(() => { container.classList.remove('windy'); }, 6000);
+        }, 30000);
+
+        // --- 2. HIỆU ỨNG TÊN NẢY BÓNG ---
         const profileName = "NGUYỄN BẮC SƠN";
         const nameContainer = document.getElementById('profile-name');
         nameContainer.innerHTML = profileName.split('').map(char => 
             `<span>${char === ' ' ? '&nbsp;' : char}</span>`
         ).join('');
 
-        // Cập nhật Đồng hồ
+        // --- 3. ĐỒNG HỒ TICK TẮC ---
         function updateClock() {
             const now = new Date();
             const days = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
-            const dateStr = `${days[now.getDay()]}, ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
-            document.getElementById('date-text').innerText = dateStr;
-
-            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-            document.getElementById('time-text').innerText = timeStr;
+            document.getElementById('date-text').innerText = `${days[now.getDay()]}, ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+            document.getElementById('time-text').innerText = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        // API Thời tiết & Theme
+        // --- 4. CẬP NHẬT THỜI TIẾT, THEME VÀ MÀU MÂY ---
         async function getWeatherAndTheme() {
             try {
                 const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=21.0285&longitude=105.8542&current_weather=true');
@@ -301,28 +296,29 @@
                     const code = data.current_weather.weathercode;
                     const isDay = data.current_weather.is_day; 
                     
-                    let icon = "☁️"; 
-                    let theme = {};
+                    let icon = "☁️"; let theme = {};
                     const root = document.documentElement;
 
                     if (isDay === 1) {
                         if (code === 0) { 
-                            icon = "☀️"; 
+                            icon = "☀️"; // Trời nắng đẹp
                             theme = {
                                 bg: '#e0f2fe',
                                 gradient: 'radial-gradient(at 10% 20%, rgba(253, 224, 71, 0.4) 0px, transparent 50%), radial-gradient(at 90% 10%, rgba(56, 189, 248, 0.6) 0px, transparent 50%), radial-gradient(at 80% 50%, rgba(255, 255, 255, 0.8) 0px, transparent 50%), radial-gradient(at 10% 80%, rgba(125, 211, 252, 0.5) 0px, transparent 50%), radial-gradient(at 50% 50%, #bae6fd 0px, #e0f2fe 100%)',
                                 cardBg: 'rgba(255, 255, 255, 0.6)', text: '#0f172a', hover: 'rgba(255, 255, 255, 0.9)', border: 'rgba(148, 163, 184, 0.5)',
                                 nameGrad: 'linear-gradient(-45deg, #FF9966, #FF5E62, #00C6FF, #0072FF)',
-                                timeGrad: 'linear-gradient(-45deg, #FF5E62, #FF9966, #FFD194)'
+                                timeGrad: 'linear-gradient(-45deg, #FF5E62, #FF9966, #FFD194)',
+                                cloud: 'rgba(255, 255, 255, 0.8)' // Mây trắng tinh
                             };
                         } else if (code > 0 && code <= 3) { 
-                            icon = "⛅"; 
+                            icon = "⛅"; // Nhiều mây
                             theme = {
                                 bg: '#cbd5e1',
                                 gradient: 'radial-gradient(at 10% 20%, rgba(248, 250, 252, 0.5) 0px, transparent 50%), radial-gradient(at 90% 10%, rgba(148, 163, 184, 0.5) 0px, transparent 50%), radial-gradient(at 80% 50%, rgba(226, 232, 240, 0.7) 0px, transparent 50%), radial-gradient(at 10% 80%, rgba(203, 213, 225, 0.6) 0px, transparent 50%), radial-gradient(at 50% 50%, #e2e8f0 0px, #cbd5e1 100%)',
                                 cardBg: 'rgba(248, 250, 252, 0.5)', text: '#334155', hover: 'rgba(248, 250, 252, 0.8)', border: 'rgba(100, 116, 139, 0.4)',
                                 nameGrad: 'linear-gradient(-45deg, #00C6FF, #0072FF, #8E2DE2, #4A00E0)',
-                                timeGrad: 'linear-gradient(-45deg, #00C6FF, #0072FF, #2193b0)'
+                                timeGrad: 'linear-gradient(-45deg, #00C6FF, #0072FF, #2193b0)',
+                                cloud: 'rgba(255, 255, 255, 0.6)'
                             };
                         } else { 
                             if (code >= 45 && code <= 48) icon = "🌫️";
@@ -330,22 +326,24 @@
                             else if (code >= 80 && code <= 82) icon = "🌦️";
                             else if (code >= 95) icon = "⛈️";
                             theme = {
-                                bg: '#475569',
+                                bg: '#475569', // Mưa bão u ám
                                 gradient: 'radial-gradient(at 10% 20%, rgba(100, 116, 139, 0.6) 0px, transparent 50%), radial-gradient(at 90% 10%, rgba(51, 65, 85, 0.7) 0px, transparent 50%), radial-gradient(at 80% 50%, rgba(71, 85, 105, 0.6) 0px, transparent 50%), radial-gradient(at 10% 80%, rgba(15, 23, 42, 0.4) 0px, transparent 50%), radial-gradient(at 50% 50%, #334155 0px, #475569 100%)',
                                 cardBg: 'rgba(30, 41, 59, 0.6)', text: '#f8fafc', hover: 'rgba(30, 41, 59, 0.9)', border: 'rgba(148, 163, 184, 0.4)',
                                 nameGrad: 'linear-gradient(-45deg, #a8c0ff, #3f2b96)',
-                                timeGrad: 'linear-gradient(-45deg, #a8c0ff, #3f2b96, #00C6FF)'
+                                timeGrad: 'linear-gradient(-45deg, #a8c0ff, #3f2b96, #00C6FF)',
+                                cloud: 'rgba(148, 163, 184, 0.5)' // Mây xám xịt
                             };
                         }
                     } else { 
                         if (code === 0 || code <= 3) icon = "🌙";
                         else icon = "🌧️";
                         theme = {
-                            bg: '#0d1117',
+                            bg: '#0d1117', // Ban đêm
                             gradient: 'radial-gradient(at 10% 20%, rgba(31, 111, 235, 0.15) 0px, transparent 50%), radial-gradient(at 90% 10%, rgba(22, 27, 34, 0.6) 0px, transparent 50%), radial-gradient(at 80% 50%, rgba(16, 118, 230, 0.12) 0px, transparent 50%), radial-gradient(at 10% 80%, rgba(31, 111, 235, 0.18) 0px, transparent 50%), radial-gradient(at 50% 50%, #0d1117 0px, #0d1117 100%)',
                             cardBg: 'rgba(22, 27, 34, 0.5)', text: '#f0f6fc', hover: 'rgba(33, 38, 45, 0.8)', border: 'rgba(60, 68, 79, 0.5)',
                             nameGrad: 'linear-gradient(-45deg, #00C6FF, #0072FF, #8E2DE2, #4A00E0)',
-                            timeGrad: 'linear-gradient(-45deg, #00C6FF, #FF5E62, #FF9966, #0072FF)'
+                            timeGrad: 'linear-gradient(-45deg, #00C6FF, #FF5E62, #FF9966, #0072FF)',
+                            cloud: 'rgba(255, 255, 255, 0.1)' // Đêm mây mờ mờ
                         };
                     }
 
@@ -357,6 +355,7 @@
                     root.style.setProperty('--border-color', theme.border);
                     root.style.setProperty('--profile-name-gradient', theme.nameGrad);
                     root.style.setProperty('--time-gradient', theme.timeGrad); 
+                    root.style.setProperty('--cloud-color', theme.cloud); 
 
                     document.getElementById('weather-text').innerHTML = `${icon} Hà Nội: <b>${temp}°C</b>`;
                 }
@@ -368,22 +367,10 @@
         getWeatherAndTheme();
         setInterval(getWeatherAndTheme, 1800000); 
 
-        // --- BỘ GIÁP BẢO MẬT: CHẶN F12, CHUỘT PHẢI, SO SOI CODE ---
+        // --- 5. BỘ GIÁP BẢO MẬT: CHẶN F12, SO SOI CODE ---
         document.addEventListener('keydown', function(e) {
-            // Chặn F12
-            if (e.keyCode === 123) {
-                e.preventDefault();
-                return false;
-            }
-            // Chặn Ctrl + Shift + I (Mở Inspect)
-            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) {
-                e.preventDefault();
-                return false;
-            }
-            // Chặn Ctrl + U (Xem Source Code)
-            if (e.ctrlKey && e.keyCode === 85) {
-                e.preventDefault();
-                return false;
+            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) {
+                e.preventDefault(); return false;
             }
         });
     </script>
