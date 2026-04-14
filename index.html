@@ -32,17 +32,19 @@
             color: var(--text-color);
             display: flex; flex-direction: column; align-items: center;
             padding-top: 25px; box-sizing: border-box; perspective: 1000px;
+            /* Chống bôi đen text copy (Tùy chọn thêm cho an toàn) */
+            user-select: none; 
+            -webkit-user-select: none;
         }
 
         /* --- CONTAINER CHO CANVAS 3D --- */
         #sky-canvas-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; /* Nằm dưới cùng */
-            background-color: #0d1117; /* Màu nền dự phòng */
+            z-index: -1;
+            background-color: #0d1117;
             transition: background-color 2s ease;
         }
 
-        /* Nổi các phần tử giao diện lên trên bầu trời 3D */
         .top-info-widget, .profile-container, .links-container { position: relative; z-index: 10; }
 
         /* Widget */
@@ -59,7 +61,7 @@
             animation: textColorMove 4s ease infinite; font-weight: bold;
         }
 
-        /* ----- KHU VỰC PROFILE DỌC ----- */
+        /* ----- KHU VỰC PROFILE ----- */
         .profile-container {
             text-align: center; margin-bottom: 30px;
             display: flex; flex-direction: column; align-items: center;
@@ -87,7 +89,7 @@
             80%, 100% { transform: scale(1); }
         }
 
-        /* --- HIỆU ỨNG NẢY CHỮ LỆCH KHÉP KÍN --- */
+        /* --- HIỆU ỨNG NẢY CHỮ --- */
         .profile-name-wrapper {
             font-size: 1.8rem; font-weight: 700; margin: 0; display: inline-flex;
             color: transparent; background-image: var(--profile-name-gradient);
@@ -126,9 +128,7 @@
         .link-icon { width: 36px; height: 36px; border-radius: 8px; margin-right: 18px; object-fit: cover; }
     </style>
 </head>
-<body oncontextmenu="return false;">
-
-    <div id="sky-canvas-container"></div>
+<body oncontextmenu="return false;"> <div id="sky-canvas-container"></div>
 
     <div class="top-info-widget">
         <span id="date-text" class="gradient-text">Đang tải...</span>
@@ -183,6 +183,35 @@
     </div>
 
     <script>
+        // ==========================================
+        // BỘ GIÁP BẢO MẬT CHỐNG SOI CODE KỊCH TRẦN
+        // ==========================================
+        
+        // 1. Chặn click chuột phải trên toàn bộ trang
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // 2. Chặn các tổ hợp phím tắt của DevTools
+        document.addEventListener('keydown', function(e) {
+            // Chặn F12
+            if (e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+            // Chặn Ctrl + Shift + I (Inspect) / J (Console) / C (Element)
+            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+                e.preventDefault();
+                return false;
+            }
+            // Chặn Ctrl + U (View Source)
+            if (e.ctrlKey && e.keyCode === 85) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+
         // --- CÀI ĐẶT SPLIT TÊN VÀ ĐỒNG HỒ ---
         const profileName = "NGUYỄN BẮC SƠN";
         const nameContainer = document.getElementById('profile-name');
@@ -201,9 +230,8 @@
         }
         setInterval(updateClock, 1000); updateClock();
 
-        // --- HỆ THỐNG MÂY 3D VÀ BẦU TRỜI BẰNG THREE.JS ---
-        let scene, camera, renderer, cloudParticles = [], flash, rainCount = 15000, rainGeo, rainDrop, rainSystem;
-        let ambientLight, directionalLight, sunSphere, moonSphere;
+        // --- HỆ THỐNG MÂY 3D VÀ BẦU TRỜI ---
+        let scene, camera, renderer, cloudParticles = [], flash, sunSphere, moonSphere, directionalLight;
 
         function init3DSky() {
             scene = new THREE.Scene();
@@ -213,30 +241,18 @@
             camera.rotation.y = -0.12;
             camera.rotation.z = 0.27;
 
-            ambientLight = new THREE.AmbientLight(0x555555);
-            scene.add(ambientLight);
-            
+            scene.add(new THREE.AmbientLight(0x555555));
             directionalLight = new THREE.DirectionalLight(0xffeedd);
             directionalLight.position.set(0,0,1);
             scene.add(directionalLight);
 
-            // Tạo Mặt Trời
-            const sunGeo = new THREE.SphereGeometry( 50, 32, 32 );
-            const sunMat = new THREE.MeshBasicMaterial( {color: 0xffffaa} );
-            sunSphere = new THREE.Mesh( sunGeo, sunMat );
+            sunSphere = new THREE.Mesh(new THREE.SphereGeometry(50, 32, 32), new THREE.MeshBasicMaterial({color: 0xffffaa}));
             sunSphere.position.set(-200, 400, -500);
-            scene.add( sunSphere );
+            scene.add(sunSphere);
 
-            // Tạo Mặt Trăng
-            const moonGeo = new THREE.SphereGeometry( 40, 32, 32 );
-            const moonMat = new THREE.MeshBasicMaterial( {color: 0xdddddd} );
-            moonSphere = new THREE.Mesh( moonGeo, moonMat );
+            moonSphere = new THREE.Mesh(new THREE.SphereGeometry(40, 32, 32), new THREE.MeshBasicMaterial({color: 0xdddddd}));
             moonSphere.position.set(200, 300, -500);
-            scene.add( moonSphere );
-
-            flash = new THREE.PointLight(0x062d89, 30, 500 ,1.7);
-            flash.position.set(200,300,100);
-            scene.add(flash);
+            scene.add(moonSphere);
 
             renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
             scene.fog = new THREE.FogExp2(0x11111f, 0.002);
@@ -244,44 +260,24 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.getElementById('sky-canvas-container').appendChild(renderer.domElement);
 
-            // Tải Texture Mây Khói (Dùng base64 cực nhỏ để không cần file ngoài)
-            const cloudTextureSrc = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAACNJREFUeNrtwTEBAAAAwiD7p7bGDmAAAAAAAAAAAAAAAAAAAF6M6AABzR8+3AAAAABJRU5ErkJggg=="; // Dummy 1x1 for safety, we rely on geometry & fog for shape in simple implementations without external assets. 
-            // *Để web chạy độc lập không phụ thuộc file ảnh ngoài, em tạo mây bằng khối chóp mờ ảo (PlaneGeometry lồng nhau).*
-
             const cloudGeo = new THREE.PlaneBufferGeometry(500,500);
-            const cloudMaterial = new THREE.MeshLambertMaterial({
-                color: 0xffffff,
-                transparent: true,
-                opacity: 0.15, // Độ mờ của mây
-                depthWrite: false
-            });
+            const cloudMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.15, depthWrite: false });
 
-            // Sinh ra 50 cụm mây 3D
             for(let p=0; p<50; p++) {
                 let cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
-                cloud.position.set(
-                    Math.random()*800 -400,
-                    500,
-                    Math.random()*500 - 450
-                );
-                cloud.rotation.x = 1.16;
-                cloud.rotation.y = -0.12;
-                cloud.rotation.z = Math.random()*360;
+                cloud.position.set(Math.random()*800 -400, 500, Math.random()*500 - 450);
+                cloud.rotation.x = 1.16; cloud.rotation.y = -0.12; cloud.rotation.z = Math.random()*360;
                 cloud.material.opacity = 0.2;
-                cloudParticles.push(cloud);
-                scene.add(cloud);
+                cloudParticles.push(cloud); scene.add(cloud);
             }
-
             render3D();
         }
 
         function render3D() {
             cloudParticles.forEach(p => {
-                p.rotation.z -=0.002; // Mây cuộn nhẹ
-                p.position.x += 0.5; // Gió thổi mây bay ngang
-                if(p.position.x > 400) p.position.x = -400; // Vòng lặp khép kín
+                p.rotation.z -=0.002; p.position.x += 0.5;
+                if(p.position.x > 400) p.position.x = -400;
             });
-
             renderer.render(scene, camera);
             requestAnimationFrame(render3D);
         }
@@ -294,7 +290,7 @@
 
         init3DSky();
 
-        // --- CẬP NHẬT THỜI TIẾT VÀ ĐỒNG BỘ 3D ---
+        // --- CẬP NHẬT THỜI TIẾT ---
         async function getWeather() {
             try {
                 const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=21.0285&longitude=105.8542&current_weather=true');
@@ -304,55 +300,40 @@
                     const code = data.current_weather.weathercode;
                     const isDay = data.current_weather.is_day;
                     let icon = "☁️";
-
-                    // ĐIỀU CHỈNH 3D THEO THỜI TIẾT THẬT
                     const container = document.getElementById('sky-canvas-container');
 
-                    if(isDay === 1) { // BAN NGÀY
-                        sunSphere.visible = true;
-                        moonSphere.visible = false;
-                        
-                        if(code === 0 || code <= 3) { // Nắng / Ít mây
+                    if(isDay === 1) { 
+                        sunSphere.visible = true; moonSphere.visible = false;
+                        if(code === 0 || code <= 3) { 
                             icon = code === 0 ? "☀️" : "⛅";
-                            container.style.backgroundColor = '#87CEEB'; // Nền xanh da trời
-                            scene.fog.color.setHex(0x87CEEB);
-                            directionalLight.color.setHex(0xffffff);
+                            container.style.backgroundColor = '#87CEEB'; scene.fog.color.setHex(0x87CEEB);
                             directionalLight.intensity = 1.5;
                             cloudParticles.forEach(p => { p.material.color.setHex(0xffffff); p.material.opacity = 0.1; });
-                        } else { // Nhiều mây / Mưa
+                        } else { 
                             icon = "🌧️";
-                            container.style.backgroundColor = '#556B2F'; // Nền xám chì
-                            scene.fog.color.setHex(0x556B2F);
+                            container.style.backgroundColor = '#556B2F'; scene.fog.color.setHex(0x556B2F);
                             directionalLight.intensity = 0.5;
                             cloudParticles.forEach(p => { p.material.color.setHex(0x888888); p.material.opacity = 0.4; });
                         }
-                    } else { // BAN ĐÊM
-                        sunSphere.visible = false;
-                        moonSphere.visible = true;
-
-                        if(code === 0 || code <= 3) { // Trăng sáng / Ít mây
+                    } else { 
+                        sunSphere.visible = false; moonSphere.visible = true;
+                        if(code === 0 || code <= 3) { 
                             icon = "🌙";
-                            container.style.backgroundColor = '#0d1117'; // Đêm đen
-                            scene.fog.color.setHex(0x0d1117);
+                            container.style.backgroundColor = '#0d1117'; scene.fog.color.setHex(0x0d1117);
                             directionalLight.intensity = 0.2;
                             cloudParticles.forEach(p => { p.material.color.setHex(0xaaaaff); p.material.opacity = 0.1; });
-                        } else { // Đêm mù mịt / Mưa
+                        } else { 
                             icon = "🌧️";
-                            container.style.backgroundColor = '#05050a'; // Đêm xịt
-                            scene.fog.color.setHex(0x05050a);
-                            moonSphere.visible = false; // Mây che lấp trăng
+                            container.style.backgroundColor = '#05050a'; scene.fog.color.setHex(0x05050a);
+                            moonSphere.visible = false; 
                             cloudParticles.forEach(p => { p.material.color.setHex(0x333333); p.material.opacity = 0.5; });
                         }
                     }
-
                     document.getElementById('weather-text').innerHTML = `${icon} Hà Nội: <b>${temp}°C</b>`;
                 }
             } catch (e) { document.getElementById('weather-text').innerText = "Hà Nội: Lỗi kết nối"; }
         }
         getWeather(); setInterval(getWeather, 1800000);
-
-        // --- GIÁP BẢO MẬT ---
-        document.addEventListener('keydown', e => { if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) { e.preventDefault(); return false; } });
     </script>
 </body>
 </html>
